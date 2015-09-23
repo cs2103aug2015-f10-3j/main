@@ -15,7 +15,11 @@ public class LogicController {
 		return executeCommand(command);
 	}
 	
+<<<<<<< HEAD
+	private CommandResults executeCommand(CommandStub command) {
+=======
 	public CommandResults executeCommand(CommandStub command) {
+>>>>>>> befd6ffbdccaf3d7c2ae74ec6accc72c0cc3dadc
 		switch (command.getCommandType()) {
 			case ADD :
 				return mainExecutor.handleAdd(command);
