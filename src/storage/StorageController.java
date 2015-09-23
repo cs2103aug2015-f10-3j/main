@@ -1,6 +1,5 @@
 package storage;
 
-import logic.data.Task;
 import java.util.ArrayList;
 
 public class StorageController {
@@ -8,7 +7,11 @@ public class StorageController {
 		return 0;
 	}
 	
-	public ArrayList<Task> retrieveTasks(String fileName) {
+	public ArrayList retrieveTasks(String fileName) {
 		return null;
+	}
+	
+	public boolean storeTasks(String filename, ArrayList taskList) {
+		return false;
 	}
 }
