@@ -1,4 +1,4 @@
-package Logic;
+package logic;
 
 public class LogicController {
 	private static final String MESSAGE_UNRECOGNIZED_COMMAND = "";
