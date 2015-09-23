@@ -41,12 +41,13 @@ public class CommandLinePanel implements ItemListener {
         JCheckBox cb = new JCheckBox("Restrict maximum rectangle size.");
         cb.setSelected(restrictSize);
         cb.addItemListener(this);
- 
+        JTextField input = new JTextField();
         panel.setBorder(BorderFactory.createLineBorder(Color.red));
  
         Box box = Box.createVerticalBox();
         box.add(label);
         box.add(cb);
+        box.add(input);
  
         contentPane.add(panel, BorderLayout.CENTER);
         contentPane.add(box, BorderLayout.PAGE_END);
