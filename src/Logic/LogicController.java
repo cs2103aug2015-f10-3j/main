@@ -1,16 +1,38 @@
 package Logic;
 
 public class LogicController {
-
-	private static Command cmd;
+	private static final String MESSAGE_UNRECOGNIZED_COMMAND = "";
 	
-	public Command parseCommand(String userInput) {
-		//cmd = tryParse(userInput);
-		return new Command();
+	LogicExecutor mainExecutor;
+	
+	public LogicController() {
+		mainExecutor = new LogicExecutor();
 	}
-
+	
+	public CommandResults parseCommand(String userInput) {
+		// Joel's API that returns a Command object
+		CommandStub command = ParserStub.tryParse(userInput);
+		return executeCommand(command);
+	}
+	
+	private CommandResults executeCommand(CommandStub command) {
+		switch (command.getCommandType()) {
+			case ADD :
+				return mainExecutor.handleAdd(command);
+			case EDIT :
+				return mainExecutor.handleEdit(command);
+			case VIEW :
+				return mainExecutor.handleView(command);
+			case DELETE :
+				return mainExecutor.handleDelete(command);
+			case INVALID:
+				return mainExecutor.handleInvalid(command);
+			default :
+				throw new Error(MESSAGE_UNRECOGNIZED_COMMAND);
+		}
+	}
 }
 
-class Command {
+class CommandResults {
 	
 }
