@@ -2,18 +2,20 @@ package storage;
 
 import java.util.ArrayList;
 
-import com.sun.xml.internal.txw2.Document;
+import org.w3c.dom.Document;
+
+import logic.data.Task;
 
 public class StorageDataParser {
 	public int retrieveNumberofTasks() {
 		return 0;
 	}
 	
-	public ArrayList retrieveTasks(String fileName) {
+	public ArrayList<Task> retrieveTasks(String fileName) {
 		return null;
 	}
 	
-	public boolean storeTasks(String filename, ArrayList taskList) {
+	public boolean storeTasks(String filename, ArrayList<Task> taskList) {
 		return false;
 	}
 	
@@ -21,7 +23,7 @@ public class StorageDataParser {
 		return null;
 	}
 	
-	public boolean writeXmlFile(ArrayList taskList) {
+	public boolean writeXmlFile(ArrayList<Task> taskList) {
 		return false;
 	}
 }
