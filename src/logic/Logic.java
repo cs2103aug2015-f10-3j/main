@@ -1,4 +1,4 @@
-package Logic;
+package logic;
 
 public class Logic {
 	private static LogicController mainController = new LogicController();

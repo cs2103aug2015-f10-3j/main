@@ -1,4 +1,4 @@
-package Logic;
+package logic;
 
 public class ParserStub {
 	public static CommandStub tryParse(String userInput) {
