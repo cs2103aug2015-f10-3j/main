@@ -1,5 +1,6 @@
 package storage;
 
+import logic.data.Task;
 import java.util.ArrayList;
 
 public class StorageController {
