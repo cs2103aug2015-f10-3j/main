@@ -29,7 +29,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
  
-package UI;
+package ui;
  
 /*
  * Used by BoxLayoutDemo.java.
