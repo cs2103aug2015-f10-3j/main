@@ -1,7 +1,7 @@
 package logic;
 
 import java.util.ArrayList;
-import parser.Command;
+import input.Command;
 import logic.data.Task;
 
 public class Logic {
