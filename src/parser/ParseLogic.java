@@ -43,9 +43,9 @@ public class ParseLogic {
 		case SEARCH:
 			return null;
 		case UNDO:
-			return new UndoCommand();
+			return null;
 		case REDO:
-			return new RedoCommand();
+			return null;
 		case INVALID:
 			return null;
 		case EXIT:

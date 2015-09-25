@@ -1,5 +1,7 @@
 package input;
+import java.util.ArrayList;
+import logic.data.Task;
 
 public interface Command {
-	public void execute();
+	public ArrayList<Task> execute();
 }

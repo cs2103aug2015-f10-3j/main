@@ -1,18 +1,14 @@
 package input;
 
 import java.util.ArrayList;
-
 import logic.data.Task;
 
-public class ExitCommand implements Command {
+public class DeleteTaskCommand implements Command {
 
 	@Override
 	public ArrayList<Task> execute() {
-		exitProgram();
+		// TODO Auto-generated method stub
 		return null;
 	}
-	
-	private void exitProgram() {
-		System.exit(0);
-	}
+
 }
