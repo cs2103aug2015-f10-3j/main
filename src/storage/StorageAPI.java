@@ -31,8 +31,7 @@ public class StorageAPI {
 	  * @return       an ArrayList of Tasks
       */
 	 public ArrayList<Task> viewTask() {
-		//TODO
-		 return null;
+	     return sController.viewTask();
 	 }
 	 
 	 /**
@@ -42,8 +41,7 @@ public class StorageAPI {
       * @return       an ArrayList of Tasks
       */
 	 public ArrayList<Task> viewTask(String type) {
-		//TODO
-		 return null;
+	     return sController.viewTask(type);
 	 }
 	 
      /**
