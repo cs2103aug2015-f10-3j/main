@@ -49,9 +49,8 @@ public class StorageController {
       * @return       an ArrayList of Tasks
       */
      protected ArrayList<Task> viewTask() {
-         //TODO
-         // Return arraylist in full
-         return null;
+         ArrayList<Task> taskList = Task.getTaskList();
+         return taskList;
      }
      
      /**
@@ -61,10 +60,16 @@ public class StorageController {
       * @return       an ArrayList of Tasks
       */
      protected ArrayList<Task> viewTask(String type) {
-         //TODO
-         // if-equals to narrow down type wanted
-         // return
-         return null;
+         ArrayList<Task> taskList = Task.getTaskList();
+         ArrayList<Task> filteredTaskList = new ArrayList<Task>();
+         
+         for (Task task : taskList) {
+             if (task.getType().equals(type)) {
+                 filteredTaskList.add(task);
+             }
+         }
+         
+         return filteredTaskList;
      }
      
      /**
