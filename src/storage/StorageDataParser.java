@@ -31,7 +31,7 @@ import storage.data.TimedTask;
 
 public class StorageDataParser {
     /*** Variables ***/
-    private static final String FILE_NAME = "tasks.xml";
+    protected static final String FILE_NAME = "task.xml";
     
     /*** Methods ***/
     /**
@@ -72,19 +72,22 @@ public class StorageDataParser {
                 //System.out.println("\nCurrent Element :" + nNode.getNodeName());
                 if (nNode.getNodeType() == Node.ELEMENT_NODE) {
                     Element eElement = (Element) nNode;
+                    // DateTimeFormatter
                     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+                    
+                    // taskId
                     String taskId = eElement.getElementsByTagName("taskId").item(0).getTextContent();
                     int taskId_int = Integer.valueOf(taskId);
+                    
+                    // description
                     String description = eElement.getElementsByTagName("description").item(0).getTextContent();
+                    
+                    // createdAt
                     String createdAt = eElement.getElementsByTagName("createdAt").item(0).getTextContent();
                     LocalDateTime createdAt_localdatetime = LocalDateTime.parse(createdAt, formatter);
+                    
+                    // type
                     String type = eElement.getElementsByTagName("type").item(0).getTextContent();
-                    String start = eElement.getElementsByTagName("start").item(0).getTextContent();
-                    LocalDateTime start_localdatetime = LocalDateTime.parse(start, formatter);
-                    String end = eElement.getElementsByTagName("end").item(0).getTextContent();
-                    LocalDateTime end_localdatetime = LocalDateTime.parse(end, formatter);
-                    String complete = eElement.getElementsByTagName("complete").item(0).getTextContent();
-                    boolean complete_boolean = Boolean.valueOf(complete);
                     
                     /*
                     System.out.println("taskId: " + taskId);
@@ -96,14 +99,36 @@ public class StorageDataParser {
                     System.out.println("complete: " + complete);
                     */
                     
+                    String start;
+                    LocalDateTime start_localdatetime;
+                    String end;
+                    LocalDateTime end_localdatetime;
+                    String complete;
+                    boolean complete_boolean;
                     switch (type) {
                         case "floating":
                             task = new FloatingTask(taskId_int, description, createdAt_localdatetime);
                             break;
                         case "timed":
+                            // start
+                            start = eElement.getElementsByTagName("start").item(0).getTextContent();
+                            start_localdatetime = LocalDateTime.parse(start, formatter);
+                            
+                            // end
+                            end = eElement.getElementsByTagName("end").item(0).getTextContent();
+                            end_localdatetime = LocalDateTime.parse(end, formatter);
+                           
                             task = new TimedTask(taskId_int, description, createdAt_localdatetime, start_localdatetime, end_localdatetime);
                             break;
                         case "deadline":
+                            // end
+                            end = eElement.getElementsByTagName("end").item(0).getTextContent();
+                            end_localdatetime = LocalDateTime.parse(end, formatter);
+                           
+                            // complete
+                            complete = eElement.getElementsByTagName("complete").item(0).getTextContent();
+                            complete_boolean = Boolean.valueOf(complete);
+                            
                             task = new DeadlineTask(taskId_int, description, createdAt_localdatetime, end_localdatetime, complete_boolean);
                             break;
                         default:
@@ -143,24 +168,28 @@ public class StorageDataParser {
             for (Task task : taskList) {
                 Element item = doc.createElement("item");
                 root.appendChild(item);
-                
+
                 // taskId
                 Element taskId = doc.createElement("taskId");
                 taskId.appendChild(doc.createTextNode(Integer.toString(task.getTaskId())));
+                item.appendChild(taskId);
                 
                 // description
                 Element description = doc.createElement("description");
                 description.appendChild(doc.createTextNode(task.getDescription()));
+                item.appendChild(description);
                 
                 // createdAt
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
                 String formattedDateTime = task.getCreatedAt().format(formatter);
                 Element createdAt = doc.createElement("createdAt");
                 createdAt.appendChild(doc.createTextNode(formattedDateTime));
+                item.appendChild(createdAt);
                 
                 // type
                 Element type = doc.createElement("type");
                 type.appendChild(doc.createTextNode(task.getType()));
+                item.appendChild(type);
                 
                 Element start;
                 Element end;
@@ -170,44 +199,53 @@ public class StorageDataParser {
                         // start
                         start = doc.createElement("start");
                         start.appendChild(doc.createTextNode(""));
+                        item.appendChild(start);
                         
                         // end
                         end = doc.createElement("end");
                         end.appendChild(doc.createTextNode(""));
+                        item.appendChild(end);
                         
                         // complete
                         complete = doc.createElement("complete");
                         complete.appendChild(doc.createTextNode(""));
+                        item.appendChild(complete);
                         break;
                     case "timed":
                         //start
                         start = doc.createElement("start");
                         formattedDateTime = ((TimedTask) task).getStart().format(formatter);
-                        start.appendChild(doc.createTextNode(""));
+                        start.appendChild(doc.createTextNode(formattedDateTime));
+                        item.appendChild(start);
                         
                         // end
                         end = doc.createElement("end");
                         formattedDateTime = ((TimedTask) task).getEnd().format(formatter);
                         end.appendChild(doc.createTextNode(formattedDateTime));
+                        item.appendChild(end);
                         
                         // complete
                         complete = doc.createElement("complete");
                         complete.appendChild(doc.createTextNode(""));
+                        item.appendChild(complete);
                         break;
                     case "deadline":
                         // start
                         start = doc.createElement("start");
                         start.appendChild(doc.createTextNode(""));
+                        item.appendChild(start);
                         
                         // end
                         end = doc.createElement("end");
                         formattedDateTime = ((DeadlineTask) task).getEnd().format(formatter);
                         end.appendChild(doc.createTextNode(formattedDateTime));
+                        item.appendChild(end);
                         
                         // complete
                         complete = doc.createElement("complete");
                         String complete_string = String.valueOf(((DeadlineTask) task).isComplete());
                         complete.appendChild(doc.createTextNode(complete_string));
+                        item.appendChild(complete);
                         break;
                     default:
                         break;
