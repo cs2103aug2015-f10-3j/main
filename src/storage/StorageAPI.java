@@ -5,6 +5,14 @@ import java.util.ArrayList;
 import storage.data.Task;
 
 public class StorageAPI {
+    /*** Variables ***/
+    protected StorageController sController;
+    
+    /*** Constructor ***/
+    public StorageAPI() {
+        sController = new StorageController();
+    }
+    
     /*** Methods ***/
 	/**
 	 * This method adds the Task object to file
@@ -14,8 +22,7 @@ public class StorageAPI {
      *               <code>false</code> otherwise.
 	 */
 	 public boolean addTask(Task task) {
-		 //TODO
-		 return false;
+	     return sController.addTask(task);
 	 }
 	 
 	 /**
