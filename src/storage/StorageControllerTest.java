@@ -124,7 +124,17 @@ public class StorageControllerTest {
     
     @Test
     public void testViewTaskInt() {
-        fail("Not yet implemented");
+        // Set up
+        testTaskList = repopulateTask();
+        
+        // View DeadlineTask
+        Task task = sController.viewTask(5);
+        assertEquals(5, task.getTaskId());
+        
+        // View null
+        task = sController.viewTask(100);
+        assertEquals(null, task);
+        
     }
     
     @Test
