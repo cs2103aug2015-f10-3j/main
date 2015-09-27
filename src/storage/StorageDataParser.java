@@ -206,8 +206,8 @@ public class StorageDataParser {
                         
                         // complete
                         complete = doc.createElement("complete");
-                        boolean complete_bool = Boolean.valueOf(((DeadlineTask) task).isComplete());
-                        complete.appendChild(doc.createTextNode(""));
+                        String complete_string = String.valueOf(((DeadlineTask) task).isComplete());
+                        complete.appendChild(doc.createTextNode(complete_string));
                         break;
                     default:
                         break;
