@@ -4,81 +4,81 @@ import java.time.LocalDateTime;
 import logic.data.*;
 
 public class TaskStub extends Task {
-	private int _taskId;
-	private String _description;
-	private String _type;
-	private LocalDateTime _createdAt;
-	private LocalDateTime _start;
-	private LocalDateTime _end;
+	private int taskId;
+	private String description;
+	private String type;
+	private LocalDateTime createdAt;
+	private LocalDateTime start;
+	private LocalDateTime end;
 	
 	public TaskStub() {
 		// Define default value to indicate that it is an EDIT/VIEW
 	}
 	
-	public TaskStub(int taskId, String description, String type, LocalDateTime start, LocalDateTime end) {
-		_taskId = taskId;
-		_description = description;
-		_type = type;
-		_createdAt = null; // Supposed to get current time
-		_start = start;
-		_end = end;
+	public TaskStub(int _taskId, String _description, String _type, LocalDateTime _start, LocalDateTime _end) {
+		taskId = _taskId;
+		description = _description;
+		type = _type;
+		createdAt = null; // Supposed to get current time
+		start = _start;
+		end = _end;
 	}
 
 	// Used by EditTaskCommand to copy the original createdAt to the new created Task
-	public TaskStub(int taskId, String description, String type, LocalDateTime createdAt, LocalDateTime start, LocalDateTime end) {
-		_taskId = taskId;
-		_description = description;
-		_type = type;
-		_createdAt = createdAt;
-		_start = start;
-		_end = end;
-	}
-	
-	public int get_taskId() {
-		return _taskId;
+	public TaskStub(int _taskId, String _description, String _type, LocalDateTime _createdAt, LocalDateTime _start, LocalDateTime _end) {
+		taskId = _taskId;
+		description = _description;
+		type = _type;
+		createdAt = _createdAt;
+		start = _start;
+		end = _end;
 	}
 
-	public void set_taskId(int _taskId) {
-		this._taskId = _taskId;
+	public int getTaskId() {
+		return taskId;
 	}
 
-	public String get_description() {
-		return _description;
+	public void setTaskId(int taskId) {
+		this.taskId = taskId;
 	}
 
-	public void set_description(String _description) {
-		this._description = _description;
+	public String getDescription() {
+		return description;
 	}
 
-	public String get_type() {
-		return _type;
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
-	public void set_type(String _type) {
-		this._type = _type;
+	public String getType() {
+		return type;
 	}
 
-	public LocalDateTime get_createdAt() {
-		return _createdAt;
+	public void setType(String type) {
+		this.type = type;
 	}
 
-	public void set_createdAt(LocalDateTime _createdAt) {
-		this._createdAt = _createdAt;
+	public LocalDateTime getCreatedAt() {
+		return createdAt;
 	}
 
-	public LocalDateTime get_start() {
-		return _start;
+	public void setCreatedAt(LocalDateTime createdAt) {
+		this.createdAt = createdAt;
 	}
 
-	public void set_start(LocalDateTime _start) {
-		this._start = _start;
+	public LocalDateTime getStart() {
+		return start;
 	}
 
-	public LocalDateTime get_end() {
-		return _end;
+	public void setStart(LocalDateTime start) {
+		this.start = start;
 	}
 
-	public void set_end(LocalDateTime _end) {
-		this._end = _end;
+	public LocalDateTime getEnd() {
+		return end;
+	}
+
+	public void setEnd(LocalDateTime end) {
+		this.end = end;
 	}
 }
