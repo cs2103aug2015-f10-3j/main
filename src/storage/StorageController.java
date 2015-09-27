@@ -1,11 +1,23 @@
 package storage;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+
+import org.w3c.dom.Document;
 
 import storage.data.Task;
 
 
 public class StorageController {
+    /*** Variables ***/
+    protected StorageDataParser sdParser;
+    
+    /*** Constructor ***/
+    public StorageController() {
+        sdParser = new StorageDataParser();
+        Task.setTaskList(sdParser.readTask());
+    }
+    
     /*** Methods ***/
     /**
      * This method adds the Task object to file
@@ -15,8 +27,20 @@ public class StorageController {
      *               <code>false</code> otherwise.
      */
      protected boolean addTask(Task task) {
-         //TODO
-         return false;
+         // Get and set the smallest available tasId
+         int taskId = getAvailableTaskId();
+         task.setTaskId(taskId);
+         
+         // Add this task to our arraylist
+         ArrayList<Task> taskList = Task.getTaskList();
+         taskList.add(task);
+         Task.setTaskList(taskList);
+         
+         // Store to file
+         Document doc = sdParser.parseTask(taskList);
+         boolean result = sdParser.writeXml(doc);
+         
+         return result;
      }
      
      /**
@@ -25,7 +49,8 @@ public class StorageController {
       * @return       an ArrayList of Tasks
       */
      protected ArrayList<Task> viewTask() {
-        //TODO
+         //TODO
+         // Return arraylist in full
          return null;
      }
      
@@ -36,7 +61,9 @@ public class StorageController {
       * @return       an ArrayList of Tasks
       */
      protected ArrayList<Task> viewTask(String type) {
-        //TODO
+         //TODO
+         // if-equals to narrow down type wanted
+         // return
          return null;
      }
      
@@ -48,6 +75,7 @@ public class StorageController {
       */
      protected Task viewTask(int taskId) {
          //TODO
+         // if-equals to narrow down taskId
          return null;
      }
      
@@ -70,7 +98,7 @@ public class StorageController {
       * @return         <code>true</code> if the task is successfully updated; 
       *                 <code>false</code> otherwise.
       */
-     protected boolean deleteTask (int taskId) {
+     protected boolean deleteTask(int taskId) {
          //TODO
          return false;
      }
@@ -98,4 +126,38 @@ public class StorageController {
          //TODO
          return false;
      }
+     
+     /**
+      * This method gets the next available taskId
+      * 
+      * @return       an int as the next taskId
+      */
+      protected int getAvailableTaskId() {
+          ArrayList<Task> taskList = Task.getTaskList();
+          int[] testArray = new int[taskList.size()];
+          
+          for (int i = 0; i < testArray.length; i++) {
+              testArray[i] = taskList.get(i).getTaskId();
+          }
+          
+          Arrays.sort(testArray);
+          int smallest = testArray[0];
+          int largest = testArray[testArray.length-1];
+          int smallestUnused = largest + 1;
+          //System.out.println("smallest: "+smallest);
+          //System.out.println("largest: "+largest);
+          if(smallest>1){
+              smallestUnused = 1;
+          }else{
+              for(int i=2; i<largest; i++){
+                  if(Arrays.binarySearch(testArray, i)<0){
+                      smallestUnused = i;
+                      break;
+                  }
+              }
+          }
+          //System.out.println("Smallest unused: "+smallestUnused);
+          
+          return smallestUnused;
+      }
 }
