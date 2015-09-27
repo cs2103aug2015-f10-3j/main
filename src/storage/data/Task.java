@@ -25,6 +25,13 @@ public class Task {
 		this.type = type;
 	}
 	
+	public Task(int taskId, String description, LocalDateTime createdAt, String type) {
+	    this.taskId = taskId;
+	    this.description = description;
+	    this.createdAt = createdAt;
+	    this.type = type;
+	}
+	
 	/*** Assessors ***/
 	public static ArrayList<Task> getTaskList() {
 		return taskList;

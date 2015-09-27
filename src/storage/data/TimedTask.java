@@ -5,37 +5,37 @@ import java.time.LocalDateTime;
 public class TimedTask extends Task {
 	/*** Variables ***/
 	private static final String TASK_TYPE = "timed";
+	private LocalDateTime start;
 	private LocalDateTime end;
-	private boolean complete;
 	
 	/*** Constructors ***/
 	public TimedTask() {
 		super();
 	}
 	
-	public TimedTask(String description, LocalDateTime end) {
+	public TimedTask(String description, LocalDateTime start, LocalDateTime end) {
 		super(description, TASK_TYPE);
+		this.start = start;
 		this.end = end;
-		this.complete = false;
 	}
 	
+	public TimedTask(int taskId, String description, LocalDateTime createdAt, LocalDateTime start, LocalDateTime end) {
+        super(taskId, description, createdAt, TASK_TYPE);
+        this.start = start;
+        this.end = end;
+    }
+	
 	/*** Assessors ***/
+	public LocalDateTime getStart() {
+		return start;
+	}
+	public void setStart(LocalDateTime start) {
+		this.start = start;
+	}
 	public LocalDateTime getEnd() {
 		return end;
 	}
 	public void setEnd(LocalDateTime end) {
 		this.end = end;
-	}
-	public boolean isComplete() {
-		return complete;
-	}
-	public void setComplete(boolean complete) {
-		this.complete = complete;
-	}
-	
-	/*** Methods ***/
-	public boolean completeTask(int taskId) {
-		// TODO
-		return false;
 	}
 }
