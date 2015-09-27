@@ -1,24 +1,30 @@
 package storage.data;
 
-import java.util.ArrayList;
 import java.time.LocalDateTime;
 
 public class TimedTask extends Task {
-	private ArrayList<TimedTask> timedTaskList;
-	private LocalDateTime start;
+	/*** Variables ***/
+	private static final String TASK_TYPE = "timed";
+	private LocalDateTime end;
 	private boolean complete;
 	
-	public ArrayList<TimedTask> getTimedTaskList() {
-		return timedTaskList;
+	/*** Constructors ***/
+	public TimedTask() {
+		super();
 	}
-	public void setTimedTaskList(ArrayList<TimedTask> timedTaskList) {
-		this.timedTaskList = timedTaskList;
+	
+	public TimedTask(String description, LocalDateTime end) {
+		super(description, TASK_TYPE);
+		this.end = end;
+		this.complete = false;
 	}
-	public LocalDateTime getStart() {
-		return start;
+	
+	/*** Assessors ***/
+	public LocalDateTime getEnd() {
+		return end;
 	}
-	public void setStart(LocalDateTime start) {
-		this.start = start;
+	public void setEnd(LocalDateTime end) {
+		this.end = end;
 	}
 	public boolean isComplete() {
 		return complete;
@@ -27,5 +33,9 @@ public class TimedTask extends Task {
 		this.complete = complete;
 	}
 	
-	
+	/*** Methods ***/
+	public boolean completeTask(int taskId) {
+		// TODO
+		return false;
+	}
 }

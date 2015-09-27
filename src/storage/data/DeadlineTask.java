@@ -1,19 +1,25 @@
 package storage.data;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 
 public class DeadlineTask extends Task {
-	private ArrayList<DeadlineTask> deadlineTaskList;
+	/*** Variables ***/
+	private static final String TASK_TYPE = "deadline";
 	private LocalDateTime start;
 	private LocalDateTime end;
 	
-	public ArrayList<DeadlineTask> getDeadlineTaskList() {
-		return deadlineTaskList;
+	/*** Constructors ***/
+	public DeadlineTask() {
+		super();
 	}
-	public void setDeadlineTaskList(ArrayList<DeadlineTask> deadlineTaskList) {
-		this.deadlineTaskList = deadlineTaskList;
+	
+	public DeadlineTask(String description, LocalDateTime start, LocalDateTime end) {
+		super(description, TASK_TYPE);
+		this.start = start;
+		this.end = end;
 	}
+	
+	/*** Assessors ***/
 	public LocalDateTime getStart() {
 		return start;
 	}
@@ -26,6 +32,4 @@ public class DeadlineTask extends Task {
 	public void setEnd(LocalDateTime end) {
 		this.end = end;
 	}
-	
-	
 }

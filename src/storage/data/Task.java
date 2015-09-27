@@ -4,18 +4,28 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 public class Task {
+	/*** Variables ***/
 	private static ArrayList<Task> taskList;
 	private int taskId;
 	private String description;
 	private LocalDateTime createdAt;
 	private String type;
 	
+	/*** Constructors ***/
 	public Task() {
 		if (taskList == null) {
 			taskList = new ArrayList<Task>();
 		}
 	}
 	
+	public Task(String description, String type) {
+		this.taskId = 0; //TODO: getAvailableTaskId()
+		this.description = description;
+		this.createdAt = LocalDateTime.now();
+		this.type = type;
+	}
+	
+	/*** Assessors ***/
 	public static ArrayList<Task> getTaskList() {
 		return taskList;
 	}
