@@ -1,0 +1,83 @@
+<?xml version="1.0"?>
+<company>
+	<task id="1">
+		<description>CS2103 CE2</description>
+		<createdAt>2015-09-01 12:30</createdAt>
+		<type>deadline</type>
+		<start></start>
+		<end>2015-09-10 12:30</end>
+		<complete>true</complete>
+	</task>
+	<task id="2">
+		<description>Appointment with dentist</description>
+		<createdAt>2015-09-02 16:34</createdAt>
+		<type>timed</type>
+		<start>2015-09-10 14:30</start>
+		<end>2015-09-10 15:30</end>
+		<complete></complete>
+	</task>
+	<task id="3">
+		<description>Buy chicken</description>
+		<createdAt>2015-09-05 13:03</createdAt>
+		<type>floating</type>
+		<start></start>
+		<end></end>
+		<complete></complete>
+	</task>
+	<task id="4">
+		<description>Submit CS2106 Lab 1</description>
+		<createdAt>2015-09-06 22:16</createdAt>
+		<type>deadline</type>
+		<start></start>
+		<end>2015-09-10 23:59</end>
+		<complete>false</complete>
+	</task>
+	<task id="5">
+		<description>Go out gaigai</description>
+		<createdAt>2015-09-07 23:00</createdAt>
+		<type>timed</type>
+		<start>2015-09-17 13:00</start>
+		<end>2015-09-17 17:00</end>
+		<complete></complete>
+	</task>
+	<task id="6">
+		<description>Eat more chicken</description>
+		<createdAt>2015-09-07 23:01</createdAt>
+		<type>floating</type>
+		<start></start>
+		<end></end>
+		<complete></complete>
+	</task>
+	<task id="7">
+		<description>Pay money for steamboat</description>
+		<createdAt>2015-09-08 08:55</createdAt>
+		<type>deadline</type>
+		<start></start>
+		<end>2015-09-10 23:59</end>
+		<complete>false</complete>
+	</task>
+	<task id="8">
+		<description>Walk the neighbor's dog</description>
+		<createdAt>2015-09-08 10:20</createdAt>
+		<type>timed</type>
+		<start>2015-09-13 17:00</start>
+		<end>2015-09-13 18:00</end>
+		<complete></complete>
+	</task>
+	<task id="9">
+		<description>Stock up locker</description>
+		<createdAt>2015-09-10 11:45</createdAt>
+		<type>floating</type>
+		<start></start>
+		<end></end>
+		<complete></complete>
+	</task>
+	<task id="10">
+		<description>Sign up for chicken eating competition</description>
+		<createdAt>2015-09-14 21:10</createdAt>
+		<type>deadline</type>
+		<start></start>
+		<end>2015-09-20 23:59</end>
+		<complete>false</complete>
+	</task>
+</company>
