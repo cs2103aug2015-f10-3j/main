@@ -1,0 +1,43 @@
+package storage;
+
+import static org.junit.Assert.*;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+public class StorageDataParserTest {
+
+    @Before
+    public void setUp() throws Exception {
+    }
+
+    @After
+    public void tearDown() throws Exception {
+    }
+
+    @Test
+    public void testGetFile() {
+        fail("Not yet implemented");
+    }
+
+    @Test
+    public void testReadTask() {
+        fail("Not yet implemented");
+    }
+    
+    @Test
+    public void testParseTask() {
+        fail("Not yet implemented");
+    }
+    
+    @Test
+    public void testParseXml() {
+        fail("Not yet implemented");
+    }
+    
+    @Test
+    public void testWriteXml() {
+        fail("Not yet implemented");
+    }
+}
