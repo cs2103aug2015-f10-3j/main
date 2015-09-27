@@ -95,12 +95,31 @@ public class StorageControllerTest {
     
     @Test
     public void testViewTask() {
-        fail("Not yet implemented");
+        // Set up
+        testTaskList = repopulateTask();
+        
+        // Perform test
+        ArrayList<Task> taskList = sController.viewTask();
+        assertEquals(testTaskList.size(), taskList.size());
     }
     
     @Test
     public void testViewTaskString() {
-        fail("Not yet implemented");
+        // Set up
+        testTaskList = repopulateTask();
+        
+        // View DeadlineTask
+        ArrayList<Task> filteredTaskList = sController.viewTask("deadline");
+        assertEquals(4, filteredTaskList.size());
+        
+        // View DeadlineTask
+        filteredTaskList = sController.viewTask("timed");
+        assertEquals(3, filteredTaskList.size());
+        
+        // View DeadlineTask
+        filteredTaskList = sController.viewTask("floating");
+        assertEquals(3, filteredTaskList.size());
+        
     }
     
     @Test
