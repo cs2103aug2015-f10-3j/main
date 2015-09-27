@@ -26,9 +26,16 @@ public class StorageDataParserTest {
     @Before
     public void setUp() throws Exception {
         sdParser = new StorageDataParser();
-        testTaskList = new ArrayList<Task>();
+        testTaskList = repopulateTask();
+    }
+
+    @After
+    public void tearDown() throws Exception {
+    }
+
+    public ArrayList<Task> repopulateTask() {
+        ArrayList<Task> testTaskList = new ArrayList<Task>();
         
-        // LocalDateTime.parse("2015-09-01 12:30", formatter)
         // Populate sample arraylist
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         Task task;
@@ -52,12 +59,13 @@ public class StorageDataParserTest {
         testTaskList.add(task);
         task = new DeadlineTask(10, "Sign up for chicken eating competition", LocalDateTime.parse("2015-09-14 21:10", formatter), LocalDateTime.parse("2015-09-20 23:59", formatter), false);
         testTaskList.add(task);
+        
+        Document doc = sdParser.parseTask(testTaskList);
+        sdParser.writeXml(doc);
+        
+        return testTaskList;
     }
-
-    @After
-    public void tearDown() throws Exception {
-    }
-
+    
     /*** Test Cases ***/
     @Test
     public void testGetFile() {

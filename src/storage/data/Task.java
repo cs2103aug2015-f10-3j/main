@@ -19,7 +19,6 @@ public class Task {
 	}
 	
 	public Task(String description, String type) {
-		this.taskId = 0; //TODO: getAvailableTaskId()
 		this.description = description;
 		this.createdAt = LocalDateTime.now();
 		this.type = type;
