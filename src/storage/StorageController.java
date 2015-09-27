@@ -79,8 +79,12 @@ public class StorageController {
       * @return         the specified Task object
       */
      protected Task viewTask(int taskId) {
-         //TODO
-         // if-equals to narrow down taskId
+         ArrayList<Task> taskList = Task.getTaskList();
+         for (Task task : taskList) {
+             if (task.getTaskId() == taskId) {
+                 return task;
+             }
+         }
          return null;
      }
      
