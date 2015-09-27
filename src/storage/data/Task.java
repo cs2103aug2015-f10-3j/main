@@ -1,4 +1,4 @@
-package logic.data;
+package storage.data;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -10,10 +10,16 @@ public class Task {
 	private LocalDateTime createdAt;
 	private String type;
 	
-	public static ArrayList getTaskList() {
+	public Task() {
+		if (taskList == null) {
+			taskList = new ArrayList<Task>();
+		}
+	}
+	
+	public static ArrayList<Task> getTaskList() {
 		return taskList;
 	}
-	public static void setTaskList(ArrayList taskList) {
+	public static void setTaskList(ArrayList<Task> taskList) {
 		Task.taskList = taskList;
 	}
 	public int getTaskId() {

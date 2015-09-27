@@ -2,7 +2,8 @@ package storage;
 
 import java.util.ArrayList;
 
-import logic.data.Task;
+import storage.data.Task;
+
 
 public class StorageAPI {
 	public int retrieveNumberofTasks() {

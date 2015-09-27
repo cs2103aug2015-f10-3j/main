@@ -4,7 +4,8 @@ import java.util.ArrayList;
 
 import org.w3c.dom.Document;
 
-import logic.data.Task;
+import storage.data.Task;
+
 
 public class StorageDataParser {
 	public int retrieveNumberofTasks() {

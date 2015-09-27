@@ -1,4 +1,4 @@
-package logic.data;
+package storage.data;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
