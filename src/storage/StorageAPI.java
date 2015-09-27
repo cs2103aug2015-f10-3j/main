@@ -51,8 +51,7 @@ public class StorageAPI {
       * @return         the specified Task object
       */
 	 public Task viewTask(int taskId) {
-		 //TODO
-		 return null;
+	     return sController.viewTask(taskId);
 	 }
 	 
      /**
