@@ -6,10 +6,10 @@ public class UIController {
 	}
 	
 	public String[] processUserInput(String input){
-		String[] output =null;
+		String[] output = null;
 		
 		//Call logicApi to process input
-		
+		output = new String[]{"testing :", input, "end"};
 		return output;
 	}
 }
