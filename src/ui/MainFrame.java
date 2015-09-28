@@ -26,15 +26,19 @@ public class MainFrame {
         
         JFrame frame = new JFrame(TITLE);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-        JLabel emptyLabel = new JLabel("Welcome");
-        emptyLabel.setPreferredSize(new Dimension(800, 800));
+        frame.addWindowListener(new WindowAdapter() {
+        	public void windowClosing(WindowEvent e) {
+        	System.exit(0);
+        	}
+        	});
         CommandLinePanel panel = new CommandLinePanel();
         panel.populateContentPane(frame.getContentPane());
-       // frame.getContentPane().add(emptyLabel, BorderLayout.CENTER);
 
         //Display the window.
-        frame.pack();
+        Dimension size = frame.getToolkit().getScreenSize();
+        size.setSize(size.width / 2, size.height / 2);
+        frame.setSize(size);
+        //frame.pack();
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }

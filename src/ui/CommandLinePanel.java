@@ -2,56 +2,61 @@ package ui;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+import javax.swing.text.DefaultCaret;
 
-public class CommandLinePanel implements ItemListener {
+@SuppressWarnings("serial")
+public class CommandLinePanel extends Panel implements ItemListener {
 	protected static int NUM_COMPONENTS = 3;
-    protected static float[] xAlignment = {
-                                 Component.LEFT_ALIGNMENT,
-                                 Component.CENTER_ALIGNMENT,
-                                 Component.RIGHT_ALIGNMENT};
-    protected static float[] hue = {0.0f, 0.33f, 0.67f};
+ 
     protected static boolean restrictSize = true;
     protected static boolean sizeIsRandom = false;
-    protected static BLDComponent[] bldComponent =
-        new BLDComponent[NUM_COMPONENTS];
- 
+    private static final String STRING_EMPTY = "";
+  
     public void populateContentPane(Container contentPane) {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
- 
-        //Create the rectangles.
-        int shortSideSize = 15;
-        for (int i = 0; i < NUM_COMPONENTS; i++) {
-            if (sizeIsRandom) {
-                shortSideSize = (int)(30.0 * Math.random()) + 30;
-            } else {
-                shortSideSize += 10;
-            }
-            bldComponent[i] = new BLDComponent(xAlignment[i], hue[i],
-                                               shortSideSize,
-                                               restrictSize,
-                                               sizeIsRandom,
-                                               String.valueOf(i));
-            panel.add(bldComponent[i]);
-        }
- 
-        //Create the instructions.
-        JLabel label = new JLabel("Click a rectangle to "
-                                + "change its X alignment.");
-        JCheckBox cb = new JCheckBox("Restrict maximum rectangle size.");
-        cb.setSelected(restrictSize);
-        cb.addItemListener(this);
-        JTextField input = new JTextField();
-        panel.setBorder(BorderFactory.createLineBorder(Color.red));
- 
+        
+        JTextArea textArea = prepareJTextArea();
+        JTextField inputField = prepareTextField(textArea);
+        JScrollPane areaScrollPane = prepareScrollPane(textArea);
+        
+        panel.setBorder(BorderFactory.createLineBorder(Color.black));
         Box box = Box.createVerticalBox();
-        box.add(label);
-        box.add(cb);
-        box.add(input);
- 
+        box.add(areaScrollPane);
+        box.add(inputField);
+        panel.add(box, BorderLayout.PAGE_END);
         contentPane.add(panel, BorderLayout.CENTER);
-        contentPane.add(box, BorderLayout.PAGE_END);
     }
+
+	public JScrollPane prepareScrollPane(JTextArea textArea) {
+		JScrollPane areaScrollPane = new JScrollPane(textArea);
+        areaScrollPane.setVerticalScrollBarPolicy(
+                        JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+		return areaScrollPane;
+	}
+
+	public JTextField prepareTextField(final JTextArea textArea) {
+		final JTextField inputField = new JTextField();
+		inputField.setMaximumSize(new Dimension(inputField.getMaximumSize().width ,inputField.getPreferredSize().height));
+        inputField.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+               textArea.append(inputField.getText() + "\n");
+               inputField.setText(STRING_EMPTY);
+            }
+        });
+		return inputField;
+	}
+
+	public JTextArea prepareJTextArea() {
+		JTextArea textArea = new JTextArea();
+        textArea.setLineWrap(true);
+        textArea.setEditable(false);
+        DefaultCaret caret = (DefaultCaret)textArea.getCaret();
+        caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
+		return textArea;
+	}
  
     public void itemStateChanged(ItemEvent e) {
         if (e.getStateChange() == ItemEvent.SELECTED) {
@@ -59,13 +64,6 @@ public class CommandLinePanel implements ItemListener {
         } else {
             restrictSize = false;
         }
-        notifyBLDComponents();
     }
- 
-    static public void notifyBLDComponents() {
-        for (int i = 0; i < NUM_COMPONENTS; i++) {
-            bldComponent[i].setSizeRestriction(restrictSize);
-        }
-        bldComponent[0].revalidate();
-    }
+
 }
