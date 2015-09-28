@@ -1,84 +1,77 @@
 package logic;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+
 import logic.data.*;
 
-public class TaskStub extends Task {
-	private int taskId;
+public class TaskStub extends Task{
+	/*** Variables ***/
+	private static ArrayList<TaskStub> TaskStubList;
+	private int TaskStubId;
 	private String description;
-	private String type;
 	private LocalDateTime createdAt;
-	private LocalDateTime start;
-	private LocalDateTime end;
+	private String type;
+	private boolean complete;
 	
+	/*** Constructors ***/
 	public TaskStub() {
-		// Define default value to indicate that it is an EDIT/VIEW
+		if (TaskStubList == null) {
+			TaskStubList = new ArrayList<TaskStub>();
+		}
 	}
 	
-	public TaskStub(int _taskId, String _description, String _type, LocalDateTime _start, LocalDateTime _end) {
-		taskId = _taskId;
-		description = _description;
-		type = _type;
-		createdAt = null; // Supposed to get current time
-		start = _start;
-		end = _end;
+	public TaskStub(String description, String type) {
+		this.description = description;
+		this.createdAt = LocalDateTime.now();
+		this.type = type;
 	}
-
-	// Used by EditTaskCommand to copy the original createdAt to the new created Task
-	public TaskStub(int _taskId, String _description, String _type, LocalDateTime _createdAt, LocalDateTime _start, LocalDateTime _end) {
-		taskId = _taskId;
-		description = _description;
-		type = _type;
-		createdAt = _createdAt;
-		start = _start;
-		end = _end;
+	
+	public TaskStub(int TaskStubId, String description, LocalDateTime createdAt, String type, boolean complete) {
+	    this.TaskStubId = TaskStubId;
+	    this.description = description;
+	    this.createdAt = createdAt;
+	    this.type = type;
+	    this.complete = complete;
 	}
-
-	public int getTaskId() {
-		return taskId;
+	
+	/*** Assessors ***/
+	public static ArrayList<TaskStub> getTaskStubList() {
+		return TaskStubList;
 	}
-
-	public void setTaskId(int taskId) {
-		this.taskId = taskId;
+	public static void setTaskStubList(ArrayList<TaskStub> TaskStubList) {
+		TaskStub.TaskStubList = TaskStubList;
 	}
-
+	public int getTaskStubId() {
+		return TaskStubId;
+	}
+	public void setTaskStubId(int TaskStubId) {
+		this.TaskStubId = TaskStubId;
+	}
 	public String getDescription() {
 		return description;
 	}
-
 	public void setDescription(String description) {
 		this.description = description;
 	}
-
+	public LocalDateTime getCreatedAt() {
+		return createdAt;
+	}
+	public void setCreatedAt(LocalDateTime createdAt) {
+		this.createdAt = createdAt;
+	}
 	public String getType() {
 		return type;
 	}
-
 	public void setType(String type) {
 		this.type = type;
 	}
 
-	public LocalDateTime getCreatedAt() {
-		return createdAt;
+	public boolean isComplete() {
+		return complete;
 	}
 
-	public void setCreatedAt(LocalDateTime createdAt) {
-		this.createdAt = createdAt;
-	}
-
-	public LocalDateTime getStart() {
-		return start;
-	}
-
-	public void setStart(LocalDateTime start) {
-		this.start = start;
-	}
-
-	public LocalDateTime getEnd() {
-		return end;
-	}
-
-	public void setEnd(LocalDateTime end) {
-		this.end = end;
+	public void setComplete(boolean complete) {
+		this.complete = complete;
 	}
 }
