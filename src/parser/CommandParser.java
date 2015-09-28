@@ -14,6 +14,10 @@ public final class CommandParser {
 	}
 
 	private static Command parse(String userCommand) throws Exception {
+		userCommand = userCommand.trim();
+		if (userCommand.length() <= 0) {
+			return null;
+		}
 		return ParseLogic.createCommand(userCommand);
 	}
 }
