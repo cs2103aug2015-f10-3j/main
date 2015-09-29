@@ -5,6 +5,7 @@ import java.util.Arrays;
 
 import org.w3c.dom.Document;
 
+import storage.data.DeadlineTask;
 import storage.data.Task;
 
 
@@ -164,8 +165,41 @@ public class StorageController {
       *                 <code>false</code> otherwise.
       */
      protected boolean completeTask(int taskId) {
-         //TODO
-         return false;
+         ArrayList<Task> taskList = Task.getTaskList();
+         Task task = null;
+         boolean found = false;
+         int index = -1;
+         
+         // Find task
+         for (int i = 0; i < taskList.size(); i++) {
+             task = taskList.get(i);
+             if (task.getTaskId() == taskId) {
+                 index = i;
+                 found = true;
+                 break;
+             }
+         }
+         
+         // Return if task is not found
+         if (!found) {
+             return false;
+         }
+         
+         // Return if task is not a DeadlineTask
+         if (!task.getType().equals("deadline")) {
+             return false;
+         }
+         
+         // Modify complete status
+         ((DeadlineTask) task).setComplete(true);
+         taskList.set(index, task);
+         
+         // Store to file
+         Task.setTaskList(taskList);
+         Document doc = sdParser.parseTask(taskList);
+         boolean result = sdParser.writeXml(doc);
+         
+         return result;
      }
 
      /**
