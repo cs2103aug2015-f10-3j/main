@@ -95,7 +95,6 @@ public class StorageAPI {
       *                   <code>false</code> otherwise.
       */
 	 public boolean writeAllToFile(ArrayList<Task> taskList) {
-		 //TODO
-		 return false;
+		 return sController.writeAllToFile(taskList);
 	 }
 }

@@ -178,13 +178,21 @@ public class StorageControllerTest {
         
         // Check
         Task task = sController.viewTask(4);
-        
         assertEquals(true, ((DeadlineTask) task).isComplete());
     }
     
     @Test
     public void testWriteAllToFile() {
-        fail("Not yet implemented");
+        // Set up
+        ArrayList<Task> updatedTaskList = new ArrayList<Task>();
+        testTaskList = repopulateTask();
+        
+        // Perform update
+        sController.writeAllToFile(testTaskList);
+        
+        // Check
+        updatedTaskList = sController.viewTask();
+        assertEquals(10, updatedTaskList.size());
     }
     
     @Test

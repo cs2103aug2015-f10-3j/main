@@ -210,8 +210,12 @@ public class StorageController {
       *                   <code>false</code> otherwise.
       */
      protected boolean writeAllToFile(ArrayList<Task> taskList) {
-         //TODO
-         return false;
+         // Store to file
+         Task.setTaskList(taskList);
+         Document doc = sdParser.parseTask(taskList);
+         boolean result = sdParser.writeXml(doc);
+         
+         return result;
      }
      
      /**
