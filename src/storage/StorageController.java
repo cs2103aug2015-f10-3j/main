@@ -96,8 +96,29 @@ public class StorageController {
       *               <code>false</code> otherwise.
       */
      protected boolean updateTask(Task task) {
-         //TODO
-         return false;
+         ArrayList<Task> taskList = Task.getTaskList();
+         boolean found = false;
+         
+         // Find task
+         for (int i = 0; i < taskList.size(); i++) {
+             Task existingTask = taskList.get(i);
+             if (existingTask.getTaskId() == task.getTaskId()) {
+                 taskList.set(i, task);
+                 found = true;
+                 break;
+             }
+         }
+         
+         // Return if task is not found
+         if (!found) {
+             return false;
+         }
+         
+         // Store to file
+         Document doc = sdParser.parseTask(taskList);
+         boolean result = sdParser.writeXml(doc);
+         
+         return result;
      }
      
      /**
