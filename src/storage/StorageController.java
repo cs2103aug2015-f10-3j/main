@@ -115,6 +115,7 @@ public class StorageController {
          }
          
          // Store to file
+         Task.setTaskList(taskList);
          Document doc = sdParser.parseTask(taskList);
          boolean result = sdParser.writeXml(doc);
          
@@ -129,8 +130,30 @@ public class StorageController {
       *                 <code>false</code> otherwise.
       */
      protected boolean deleteTask(int taskId) {
-         //TODO
-         return false;
+         ArrayList<Task> taskList = Task.getTaskList();
+         boolean found = false;
+         
+         // Find task
+         for (int i = 0; i < taskList.size(); i++) {
+             Task task = taskList.get(i);
+             if (task.getTaskId() == taskId) {
+                 taskList.remove(i);
+                 found = true;
+                 break;
+             }
+         }
+         
+         // Return if task is not found
+         if (!found) {
+             return false;
+         }
+         
+         // Store to file
+         Task.setTaskList(taskList);
+         Document doc = sdParser.parseTask(taskList);
+         boolean result = sdParser.writeXml(doc);
+         
+         return result;
      }
      
      /**
