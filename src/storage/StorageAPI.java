@@ -84,8 +84,7 @@ public class StorageAPI {
       *                 <code>false</code> otherwise.
       */
 	 public boolean completeTask(int taskId) {
-		 //TODO
-		 return false;
+		 return sController.completeTask(taskId);
 	 }
 
      /**
