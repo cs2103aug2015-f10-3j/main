@@ -156,7 +156,16 @@ public class StorageControllerTest {
     
     @Test
     public void testDeleteTask() {
-        fail("Not yet implemented");
+        // Set up
+        ArrayList<Task> updatedTaskList = new ArrayList<Task>();
+        testTaskList = repopulateTask();
+        
+        // Perform update
+        sController.deleteTask(3);
+        
+        // Check
+        updatedTaskList = sController.viewTask();
+        assertEquals(9, updatedTaskList.size());
     }
     
     @Test
