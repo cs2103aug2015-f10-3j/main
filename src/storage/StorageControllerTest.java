@@ -139,7 +139,19 @@ public class StorageControllerTest {
     
     @Test
     public void testUpdateTask() {
-        fail("Not yet implemented");
+        // Set up
+        ArrayList<Task> updatedTaskList = new ArrayList<Task>();
+        testTaskList = repopulateTask();
+        
+        // Perform update
+        Task task = testTaskList.get(5);
+        task.setDescription("Submit CS2106 Lab is cancelled lol");
+        sController.updateTask(task);
+        
+        // Check
+        updatedTaskList = sController.viewTask();
+        assertEquals(task.getTaskId(), updatedTaskList.get(5).getTaskId());
+        assertEquals("Submit CS2106 Lab is cancelled lol", updatedTaskList.get(5).getDescription());
     }
     
     @Test
