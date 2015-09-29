@@ -143,6 +143,11 @@ public class StorageControllerTest {
     }
     
     @Test
+    public void testDeleteTask() {
+        fail("Not yet implemented");
+    }
+    
+    @Test
     public void testCompleteTask() {
         fail("Not yet implemented");
     }
