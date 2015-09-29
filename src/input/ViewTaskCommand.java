@@ -12,4 +12,15 @@ public class ViewTaskCommand implements Command {
 		return null;
 	}
 
+	private ArrayList<Task> selectTasksByType(ArrayList<Task> allTask, Class<?> typeOfTask){
+		ArrayList<Task> selectedTask = new ArrayList<Task>();
+		for(Task t : allTask){
+			if(typeOfTask.isInstance(t)){
+				selectedTask.add(t);
+			}
+		}
+
+		return selectedTask;
+	}
+
 }

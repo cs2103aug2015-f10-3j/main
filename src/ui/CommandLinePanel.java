@@ -5,11 +5,11 @@ import javax.swing.*;
 import javax.swing.text.DefaultCaret;
 
 @SuppressWarnings("serial")
-public class CommandLinePanel extends Panel implements ItemListener {
+public class CommandLinePanel extends Panel {
 	protected static int NUM_COMPONENTS = 3;
 
-	protected static boolean restrictSize = true;
-	protected static boolean sizeIsRandom = false;
+	//protected static boolean restrictSize = true;
+	//protected static boolean sizeIsRandom = false;
 	private static final String STRING_EMPTY = "";
 
 	public void populateContentPane(Container contentPane) {
@@ -28,14 +28,14 @@ public class CommandLinePanel extends Panel implements ItemListener {
 		contentPane.add(panel, BorderLayout.CENTER);
 	}
 
-	public JScrollPane prepareScrollPane(JTextArea textArea) {
+	private JScrollPane prepareScrollPane(JTextArea textArea) {
 		JScrollPane areaScrollPane = new JScrollPane(textArea);
 		areaScrollPane.setVerticalScrollBarPolicy(
 				JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		return areaScrollPane;
 	}
 
-	public JTextField prepareTextField(final JTextArea textArea) {
+	private JTextField prepareTextField(final JTextArea textArea) {
 		final JTextField inputField = new JTextField();
 		inputField.setMaximumSize(new Dimension(inputField.getMaximumSize().width ,inputField.getPreferredSize().height));
 		inputField.addActionListener(new ActionListener() {
@@ -55,7 +55,7 @@ public class CommandLinePanel extends Panel implements ItemListener {
 		return inputField;
 	}
 
-	public JTextArea prepareJTextArea() {
+	private JTextArea prepareJTextArea() {
 		JTextArea textArea = new JTextArea();
 		textArea.setLineWrap(true);
 		textArea.setEditable(false);
@@ -64,12 +64,12 @@ public class CommandLinePanel extends Panel implements ItemListener {
 		return textArea;
 	}
 
-	public void itemStateChanged(ItemEvent e) {
+	/*public void itemStateChanged(ItemEvent e) {
 		if (e.getStateChange() == ItemEvent.SELECTED) {
 			restrictSize = true;
 		} else {
 			restrictSize = false;
 		}
-	}
+	}*/
 
 }
