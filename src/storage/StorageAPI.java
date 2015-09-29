@@ -62,8 +62,7 @@ public class StorageAPI {
       *               <code>false</code> otherwise.
       */
 	 public boolean updateTask(Task task) {
-		 //TODO
-		 return false;
+		 return sController.updateTask(task);
 	 }
 	 
      /**
