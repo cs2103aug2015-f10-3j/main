@@ -170,7 +170,16 @@ public class StorageControllerTest {
     
     @Test
     public void testCompleteTask() {
-        fail("Not yet implemented");
+        // Set up
+        testTaskList = repopulateTask();
+        
+        // Perform update
+        sController.completeTask(4);
+        
+        // Check
+        Task task = sController.viewTask(4);
+        
+        assertEquals(true, ((DeadlineTask) task).isComplete());
     }
     
     @Test
