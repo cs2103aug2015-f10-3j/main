@@ -73,8 +73,7 @@ public class StorageAPI {
       *                 <code>false</code> otherwise.
       */
 	 public boolean deleteTask (int taskId) {
-		 //TODO
-		 return false;
+		 return sController.deleteTask(taskId);
 	 }
 	 
      /**
