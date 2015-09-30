@@ -15,7 +15,7 @@ public class EditTaskCommand implements Command {
 	private static final String TASK_TYPE_TIMED = "timed";
 	private static final String TASK_TYPE_FLOATING = "floating";
 	private static final String TASK_TYPE_INVALID = "invalid";
-
+	
 	private static final StorageAPIStub STORAGE_API = new StorageAPIStub();
 
 	private ArrayList<Task> taskListToReturn;
@@ -26,8 +26,15 @@ public class EditTaskCommand implements Command {
 	private LocalDateTime newStart;
 	private LocalDateTime newEnd;
 
+	/*** Constructor ***/
+	public EditTaskCommand(int _taskId, String _description, LocalDateTime _start, LocalDateTime _end) {
+		taskId = _taskId;
+		newDescription = _description;
+		newStart = _start;
+		newEnd = _end;
+	}	
+	
 	/*** Methods ***/
-
 	/**
 	 * This method modifies a Task based on user input for the edit command
 	 * 
