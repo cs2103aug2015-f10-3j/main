@@ -7,6 +7,8 @@ import parser.CommandParser;
 
 public class Logic {
 	/*** Variables ***/
+	
+	private static Logic logicController;
 	private ArrayList<Command> commandHistory;
 	private ArrayList<Command> undoHistory;
 	
@@ -16,7 +18,14 @@ public class Logic {
      * @param		userInput  the String specified by the user
      * @return		an ArrayList of Task object
      */
-	public ArrayList<Task> parseCommand(String userInput) {
+	public static ArrayList<Task> processCommand(String userInput) {
+		if (logicController == null) {
+			logicController = new Logic();
+		} 
+		return logicController.parseCommand(userInput);
+	}
+	
+	private ArrayList<Task> parseCommand(String userInput) {
 		Command cmd = CommandParser.tryParse(userInput);
 		return executeCommand(cmd);
 	}
