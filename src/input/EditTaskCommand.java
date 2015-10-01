@@ -3,6 +3,7 @@ package input;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import logic.TaskStub;
+import logic.TimedTaskStub;
 import logic.data.Task;
 import logic.DeadlineTaskStub;
 import logic.StorageAPIStub;
@@ -117,6 +118,19 @@ public class EditTaskCommand implements Command {
 	 * 
 	 */
 	private void createNewDeadlineTask() {
+		if (newDescription != null) { // If user supplied a new task description for the task
+			if (newEnd != null) {
+				createNewDeadlineTask(modifiedTask, newDescription, newEnd); 
+			} else {
+				createNewDeadlineTask(modifiedTask, newDescription, getOriginalTaskEnd());
+			}
+		} else { // If user did not supply a new task description, use the old task description
+			if (newEnd != null) {
+				createNewDeadlineTask(modifiedTask, getOriginalTaskDescription(),newEnd);
+			} else {
+				createNewDeadlineTask(modifiedTask,getOriginalTaskDescription(),getOriginalTaskEnd());
+			}
+		}
 		if (newDescription != null && newEnd != null) {
 			createNewDeadlineTask(modifiedTask, newDescription, newEnd);
 		} else if (newDescription != null && newEnd == null) {
@@ -142,7 +156,25 @@ public class EditTaskCommand implements Command {
 	}
 
 	private void createNewTimedTask() {
-
+		if (newDescription != null) { // If user supplied a new task description
+			if (newStart != null) { // If user supplied a new task start date/time
+				if (newEnd != null) { // If user supplied a new task end date/time
+					createNewTimedTask(modifiedTask, newDescription, newStart, newEnd);
+				} else {
+					createNewTimedTask(modifiedTask, newDescription, newStart, getOriginalTaskEnd());
+				}
+			} else {
+				if (newEnd != null) {
+					
+				} else {
+					
+				}
+				
+			}
+		}
+	}
+	
+	private void createNewTimedTask(Task task, String taskDescrption, LocalDateTime taskStart, LocalDateTime taskEnd) {
 	}
 
 	private void createNewFloatTask() {
@@ -151,6 +183,11 @@ public class EditTaskCommand implements Command {
 
 	/*** Setter and Getter Methods ***/
 
+	private LocalDateTime getOriginalTaskStart() {
+		TimedTaskStub castedOriginalTask = (TimedTaskStub) originalTask;
+		return castedOriginalTask.getStart();
+	}
+	
 	private LocalDateTime getOriginalTaskEnd() {
 		DeadlineTaskStub castedOriginalTask = (DeadlineTaskStub) originalTask;
 		return castedOriginalTask.getEnd();
@@ -167,21 +204,4 @@ public class EditTaskCommand implements Command {
 	private boolean storeTaskToStorage(TaskStub task) {
 		return STORAGE_API.updateTask(task);
 	}
-
-	public void setNewDescription(String newDescription) {
-		newDescription = newDescription;
-	}
-
-	public void setTaskId(int taskId) {
-		this.taskId = taskId;
-	}
-
-	public void set_newStart(LocalDateTime _newStart) {
-		this.newStart = _newStart;
-	}
-
-	public void set_newEnd(LocalDateTime _newEnd) {
-		this.newEnd = _newEnd;
-	}
-
 }

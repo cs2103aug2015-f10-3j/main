@@ -27,6 +27,10 @@ public class TaskStub extends Task{
 		this.type = type;
 	}
 	
+	public TaskStub(int taskId, String description, LocalDateTime start, String type) {
+		
+	}
+	
 	public TaskStub(int TaskStubId, String description, LocalDateTime createdAt, String type, boolean complete) {
 	    this.TaskStubId = TaskStubId;
 	    this.description = description;
