@@ -9,8 +9,29 @@ public class Task {
 	private int taskId;
 	private String description;
 	private LocalDateTime createdAt;
-	private String type;
+	private TASK_TYPE type;
     private boolean complete;
+
+    public enum TASK_TYPE {
+        FLOATING {
+            @Override
+            public String toString() {
+                return "FLOATING";
+            }
+        },
+        TIMED {
+            @Override
+            public String toString() {
+                return "TIMED";
+            }
+        }, DEADLINE {
+            @Override
+            public String toString() {
+                return "DEADLINE";
+            }
+        };
+
+    };
 	
 	/*** Constructors ***/
 	public Task() {
@@ -22,16 +43,16 @@ public class Task {
 	public Task(String description, String type) {
 		this.description = description;
 		this.createdAt = LocalDateTime.now();
-		this.type = type;
+		this.type = determineType(type);
 		this.complete = false;
 	}
-	
-	public Task(int taskId, String description, LocalDateTime createdAt, boolean complete, String type) {
+
+    public Task(int taskId, String description, LocalDateTime createdAt, boolean complete, String type) {
 	    this.taskId = taskId;
 	    this.description = description;
 	    this.createdAt = createdAt;
         this.complete = complete;
-	    this.type = type;
+	    this.type = determineType(type);
 	}
 	
 	/*** Assessors ***/
@@ -59,16 +80,33 @@ public class Task {
 	public void setCreatedAt(LocalDateTime createdAt) {
 		this.createdAt = createdAt;
 	}
-	public String getType() {
-		return type;
-	}
-	public void setType(String type) {
-		this.type = type;
-	}
+    public TASK_TYPE getType() {
+        return type;
+    }
+    public void setType(TASK_TYPE type) {
+        this.type = type;
+    }
     public boolean isComplete() {
         return complete;
     }
     public void setComplete(boolean complete) {
         this.complete = complete;
+    }
+
+    /*** Method ***/
+    public static TASK_TYPE determineType(String typeString) {
+        TASK_TYPE type = null;
+
+        if (typeString != null) {
+            if (typeString.equalsIgnoreCase("floating")) {
+                return TASK_TYPE.FLOATING;
+            } else if (typeString.equalsIgnoreCase("timed")) {
+                return TASK_TYPE.TIMED;
+            } else if (typeString.equalsIgnoreCase("deadline")) {
+                return TASK_TYPE.DEADLINE;
+            }
+        }
+
+        return type;
     }
 }

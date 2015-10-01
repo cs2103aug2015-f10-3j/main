@@ -26,6 +26,7 @@ import org.w3c.dom.NodeList;
 import storage.data.DeadlineTask;
 import storage.data.FloatingTask;
 import storage.data.Task;
+import storage.data.Task.TASK_TYPE;
 import storage.data.TimedTask;
 
 
@@ -87,7 +88,8 @@ public class StorageDataParser {
                     LocalDateTime createdAt_localdatetime = LocalDateTime.parse(createdAt, formatter);
                     
                     // type
-                    String type = eElement.getElementsByTagName("type").item(0).getTextContent();
+                    String type_string = eElement.getElementsByTagName("type").item(0).getTextContent();
+                    TASK_TYPE taskType = Task.determineType(type_string);
                     
                     // complete
                     String complete = eElement.getElementsByTagName("complete").item(0).getTextContent();
@@ -107,11 +109,11 @@ public class StorageDataParser {
                     LocalDateTime start_localdatetime;
                     String end;
                     LocalDateTime end_localdatetime;
-                    switch (type) {
-                        case "floating":
+                    switch (taskType) {
+                        case FLOATING:
                             task = new FloatingTask(taskId_int, description, createdAt_localdatetime, complete_boolean);
                             break;
-                        case "timed":
+                        case TIMED:
                             // start
                             start = eElement.getElementsByTagName("start").item(0).getTextContent();
                             start_localdatetime = LocalDateTime.parse(start, formatter);
@@ -122,7 +124,7 @@ public class StorageDataParser {
                            
                             task = new TimedTask(taskId_int, description, createdAt_localdatetime, start_localdatetime, end_localdatetime, complete_boolean);
                             break;
-                        case "deadline":
+                        case DEADLINE:
                             // end
                             end = eElement.getElementsByTagName("end").item(0).getTextContent();
                             end_localdatetime = LocalDateTime.parse(end, formatter);
@@ -186,7 +188,7 @@ public class StorageDataParser {
                 
                 // type
                 Element type = doc.createElement("type");
-                type.appendChild(doc.createTextNode(task.getType()));
+                type.appendChild(doc.createTextNode(task.getType().toString()));
                 item.appendChild(type);
                 
                 // complete
@@ -198,7 +200,7 @@ public class StorageDataParser {
                 Element start;
                 Element end;
                 switch (task.getType()) {
-                    case "floating":
+                    case FLOATING:
                         // start
                         start = doc.createElement("start");
                         start.appendChild(doc.createTextNode(""));
@@ -209,7 +211,7 @@ public class StorageDataParser {
                         end.appendChild(doc.createTextNode(""));
                         item.appendChild(end);
                         break;
-                    case "timed":
+                    case TIMED:
                         //start
                         start = doc.createElement("start");
                         formattedDateTime = ((TimedTask) task).getStart().format(formatter);
@@ -222,7 +224,7 @@ public class StorageDataParser {
                         end.appendChild(doc.createTextNode(formattedDateTime));
                         item.appendChild(end);
                         break;
-                    case "deadline":
+                    case DEADLINE:
                         // start
                         start = doc.createElement("start");
                         start.appendChild(doc.createTextNode(""));

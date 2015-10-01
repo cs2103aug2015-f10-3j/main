@@ -14,6 +14,7 @@ import org.w3c.dom.Document;
 import storage.data.DeadlineTask;
 import storage.data.FloatingTask;
 import storage.data.Task;
+import storage.data.Task.TASK_TYPE;
 import storage.data.TimedTask;
 
 public class StorageControllerTest {
@@ -109,15 +110,15 @@ public class StorageControllerTest {
         testTaskList = repopulateTask();
         
         // Get DeadlineTask
-        ArrayList<Task> filteredTaskList = sController.getTask("deadline");
+        ArrayList<Task> filteredTaskList = sController.getTask(TASK_TYPE.DEADLINE);
         assertEquals(4, filteredTaskList.size());
         
-        // Get DeadlineTask
-        filteredTaskList = sController.getTask("timed");
+        // Get TimedTask
+        filteredTaskList = sController.getTask(TASK_TYPE.TIMED);
         assertEquals(3, filteredTaskList.size());
         
-        // Get DeadlineTask
-        filteredTaskList = sController.getTask("floating");
+        // Get FloatingTask
+        filteredTaskList = sController.getTask(TASK_TYPE.FLOATING);
         assertEquals(3, filteredTaskList.size());
         
     }

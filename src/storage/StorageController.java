@@ -6,6 +6,7 @@ import java.util.Arrays;
 import org.w3c.dom.Document;
 
 import storage.data.Task;
+import storage.data.Task.TASK_TYPE;
 
 public class StorageController {
     /*** Variables ***/
@@ -55,15 +56,15 @@ public class StorageController {
      /**
       * This method returns a list of the specified tasks
       * 
-      * @param  type  type of the Tasks to be selected 
-      * @return       an ArrayList of Tasks
+      * @param  TASK_TYPE  type of the Tasks to be selected 
+      * @return            an ArrayList of Tasks
       */
-     protected ArrayList<Task> getTask(String type) {
+     protected ArrayList<Task> getTask(TASK_TYPE type) {
          ArrayList<Task> taskList = Task.getTaskList();
          ArrayList<Task> filteredTaskList = new ArrayList<Task>();
          
          for (Task task : taskList) {
-             if (task.getType().equals(type)) {
+             if (task.getType() == type) {
                  filteredTaskList.add(task);
              }
          }
@@ -156,9 +157,9 @@ public class StorageController {
      }
      
      /**
-      * This method marks a Deadline Task as completed
+      * This method marks a Task as completed
       * 
-      * @param  taskId  the unique identifier of the DeadlineTask object 
+      * @param  taskId  the unique identifier of the Task object 
       * @return         <code>true</code> if the task is successfully marked as completed; 
       *                 <code>false</code> otherwise.
       */

@@ -3,6 +3,7 @@ package storage;
 import java.util.ArrayList;
 
 import storage.data.Task;
+import storage.data.Task.TASK_TYPE;
 
 public class StorageAPI {
     /*** Variables ***/
@@ -37,10 +38,10 @@ public class StorageAPI {
 	 /**
       * This method returns a list of the specified tasks
       * 
-      * @param  type  type of the Tasks to be selected 
-      * @return       an ArrayList of Tasks
+      * @param  TASK_TYPE  type of the Tasks to be selected 
+      * @return            an ArrayList of Tasks
       */
-	 public ArrayList<Task> getTask(String type) {
+	 public ArrayList<Task> getTask(TASK_TYPE type) {
 	     return sController.getTask(type);
 	 }
 	 
