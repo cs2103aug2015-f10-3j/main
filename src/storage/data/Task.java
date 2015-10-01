@@ -10,6 +10,7 @@ public class Task {
 	private String description;
 	private LocalDateTime createdAt;
 	private String type;
+    private boolean complete;
 	
 	/*** Constructors ***/
 	public Task() {
@@ -22,12 +23,14 @@ public class Task {
 		this.description = description;
 		this.createdAt = LocalDateTime.now();
 		this.type = type;
+		this.complete = false;
 	}
 	
-	public Task(int taskId, String description, LocalDateTime createdAt, String type) {
+	public Task(int taskId, String description, LocalDateTime createdAt, boolean complete, String type) {
 	    this.taskId = taskId;
 	    this.description = description;
 	    this.createdAt = createdAt;
+        this.complete = complete;
 	    this.type = type;
 	}
 	
@@ -62,4 +65,10 @@ public class Task {
 	public void setType(String type) {
 		this.type = type;
 	}
+    public boolean isComplete() {
+        return complete;
+    }
+    public void setComplete(boolean complete) {
+        this.complete = complete;
+    }
 }

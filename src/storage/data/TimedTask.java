@@ -19,8 +19,8 @@ public class TimedTask extends Task {
 		this.end = end;
 	}
 	
-	public TimedTask(int taskId, String description, LocalDateTime createdAt, LocalDateTime start, LocalDateTime end) {
-        super(taskId, description, createdAt, TASK_TYPE);
+	public TimedTask(int taskId, String description, LocalDateTime createdAt, LocalDateTime start, LocalDateTime end, boolean complete) {
+        super(taskId, description, createdAt, complete, TASK_TYPE);
         this.start = start;
         this.end = end;
     }

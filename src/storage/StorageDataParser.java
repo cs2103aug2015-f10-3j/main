@@ -89,6 +89,10 @@ public class StorageDataParser {
                     // type
                     String type = eElement.getElementsByTagName("type").item(0).getTextContent();
                     
+                    // complete
+                    String complete = eElement.getElementsByTagName("complete").item(0).getTextContent();
+                    boolean complete_boolean = Boolean.valueOf(complete);
+                    
                     /*
                     System.out.println("taskId: " + taskId);
                     System.out.println("description: " + description);
@@ -103,11 +107,9 @@ public class StorageDataParser {
                     LocalDateTime start_localdatetime;
                     String end;
                     LocalDateTime end_localdatetime;
-                    String complete;
-                    boolean complete_boolean;
                     switch (type) {
                         case "floating":
-                            task = new FloatingTask(taskId_int, description, createdAt_localdatetime);
+                            task = new FloatingTask(taskId_int, description, createdAt_localdatetime, complete_boolean);
                             break;
                         case "timed":
                             // start
@@ -118,17 +120,13 @@ public class StorageDataParser {
                             end = eElement.getElementsByTagName("end").item(0).getTextContent();
                             end_localdatetime = LocalDateTime.parse(end, formatter);
                            
-                            task = new TimedTask(taskId_int, description, createdAt_localdatetime, start_localdatetime, end_localdatetime);
+                            task = new TimedTask(taskId_int, description, createdAt_localdatetime, start_localdatetime, end_localdatetime, complete_boolean);
                             break;
                         case "deadline":
                             // end
                             end = eElement.getElementsByTagName("end").item(0).getTextContent();
                             end_localdatetime = LocalDateTime.parse(end, formatter);
                            
-                            // complete
-                            complete = eElement.getElementsByTagName("complete").item(0).getTextContent();
-                            complete_boolean = Boolean.valueOf(complete);
-                            
                             task = new DeadlineTask(taskId_int, description, createdAt_localdatetime, end_localdatetime, complete_boolean);
                             break;
                         default:
@@ -191,9 +189,14 @@ public class StorageDataParser {
                 type.appendChild(doc.createTextNode(task.getType()));
                 item.appendChild(type);
                 
+                // complete
+                Element complete = doc.createElement("complete");
+                String complete_string = String.valueOf(task.isComplete());
+                complete.appendChild(doc.createTextNode(complete_string));
+                item.appendChild(complete);
+                
                 Element start;
                 Element end;
-                Element complete;
                 switch (task.getType()) {
                     case "floating":
                         // start
@@ -205,11 +208,6 @@ public class StorageDataParser {
                         end = doc.createElement("end");
                         end.appendChild(doc.createTextNode(""));
                         item.appendChild(end);
-                        
-                        // complete
-                        complete = doc.createElement("complete");
-                        complete.appendChild(doc.createTextNode(""));
-                        item.appendChild(complete);
                         break;
                     case "timed":
                         //start
@@ -223,11 +221,6 @@ public class StorageDataParser {
                         formattedDateTime = ((TimedTask) task).getEnd().format(formatter);
                         end.appendChild(doc.createTextNode(formattedDateTime));
                         item.appendChild(end);
-                        
-                        // complete
-                        complete = doc.createElement("complete");
-                        complete.appendChild(doc.createTextNode(""));
-                        item.appendChild(complete);
                         break;
                     case "deadline":
                         // start
@@ -240,12 +233,6 @@ public class StorageDataParser {
                         formattedDateTime = ((DeadlineTask) task).getEnd().format(formatter);
                         end.appendChild(doc.createTextNode(formattedDateTime));
                         item.appendChild(end);
-                        
-                        // complete
-                        complete = doc.createElement("complete");
-                        String complete_string = String.valueOf(((DeadlineTask) task).isComplete());
-                        complete.appendChild(doc.createTextNode(complete_string));
-                        item.appendChild(complete);
                         break;
                     default:
                         break;

@@ -5,9 +5,7 @@ import java.util.Arrays;
 
 import org.w3c.dom.Document;
 
-import storage.data.DeadlineTask;
 import storage.data.Task;
-
 
 public class StorageController {
     /*** Variables ***/
@@ -185,13 +183,8 @@ public class StorageController {
              return false;
          }
          
-         // Return if task is not a DeadlineTask
-         if (!task.getType().equals("deadline")) {
-             return false;
-         }
-         
          // Modify complete status
-         ((DeadlineTask) task).setComplete(true);
+         task.setComplete(true);
          taskList.set(index, task);
          
          // Store to file
