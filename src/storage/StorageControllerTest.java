@@ -2,39 +2,38 @@ package storage;
 
 import static org.junit.Assert.*;
 
+import java.io.File;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+
+import logic.data.DeadlineTask;
+import logic.data.FloatingTask;
+import logic.data.Task;
+import logic.data.TimedTask;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.w3c.dom.Document;
 
-import storage.data.DeadlineTask;
-import storage.data.FloatingTask;
-import storage.data.Task;
-import storage.data.Task.TASK_TYPE;
-import storage.data.TimedTask;
 
 public class StorageControllerTest {
     /*** Variables ***/
-    StorageDataParser sdParser;
+    StorageController sdParser;
     ArrayList<Task> testTaskList;
-    StorageController sController;
     
     /*** Setup and Teardown ***/
     @Before
     public void setUp() throws Exception {
-        sdParser = new StorageDataParser();
+        sdParser = new StorageController();
         testTaskList = repopulateTask();
-        sController = new StorageController();
     }
 
     @After
     public void tearDown() throws Exception {
     }
-    
+
     public ArrayList<Task> repopulateTask() {
         ArrayList<Task> testTaskList = new ArrayList<Task>();
         
@@ -67,142 +66,66 @@ public class StorageControllerTest {
         
         return testTaskList;
     }
-
+    
     /*** Test Cases ***/
     @Test
-    public void testAddTask() {
-        // Set up
-        testTaskList = repopulateTask();
+    public void testGetFile() {
+        File file = sdParser.getFile();
+        if (file.exists()) {
+            assert true;
+        } else {
+            assert false;
+        }
+    }
+
+    @Test
+    public void testReadTask() {
+        ArrayList<Task> taskList = sdParser.readTask();
+        if (taskList.size() > 0) {
+            assert true;
+        } else {
+            assert false;
+        }
+    }
+    
+    @Test
+    public void testParseTask() {
+        Document doc = sdParser.parseTask(testTaskList);
         
-        // Add DeadlineTask
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-        Task task = new DeadlineTask("Stock up rainbow icecream", LocalDateTime.parse("2015-09-20 12:00", formatter));
-        boolean result = sController.addTask(task);
+        if (doc.getDocumentElement().getNodeName().equals("task")) {
+            assert true;
+        } else {
+            assert false;
+        }
+        
+        if (doc.getElementsByTagName("item").getLength() == 10) {
+            assert true;
+        } else {
+            assert false;
+        }
+    }
+    
+    @Test
+    public void testParseXml() {
+        Document doc = sdParser.parseXml();
+        
+        if (doc.getDocumentElement().getNodeName().equals("task")) {
+            assert true;
+        } else {
+            assert false;
+        }
+        
+        if (doc.getElementsByTagName("item").getLength() == 10) {
+            assert true;
+        } else {
+            assert false;
+        }
+    }
+    
+    @Test
+    public void testWriteXml() {
+        Document doc = sdParser.parseTask(testTaskList);
+        boolean result = sdParser.writeXml(doc);
         assertEquals(true, result);
-        assertEquals(11, Task.getTaskList().size());
-        
-        // Add TimedTask
-        task = new TimedTask("Eat lunch with senpai", LocalDateTime.parse("2015-10-01 12:00", formatter), LocalDateTime.parse("2015-10-01 14:00", formatter));
-        result = sController.addTask(task);
-        assertEquals(true, result);
-        assertEquals(12, Task.getTaskList().size());
-        
-        // Add TimedTask
-        task = new FloatingTask("Rainbows and clouds :3");
-        result = sController.addTask(task);
-        assertEquals(true, result);
-        assertEquals(13, Task.getTaskList().size());
-    }
-    
-    @Test
-    public void testGetTask() {
-        // Set up
-        testTaskList = repopulateTask();
-        
-        // Perform test
-        ArrayList<Task> taskList = sController.getTask();
-        assertEquals(testTaskList.size(), taskList.size());
-    }
-    
-    @Test
-    public void testGetTaskString() {
-        // Set up
-        testTaskList = repopulateTask();
-        
-        // Get DeadlineTask
-        ArrayList<Task> filteredTaskList = sController.getTask(TASK_TYPE.DEADLINE);
-        assertEquals(4, filteredTaskList.size());
-        
-        // Get TimedTask
-        filteredTaskList = sController.getTask(TASK_TYPE.TIMED);
-        assertEquals(3, filteredTaskList.size());
-        
-        // Get FloatingTask
-        filteredTaskList = sController.getTask(TASK_TYPE.FLOATING);
-        assertEquals(3, filteredTaskList.size());
-        
-    }
-    
-    @Test
-    public void testGetTaskInt() {
-        // Set up
-        testTaskList = repopulateTask();
-        
-        // Get DeadlineTask
-        Task task = sController.getTask(5);
-        assertEquals(5, task.getTaskId());
-        
-        // Get null
-        task = sController.getTask(100);
-        assertEquals(null, task);
-        
-    }
-    
-    @Test
-    public void testUpdateTask() {
-        // Set up
-        ArrayList<Task> updatedTaskList = new ArrayList<Task>();
-        testTaskList = repopulateTask();
-        
-        // Perform update
-        Task task = testTaskList.get(5);
-        task.setDescription("Submit CS2106 Lab is cancelled lol");
-        sController.updateTask(task);
-        
-        // Check
-        updatedTaskList = sController.getTask();
-        assertEquals(task.getTaskId(), updatedTaskList.get(5).getTaskId());
-        assertEquals("Submit CS2106 Lab is cancelled lol", updatedTaskList.get(5).getDescription());
-    }
-    
-    @Test
-    public void testDeleteTask() {
-        // Set up
-        ArrayList<Task> updatedTaskList = new ArrayList<Task>();
-        testTaskList = repopulateTask();
-        
-        // Perform update
-        sController.deleteTask(3);
-        
-        // Check
-        updatedTaskList = sController.getTask();
-        assertEquals(9, updatedTaskList.size());
-    }
-    
-    @Test
-    public void testCompleteTask() {
-        // Set up
-        testTaskList = repopulateTask();
-        
-        // Perform update
-        sController.completeTask(4);
-        
-        // Check
-        Task task = sController.getTask(4);
-        assertEquals(true, ((DeadlineTask) task).isComplete());
-    }
-    
-    @Test
-    public void testWriteAllToFile() {
-        // Set up
-        ArrayList<Task> updatedTaskList = new ArrayList<Task>();
-        testTaskList = repopulateTask();
-        
-        // Perform update
-        sController.writeAllToFile(testTaskList);
-        
-        // Check
-        updatedTaskList = sController.getTask();
-        assertEquals(10, updatedTaskList.size());
-    }
-    
-    @Test
-    public void testGetAvailableTaskId() {
-        // Set up
-        testTaskList = repopulateTask();
-        
-        // Perform test
-        int result = sController.getAvailableTaskId();
-        assertEquals(testTaskList.size() + 1, result);
     }
 }

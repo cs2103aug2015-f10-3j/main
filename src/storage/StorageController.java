@@ -1,248 +1,308 @@
 package storage;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Arrays;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
+import logic.data.DeadlineTask;
+import logic.data.FloatingTask;
+import logic.data.Task;
+import logic.data.TimedTask;
+import logic.data.Task.TASK_TYPE;
 
 import org.w3c.dom.Document;
-
-import storage.data.Task;
-import storage.data.Task.TASK_TYPE;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 public class StorageController {
     /*** Variables ***/
-    protected StorageDataParser sdParser;
-    
-    /*** Constructor ***/
-    public StorageController() {
-        sdParser = new StorageDataParser();
-        Task.setTaskList(sdParser.readTask());
-    }
+    protected static final String FILE_NAME = "task.xml";
     
     /*** Methods ***/
     /**
-     * This method adds the Task object to file
+     * This method check if the XML file exist and create it if not
      * 
-     * @param  task  Task entry to be added 
-     * @return       <code>true</code> if the task is successfully added; 
-     *               <code>false</code> otherwise.
+     * @return       file containing Task objects
      */
-     protected boolean addTask(Task task) {
-         // Get and set the smallest available tasId
-         int taskId = getAvailableTaskId();
-         task.setTaskId(taskId);
-         
-         // Add this task to our arraylist
-         ArrayList<Task> taskList = Task.getTaskList();
-         taskList.add(task);
-         Task.setTaskList(taskList);
-         
-         // Store to file
-         Document doc = sdParser.parseTask(taskList);
-         boolean result = sdParser.writeXml(doc);
-         
-         return result;
-     }
-     
-     /**
-      * This method returns a list of all tasks
-      * 
-      * @return       an ArrayList of Tasks
-      */
-     protected ArrayList<Task> getTask() {
-         ArrayList<Task> taskList = Task.getTaskList();
-         return taskList;
-     }
-     
-     /**
-      * This method returns a list of the specified tasks
-      * 
-      * @param  TASK_TYPE  type of the Tasks to be selected 
-      * @return            an ArrayList of Tasks
-      */
-     protected ArrayList<Task> getTask(TASK_TYPE type) {
-         ArrayList<Task> taskList = Task.getTaskList();
-         ArrayList<Task> filteredTaskList = new ArrayList<Task>();
-         
-         for (Task task : taskList) {
-             if (task.getType() == type) {
-                 filteredTaskList.add(task);
-             }
-         }
-         
-         return filteredTaskList;
-     }
-     
-     /**
-      * This method returns a Task object
-      * 
-      * @param  taskId  the unique identifier of the Task object
-      * @return         the specified Task object
-      */
-     protected Task getTask(int taskId) {
-         ArrayList<Task> taskList = Task.getTaskList();
-         for (Task task : taskList) {
-             if (task.getTaskId() == taskId) {
-                 return task;
-             }
-         }
-         return null;
-     }
-     
-     /**
-      * This method updates the Task object to file
-      * 
-      * @param  task  Task entry to be updated 
-      * @return       <code>true</code> if the task is successfully updated; 
-      *               <code>false</code> otherwise.
-      */
-     protected boolean updateTask(Task task) {
-         ArrayList<Task> taskList = Task.getTaskList();
-         boolean found = false;
-         
-         // Find task
-         for (int i = 0; i < taskList.size(); i++) {
-             Task existingTask = taskList.get(i);
-             if (existingTask.getTaskId() == task.getTaskId()) {
-                 taskList.set(i, task);
-                 found = true;
-                 break;
-             }
-         }
-         
-         // Return if task is not found
-         if (!found) {
-             return false;
-         }
-         
-         // Store to file
-         Task.setTaskList(taskList);
-         Document doc = sdParser.parseTask(taskList);
-         boolean result = sdParser.writeXml(doc);
-         
-         return result;
-     }
-     
-     /**
-      * This method delete the Task from file
-      * 
-      * @param  taskId  the unique identifier of the Task object 
-      * @return         <code>true</code> if the task is successfully updated; 
-      *                 <code>false</code> otherwise.
-      */
-     protected boolean deleteTask(int taskId) {
-         ArrayList<Task> taskList = Task.getTaskList();
-         boolean found = false;
-         
-         // Find task
-         for (int i = 0; i < taskList.size(); i++) {
-             Task task = taskList.get(i);
-             if (task.getTaskId() == taskId) {
-                 taskList.remove(i);
-                 found = true;
-                 break;
-             }
-         }
-         
-         // Return if task is not found
-         if (!found) {
-             return false;
-         }
-         
-         // Store to file
-         Task.setTaskList(taskList);
-         Document doc = sdParser.parseTask(taskList);
-         boolean result = sdParser.writeXml(doc);
-         
-         return result;
-     }
-     
-     /**
-      * This method marks a Task as completed
-      * 
-      * @param  taskId  the unique identifier of the Task object 
-      * @return         <code>true</code> if the task is successfully marked as completed; 
-      *                 <code>false</code> otherwise.
-      */
-     protected boolean completeTask(int taskId) {
-         ArrayList<Task> taskList = Task.getTaskList();
-         Task task = null;
-         boolean found = false;
-         int index = -1;
-         
-         // Find task
-         for (int i = 0; i < taskList.size(); i++) {
-             task = taskList.get(i);
-             if (task.getTaskId() == taskId) {
-                 index = i;
-                 found = true;
-                 break;
-             }
-         }
-         
-         // Return if task is not found
-         if (!found) {
-             return false;
-         }
-         
-         // Modify complete status
-         task.setComplete(true);
-         taskList.set(index, task);
-         
-         // Store to file
-         Task.setTaskList(taskList);
-         Document doc = sdParser.parseTask(taskList);
-         boolean result = sdParser.writeXml(doc);
-         
-         return result;
-     }
+    protected File getFile() {
+        File file = new File(FILE_NAME);
+        if (!file.exists()) {
+            // Create file if it does not exist
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+        return file;
+    }
+    
+    /**
+     * This method reads all the Task objects to an ArrayList
+     * 
+     * @return       ArrayList of all Task objects
+     */
+    protected ArrayList<Task> readTask() {
+        ArrayList<Task> taskList = new ArrayList<Task>();
+        try {
+            Document doc = parseXml();
+            
+            //~ System.out.println("Root element :" + doc.getDocumentElement().getNodeName());
+            NodeList nodeList = doc.getElementsByTagName("item");
+            
+            for (int temp = 0; temp < nodeList.getLength(); temp++) {
+                Node nNode = nodeList.item(temp);
+                Task task = null;
+                //System.out.println("\nCurrent Element :" + nNode.getNodeName());
+                if (nNode.getNodeType() == Node.ELEMENT_NODE) {
+                    Element eElement = (Element) nNode;
+                    // DateTimeFormatter
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+                    
+                    // taskId
+                    String taskId = eElement.getElementsByTagName("taskId").item(0).getTextContent();
+                    int taskId_int = Integer.valueOf(taskId);
+                    
+                    // description
+                    String description = eElement.getElementsByTagName("description").item(0).getTextContent();
+                    
+                    // createdAt
+                    String createdAt = eElement.getElementsByTagName("createdAt").item(0).getTextContent();
+                    LocalDateTime createdAt_localdatetime = LocalDateTime.parse(createdAt, formatter);
+                    
+                    // type
+                    String type_string = eElement.getElementsByTagName("type").item(0).getTextContent();
+                    TASK_TYPE taskType = Task.determineType(type_string);
+                    
+                    // complete
+                    String complete = eElement.getElementsByTagName("complete").item(0).getTextContent();
+                    boolean complete_boolean = Boolean.valueOf(complete);
+                    
+                    /*
+                    System.out.println("taskId: " + taskId);
+                    System.out.println("description: " + description);
+                    System.out.println("createdAt: " + createdAt);
+                    System.out.println("type: " + type);
+                    System.out.println("start: " + start);
+                    System.out.println("end: " + end);
+                    System.out.println("complete: " + complete);
+                    */
+                    
+                    String start;
+                    LocalDateTime start_localdatetime;
+                    String end;
+                    LocalDateTime end_localdatetime;
+                    switch (taskType) {
+                        case FLOATING:
+                            task = new FloatingTask(taskId_int, description, createdAt_localdatetime, complete_boolean);
+                            break;
+                        case TIMED:
+                            // start
+                            start = eElement.getElementsByTagName("start").item(0).getTextContent();
+                            start_localdatetime = LocalDateTime.parse(start, formatter);
+                            
+                            // end
+                            end = eElement.getElementsByTagName("end").item(0).getTextContent();
+                            end_localdatetime = LocalDateTime.parse(end, formatter);
+                           
+                            task = new TimedTask(taskId_int, description, createdAt_localdatetime, start_localdatetime, end_localdatetime, complete_boolean);
+                            break;
+                        case DEADLINE:
+                            // end
+                            end = eElement.getElementsByTagName("end").item(0).getTextContent();
+                            end_localdatetime = LocalDateTime.parse(end, formatter);
+                           
+                            task = new DeadlineTask(taskId_int, description, createdAt_localdatetime, end_localdatetime, complete_boolean);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                
+                if (task != null) {
+                    taskList.add(task);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+        
+        return taskList;
+    }
+    
+    /**
+     * This method returns a string representation of the XML version of the Task objects
+     * 
+     * @param  task  an ArrayList of all Task objects
+     * @return       a Document representing the XML document
+     */
+    protected Document parseTask(ArrayList<Task> taskList) {
+        Document doc = null;
+        try {
 
-     /**
-      * This method overwrites the entire file with an new list of Tasks
-      * 
-      * @param  taskList  list of the new Task objects 
-      * @return           <code>true</code> if the task is successfully marked as completed; 
-      *                   <code>false</code> otherwise.
-      */
-     protected boolean writeAllToFile(ArrayList<Task> taskList) {
-         // Store to file
-         Task.setTaskList(taskList);
-         Document doc = sdParser.parseTask(taskList);
-         boolean result = sdParser.writeXml(doc);
-         
-         return result;
-     }
-     
-     /**
-      * This method gets the next available taskId
-      * 
-      * @return       an int as the next taskId
-      */
-      protected int getAvailableTaskId() {
-          ArrayList<Task> taskList = Task.getTaskList();
-          int[] testArray = new int[taskList.size()];
-          
-          for (int i = 0; i < testArray.length; i++) {
-              testArray[i] = taskList.get(i).getTaskId();
-          }
-          
-          Arrays.sort(testArray);
-          int smallest = testArray[0];
-          int largest = testArray[testArray.length-1];
-          int smallestUnused = largest + 1;
-          //System.out.println("smallest: "+smallest);
-          //System.out.println("largest: "+largest);
-          if(smallest>1){
-              smallestUnused = 1;
-          }else{
-              for(int i=2; i<largest; i++){
-                  if(Arrays.binarySearch(testArray, i)<0){
-                      smallestUnused = i;
-                      break;
-                  }
-              }
-          }
-          //System.out.println("Smallest unused: "+smallestUnused);
-          
-          return smallestUnused;
-      }
+            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+            doc = dBuilder.newDocument();
+            
+            Element root = doc.createElement("task");
+            doc.appendChild(root);
+            
+            for (Task task : taskList) {
+                Element item = doc.createElement("item");
+                root.appendChild(item);
+
+                // taskId
+                Element taskId = doc.createElement("taskId");
+                taskId.appendChild(doc.createTextNode(Integer.toString(task.getTaskId())));
+                item.appendChild(taskId);
+                
+                // description
+                Element description = doc.createElement("description");
+                description.appendChild(doc.createTextNode(task.getDescription()));
+                item.appendChild(description);
+                
+                // createdAt
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+                String formattedDateTime = task.getCreatedAt().format(formatter);
+                Element createdAt = doc.createElement("createdAt");
+                createdAt.appendChild(doc.createTextNode(formattedDateTime));
+                item.appendChild(createdAt);
+                
+                // type
+                Element type = doc.createElement("type");
+                type.appendChild(doc.createTextNode(task.getType().toString()));
+                item.appendChild(type);
+                
+                // complete
+                Element complete = doc.createElement("complete");
+                String complete_string = String.valueOf(task.isComplete());
+                complete.appendChild(doc.createTextNode(complete_string));
+                item.appendChild(complete);
+                
+                Element start;
+                Element end;
+                switch (task.getType()) {
+                    case FLOATING:
+                        // start
+                        start = doc.createElement("start");
+                        start.appendChild(doc.createTextNode(""));
+                        item.appendChild(start);
+                        
+                        // end
+                        end = doc.createElement("end");
+                        end.appendChild(doc.createTextNode(""));
+                        item.appendChild(end);
+                        break;
+                    case TIMED:
+                        //start
+                        start = doc.createElement("start");
+                        formattedDateTime = ((TimedTask) task).getStart().format(formatter);
+                        start.appendChild(doc.createTextNode(formattedDateTime));
+                        item.appendChild(start);
+                        
+                        // end
+                        end = doc.createElement("end");
+                        formattedDateTime = ((TimedTask) task).getEnd().format(formatter);
+                        end.appendChild(doc.createTextNode(formattedDateTime));
+                        item.appendChild(end);
+                        break;
+                    case DEADLINE:
+                        // start
+                        start = doc.createElement("start");
+                        start.appendChild(doc.createTextNode(""));
+                        item.appendChild(start);
+                        
+                        // end
+                        end = doc.createElement("end");
+                        formattedDateTime = ((DeadlineTask) task).getEnd().format(formatter);
+                        end.appendChild(doc.createTextNode(formattedDateTime));
+                        item.appendChild(end);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        } catch (ParserConfigurationException e) {
+            System.out.println("Error building document");
+        }
+        return doc;
+    }
+    
+    /**
+     * This method parse the raw XML file to XML Document of Nodes
+     * 
+     * @return       XML Document of Nodes
+     */
+    protected Document parseXml() {
+        Document doc = null;
+        try {
+            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+            doc = dBuilder.parse(getFile());
+            
+            // Ensures that the XML DOM view of a document is identical
+            doc.getDocumentElement().normalize();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+        return doc;
+    }
+    
+    /**
+     * This method writes all Task objects to file
+     * 
+     * @param  doc  a Document representing the XML document
+     * @return      <code>true</code> if the tasks are successfully stored; 
+     *              <code>false</code> otherwise.
+     */
+    protected boolean writeXml(Document doc) {
+        try {
+            // Save the document to the disk file
+            TransformerFactory tranFactory = TransformerFactory.newInstance();
+            Transformer aTransformer = tranFactory.newTransformer();
+
+            // format the XML nicely
+            aTransformer.setOutputProperty(OutputKeys.ENCODING, "ISO-8859-1");
+
+            aTransformer.setOutputProperty(
+                    "{http://xml.apache.org/xslt}indent-amount", "4");
+            aTransformer.setOutputProperty(OutputKeys.INDENT, "yes");
+
+            DOMSource source = new DOMSource(doc);
+            
+            FileWriter fos = new FileWriter(FILE_NAME);
+            StreamResult result = new StreamResult(fos);
+            aTransformer.transform(source, result);
+
+        } catch (IOException e) {
+            System.out.println("Error writing to file");
+            return false;
+        } catch (TransformerConfigurationException e1) {
+            System.out.println("Error outputting document");
+            return false;
+        } catch (TransformerException e) {
+            System.out.println("Error initializing transformer");
+            return false;
+        }   
+        
+        return true;
+    }
 }
