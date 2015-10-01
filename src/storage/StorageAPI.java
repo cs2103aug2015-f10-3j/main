@@ -26,32 +26,32 @@ public class StorageAPI {
 	 }
 	 
 	 /**
-  	  * This method returns a list of all tasks for viewing
+  	  * This method returns a list of all tasks
 	  * 
 	  * @return       an ArrayList of Tasks
       */
-	 public ArrayList<Task> viewTask() {
-	     return sController.viewTask();
+	 public ArrayList<Task> getTask() {
+	     return sController.getTask();
 	 }
 	 
 	 /**
-      * This method returns a list of the specified tasks for viewing
+      * This method returns a list of the specified tasks
       * 
       * @param  type  type of the Tasks to be selected 
       * @return       an ArrayList of Tasks
       */
-	 public ArrayList<Task> viewTask(String type) {
-	     return sController.viewTask(type);
+	 public ArrayList<Task> getTask(String type) {
+	     return sController.getTask(type);
 	 }
 	 
      /**
-      * This method returns a Task object for viewing
+      * This method returns a Task object
       * 
       * @param  taskId  the unique identifier of the Task object
       * @return         the specified Task object
       */
-	 public Task viewTask(int taskId) {
-	     return sController.viewTask(taskId);
+	 public Task getTask(int taskId) {
+	     return sController.getTask(taskId);
 	 }
 	 
      /**

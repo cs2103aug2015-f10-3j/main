@@ -94,45 +94,45 @@ public class StorageControllerTest {
     }
     
     @Test
-    public void testViewTask() {
+    public void testGetTask() {
         // Set up
         testTaskList = repopulateTask();
         
         // Perform test
-        ArrayList<Task> taskList = sController.viewTask();
+        ArrayList<Task> taskList = sController.getTask();
         assertEquals(testTaskList.size(), taskList.size());
     }
     
     @Test
-    public void testViewTaskString() {
+    public void testGetTaskString() {
         // Set up
         testTaskList = repopulateTask();
         
-        // View DeadlineTask
-        ArrayList<Task> filteredTaskList = sController.viewTask("deadline");
+        // Get DeadlineTask
+        ArrayList<Task> filteredTaskList = sController.getTask("deadline");
         assertEquals(4, filteredTaskList.size());
         
-        // View DeadlineTask
-        filteredTaskList = sController.viewTask("timed");
+        // Get DeadlineTask
+        filteredTaskList = sController.getTask("timed");
         assertEquals(3, filteredTaskList.size());
         
-        // View DeadlineTask
-        filteredTaskList = sController.viewTask("floating");
+        // Get DeadlineTask
+        filteredTaskList = sController.getTask("floating");
         assertEquals(3, filteredTaskList.size());
         
     }
     
     @Test
-    public void testViewTaskInt() {
+    public void testGetTaskInt() {
         // Set up
         testTaskList = repopulateTask();
         
-        // View DeadlineTask
-        Task task = sController.viewTask(5);
+        // Get DeadlineTask
+        Task task = sController.getTask(5);
         assertEquals(5, task.getTaskId());
         
-        // View null
-        task = sController.viewTask(100);
+        // Get null
+        task = sController.getTask(100);
         assertEquals(null, task);
         
     }
@@ -149,7 +149,7 @@ public class StorageControllerTest {
         sController.updateTask(task);
         
         // Check
-        updatedTaskList = sController.viewTask();
+        updatedTaskList = sController.getTask();
         assertEquals(task.getTaskId(), updatedTaskList.get(5).getTaskId());
         assertEquals("Submit CS2106 Lab is cancelled lol", updatedTaskList.get(5).getDescription());
     }
@@ -164,7 +164,7 @@ public class StorageControllerTest {
         sController.deleteTask(3);
         
         // Check
-        updatedTaskList = sController.viewTask();
+        updatedTaskList = sController.getTask();
         assertEquals(9, updatedTaskList.size());
     }
     
@@ -177,7 +177,7 @@ public class StorageControllerTest {
         sController.completeTask(4);
         
         // Check
-        Task task = sController.viewTask(4);
+        Task task = sController.getTask(4);
         assertEquals(true, ((DeadlineTask) task).isComplete());
     }
     
@@ -191,7 +191,7 @@ public class StorageControllerTest {
         sController.writeAllToFile(testTaskList);
         
         // Check
-        updatedTaskList = sController.viewTask();
+        updatedTaskList = sController.getTask();
         assertEquals(10, updatedTaskList.size());
     }
     

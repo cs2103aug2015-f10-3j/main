@@ -43,22 +43,22 @@ public class StorageController {
      }
      
      /**
-      * This method returns a list of all tasks for viewing
+      * This method returns a list of all tasks
       * 
       * @return       an ArrayList of Tasks
       */
-     protected ArrayList<Task> viewTask() {
+     protected ArrayList<Task> getTask() {
          ArrayList<Task> taskList = Task.getTaskList();
          return taskList;
      }
      
      /**
-      * This method returns a list of the specified tasks for viewing
+      * This method returns a list of the specified tasks
       * 
       * @param  type  type of the Tasks to be selected 
       * @return       an ArrayList of Tasks
       */
-     protected ArrayList<Task> viewTask(String type) {
+     protected ArrayList<Task> getTask(String type) {
          ArrayList<Task> taskList = Task.getTaskList();
          ArrayList<Task> filteredTaskList = new ArrayList<Task>();
          
@@ -72,12 +72,12 @@ public class StorageController {
      }
      
      /**
-      * This method returns a Task object for viewing
+      * This method returns a Task object
       * 
       * @param  taskId  the unique identifier of the Task object
       * @return         the specified Task object
       */
-     protected Task viewTask(int taskId) {
+     protected Task getTask(int taskId) {
          ArrayList<Task> taskList = Task.getTaskList();
          for (Task task : taskList) {
              if (task.getTaskId() == taskId) {
