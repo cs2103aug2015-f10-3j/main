@@ -7,11 +7,15 @@ import javax.swing.text.DefaultCaret;
 @SuppressWarnings("serial")
 public class CommandLinePanel extends Panel {
 	protected static int NUM_COMPONENTS = 3;
-
+	protected UIController uiController = null;
 	//protected static boolean restrictSize = true;
 	//protected static boolean sizeIsRandom = false;
 	private static final String STRING_EMPTY = "";
 
+	public CommandLinePanel(){
+		uiController = new UIController();
+	}
+	
 	public void populateContentPane(Container contentPane) {
 		JPanel panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
@@ -43,7 +47,7 @@ public class CommandLinePanel extends Panel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				String input = inputField.getText();
-				UIController uiController = new UIController();
+				
 				String[] output = uiController.processUserInput(input);
 				textArea.append( input + "\n");
 				for(String s : output){

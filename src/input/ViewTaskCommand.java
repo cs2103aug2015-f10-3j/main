@@ -10,13 +10,25 @@ public class ViewTaskCommand implements Command {
 	private static final int OFFSET_ZERO = 0;
 	private static final int OFFSET_ONE = 1;
 
+	private String type = null;
+	private String period = null;
+	
+	public ViewTaskCommand(String type, String period){
+		this.type = type;
+		this.period = period;
+	}
+	
 	@Override
 	public ArrayList<Task> execute() {
 		// TODO Auto-generated method stub
-		return null;
+		ArrayList<Task> taskList = Task.getTaskList();
+		taskList = selectTasksByType(taskList);
+		taskList = selectTaskByPeriod(taskList);
+		
+		return taskList;
 	}
 
-	private ArrayList<Task> selectTasksByType(ArrayList<Task> allTask, String type){
+	private ArrayList<Task> selectTasksByType(ArrayList<Task> allTask){
 		type = type.toLowerCase();
 		Class<?> typeOfTask = null;
 		switch(type){
@@ -44,7 +56,7 @@ public class ViewTaskCommand implements Command {
 	}
 
 
-	private ArrayList<Task> selectTaskByPeriod(ArrayList<Task> allTask, String period){
+	private ArrayList<Task> selectTaskByPeriod(ArrayList<Task> allTask){
 		ArrayList<Task> selectedTask = new ArrayList<Task>();
 		LocalDateTime systemTime = LocalDateTime.now();
 		LocalDateTime beforeThisTime = systemTime;
