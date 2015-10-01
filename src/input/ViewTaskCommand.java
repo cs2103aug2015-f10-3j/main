@@ -9,7 +9,10 @@ public class ViewTaskCommand implements Command {
 
 	private static final int OFFSET_ZERO = 0;
 	private static final int OFFSET_ONE = 1;
-
+	private static final String TYPE_FLOATING = "floating";
+	private static final String TYPE_DEADLINE= "deadline";
+	private static final String TYPE_TIMED = "timed";
+	
 	private String type = null;
 	private String period = null;
 	
@@ -32,14 +35,14 @@ public class ViewTaskCommand implements Command {
 		type = type.toLowerCase();
 		Class<?> typeOfTask = null;
 		switch(type){
-		case "floating":
-			//typeOfTask = Task.class;
+		case TYPE_FLOATING:
+			typeOfTask = FloatingTask.class;
 			break;
-		case "deadline" :
-			//typeOfTask = Task.class;
+		case TYPE_DEADLINE :
+			typeOfTask = DeadlineTask.class;
 			break;
-		case "timed" :
-			//typeOfTask = Task.class;
+		case TYPE_TIMED :
+			typeOfTask = TimedTask.class;
 			break;
 		case "all": 
 		default:
@@ -83,10 +86,14 @@ public class ViewTaskCommand implements Command {
 							.withNano(OFFSET_ZERO).plusDays(OFFSET_ONE);
 		}
 		for(Task t : allTask){
-			LocalDateTime deadline = null;
-			//LocalDateTime deadline = t.getEnd();
-			if(deadline.isBefore(beforeThisTime)){
+			//LocalDateTime deadline = null;
+			if(t.getType().equalsIgnoreCase(TYPE_FLOATING)){
 				selectedTask.add(t);
+			}else{
+				LocalDateTime deadline = t.getEnd();
+				if(deadline.isBefore(beforeThisTime)){
+					selectedTask.add(t);
+				}
 			}
 		}
 

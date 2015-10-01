@@ -3,6 +3,8 @@ package ui;
 import java.util.ArrayList;
 
 import logic.data.Task;
+import logic.Logic;
+import util.Pair;
 
 public class UIController {
 	
@@ -14,7 +16,7 @@ public class UIController {
 
 	public String[] processUserInput(String input){
 		String[] output = null;
-		Pair<Boolean, ArrayList<Task>> result = new Pair<Boolean, ArrayList<Task>>();
+		Pair<Boolean, ArrayList<Task>> result = Logic.processCommand(input);
 		/*
 		//Call logicApi to process input
 		//Logic.processCommand(input)
