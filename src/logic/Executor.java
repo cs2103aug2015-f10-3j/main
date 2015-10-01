@@ -20,7 +20,11 @@ public class Executor {
 	/*** Methods ***/
 	private ArrayList<Task> parseCommand(String userInput) {
 		Command cmd = CommandParser.tryParse(userInput);
-		return executeCommand(cmd);
+		if (cmd == null) {
+			return null;
+		} else {
+			return executeCommand(cmd);
+		}
 	}
 	
 	private ArrayList<Task> executeCommand(Command cmd) {
