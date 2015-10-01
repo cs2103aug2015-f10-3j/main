@@ -11,6 +11,10 @@ public class AddTaskCommand implements Command {
 	private String _taskName;
 	//private String _label;
 	
+	public AddTaskCommand(String taskName) {
+		_taskName = taskName;
+	}
+	
 	@Override
 	public ArrayList<Task> execute() {
 		//Task userTask = new Task(_taskName, _startDate, _startTime, _endDate, _endTime);

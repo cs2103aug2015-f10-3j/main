@@ -122,26 +122,25 @@ public class ParseLogic {
 	
 	private static Command createAddTaskCommand(List<String> commandArgs) {
 		String taskName = commandArgs.get(1);
+		AddTaskCommand newAddCmd = new AddTaskCommand(taskName);
 		for (int i = 0; i < commandArgs.size(); i++) {
 			String commandArg = commandArgs.get(i);
 			switch (commandArg) {
 			case "between":
-				//expect 0-2 parameters
-				//add to start date/time
+				//expect date
+				//expect(commandArgs, i, 1, 2);
 				break;
 			case "and":
-				//expect 0-2 parameters
-				//add to end date/time
+				//expect(commandArgs, i, 1, 2);
 				break;
 			case "by":
-				//expect 0-2 parameters
-				//add to end date/time
+				//expect(commandArgs, i, 1, 2);
 				break;
 			default:
 				return null;
 			}
 		}
-		return new AddTaskCommand();
+		return newAddCmd;
 	}
 	
 	private static Command createViewTaskCommand(List<String> commandArgs) {
@@ -169,5 +168,41 @@ public class ParseLogic {
 			}
 		}
 		return new ViewTaskCommand();
+	}
+	
+	private static Command createEditTaskCommand(List<String> commandArgs) {
+		for (int i = 1; i < commandArgs.size(); i++) {
+			String commandArg = commandArgs.get(i);
+			switch (commandArg) {
+			case "-name":
+				break;
+			case "-start":
+				break;
+			case "-end":
+				break;
+			default:
+				return null;
+			}
+		}
+		return new EditTaskCommand();
+	}
+	
+	private static Command createDeleteTaskCommand(List<String> commandArgs) {
+		for (int i = 1; i < commandArgs.size(); i++) {
+			String commandArg = commandArgs.get(i);
+			switch (commandArg) {
+			case "between":
+				break;
+			case "and":
+				break;
+			default:
+				return null;
+			}
+		}
+		return new DeleteTaskCommand();
+	}
+	
+	private static Command createCompleteTaskCommand(List<String> commandArgs) {
+		return null;//new ViewTaskCommand();
 	}
 }
