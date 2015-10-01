@@ -6,23 +6,18 @@ import logic.data.Task;
 import parser.CommandParser;
 
 public class Executor {
-	/*** Variables ***/
+	/*** Variable ***/
+	private static Executor logicExecutor;
 	
-	private static Executor logicController;
-	
-	/**
-     * This method calls the CommandParser API to parse the userInput
-     * 
-     * @param		userInput  the String specified by the user
-     * @return		an ArrayList of Task object
-     */
+	/*** API ***/
 	public static ArrayList<Task> processCommand(String userInput) {
-		if (logicController == null) {
-			logicController = new Executor();
+		if (logicExecutor == null) {
+			logicExecutor = new Executor();
 		} 
-		return logicController.parseCommand(userInput);
+		return logicExecutor.parseCommand(userInput);
 	}
 	
+	/*** Methods ***/
 	private ArrayList<Task> parseCommand(String userInput) {
 		Command cmd = CommandParser.tryParse(userInput);
 		return executeCommand(cmd);
