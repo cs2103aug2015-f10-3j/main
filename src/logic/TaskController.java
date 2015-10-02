@@ -8,17 +8,16 @@ import logic.data.Task.TASK_TYPE;
 
 import org.w3c.dom.Document;
 
-import storage.Storage;
-
+import storage.StorageController;
 
 public class TaskController {
     /*** Variables ***/
-    protected Storage sAPI;
+    protected StorageController sController;
     
     /*** Constructor ***/
     public TaskController() {
-        sAPI = new Storage();
-        Task.setTaskList(sAPI.readTask());
+        sController = new StorageController();
+        Task.setTaskList(sController.readTask());
     }
     
     /*** Methods ***/
@@ -40,8 +39,8 @@ public class TaskController {
          Task.setTaskList(taskList);
          
          // Store to file
-         Document doc = sAPI.parseTask(taskList);
-         boolean result = sAPI.writeXml(doc);
+         Document doc = sController.parseTask(taskList);
+         boolean result = sController.writeXml(doc);
          
          return result;
      }
@@ -119,8 +118,8 @@ public class TaskController {
          
          // Store to file
          Task.setTaskList(taskList);
-         Document doc = sAPI.parseTask(taskList);
-         boolean result = sAPI.writeXml(doc);
+         Document doc = sController.parseTask(taskList);
+         boolean result = sController.writeXml(doc);
          
          return result;
      }
@@ -153,8 +152,8 @@ public class TaskController {
          
          // Store to file
          Task.setTaskList(taskList);
-         Document doc = sAPI.parseTask(taskList);
-         boolean result = sAPI.writeXml(doc);
+         Document doc = sController.parseTask(taskList);
+         boolean result = sController.writeXml(doc);
          
          return result;
      }
@@ -193,8 +192,8 @@ public class TaskController {
          
          // Store to file
          Task.setTaskList(taskList);
-         Document doc = sAPI.parseTask(taskList);
-         boolean result = sAPI.writeXml(doc);
+         Document doc = sController.parseTask(taskList);
+         boolean result = sController.writeXml(doc);
          
          return result;
      }
@@ -209,8 +208,8 @@ public class TaskController {
      protected boolean writeAllToFile(ArrayList<Task> taskList) {
          // Store to file
          Task.setTaskList(taskList);
-         Document doc = sAPI.parseTask(taskList);
-         boolean result = sAPI.writeXml(doc);
+         Document doc = sController.parseTask(taskList);
+         boolean result = sController.writeXml(doc);
          
          return result;
      }

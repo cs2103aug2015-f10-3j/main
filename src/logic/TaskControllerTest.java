@@ -17,20 +17,20 @@ import org.junit.Before;
 import org.junit.Test;
 import org.w3c.dom.Document;
 
-import storage.Storage;
+import storage.StorageController;
 
 public class TaskControllerTest {
     /*** Variables ***/
-    Storage sAPI;
+    StorageController sController;
     ArrayList<Task> testTaskList;
-    TaskController sController;
+    TaskController tController;
     
     /*** Setup and Teardown ***/
     @Before
     public void setUp() throws Exception {
-        sAPI = new Storage();
+        sController = new StorageController();
         testTaskList = repopulateTask();
-        sController = new TaskController();
+        tController = new TaskController();
     }
 
     @After
@@ -64,8 +64,8 @@ public class TaskControllerTest {
         task = new DeadlineTask(10, "Sign up for chicken eating competition", LocalDateTime.parse("2015-09-14 21:10", formatter), LocalDateTime.parse("2015-09-20 23:59", formatter), false);
         testTaskList.add(task);
         
-        Document doc = sAPI.parseTask(testTaskList);
-        sAPI.writeXml(doc);
+        Document doc = sController.parseTask(testTaskList);
+        sController.writeXml(doc);
         
         return testTaskList;
     }
@@ -79,19 +79,19 @@ public class TaskControllerTest {
         // Add DeadlineTask
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         Task task = new DeadlineTask("Stock up rainbow icecream", LocalDateTime.parse("2015-09-20 12:00", formatter));
-        boolean result = sController.addTask(task);
+        boolean result = tController.addTask(task);
         assertEquals(true, result);
         assertEquals(11, Task.getTaskList().size());
         
         // Add TimedTask
         task = new TimedTask("Eat lunch with senpai", LocalDateTime.parse("2015-10-01 12:00", formatter), LocalDateTime.parse("2015-10-01 14:00", formatter));
-        result = sController.addTask(task);
+        result = tController.addTask(task);
         assertEquals(true, result);
         assertEquals(12, Task.getTaskList().size());
         
         // Add TimedTask
         task = new FloatingTask("Rainbows and clouds :3");
-        result = sController.addTask(task);
+        result = tController.addTask(task);
         assertEquals(true, result);
         assertEquals(13, Task.getTaskList().size());
     }
@@ -102,7 +102,7 @@ public class TaskControllerTest {
         testTaskList = repopulateTask();
         
         // Perform test
-        ArrayList<Task> taskList = sController.getTask();
+        ArrayList<Task> taskList = tController.getTask();
         assertEquals(testTaskList.size(), taskList.size());
     }
     
@@ -112,15 +112,15 @@ public class TaskControllerTest {
         testTaskList = repopulateTask();
         
         // Get DeadlineTask
-        ArrayList<Task> filteredTaskList = sController.getTask(TASK_TYPE.DEADLINE);
+        ArrayList<Task> filteredTaskList = tController.getTask(TASK_TYPE.DEADLINE);
         assertEquals(4, filteredTaskList.size());
         
         // Get TimedTask
-        filteredTaskList = sController.getTask(TASK_TYPE.TIMED);
+        filteredTaskList = tController.getTask(TASK_TYPE.TIMED);
         assertEquals(3, filteredTaskList.size());
         
         // Get FloatingTask
-        filteredTaskList = sController.getTask(TASK_TYPE.FLOATING);
+        filteredTaskList = tController.getTask(TASK_TYPE.FLOATING);
         assertEquals(3, filteredTaskList.size());
         
     }
@@ -131,11 +131,11 @@ public class TaskControllerTest {
         testTaskList = repopulateTask();
         
         // Get DeadlineTask
-        Task task = sController.getTask(5);
+        Task task = tController.getTask(5);
         assertEquals(5, task.getTaskId());
         
         // Get null
-        task = sController.getTask(100);
+        task = tController.getTask(100);
         assertEquals(null, task);
         
     }
@@ -149,10 +149,10 @@ public class TaskControllerTest {
         // Perform update
         Task task = testTaskList.get(5);
         task.setDescription("Submit CS2106 Lab is cancelled lol");
-        sController.updateTask(task);
+        tController.updateTask(task);
         
         // Check
-        updatedTaskList = sController.getTask();
+        updatedTaskList = tController.getTask();
         assertEquals(task.getTaskId(), updatedTaskList.get(5).getTaskId());
         assertEquals("Submit CS2106 Lab is cancelled lol", updatedTaskList.get(5).getDescription());
     }
@@ -164,10 +164,10 @@ public class TaskControllerTest {
         testTaskList = repopulateTask();
         
         // Perform update
-        sController.deleteTask(3);
+        tController.deleteTask(3);
         
         // Check
-        updatedTaskList = sController.getTask();
+        updatedTaskList = tController.getTask();
         assertEquals(9, updatedTaskList.size());
     }
     
@@ -177,10 +177,10 @@ public class TaskControllerTest {
         testTaskList = repopulateTask();
         
         // Perform update
-        sController.completeTask(4);
+        tController.completeTask(4);
         
         // Check
-        Task task = sController.getTask(4);
+        Task task = tController.getTask(4);
         assertEquals(true, ((DeadlineTask) task).isComplete());
     }
     
@@ -191,10 +191,10 @@ public class TaskControllerTest {
         testTaskList = repopulateTask();
         
         // Perform update
-        sController.writeAllToFile(testTaskList);
+        tController.writeAllToFile(testTaskList);
         
         // Check
-        updatedTaskList = sController.getTask();
+        updatedTaskList = tController.getTask();
         assertEquals(10, updatedTaskList.size());
     }
     
@@ -204,7 +204,7 @@ public class TaskControllerTest {
         testTaskList = repopulateTask();
         
         // Perform test
-        int result = sController.getAvailableTaskId();
+        int result = tController.getAvailableTaskId();
         assertEquals(testTaskList.size() + 1, result);
     }
 }

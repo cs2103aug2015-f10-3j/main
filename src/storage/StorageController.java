@@ -58,7 +58,7 @@ public class StorageController {
      * 
      * @return       ArrayList of all Task objects
      */
-    protected ArrayList<Task> readTask() {
+    public ArrayList<Task> readTask() {
         ArrayList<Task> taskList = new ArrayList<Task>();
         try {
             Document doc = parseXml();
@@ -153,7 +153,7 @@ public class StorageController {
      * @param  task  an ArrayList of all Task objects
      * @return       a Document representing the XML document
      */
-    protected Document parseTask(ArrayList<Task> taskList) {
+    public Document parseTask(ArrayList<Task> taskList) {
         Document doc = null;
         try {
 
@@ -273,7 +273,7 @@ public class StorageController {
      * @return      <code>true</code> if the tasks are successfully stored; 
      *              <code>false</code> otherwise.
      */
-    protected boolean writeXml(Document doc) {
+    public boolean writeXml(Document doc) {
         try {
             // Save the document to the disk file
             TransformerFactory tranFactory = TransformerFactory.newInstance();

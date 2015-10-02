@@ -17,7 +17,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.w3c.dom.Document;
 
-
 public class StorageControllerTest {
     /*** Variables ***/
     StorageController sdParser;
