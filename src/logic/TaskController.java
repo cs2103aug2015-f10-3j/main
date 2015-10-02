@@ -2,7 +2,6 @@ package logic;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-
 import logic.data.Task;
 import logic.data.Task.TASK_TYPE;
 

@@ -2,11 +2,8 @@ package input;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import logic.TaskStub;
-import logic.TimedTaskStub;
-import logic.data.Task;
-import logic.DeadlineTaskStub;
-import logic.StorageAPIStub;
+import logic.TaskController;
+import logic.data.*;
 import storage.StorageController;
 import util.Pair;
 
@@ -17,13 +14,13 @@ public class EditTaskCommand implements Command {
 	private static final String TASK_TYPE_TIMED = "timed";
 	private static final String TASK_TYPE_FLOATING = "floating";
 	private static final String TASK_TYPE_INVALID = "invalid";
-
-	private static final StorageAPIStub STORAGE_API = new StorageAPIStub();
-
+	
+	private static final TaskController taskController = new TaskController();
+	
 	private Pair<ArrayList<Task>,Boolean> executionResult;
 	private ArrayList<Task> taskListToReturn;
-	private TaskStub originalTask;
-	private TaskStub editedTask;
+	private Task originalTask;
+	private Task editedTask;
 	private String newDescription;
 	private int taskId;
 	private LocalDateTime newStart;
@@ -63,7 +60,7 @@ public class EditTaskCommand implements Command {
 	 */
 	private String determineEditedTaskType() {
 		switch(originalTask.getType()) {
-		case TASK_TYPE_FLOATING :
+		case FLOATING:
 			if (newStart == null && newEnd == null) { // If no start/end date/time is specified, task.type is still floating
 				return TASK_TYPE_FLOATING;
 			} else if (newStart == null) { // If only an end date/time is specified, task.type is now a deadline task
@@ -72,14 +69,14 @@ public class EditTaskCommand implements Command {
 				return TASK_TYPE_TIMED;
 			}
 
-		case TASK_TYPE_DEADLINE :
+		case DEADLINE :
 			if (newStart == null) {
 				return TASK_TYPE_DEADLINE;
 			} else {
 				return TASK_TYPE_TIMED;
 			}
 
-		case TASK_TYPE_TIMED :
+		case TIMED :
 			return TASK_TYPE_TIMED;
 
 		default :
@@ -115,8 +112,8 @@ public class EditTaskCommand implements Command {
 	}
 	
 	private void createNewDeadlineTask() {
-		editedTask = new DeadlineTaskStub(
-				originalTask.getTaskStubId(),
+		editedTask = new DeadlineTask(
+				originalTask.getTaskId(),
 				getEditedTaskDescription(),
 				originalTask.getCreatedAt(),
 				getEditedTaskEnd(),
@@ -124,12 +121,13 @@ public class EditTaskCommand implements Command {
 	}
 
 	private void createNewTimedTask() {
-		editedTask = new TimedTaskStub(
-				originalTask.getTaskStubId(),
+		editedTask = new TimedTask(
+				originalTask.getTaskId(),
 				getEditedTaskDescription(),
 				originalTask.getCreatedAt(),
 				getEditedTaskStart(),
-				getEditedTaskEnd());
+				getEditedTaskEnd(),
+				originalTask.isComplete());
 	}
 
 	/*** Setter and Getter Methods ***/
@@ -146,7 +144,7 @@ public class EditTaskCommand implements Command {
 		if (newStart != null) {
 			return newStart;
 		} else {
-			TimedTaskStub castedOriginalTask = (TimedTaskStub) originalTask;
+			TimedTask castedOriginalTask = (TimedTask) originalTask;
 			return castedOriginalTask.getStart();
 		}
 	}
@@ -155,13 +153,13 @@ public class EditTaskCommand implements Command {
 		if (newEnd != null) {
 			return newEnd;
 		} else {
-			DeadlineTaskStub castedOriginalTask = (DeadlineTaskStub) originalTask;
+			DeadlineTask castedOriginalTask = (DeadlineTask) originalTask;
 			return castedOriginalTask.getEnd();
 		}
 	}
 
 	private void getTaskFromStorage(Task task) {
-		task = STORAGE_API.viewTask(taskId);
+		
 	}
 
 	/**
@@ -171,7 +169,8 @@ public class EditTaskCommand implements Command {
 	 * @return returns <code>True</code> if the operation is a success,
 	 * 		   returns <code>False</code> otherwise
 	 */
-	private boolean storeTaskToStorage(TaskStub task) {
-		return STORAGE_API.updateTask(task);
+	private boolean storeTaskToStorage(Task task) {
+		
+		return false;
 	}
 }
