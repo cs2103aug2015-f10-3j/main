@@ -8,16 +8,16 @@ import logic.data.Task.TASK_TYPE;
 
 import org.w3c.dom.Document;
 
-import storage.StorageAPI;
+import storage.Storage;
 
 
 public class TaskController {
     /*** Variables ***/
-    protected StorageAPI sAPI;
+    protected Storage sAPI;
     
     /*** Constructor ***/
     public TaskController() {
-        sAPI = new StorageAPI();
+        sAPI = new Storage();
         Task.setTaskList(sAPI.readTask());
     }
     

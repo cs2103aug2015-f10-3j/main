@@ -7,12 +7,12 @@ import logic.data.Task;
 
 import org.w3c.dom.Document;
 
-public class StorageAPI {
+public class Storage {
     /*** Variables ***/
     protected StorageController sController;
     
     /*** Constructor ***/
-    public StorageAPI() {
+    public Storage() {
         sController = new StorageController();
     }
     

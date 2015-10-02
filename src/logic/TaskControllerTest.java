@@ -17,18 +17,18 @@ import org.junit.Before;
 import org.junit.Test;
 import org.w3c.dom.Document;
 
-import storage.StorageAPI;
+import storage.Storage;
 
 public class TaskControllerTest {
     /*** Variables ***/
-    StorageAPI sAPI;
+    Storage sAPI;
     ArrayList<Task> testTaskList;
     TaskController sController;
     
     /*** Setup and Teardown ***/
     @Before
     public void setUp() throws Exception {
-        sAPI = new StorageAPI();
+        sAPI = new Storage();
         testTaskList = repopulateTask();
         sController = new TaskController();
     }
