@@ -19,17 +19,22 @@ public class CommandLinePanel extends Panel {
 	public void populateContentPane(Container contentPane) {
 		JPanel panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
-
+		panel.setBorder(BorderFactory.createLineBorder(Color.black));
+		
 		JTextArea textArea = prepareJTextArea();
 		JTextField inputField = prepareTextField(textArea);
 		JScrollPane areaScrollPane = prepareScrollPane(textArea);
+		Box box = prepareBoxComponent(inputField, areaScrollPane);
+		
+		panel.add(box, BorderLayout.PAGE_END);
+		contentPane.add(panel, BorderLayout.CENTER);
+	}
 
-		panel.setBorder(BorderFactory.createLineBorder(Color.black));
+	public Box prepareBoxComponent(JTextField inputField, JScrollPane areaScrollPane) {
 		Box box = Box.createVerticalBox();
 		box.add(areaScrollPane);
 		box.add(inputField);
-		panel.add(box, BorderLayout.PAGE_END);
-		contentPane.add(panel, BorderLayout.CENTER);
+		return box;
 	}
 
 	private JScrollPane prepareScrollPane(JTextArea textArea) {

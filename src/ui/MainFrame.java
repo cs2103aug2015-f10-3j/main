@@ -12,6 +12,16 @@ public class MainFrame {
 	 */
 	private static final String TITLE = "PaddleTask";
 
+	public static void main(String[] args) {
+		//Schedule a job for the event-dispatching thread:
+		//creating and showing this application's GUI.
+		javax.swing.SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				createAndShowGUI();
+			}
+		});
+	}
+	
 	private static void createAndShowGUI() {
 		//Create and set up the window.
 		//Use the Java look and feel.
@@ -24,6 +34,10 @@ public class MainFrame {
 		JFrame.setDefaultLookAndFeelDecorated(true);
 		JDialog.setDefaultLookAndFeelDecorated(true);
 
+		prepareFrame();
+	}
+
+	public static void prepareFrame() {
 		JFrame frame = new JFrame(TITLE);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.addWindowListener(new WindowAdapter() {
@@ -43,13 +57,5 @@ public class MainFrame {
 		frame.setVisible(true);
 	}
 
-	public static void main(String[] args) {
-		//Schedule a job for the event-dispatching thread:
-		//creating and showing this application's GUI.
-		javax.swing.SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				createAndShowGUI();
-			}
-		});
-	}
+
 }

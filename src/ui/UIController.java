@@ -16,21 +16,22 @@ public class UIController {
 
 	public String[] processUserInput(String input){
 		String[] output = null;
-		Pair<Boolean, ArrayList<Task>> result = Logic.processCommand(input);
+		Pair<ArrayList<Task>, Boolean > result = Logic.processCommand(input);
 		/*
 		//Call logicApi to process input
 		//Logic.processCommand(input)
 		 * 
 		 */
-		Boolean confirmation = result.getFirst();
-		ArrayList<Task> taskList = result.getSecond();
+		ArrayList<Task> taskList = result.getFirst();
+		Boolean confirmation = result.getSecond();
+		
 		if(taskList == null){
 			output = new String[1];
-			output[1] = ERROR_INCORRECT_FORMAT;
+			output[0] = ERROR_INCORRECT_FORMAT;
 		}
 		else if(!confirmation){
 			output = new String[1];
-			output[1] = ERROR_BAD_COMMAND;
+			output[0] = ERROR_BAD_COMMAND;
 		}
 		else{
 			output = new String[taskList.size()];

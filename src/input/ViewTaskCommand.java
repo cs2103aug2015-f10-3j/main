@@ -34,6 +34,7 @@ public class ViewTaskCommand implements Command {
 	private ArrayList<Task> selectTasksByType(ArrayList<Task> allTask){
 		type = type.toLowerCase();
 		Class<?> typeOfTask = null;
+		//Can use method from Task Controller to retrieve by type
 		switch(type){
 		case TYPE_FLOATING:
 			typeOfTask = FloatingTask.class;
