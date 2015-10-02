@@ -3,29 +3,36 @@ package ui;
 import java.util.ArrayList;
 
 import logic.data.Task;
-import logic.Logic;
+import logic.Executor;
 import util.Pair;
 
 public class UIController {
-	
+
+	/*** Variables ***/
 	private static final String ERROR_INCORRECT_FORMAT = "Invalid Format";
 	private static final String ERROR_BAD_COMMAND = "Command fail to execute";
+
+	/*** Constructor ***/
 	public UIController(){
 
 	}
 
+	/*** Methods ***/
+
+	/**
+	 * This method returns an array of output from Logic Component, Executor class.
+	 * 
+	 * @param String 
+	 *            Input string of the user
+	 * @return String array
+	 */
 	public String[] processUserInput(String input){
 		String[] output = null;
-		Pair<ArrayList<Task>, Boolean > result = Logic.processCommand(input);
-		/*
-		//Call logicApi to process input
-		//Logic.processCommand(input)
-		 * 
-		 */
+		Pair<ArrayList<Task>, Boolean> result = Executor.processCommand(input);
 		ArrayList<Task> taskList = result.getFirst();
 		Boolean confirmation = result.getSecond();
-		
-		if(taskList == null){
+
+		if(taskList == null || result == null){
 			output = new String[1];
 			output[0] = ERROR_INCORRECT_FORMAT;
 		}
