@@ -3,6 +3,7 @@ package logic;
 import java.util.ArrayList;
 import input.Command;
 import logic.data.Task;
+import util.Pair;
 import parser.CommandParser;
 
 public class Executor {
@@ -10,7 +11,7 @@ public class Executor {
 	private static Executor logicExecutor;
 	
 	/*** API ***/
-	public static ArrayList<Task> processCommand(String userInput) {
+	public static Pair<ArrayList<Task>,Boolean> processCommand(String userInput) {
 		if (logicExecutor == null) {
 			logicExecutor = new Executor();
 		} 
@@ -18,7 +19,7 @@ public class Executor {
 	}
 	
 	/*** Methods ***/
-	private ArrayList<Task> parseCommand(String userInput) {
+	private Pair<ArrayList<Task>,Boolean> parseCommand(String userInput) {
 		Command cmd = CommandParser.tryParse(userInput);
 		if (cmd == null) {
 			return null;
@@ -27,7 +28,7 @@ public class Executor {
 		}
 	}
 	
-	private ArrayList<Task> executeCommand(Command cmd) {
+	private Pair<ArrayList<Task>,Boolean> executeCommand(Command cmd) {
 		return cmd.execute();
 	}
 }

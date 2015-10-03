@@ -1,26 +1,26 @@
-package logic;
+package logic.data;
 
 import java.time.LocalDateTime;
 
-public class TimedTaskStub extends TaskStub {
+public class TimedTask extends Task {
 	/*** Variables ***/
 	private static final String TASK_TYPE = "timed";
 	private LocalDateTime start;
 	private LocalDateTime end;
 	
 	/*** Constructors ***/
-	public TimedTaskStub() {
+	public TimedTask() {
 		super();
 	}
 	
-	public TimedTaskStub(String description, LocalDateTime start, LocalDateTime end) {
+	public TimedTask(String description, LocalDateTime start, LocalDateTime end) {
 		super(description, TASK_TYPE);
 		this.start = start;
 		this.end = end;
 	}
 	
-	public TimedTaskStub(int taskId, String description, LocalDateTime createdAt, LocalDateTime start, LocalDateTime end) {
-        super(taskId, description, createdAt, TASK_TYPE);
+	public TimedTask(int taskId, String description, LocalDateTime createdAt, LocalDateTime start, LocalDateTime end, boolean complete) {
+        super(taskId, description, createdAt, complete, TASK_TYPE);
         this.start = start;
         this.end = end;
     }

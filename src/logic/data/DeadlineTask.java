@@ -1,24 +1,24 @@
-package logic;
+package logic.data;
 
 import java.time.LocalDateTime;
 
-public class DeadlineTaskStub extends TaskStub{
+public class DeadlineTask extends Task {
 	/*** Variables ***/
 	private static final String TASK_TYPE = "deadline";
 	private LocalDateTime end;
 	
 	/*** Constructors ***/
-	public DeadlineTaskStub() {
+	public DeadlineTask() {
 		super();
 	}
 	
-	public DeadlineTaskStub(String description, LocalDateTime end) {
+	public DeadlineTask(String description, LocalDateTime end) {
 		super(description, TASK_TYPE);
 		this.end = end;
 	}
 	
-	public DeadlineTaskStub(int taskId, String description, LocalDateTime createdAt, LocalDateTime end, boolean complete) {
-        super(taskId, description, createdAt, TASK_TYPE, complete);
+	public DeadlineTask(int taskId, String description, LocalDateTime createdAt, LocalDateTime end, boolean complete) {
+        super(taskId, description, createdAt, complete, TASK_TYPE);
         this.end = end;
     }
 	
@@ -34,9 +34,5 @@ public class DeadlineTaskStub extends TaskStub{
 	public boolean completeTask(int taskId) {
 		// TODO
 		return false;
-	}
-	
-	public static String getTaskType() {
-		return TASK_TYPE;
 	}
 }
