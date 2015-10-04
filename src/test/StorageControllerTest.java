@@ -1,8 +1,9 @@
-package storage;
+package test;
 
 import static org.junit.Assert.*;
 
 import java.io.File;
+import java.lang.reflect.Method;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -11,6 +12,7 @@ import logic.data.DeadlineTask;
 import logic.data.FloatingTask;
 import logic.data.Task;
 import logic.data.TimedTask;
+import storage.StorageController;
 
 import org.junit.After;
 import org.junit.Before;
@@ -66,10 +68,13 @@ public class StorageControllerTest {
         return testTaskList;
     }
     
-    /*** Test Cases ***/
+    /*** Test Cases 
+     * @throws Exception  ***/
     @Test
-    public void testGetFile() {
-        File file = sdParser.getFile();
+    public void testGetFile() throws Exception {
+    	Method m = sdParser.getClass().getDeclaredMethod("getFile", File.class);
+		m.setAccessible(true);
+        File file = (File)m.invoke(sdParser, "getFile");
         if (file.exists()) {
             assert true;
         } else {
@@ -105,8 +110,10 @@ public class StorageControllerTest {
     }
     
     @Test
-    public void testParseXml() {
-        Document doc = sdParser.parseXml();
+    public void testParseXml() throws Exception {
+    	Method m = sdParser.getClass().getDeclaredMethod("parseXml", Document.class);
+		m.setAccessible(true);
+        Document doc = (Document)m.invoke(sdParser, "parseXml");
         
         if (doc.getDocumentElement().getNodeName().equals("task")) {
             assert true;

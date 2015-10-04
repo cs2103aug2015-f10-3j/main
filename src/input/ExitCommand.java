@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import logic.data.Task;
 import util.Pair;
 
-public class ExitCommand implements Command {
+public class ExitCommand extends Command {
 
 	@Override
 	public Pair<ArrayList<Task>,Boolean> execute() {

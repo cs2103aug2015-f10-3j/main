@@ -11,7 +11,7 @@ import logic.data.TimedTask;
 import logic.data.Task.TASK_TYPE;
 import util.Pair;
 
-public class ViewTaskCommand implements Command {
+public class ViewTaskCommand extends Command {
 
 	/*** Variables ***/
 	private static final int OFFSET_ZERO = 0;
@@ -23,6 +23,17 @@ public class ViewTaskCommand implements Command {
 	private static final TaskController taskController = new TaskController();	
 
 	/*** Constructor ***/
+	public ViewTaskCommand() {
+		this.type = getOption("all").getStringValue();
+		this.type = getOption("floating").getStringValue();
+		this.type = getOption("deadline").getStringValue();
+		this.type = getOption("timed").getStringValue();
+		this.period = getOption("today").getStringValue();
+		this.period = getOption("tomorrow").getStringValue();
+		this.period = getOption("week").getStringValue();
+		this.period = getOption("month").getStringValue();
+	}
+	
 	public ViewTaskCommand(String type, String period){
 		this.type = type;
 		this.period = period;

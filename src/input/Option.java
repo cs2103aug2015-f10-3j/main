@@ -1,30 +1,84 @@
 package input;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Option {
 	
-	private HashMap<String, Object> a;
+	private static final String INVALID_STRING = "";
+	private static final int INVALID_INT_VALUE = -1;
+	private List<Object> values = new ArrayList<Object>();
 	
-	public boolean getBooleanOption(){
-		return false;
+
+	public LocalDateTime getDateValue() {
+		return getDateValue(0);
 	}
 	
-	public LocalDateTime getDateOption() {
-		return null;
+	public String getStringValue() {
+		return getStringValue(0);
 	}
 	
-	
-	public String getStringOption() {
-		return "";
+	public int getIntegerValue() {
+		return getIntegerValue(0);
 	}
 	
-	public int getIntegerOption() {
-		return -1;
+	public LocalDateTime getDateValue(int position) {
+		try {
+			return (LocalDateTime)getValue(position);
+		} catch (ClassCastException e) {
+			return null;
+		}
 	}
 	
-	public void addOption() {
-		
+	public String getStringValue(int position) {
+		try {
+			return (String)getValue(position);
+		} catch (ClassCastException e) {
+			return INVALID_STRING;
+		}
+	}
+	
+	public int getIntegerValue(int position) {
+		try {
+			return (Integer)getValue(position);
+		} catch (ClassCastException e) {
+			return INVALID_INT_VALUE;
+		}
+	}
+	
+	public Object getValue() {
+		return getValue(0);
+	}
+	
+	public Object getValue(int position) {
+		if (!hasValues()) {
+			return null;
+		}
+		try {
+			return values.get(position);
+		} catch (IndexOutOfBoundsException e) {
+			return null;
+		}
+	}
+	
+	public boolean addValues(Object[] values) throws Exception {
+		boolean success = false;
+		for (Object value : values) {
+			success |= this.values.add(value);
+		}
+		return success;
+	}
+	
+	public boolean addValue(Object value) throws Exception {
+		return values.add(value);
+	}
+	
+	public boolean hasValues() {
+		return values.isEmpty();
+	}
+	
+	public int getValuesCount() {
+		return values.size();
 	}
 }

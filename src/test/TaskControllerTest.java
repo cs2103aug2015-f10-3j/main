@@ -1,4 +1,4 @@
-package logic;
+package test;
 
 import static org.junit.Assert.*;
 
@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
+import logic.TaskController;
 import logic.data.DeadlineTask;
 import logic.data.FloatingTask;
 import logic.data.Task;

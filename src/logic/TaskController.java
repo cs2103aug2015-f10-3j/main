@@ -12,12 +12,20 @@ import storage.StorageController;
 public class TaskController {
     /*** Variables ***/
     protected StorageController sController;
+    private static TaskController thisInstance;
 
     /*** Constructor ***/
     public TaskController() {
         sController = new StorageController();
         Task.setTaskList(sController.readTask());
+    	thisInstance = this;
     }
+    
+    public static synchronized TaskController getInstance( ) {
+        if (thisInstance == null)
+        	thisInstance = new TaskController();
+        return thisInstance;
+     }
 
     /*** Methods ***/
     /**

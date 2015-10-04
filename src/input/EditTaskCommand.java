@@ -7,7 +7,7 @@ import logic.data.*;
 import storage.StorageController;
 import util.Pair;
 
-public class EditTaskCommand implements Command {
+public class EditTaskCommand extends Command {
 
 	/*** Variables ***/
 	private static final String TASK_TYPE_DEADLINE = "deadline";
@@ -15,7 +15,7 @@ public class EditTaskCommand implements Command {
 	private static final String TASK_TYPE_FLOATING = "floating";
 	private static final String TASK_TYPE_INVALID = "invalid";
 	
-	private static final TaskController taskController = new TaskController();
+	private TaskController taskController = TaskController.getInstance();
 	
 	private Pair<ArrayList<Task>,Boolean> executionResult;
 	private ArrayList<Task> taskListToReturn;
@@ -27,6 +27,14 @@ public class EditTaskCommand implements Command {
 	private LocalDateTime newEnd;
 
 	/*** Constructor ***/
+	public EditTaskCommand() {
+		taskListToReturn = new ArrayList<Task>();
+		taskId = getOption("edit").getIntegerValue();
+		newDescription = getOption("name").getStringValue();
+		newStart = getOption("start").getDateValue();
+		newEnd = getOption("end").getDateValue();
+	}
+	
 	public EditTaskCommand(int _taskId, String _description, LocalDateTime _start, LocalDateTime _end) {
 		taskListToReturn = new ArrayList<Task>();
 		taskId = _taskId;

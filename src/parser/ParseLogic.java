@@ -1,93 +1,86 @@
 package parser;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
 import input.*;
+import util.DateTimeCommon;
 
-public class ParseLogic {
+class ParseLogic {
 	
-	//private static final String SPACES = "\\s+";
+	private static final String SPACES = "\\s+";
 	private static final String CMD_PATTERN = "([^\"]\\S*|\".+?\")\\s*";
+	private static final String EMPTY_STRING = "";
 
-	private static enum COMMAND_TYPE {
+	protected static enum COMMAND_TYPE {
 		ADD, VIEW, EDIT, DELETE,
 		SEARCH, UNDO, REDO, 
 		INVALID, EXIT
 	}
 
-	private static enum COMMANDS {
+	protected static enum COMMANDS {
 		ADD("add"), VIEW("view"), EDIT("edit"), DELETE("delete"), 
-		SEARCH("search"), UNDO("undo"), REDO("redo"),
+		COMPLETE("complete"), SEARCH("search"), UNDO("undo"), REDO("redo"),
 		EXIT("exit");
 
-		private final String _commandText;
+		private final String commandText;
 		
 		private COMMANDS(final String commandText) {
-			this._commandText = commandText;
+			this.commandText = commandText;
 		}
 
 		@Override
 		public String toString() {
-			return _commandText;
+			return commandText;
 		}
 	}
 
-	public static Command createCommand(String userCommand) {
-		List<String> commandArgs = breakDownCommand(userCommand);
-		if (commandArgs == null) {
-			return null;
+	protected static enum OPTIONS {
+		ADD("add"), VIEW("view"), EDIT("edit"), DELETE("delete"), 
+		COMPLETE("complete"), SEARCH("search"), UNDO("undo"), REDO("redo"),
+		EXIT("exit"), BY("by"), BETWEEN("between"), AND("and"),
+		NAME("name"), START("start"), END("end"), ALL("all"),
+		FLOATING("floating"), DEADLINE("deadline"), TIMED("timed"),
+		TODAY("today"), TOMORROW("tomorrow"), WEEK("week"), MONTH("month");
+
+		private final String optionText;
+		
+		private OPTIONS(final String commandText) {
+			this.optionText = commandText;
 		}
-		String mainCommand = getMainCommand(commandArgs);
-		COMMAND_TYPE commandType = determineCommandType(mainCommand);
-		switch (commandType) {
-		case ADD:
-			return createAddTaskCommand(commandArgs);
-		case VIEW:
-			return createViewTaskCommand(commandArgs);
-		case EDIT:
-			return null;
-		case DELETE:
-			return null;
-		case SEARCH:
-			return null;
-		case UNDO:
-			return null;
-		case REDO:
-			return null;
-		case INVALID:
-			return null;
-		case EXIT:
-			return createExitCommand();
-		default:
-			return null;
+
+		@Override
+		public String toString() {
+			return optionText;
 		}
 	}
-	
-	private static COMMAND_TYPE determineCommandType(String mainCommand) {
-		if (isStringEqual(mainCommand, COMMANDS.ADD.toString())) {
+
+	protected COMMAND_TYPE determineCommandType(String userCommand) {
+		String mainCommand = getMainCommand(userCommand);
+		if (mainCommand.equals(COMMANDS.ADD.toString())) {
 			return COMMAND_TYPE.ADD;
 		}
-		else if (isStringEqual(mainCommand, COMMANDS.VIEW.toString())) {
+		else if (mainCommand.equals(COMMANDS.VIEW.toString())) {
 			return COMMAND_TYPE.VIEW;
 		}
-		else if (isStringEqual(mainCommand, COMMANDS.EDIT.toString())) {
+		else if (mainCommand.equals(COMMANDS.EDIT.toString())) {
 			return COMMAND_TYPE.EDIT;
 		}
-		else if (isStringEqual(mainCommand, COMMANDS.DELETE.toString())) {
+		else if (mainCommand.equals(COMMANDS.DELETE.toString())) {
 			return COMMAND_TYPE.DELETE;
 		}
-		else if (isStringEqual(mainCommand, COMMANDS.SEARCH.toString())) {
+		else if (mainCommand.equals(COMMANDS.SEARCH.toString())) {
 			return COMMAND_TYPE.SEARCH;
 		}
-		else if (isStringEqual(mainCommand, COMMANDS.UNDO.toString())) {
+		else if (mainCommand.equals(COMMANDS.UNDO.toString())) {
 			return COMMAND_TYPE.UNDO;
 		}
-		else if (isStringEqual(mainCommand, COMMANDS.REDO.toString())) {
+		else if (mainCommand.equals(COMMANDS.REDO.toString())) {
 			return COMMAND_TYPE.REDO;
 		}
-		else if (isStringEqual(mainCommand, COMMANDS.EXIT.toString())) {
+		else if (mainCommand.equals(COMMANDS.EXIT.toString())) {
 			return COMMAND_TYPE.EXIT;
 		}
 		else {
@@ -95,114 +88,189 @@ public class ParseLogic {
 		}
 	}
 	
-	private static boolean isStringEqual(String s1, String s2) {
-		return s1.equals(s2);
-	}
-	
-	private static List<String> breakDownCommand(String userCommand) {
-		List<String> commandList = new ArrayList<String>();
+	protected List<String> breakDownCommand(String userCommand) {
+		List<String> commandLine = new ArrayList<String>();
 		Scanner sc = new Scanner(userCommand);
 		while (sc.hasNext(CMD_PATTERN)) {
-			commandList.add(sc.next(CMD_PATTERN));
+			commandLine.add(sc.next(CMD_PATTERN));
 		}
 		sc.close();
-		return commandList;
+		return commandLine;
 	}
 	
-	private static String getMainCommand(List<String> commandArgs) {
-		if (commandArgs == null) {
+	private String getMainCommand(String userCommand) {
+		if (userCommand == null) {
 			return null;
 		}
-		return commandArgs.remove(0);
+		return userCommand.split(SPACES)[0];
 	}
-	
-	private static Command createExitCommand() {
-		return new ExitCommand();
-	}
-	
-	private static Command createAddTaskCommand(List<String> commandArgs) {
-		String taskName = commandArgs.get(1);
-		AddTaskCommand newAddCmd = new AddTaskCommand(taskName);
-		for (int i = 0; i < commandArgs.size(); i++) {
-			String commandArg = commandArgs.get(i);
-			switch (commandArg) {
-			case "between":
-				//expect date
-				//expect(commandArgs, i, 1, 2);
-				break;
-			case "and":
-				//expect(commandArgs, i, 1, 2);
-				break;
-			case "by":
-				//expect(commandArgs, i, 1, 2);
-				break;
-			default:
+		
+	protected Command createCommand(COMMAND_TYPE commandType) throws Exception {
+		switch (commandType) {
+			case ADD:
+				return new AddTaskCommand();
+			case VIEW:
+				return new ViewTaskCommand();
+			case EDIT:
+				return new EditTaskCommand();
+			case DELETE:
+				return new DeleteTaskCommand();
+			case SEARCH:
+				return null;//new SearchTaskCommand();
+			case UNDO:
+				return null;//new UndoTaskCommand();
+			case REDO:
+				return null;//new RedoTaskCommand();
+			case EXIT:
+				return new ExitCommand();
+			case INVALID:
 				return null;
+			default:
+				throw new Exception();
+		}
+	}
+
+	protected void addOptionsToCommand(Command command, List<String> commandList) throws Exception {
+		while (!commandList.isEmpty()) {
+			String option = commandList.remove(0);
+			if (!isOption(option)) {
+				throw new Exception();
+			}
+			Option commandOption = getOption(option, commandList);
+			if (!command.addOption(option, commandOption)) {
+				throw new Error();
 			}
 		}
-		return newAddCmd;
 	}
 	
-	private static Command createViewTaskCommand(List<String> commandArgs) {
-		for (int i = 1; i < commandArgs.size(); i++) {
-			String commandArg = commandArgs.get(i);
-			switch (commandArg) {
-			case "all":
-				break;
-			case "floating":
-				break;
-			case "deadline":
-				break;
-			case "timed":
-				break;
-			case "today":
-				break;
-			case "tomorrow":
-				break;
-			case "week":
-				break;
-			case "month":
-				break;
-			default:
-				return null;
+	private Option getOption(String option, List<String> commandList) throws Exception{
+		if (option.equals(OPTIONS.ADD.toString())) {
+			return expectString(commandList);
+		} else if (option.equals(OPTIONS.VIEW.toString())) {
+			return null;
+		} else if (option.equals(OPTIONS.EDIT.toString())) {
+			return expectInteger(commandList);
+		} else if (option.equals(OPTIONS.DELETE.toString())) {
+			return expectIntegerArray(commandList);
+		} else if (option.equals(OPTIONS.COMPLETE.toString())) {
+			return expectIntegerArray(commandList);
+		} else if (option.equals(OPTIONS.SEARCH.toString())) {
+			return null;
+		} else if (option.equals(OPTIONS.UNDO.toString())) {
+			return null;
+		} else if (option.equals(OPTIONS.REDO.toString())) {
+			return null;
+		} else if (option.equals(OPTIONS.EXIT.toString())) {
+			return null;
+		} else if (option.equals(OPTIONS.BY.toString())) {
+			return expectDate(commandList);
+		} else if (option.equals(OPTIONS.BETWEEN.toString())) {
+			return expectDate(commandList);
+		} else if (option.equals(OPTIONS.AND.toString())) {
+			return expectDate(commandList);
+		} else if (option.equals(OPTIONS.NAME.toString())) {
+			return expectString(commandList);
+		} else if (option.equals(OPTIONS.START.toString())) {
+			return expectDate(commandList);
+		} else if (option.equals(OPTIONS.END.toString())) {
+			return expectDate(commandList);
+		} else if (option.equals(OPTIONS.ALL.toString())) {
+			return null;
+		} else if (option.equals(OPTIONS.FLOATING.toString())) {
+			return null;
+		} else if (option.equals(OPTIONS.DEADLINE.toString())) {
+			return null;
+		} else if (option.equals(OPTIONS.TIMED.toString())) {
+			return null;
+		} else if (option.equals(OPTIONS.TODAY.toString())) {
+			return null;
+		} else if (option.equals(OPTIONS.TOMORROW.toString())) {
+			return null;
+		} else if (option.equals(OPTIONS.WEEK.toString())) {
+			return null;
+		} else if (option.equals(OPTIONS.MONTH.toString())) {
+			return null;
+		} else {
+			throw new Exception();
+		}
+	}
+	
+	private Option expectIntegerArray(List<String> commandList) throws Exception {
+		Option commandOption = new Option();
+		String expectedInt = commandList.remove(0);
+		if (isOption(expectedInt)) {
+			throw new Exception();
+		}
+		commandOption.addValue(Integer.parseInt(expectedInt));
+		while (!isOption(commandList.get(0))) {
+			commandOption.addValue(Integer.parseInt(commandList.remove(0)));
+		}
+		return commandOption;
+	}
+	
+	private Option expectString(List<String> commandList) throws Exception {
+		Option commandOption = new Option();
+		String expectedString = commandList.remove(0);
+		if (isOption(expectedString)) {
+			throw new Exception();
+		}
+		commandOption.addValue(expectedString);
+		return commandOption;
+	}
+	
+	private Option expectInteger(List<String> commandList) throws Exception {
+		Option commandOption = new Option();
+		String expectedInt = commandList.remove(0);
+		if (isOption(expectedInt)) {
+			throw new Exception();
+		}
+		commandOption.addValue(Integer.parseInt(expectedInt));
+		return commandOption;
+	}
+	
+	private Option expectDate(List<String> commandList) throws Exception {
+		Option commandOption = new Option();
+		String expectedDate = commandList.remove(0);
+		if (isOption(expectedDate)) {
+			throw new Exception();
+		}
+		String expectedTime = commandList.remove(0);
+		if (isOption(expectedTime)) {
+			commandList.add(0, expectedTime);
+			expectedTime = EMPTY_STRING;
+		}
+		commandOption.addValue(convertToDate(expectedDate, expectedTime));
+		return commandOption;
+	}
+	
+	private LocalDateTime convertToDate(String date, String time) throws Exception {
+		if (!isDate(date)) {
+			time = date;
+			date = DateTimeCommon.getDate(DateTimeCommon.now());
+		} else if (!isTime(time)) {
+			time = "23:59";
+		}
+		LocalDateTime dateTime = DateTimeCommon.parseStringToDateTime(date + " " + time);
+		if (dateTime == null) {
+			throw new Exception();
+		}
+		return dateTime;
+	}
+	
+	private boolean isDate(String date) {
+		return date.matches("(\\d{4})/(\\d{2})/(\\d{2})");
+	}
+	
+	private boolean isTime(String time) {
+		return time.matches("(\\d{2}):(\\d{2})");
+	}
+	
+	private boolean isOption(String option) {
+		for (OPTIONS value : OPTIONS.values()) {
+			if (value.toString().equals(option)) {
+				return true;
 			}
 		}
-		return new ViewTaskCommand();
-	}
-	
-	private static Command createEditTaskCommand(List<String> commandArgs) {
-		for (int i = 1; i < commandArgs.size(); i++) {
-			String commandArg = commandArgs.get(i);
-			switch (commandArg) {
-			case "-name":
-				break;
-			case "-start":
-				break;
-			case "-end":
-				break;
-			default:
-				return null;
-			}
-		}
-		return new EditTaskCommand();
-	}
-	
-	private static Command createDeleteTaskCommand(List<String> commandArgs) {
-		for (int i = 1; i < commandArgs.size(); i++) {
-			String commandArg = commandArgs.get(i);
-			switch (commandArg) {
-			case "between":
-				break;
-			case "and":
-				break;
-			default:
-				return null;
-			}
-		}
-		return new DeleteTaskCommand();
-	}
-	
-	private static Command createCompleteTaskCommand(List<String> commandArgs) {
-		return null;//new ViewTaskCommand();
+		return false;
 	}
 }
