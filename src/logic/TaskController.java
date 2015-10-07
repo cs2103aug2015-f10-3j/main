@@ -235,6 +235,11 @@ public class TaskController {
      */
     public int getAvailableTaskId() {
         ArrayList<Task> taskList = Task.getTaskList();
+        
+        if (taskList.size() == 0) {
+            return 1;
+        }
+        
         int[] testArray = new int[taskList.size()];
 
         for (int i = 0; i < testArray.length; i++) {
