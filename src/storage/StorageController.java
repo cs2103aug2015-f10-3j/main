@@ -45,11 +45,9 @@ public class StorageController {
             // Create file if it does not exist
             try {
                 file.createNewFile();
-                /*
                 ArrayList<Task> taskList = new ArrayList<Task>();
                 Document doc = parseTask(taskList);
                 writeXml(doc);
-                */
             } catch (IOException e) {
                 e.printStackTrace();
                 return null;
