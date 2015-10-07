@@ -72,9 +72,9 @@ public class StorageControllerTest {
      * @throws Exception  ***/
     @Test
     public void testGetFile() throws Exception {
-    	Method m = sdParser.getClass().getDeclaredMethod("getFile", File.class);
+    	Method m = sdParser.getClass().getDeclaredMethod("getFile");
 		m.setAccessible(true);
-        File file = (File)m.invoke(sdParser, "getFile");
+        File file = (File)m.invoke(sdParser);
         if (file.exists()) {
             assert true;
         } else {
@@ -111,9 +111,9 @@ public class StorageControllerTest {
     
     @Test
     public void testParseXml() throws Exception {
-    	Method m = sdParser.getClass().getDeclaredMethod("parseXml", Document.class);
+    	Method m = sdParser.getClass().getDeclaredMethod("parseXml");
 		m.setAccessible(true);
-        Document doc = (Document)m.invoke(sdParser, "parseXml");
+        Document doc = (Document)m.invoke(sdParser);
         
         if (doc.getDocumentElement().getNodeName().equals("task")) {
             assert true;
