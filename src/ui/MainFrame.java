@@ -40,13 +40,13 @@ public class MainFrame {
 		//Create and set up the window.
 		//Use the Java look and feel.
 		try {
-			UIManager.setLookAndFeel(
-					UIManager.getCrossPlatformLookAndFeelClassName());
+			//UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+			UIManager.setLookAndFeel("com.seaglasslookandfeel.SeaGlassLookAndFeel");
 		} catch (Exception e) { }
 
 		//Make sure we have nice window decorations.
-		JFrame.setDefaultLookAndFeelDecorated(true);
-		JDialog.setDefaultLookAndFeelDecorated(true);
+		//JFrame.setDefaultLookAndFeelDecorated(true);
+		//JDialog.setDefaultLookAndFeelDecorated(true);
 
 		prepareFrame();
 	}
