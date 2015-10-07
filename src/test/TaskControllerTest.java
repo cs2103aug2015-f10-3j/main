@@ -2,6 +2,9 @@ package test;
 
 import static org.junit.Assert.*;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -22,6 +25,7 @@ import storage.StorageController;
 
 public class TaskControllerTest {
     /*** Variables ***/
+    protected static final String FILE_NAME = "task.xml";
     StorageController sController;
     ArrayList<Task> testTaskList;
     TaskController tController;
@@ -74,13 +78,32 @@ public class TaskControllerTest {
     /*** Test Cases ***/
     @Test
     public void testAddTask() {
+        // Test first add
+        File file = new File(FILE_NAME);
+        if (file.exists()) {
+            System.gc();
+            try {
+                Files.delete(file.toPath());
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+        Task.setTaskList(new ArrayList<Task>());
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        Task task = new DeadlineTask("My first task", LocalDateTime.parse("2015-09-20 12:00", formatter));
+        boolean result = tController.addTask(task);
+        assertEquals(true, result);
+        assertEquals(1, Task.getTaskList().size());
+        
         // Set up
         testTaskList = repopulateTask();
+        Task.setTaskList(testTaskList);
         
         // Add DeadlineTask
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-        Task task = new DeadlineTask("Stock up rainbow icecream", LocalDateTime.parse("2015-09-20 12:00", formatter));
-        boolean result = tController.addTask(task);
+        formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        task = new DeadlineTask("Stock up rainbow icecream", LocalDateTime.parse("2015-09-20 12:00", formatter));
+        result = tController.addTask(task);
         assertEquals(true, result);
         assertEquals(11, Task.getTaskList().size());
         
@@ -202,10 +225,19 @@ public class TaskControllerTest {
     @Test
     public void testGetAvailableTaskId() {
         // Set up
-        testTaskList = repopulateTask();
+        testTaskList = new ArrayList<Task>();
+        tController.writeAllToFile(testTaskList);
         
         // Perform test
         int result = tController.getAvailableTaskId();
+        assertEquals(1, result);
+        
+        // Set up
+        testTaskList = repopulateTask();
+        tController.writeAllToFile(testTaskList);
+        
+        // Perform test
+        result = tController.getAvailableTaskId();
         assertEquals(testTaskList.size() + 1, result);
     }
 }
