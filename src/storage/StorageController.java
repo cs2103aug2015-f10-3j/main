@@ -45,6 +45,11 @@ public class StorageController {
             // Create file if it does not exist
             try {
                 file.createNewFile();
+                /*
+                ArrayList<Task> taskList = new ArrayList<Task>();
+                Document doc = parseTask(taskList);
+                writeXml(doc);
+                */
             } catch (IOException e) {
                 e.printStackTrace();
                 return null;
@@ -164,7 +169,10 @@ public class StorageController {
             Element root = doc.createElement("task");
             doc.appendChild(root);
             
-            for (Task task : taskList) {
+            //for (Task task : taskList) {
+            for (int i = 0; i < taskList.size(); i++) {
+                Task task = taskList.get(i);
+                
                 Element item = doc.createElement("item");
                 root.appendChild(item);
 
