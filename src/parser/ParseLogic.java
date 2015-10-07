@@ -92,7 +92,11 @@ class ParseLogic {
 		List<String> commandLine = new ArrayList<String>();
 		Scanner sc = new Scanner(userCommand);
 		while (sc.hasNext(CMD_PATTERN)) {
-			commandLine.add(sc.next(CMD_PATTERN));
+			String command = sc.next(CMD_PATTERN);
+			if (command.startsWith("\"") && command.endsWith("\"")) {
+				command = command.substring(1, command.length() - 1);
+			}
+			commandLine.add(command);
 		}
 		sc.close();
 		return commandLine;
@@ -258,7 +262,7 @@ class ParseLogic {
 	}
 	
 	private boolean isDate(String date) {
-		return date.matches("(\\d{4})/(\\d{2})/(\\d{2})");
+		return date.matches("(\\d{2})/(\\d{2})/(\\d{4})");
 	}
 	
 	private boolean isTime(String time) {

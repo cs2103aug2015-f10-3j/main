@@ -72,6 +72,11 @@ public class TaskController {
      */
     public ArrayList<Task> getTask(TASK_TYPE type) {
         ArrayList<Task> taskList = Task.getTaskList();
+        
+        if (type == TASK_TYPE.ANY) {
+        	return taskList;
+        }
+        
         ArrayList<Task> filteredTaskList = new ArrayList<Task>();
 
         for (Task task : taskList) {

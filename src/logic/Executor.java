@@ -28,7 +28,7 @@ public class Executor {
 	private Pair<ArrayList<Task>,Boolean> parseCommand(String userInput) {
 		Command cmd = commandParser.tryParse(userInput);
 		if (cmd == null) {
-			return null;
+			return new Pair<ArrayList<Task>,Boolean>(null, false);
 		} else {
 			return executeCommand(cmd);
 		}

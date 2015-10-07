@@ -17,27 +17,21 @@ public class ViewTaskCommand extends Command {
 	private static final int OFFSET_ZERO = 0;
 	private static final int OFFSET_ONE = 1;
 	
+	private static final String TYPE_ALL = "all";
+	private static final String TYPE_FLOATING = "floating";
+	private static final String TYPE_DEADLINE = "deadline";
+	private static final String TYPE_TIMED = "timed";
+	
+	private static final String PERIOD_TODAY = "today";
+	private static final String PERIOD_TOMORROW = "tomorrow";
+	private static final String PERIOD_WEEK = "week";
+	private static final String PERIOD_MONTH = "month";
+	
+	
 	private String type = null;
 	private String period = null;
 	
 	private static final TaskController taskController = new TaskController();	
-
-	/*** Constructor ***/
-	public ViewTaskCommand() {
-		this.type = getOption("all").getStringValue();
-		this.type = getOption("floating").getStringValue();
-		this.type = getOption("deadline").getStringValue();
-		this.type = getOption("timed").getStringValue();
-		this.period = getOption("today").getStringValue();
-		this.period = getOption("tomorrow").getStringValue();
-		this.period = getOption("week").getStringValue();
-		this.period = getOption("month").getStringValue();
-	}
-	
-	public ViewTaskCommand(String type, String period){
-		this.type = type;
-		this.period = period;
-	}
 
 	/*** Methods ***/
     /**
@@ -54,6 +48,9 @@ public class ViewTaskCommand extends Command {
 	@Override
 	public Pair<ArrayList<Task>,Boolean> execute() {
 		// TODO Auto-generated method stub
+		
+		determineTypePeriod();
+		
 		boolean result = true;
 		ArrayList<Task> taskList = null;
 		try{
@@ -64,6 +61,28 @@ public class ViewTaskCommand extends Command {
 		}
 		
 		return new Pair<ArrayList<Task>,Boolean>(taskList, result);
+	}
+	
+	private void determineTypePeriod() {
+		if (hasOption(TYPE_FLOATING)) {
+			this.type = TYPE_FLOATING;
+		} else if (hasOption(TYPE_DEADLINE)) {
+			this.type = TYPE_DEADLINE;
+		} else if (hasOption(TYPE_TIMED)) {
+			this.type = TYPE_TIMED;
+		} else {
+			this.type = TYPE_ALL;
+		}
+		
+		if (hasOption(PERIOD_TOMORROW)) {
+			this.period = PERIOD_TOMORROW;
+		} else if (hasOption(PERIOD_WEEK)) {
+			this.period = PERIOD_WEEK;
+		} else if (hasOption(PERIOD_MONTH)) {
+			this.period = PERIOD_MONTH;
+		} else {
+			this.period = PERIOD_TODAY;
+		}
 	}
 
     /**

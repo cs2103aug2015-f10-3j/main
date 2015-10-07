@@ -75,7 +75,7 @@ public class Option {
 	}
 	
 	public boolean hasValues() {
-		return values.isEmpty();
+		return !values.isEmpty();
 	}
 	
 	public int getValuesCount() {
