@@ -102,6 +102,8 @@ public class CommandLinePanel extends Panel {
      */
 	private JTextArea prepareJTextArea() {
 		JTextArea textArea = new JTextArea();
+		Font font = new Font("Andale Mono",Font.PLAIN, 12);
+		textArea.setFont(font);
 		textArea.setLineWrap(true);
 		textArea.setEditable(false);
 		DefaultCaret caret = (DefaultCaret)textArea.getCaret();

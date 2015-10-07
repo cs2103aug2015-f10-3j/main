@@ -2,6 +2,8 @@ package logic.data;
 
 import java.time.LocalDateTime;
 
+import commons.DateTimeCommon;
+
 public class TimedTask extends Task {
 	/*** Variables ***/
 	private static final String TASK_TYPE = "timed";
@@ -38,4 +40,13 @@ public class TimedTask extends Task {
 	public void setEnd(LocalDateTime end) {
 		this.end = end;
 	}
+	
+	/*** Method ***/
+    public String toString(){
+    	String output = super.toString();
+    	output += DateTimeCommon.getDate(end) + " ";
+    	output += DateTimeCommon.getTime(end) + " ";
+    	
+    	return output;
+    }
 }

@@ -2,6 +2,8 @@ package logic.data;
 
 import java.time.LocalDateTime;
 
+import commons.DateTimeCommon;
+
 public class DeadlineTask extends Task {
 	/*** Variables ***/
 	private static final String TASK_TYPE = "deadline";
@@ -35,4 +37,10 @@ public class DeadlineTask extends Task {
 		// TODO
 		return false;
 	}
+	
+    public String toString(){
+    	String output = super.toString();
+    	output += DateTimeCommon.getDate(end) + " ";
+    	return output;
+    }
 }
