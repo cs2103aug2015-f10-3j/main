@@ -1,11 +1,12 @@
-package input;
+package logic.command;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+
+import commons.Pair;
 import logic.TaskController;
 import logic.data.*;
 import storage.StorageController;
-import util.Pair;
 
 public class EditTaskCommand extends Command {
 

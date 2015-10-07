@@ -1,15 +1,15 @@
-package input;
+package logic.command;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
+import commons.Pair;
 import logic.TaskController;
 import logic.data.DeadlineTask;
 import logic.data.FloatingTask;
 import logic.data.Task;
 import logic.data.TimedTask;
 import logic.data.Task.TASK_TYPE;
-import util.Pair;
 
 public class ViewTaskCommand extends Command {
 

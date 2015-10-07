@@ -2,13 +2,13 @@
  * Author : Tan Qiu Hao, Joel
  * Date	  : 3/10/2015
  */
-package input;
+package logic.command;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import commons.Pair;
 import logic.data.Task;
-import util.Pair;
 
 public abstract class Command {
 	

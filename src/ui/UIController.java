@@ -2,9 +2,9 @@ package ui;
 
 import java.util.ArrayList;
 
+import commons.Pair;
 import logic.data.Task;
 import logic.Executor;
-import util.Pair;
 
 public class UIController {
 

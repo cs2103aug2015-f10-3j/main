@@ -4,7 +4,7 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import input.Command;
+import logic.command.Command;
 import parser.CommandParser;
 
 public class TestParser {

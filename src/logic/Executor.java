@@ -1,9 +1,10 @@
 package logic;
 
 import java.util.ArrayList;
-import input.Command;
+
+import commons.Pair;
+import logic.command.Command;
 import logic.data.Task;
-import util.Pair;
 import parser.CommandParser;
 
 public class Executor {

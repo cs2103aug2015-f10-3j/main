@@ -1,10 +1,10 @@
-package input;
+package logic.command;
 
 import java.util.ArrayList;
 
+import commons.Pair;
 import logic.TaskController;
 import logic.data.Task;
-import util.Pair;
 
 public class DeleteTaskCommand extends Command {
 

@@ -2,7 +2,7 @@ package parser;
 
 import java.util.List;
 
-import input.Command;
+import logic.command.Command;
 
 public final class CommandParser {
 

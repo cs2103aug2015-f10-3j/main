@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-import input.*;
-import util.DateTimeCommon;
+import commons.DateTimeCommon;
+import logic.command.*;
 
 class ParseLogic {
 	

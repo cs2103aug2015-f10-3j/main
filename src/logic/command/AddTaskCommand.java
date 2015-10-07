@@ -1,10 +1,10 @@
-package input;
+package logic.command;
 
 import java.util.ArrayList;
 
+import commons.Pair;
 import logic.TaskController;
 import logic.data.*;
-import util.Pair;
 
 public class AddTaskCommand extends Command {
 	
