@@ -28,7 +28,6 @@ public class StorageControllerTest {
     @Before
     public void setUp() throws Exception {
         sdParser = new StorageController();
-        testTaskList = repopulateTask();
     }
 
     @After
@@ -36,8 +35,6 @@ public class StorageControllerTest {
     }
 
     public ArrayList<Task> repopulateTask() {
-        ArrayList<Task> testTaskList = new ArrayList<Task>();
-        
         // Populate sample arraylist
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         Task task;
@@ -72,19 +69,39 @@ public class StorageControllerTest {
      * @throws Exception  ***/
     @Test
     public void testGetFile() throws Exception {
-    	Method m = sdParser.getClass().getDeclaredMethod("getFile", File.class);
+    	Method m = sdParser.getClass().getDeclaredMethod("getFile");
 		m.setAccessible(true);
-        File file = (File)m.invoke(sdParser, "getFile");
+        File file = (File)m.invoke(sdParser);
         if (file.exists()) {
             assert true;
         } else {
             assert false;
         }
+        
+        testTaskList = new ArrayList<Task>();
+        m = sdParser.getClass().getDeclaredMethod("parseXml");
+        m.setAccessible(true);
+        Document doc = (Document)m.invoke(sdParser);
+        assertNotNull(doc);
     }
 
     @Test
     public void testReadTask() {
+        testTaskList = new ArrayList<Task>();
         ArrayList<Task> taskList = sdParser.readTask();
+        if (taskList != null) {
+            assert true;
+        } else {
+            assert false;
+        }
+        if (taskList.size() == 0) {
+            assert true;
+        } else {
+            assert false;
+        }
+        
+        testTaskList = repopulateTask();
+        taskList = sdParser.readTask();
         if (taskList.size() > 0) {
             assert true;
         } else {
@@ -94,14 +111,26 @@ public class StorageControllerTest {
     
     @Test
     public void testParseTask() {
+        testTaskList = new ArrayList<Task>();
         Document doc = sdParser.parseTask(testTaskList);
-        
-        if (doc.getDocumentElement().getNodeName().equals("task")) {
+        if (doc != null) {
+            assert true;
+        } else {
+            assert false;
+        }
+        if (doc.getElementsByTagName("item").getLength() == 0) {
             assert true;
         } else {
             assert false;
         }
         
+        testTaskList = repopulateTask();
+        doc = sdParser.parseTask(testTaskList);
+        if (doc.getDocumentElement().getNodeName().equals("task")) {
+            assert true;
+        } else {
+            assert false;
+        }
         if (doc.getElementsByTagName("item").getLength() == 10) {
             assert true;
         } else {
@@ -111,17 +140,15 @@ public class StorageControllerTest {
     
     @Test
     public void testParseXml() throws Exception {
-    	Method m = sdParser.getClass().getDeclaredMethod("parseXml", Document.class);
-		m.setAccessible(true);
-        Document doc = (Document)m.invoke(sdParser, "parseXml");
-        
-        if (doc.getDocumentElement().getNodeName().equals("task")) {
+        Method m = sdParser.getClass().getDeclaredMethod("parseXml");
+        m.setAccessible(true);
+        Document doc = (Document)m.invoke(sdParser);
+        if (doc != null) {
             assert true;
         } else {
             assert false;
         }
-        
-        if (doc.getElementsByTagName("item").getLength() == 10) {
+        if (doc.getDocumentElement().getNodeName().equals("task")) {
             assert true;
         } else {
             assert false;
@@ -130,8 +157,14 @@ public class StorageControllerTest {
     
     @Test
     public void testWriteXml() {
+        testTaskList = new ArrayList<Task>();
         Document doc = sdParser.parseTask(testTaskList);
         boolean result = sdParser.writeXml(doc);
+        assertEquals(true, result);
+        
+        testTaskList = repopulateTask();
+        doc = sdParser.parseTask(testTaskList);
+        result = sdParser.writeXml(doc);
         assertEquals(true, result);
     }
 }
