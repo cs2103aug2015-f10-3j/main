@@ -1,9 +1,9 @@
-package input;
+package logic.command;
 
 import java.util.ArrayList;
 
+import commons.Pair;
 import logic.data.Task;
-import util.Pair;
 
 public class ExitCommand extends Command {
 

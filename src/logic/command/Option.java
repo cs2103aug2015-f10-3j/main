@@ -1,4 +1,4 @@
-package input;
+package logic.command;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -75,7 +75,7 @@ public class Option {
 	}
 	
 	public boolean hasValues() {
-		return values.isEmpty();
+		return !values.isEmpty();
 	}
 	
 	public int getValuesCount() {

@@ -29,7 +29,12 @@ public class Task {
             public String toString() {
                 return "DEADLINE";
             }
-        };
+        }, ANY {
+            @Override
+            public String toString() {
+                return "ALL";
+            }
+        };;
 
     };
 	
@@ -104,6 +109,8 @@ public class Task {
                 return TASK_TYPE.TIMED;
             } else if (typeString.equalsIgnoreCase("deadline")) {
                 return TASK_TYPE.DEADLINE;
+            } else if (typeString.equalsIgnoreCase("all")) {
+            	return TASK_TYPE.ANY;
             }
         }
 

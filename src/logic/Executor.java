@@ -1,9 +1,10 @@
 package logic;
 
 import java.util.ArrayList;
-import input.Command;
+
+import commons.Pair;
+import logic.command.Command;
 import logic.data.Task;
-import util.Pair;
 import parser.CommandParser;
 
 public class Executor {
@@ -27,7 +28,7 @@ public class Executor {
 	private Pair<ArrayList<Task>,Boolean> parseCommand(String userInput) {
 		Command cmd = commandParser.tryParse(userInput);
 		if (cmd == null) {
-			return null;
+			return new Pair<ArrayList<Task>,Boolean>(null, false);
 		} else {
 			return executeCommand(cmd);
 		}

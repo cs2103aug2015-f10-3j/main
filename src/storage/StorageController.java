@@ -30,6 +30,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import commons.DateTimeCommon;
+
 public class StorageController {
     /*** Variables ***/
     protected static final String FILE_NAME = "task.xml";
@@ -78,7 +80,7 @@ public class StorageController {
                 if (nNode.getNodeType() == Node.ELEMENT_NODE) {
                     Element eElement = (Element) nNode;
                     // DateTimeFormatter
-                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+                    // DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
                     
                     // taskId
                     String taskId = eElement.getElementsByTagName("taskId").item(0).getTextContent();
@@ -89,7 +91,7 @@ public class StorageController {
                     
                     // createdAt
                     String createdAt = eElement.getElementsByTagName("createdAt").item(0).getTextContent();
-                    LocalDateTime createdAt_localdatetime = LocalDateTime.parse(createdAt, formatter);
+                    LocalDateTime createdAt_localdatetime = DateTimeCommon.parseStringToDateTime(createdAt);
                     
                     // type
                     String type_string = eElement.getElementsByTagName("type").item(0).getTextContent();
@@ -120,18 +122,18 @@ public class StorageController {
                         case TIMED:
                             // start
                             start = eElement.getElementsByTagName("start").item(0).getTextContent();
-                            start_localdatetime = LocalDateTime.parse(start, formatter);
+                            start_localdatetime = DateTimeCommon.parseStringToDateTime(start);
                             
                             // end
                             end = eElement.getElementsByTagName("end").item(0).getTextContent();
-                            end_localdatetime = LocalDateTime.parse(end, formatter);
+                            end_localdatetime = DateTimeCommon.parseStringToDateTime(end);
                            
                             task = new TimedTask(taskId_int, description, createdAt_localdatetime, start_localdatetime, end_localdatetime, complete_boolean);
                             break;
                         case DEADLINE:
                             // end
                             end = eElement.getElementsByTagName("end").item(0).getTextContent();
-                            end_localdatetime = LocalDateTime.parse(end, formatter);
+                            end_localdatetime = DateTimeCommon.parseStringToDateTime(end);
                            
                             task = new DeadlineTask(taskId_int, description, createdAt_localdatetime, end_localdatetime, complete_boolean);
                             break;
@@ -145,8 +147,8 @@ public class StorageController {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
-            return null;
+            //e.printStackTrace();
+            //return null;
         }
         
         return taskList;
@@ -187,8 +189,8 @@ public class StorageController {
                 item.appendChild(description);
                 
                 // createdAt
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-                String formattedDateTime = task.getCreatedAt().format(formatter);
+                //DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+                String formattedDateTime = DateTimeCommon.parseDateTimeToString(task.getCreatedAt());
                 Element createdAt = doc.createElement("createdAt");
                 createdAt.appendChild(doc.createTextNode(formattedDateTime));
                 item.appendChild(createdAt);
@@ -221,13 +223,13 @@ public class StorageController {
                     case TIMED:
                         //start
                         start = doc.createElement("start");
-                        formattedDateTime = ((TimedTask) task).getStart().format(formatter);
+                        formattedDateTime = DateTimeCommon.parseDateTimeToString(((TimedTask) task).getStart());
                         start.appendChild(doc.createTextNode(formattedDateTime));
                         item.appendChild(start);
                         
                         // end
                         end = doc.createElement("end");
-                        formattedDateTime = ((TimedTask) task).getEnd().format(formatter);
+                        formattedDateTime = DateTimeCommon.parseDateTimeToString(((TimedTask) task).getEnd());
                         end.appendChild(doc.createTextNode(formattedDateTime));
                         item.appendChild(end);
                         break;
@@ -239,7 +241,7 @@ public class StorageController {
                         
                         // end
                         end = doc.createElement("end");
-                        formattedDateTime = ((DeadlineTask) task).getEnd().format(formatter);
+                        formattedDateTime = DateTimeCommon.parseDateTimeToString(((DeadlineTask) task).getEnd());
                         end.appendChild(doc.createTextNode(formattedDateTime));
                         item.appendChild(end);
                         break;
@@ -268,7 +270,7 @@ public class StorageController {
             // Ensures that the XML DOM view of a document is identical
             doc.getDocumentElement().normalize();
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
         
         return doc;
