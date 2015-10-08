@@ -2,17 +2,17 @@ package parser;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Scanner;
 
 import commons.DateTimeCommon;
 import logic.command.*;
 
 class ParseLogic {
 	
-	private static final String SPACES = "\\s+";
-	private static final String CMD_PATTERN = "([^\"]\\S*|\".+?\")";
+	private static final String SPACE_REGEX = "\\s+";
 	private static final String EMPTY_STRING = "";
+	private static final String SPACE = " ";
 
 	protected static enum COMMAND_TYPE {
 		ADD, VIEW, EDIT, DELETE,
@@ -90,15 +90,7 @@ class ParseLogic {
 	
 	protected List<String> breakDownCommand(String userCommand) {
 		List<String> commandLine = new ArrayList<String>();
-		Scanner sc = new Scanner(userCommand);
-		while (sc.hasNext(CMD_PATTERN)) {
-			String command = sc.next(CMD_PATTERN);
-			if (command.startsWith("\"") && command.endsWith("\"")) {
-				command = command.substring(1, command.length() - 1);
-			}
-			commandLine.add(command);
-		}
-		sc.close();
+		commandLine.addAll(Arrays.asList(userCommand.split(SPACE_REGEX)));
 		return commandLine;
 	}
 	
@@ -106,7 +98,7 @@ class ParseLogic {
 		if (userCommand == null) {
 			return null;
 		}
-		return userCommand.split(SPACES)[0];
+		return userCommand.split(SPACE_REGEX)[0];
 	}
 		
 	protected Command createCommand(COMMAND_TYPE commandType) throws Exception {
@@ -214,10 +206,21 @@ class ParseLogic {
 	
 	private Option expectString(List<String> commandList) throws Exception {
 		Option commandOption = new Option();
-		String expectedString = commandList.remove(0);
+		StringBuilder stringOption = new StringBuilder();
+		String expectedString = commandList.get(0);
 		if (isOption(expectedString)) {
 			throw new Exception();
 		}
+		do {
+			expectedString = commandList.get(0);
+			if  (isOption(expectedString)) {
+				break;
+			}
+			stringOption.append(expectedString);
+			stringOption.append(SPACE);
+			commandList.remove(0);
+		} while (!commandList.isEmpty());
+		expectedString = stringOption.toString().trim();
 		commandOption.addValue(expectedString);
 		return commandOption;
 	}
@@ -252,11 +255,12 @@ class ParseLogic {
 	
 	private LocalDateTime convertToDate(String date, String time) throws Exception {
 		if (!isDate(date)) {
+			String temp = date;
 			if (isDate(time)) {
-				String temp = date;
-				time = date;
+				date = time;
 				time = temp;
 			} else {
+				time = temp;
 				date = DateTimeCommon.getDate(DateTimeCommon.now());
 			}
 		} else if (!isTime(time)) {
