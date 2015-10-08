@@ -116,4 +116,12 @@ public class Task {
 
         return type;
     }
+    
+    public String toString(){
+    	String output = "";
+    	output += taskId + " ";
+    	output += type.toString().toLowerCase() + " ";
+    	output += description + " ";
+    	return output;
+    }
 }

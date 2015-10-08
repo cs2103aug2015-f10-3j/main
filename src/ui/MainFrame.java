@@ -38,15 +38,11 @@ public class MainFrame {
      */
 	private static void createAndShowGUI() {
 		//Create and set up the window.
-		//Use the Java look and feel.
+		//Use SeaGlass Look and Feel to enhance display
 		try {
-			UIManager.setLookAndFeel(
-					UIManager.getCrossPlatformLookAndFeelClassName());
+			//UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+			UIManager.setLookAndFeel("com.seaglasslookandfeel.SeaGlassLookAndFeel");
 		} catch (Exception e) { }
-
-		//Make sure we have nice window decorations.
-		JFrame.setDefaultLookAndFeelDecorated(true);
-		JDialog.setDefaultLookAndFeelDecorated(true);
 
 		prepareFrame();
 	}
