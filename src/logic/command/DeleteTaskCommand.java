@@ -41,7 +41,7 @@ public class DeleteTaskCommand extends Command {
         for (int i = 0; i < numOfValues; i++) {
             // Get params
             int taskId = -1;
-            taskId = getOption("delete").getIntegerValue(i);
+            taskId = getOption(KEYWORD_DELETE).getIntegerValue(i);
             
             // Check if task exist
             Task task = taskController.getTask(taskId);
