@@ -14,7 +14,8 @@ public class MainFrame {
 
 	/*** Variables ***/
 	private static final String TITLE = "PaddleTask";
-
+	private static final String LOOK_AND_FEEL = "com.seaglasslookandfeel.SeaGlassLookAndFeel";
+	
 	/*** Methods ***/
     /**
      * This method is the main method of the program.
@@ -41,7 +42,7 @@ public class MainFrame {
 		//Use SeaGlass Look and Feel to enhance display
 		try {
 			//UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
-			UIManager.setLookAndFeel("com.seaglasslookandfeel.SeaGlassLookAndFeel");
+			UIManager.setLookAndFeel(LOOK_AND_FEEL);
 		} catch (Exception e) { }
 
 		prepareFrame();
