@@ -6,13 +6,16 @@ import javax.swing.text.DefaultCaret;
 
 @SuppressWarnings("serial")
 public class CommandLinePanel extends Panel {
+	
 	 /*** Variables ***/
 	protected static int NUM_COMPONENTS = 3;
 	protected UIController uiController = null;
+	private static final String STRING_EMPTY = "";
+	private static Font font = new Font("Courier",Font.PLAIN, 12);
+	private static final String NEXT_LINE = "\n";
 	//protected static boolean restrictSize = true;
 	//protected static boolean sizeIsRandom = false;
-	private static final String STRING_EMPTY = "";
-
+	
 	/*** Constructors ***/
 	public CommandLinePanel(){
 		uiController = new UIController();
@@ -84,9 +87,9 @@ public class CommandLinePanel extends Panel {
 				String input = inputField.getText();
 				
 				String[] output = uiController.processUserInput(input);
-				textArea.append( input + "\n");
+				textArea.append( input + NEXT_LINE);
 				for(String s : output){
-					textArea.append( s + "\n");
+					textArea.append( s + NEXT_LINE);
 				}
 				inputField.setText(STRING_EMPTY);
 			}
@@ -102,6 +105,7 @@ public class CommandLinePanel extends Panel {
      */
 	private JTextArea prepareJTextArea() {
 		JTextArea textArea = new JTextArea();
+		textArea.setFont(font);
 		textArea.setLineWrap(true);
 		textArea.setEditable(false);
 		DefaultCaret caret = (DefaultCaret)textArea.getCaret();
