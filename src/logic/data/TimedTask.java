@@ -44,8 +44,7 @@ public class TimedTask extends Task {
 	/*** Method ***/
     public String toString(){
     	String output = super.toString();
-    	output += DateTimeCommon.getDate(end) + " ";
-    	output += DateTimeCommon.getTime(end) + " ";
+    	output += DateTimeCommon.parseDateTimeToString(end) + " ";
     	
     	return output;
     }

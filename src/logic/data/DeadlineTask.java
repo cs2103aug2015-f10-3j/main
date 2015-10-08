@@ -40,7 +40,7 @@ public class DeadlineTask extends Task {
 	
     public String toString(){
     	String output = super.toString();
-    	output += DateTimeCommon.getDate(end) + " ";
+    	output += DateTimeCommon.parseDateTimeToString(end) + " ";
     	return output;
     }
 }

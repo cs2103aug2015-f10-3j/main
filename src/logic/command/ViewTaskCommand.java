@@ -26,6 +26,7 @@ public class ViewTaskCommand extends Command {
 	private static final String PERIOD_TOMORROW = "tomorrow";
 	private static final String PERIOD_WEEK = "week";
 	private static final String PERIOD_MONTH = "month";
+	private static final String PERIOD_ALL = "all";
 	
 	
 	private String type = null;
@@ -74,14 +75,16 @@ public class ViewTaskCommand extends Command {
 			this.type = TYPE_ALL;
 		}
 		
-		if (hasOption(PERIOD_TOMORROW)) {
+		if (hasOption(PERIOD_TODAY)) {
+			this.period = PERIOD_TODAY;
+		} else if (hasOption(PERIOD_TOMORROW)) {
 			this.period = PERIOD_TOMORROW;
 		} else if (hasOption(PERIOD_WEEK)) {
 			this.period = PERIOD_WEEK;
 		} else if (hasOption(PERIOD_MONTH)) {
 			this.period = PERIOD_MONTH;
 		} else {
-			this.period = PERIOD_TODAY;
+			this.period = PERIOD_ALL;
 		}
 	}
 
@@ -109,6 +112,9 @@ public class ViewTaskCommand extends Command {
      * @return Array list of selected tasks
      */
 	private ArrayList<Task> selectTaskByPeriod(ArrayList<Task> allTask) throws Exception{
+		if (this.period == PERIOD_ALL) {
+			return allTask;
+		}
 		ArrayList<Task> selectedTask = new ArrayList<Task>();
 		LocalDateTime beforeThisTime = checkPeriod();
 		for(Task t : allTask){
