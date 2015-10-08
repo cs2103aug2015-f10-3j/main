@@ -26,6 +26,7 @@ public class EditTaskCommand extends Command {
 	private int taskId;
 	private LocalDateTime newStart = null;
 	private LocalDateTime newEnd = null;
+	private boolean validity = true;
 
 	/*** Methods ***/
 	/**
@@ -40,8 +41,7 @@ public class EditTaskCommand extends Command {
 		getTaskFromStorage(taskId);
 		createEditedTask();
 		taskListToReturn.add(editedTask);
-		executionResult = new Pair<ArrayList<Task>,Boolean>(taskListToReturn,storeTaskToStorage(editedTask));
-		
+		prepareExecutionResult();
 		return executionResult;
 	}
 	
@@ -59,6 +59,14 @@ public class EditTaskCommand extends Command {
 		}
 	}
 
+	private void prepareExecutionResult() {
+		if (validity) {
+			executionResult = new Pair<ArrayList<Task>,Boolean>(taskListToReturn,storeTaskToStorage(editedTask));
+		} else {
+			executionResult = new Pair<ArrayList<Task>,Boolean>(null,false);
+		}
+	}
+	
 	/**
 	 * Determines the resulting Task type of the Task object to be modified based on
 	 * user input from the edit command
@@ -72,8 +80,10 @@ public class EditTaskCommand extends Command {
 				return TASK_TYPE_FLOATING;
 			} else if (newStart == null) { // If only an end date/time is specified, task.type is now a deadline task
 				return TASK_TYPE_DEADLINE;
-			} else { // If both new and end date/time is specified, task.type is now a timed task
+			} else if (newStart != null && newEnd != null) { // If both new and end date/time is specified, task.type is now a timed task
 				return TASK_TYPE_TIMED;
+			} else {
+				return TASK_TYPE_INVALID;
 			}
 
 		case DEADLINE :
@@ -105,6 +115,9 @@ public class EditTaskCommand extends Command {
 			break;
 		case TASK_TYPE_TIMED :
 			createNewTimedTask();
+			break;
+		case TASK_TYPE_INVALID :
+			validity = false;
 			break;
 		}
 	}
