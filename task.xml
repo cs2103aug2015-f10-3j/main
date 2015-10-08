@@ -2,21 +2,21 @@
 <task>
     <item>
         <taskId>1</taskId>
-        <description>task</description>
+        <description/>
         <createdAt>07/10/2015 22:48</createdAt>
         <type>DEADLINE</type>
         <complete>false</complete>
         <start/>
-        <end>11/11/2015 10:30</end>
+        <end>12/12/2013 12:23</end>
     </item>
     <item>
         <taskId>2</taskId>
-        <description>abc</description>
+        <description/>
         <createdAt>07/10/2015 22:48</createdAt>
-        <type>FLOATING</type>
+        <type>TIMED</type>
         <complete>false</complete>
-        <start/>
-        <end/>
+        <start>08/10/2015 11:11</start>
+        <end>12/12/2013 12:23</end>
     </item>
     <item>
         <taskId>3</taskId>
@@ -49,15 +49,6 @@
         <taskId>6</taskId>
         <description>clothing</description>
         <createdAt>08/10/2015 00:09</createdAt>
-        <type>FLOATING</type>
-        <complete>false</complete>
-        <start/>
-        <end/>
-    </item>
-    <item>
-        <taskId>7</taskId>
-        <description>clothing</description>
-        <createdAt>08/10/2015 00:17</createdAt>
         <type>FLOATING</type>
         <complete>false</complete>
         <start/>

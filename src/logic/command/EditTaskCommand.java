@@ -22,27 +22,10 @@ public class EditTaskCommand extends Command {
 	private ArrayList<Task> taskListToReturn;
 	private Task originalTask;
 	private Task editedTask;
-	private String newDescription;
+	private String newDescription = "";
 	private int taskId;
-	private LocalDateTime newStart;
-	private LocalDateTime newEnd;
-
-	/*** Constructor ***/
-	public EditTaskCommand() {
-		taskListToReturn = new ArrayList<Task>();
-		taskId = getOption("edit").getIntegerValue();
-		newDescription = getOption("name").getStringValue();
-		newStart = getOption("start").getDateValue();
-		newEnd = getOption("end").getDateValue();
-	}
-	
-	public EditTaskCommand(int _taskId, String _description, LocalDateTime _start, LocalDateTime _end) {
-		taskListToReturn = new ArrayList<Task>();
-		taskId = _taskId;
-		newDescription = _description;
-		newStart = _start;
-		newEnd = _end;
-	}	
+	private LocalDateTime newStart = null;
+	private LocalDateTime newEnd = null;
 
 	/*** Methods ***/
 	/**
@@ -53,12 +36,27 @@ public class EditTaskCommand extends Command {
 	 */
 	@Override
 	public Pair<ArrayList<Task>,Boolean> execute() {
-		getTaskFromStorage(originalTask);
+		retrieveOptions();
+		getTaskFromStorage(taskId);
 		createEditedTask();
 		taskListToReturn.add(editedTask);
 		executionResult = new Pair<ArrayList<Task>,Boolean>(taskListToReturn,storeTaskToStorage(editedTask));
 		
 		return executionResult;
+	}
+	
+	private void retrieveOptions() {
+		taskListToReturn = new ArrayList<Task>();
+		taskId = getOption("edit").getIntegerValue();
+		if (hasOption("name")) {
+			newDescription = getOption("name").getStringValue();
+		}
+		if (hasOption("start")) {
+			newStart = getOption("start").getDateValue();
+		}
+		if (hasOption("end")) {
+			newEnd = getOption("end").getDateValue();
+		}
 	}
 
 	/**
@@ -112,12 +110,11 @@ public class EditTaskCommand extends Command {
 	}
 
 	private void createNewFloatingTask() {
-		/*
-		editedTask = new FloatingTaskStub(
-				originalTask.getTaskStubId(),
+		editedTask = new FloatingTask(
+				originalTask.getTaskId(),
 				getEditedTaskDescription(),
-				originalTask.getCreatedAt());
-		*/
+				originalTask.getCreatedAt(),
+				originalTask.isComplete());
 	}
 	
 	private void createNewDeadlineTask() {
@@ -167,8 +164,8 @@ public class EditTaskCommand extends Command {
 		}
 	}
 
-	private void getTaskFromStorage(Task task) {
-		
+	private void getTaskFromStorage(int taskId) {
+		originalTask = taskController.getTask(taskId);
 	}
 
 	/**
@@ -179,7 +176,6 @@ public class EditTaskCommand extends Command {
 	 * 		   returns <code>False</code> otherwise
 	 */
 	private boolean storeTaskToStorage(Task task) {
-		
-		return false;
+		return taskController.updateTask(task);
 	}
 }

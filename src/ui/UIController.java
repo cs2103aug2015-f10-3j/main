@@ -11,7 +11,7 @@ public class UIController {
 	/*** Variables ***/
 	private static final String ERROR_INCORRECT_FORMAT = "Invalid Format";
 	private static final String ERROR_BAD_COMMAND = "Command fail to execute";
-	private static final String FORMAT = "%1$-5s %2$-10s %3$-60s %4$-11s %5$-5s";
+	private static final String FORMAT = "| %1$-5s | %2$-10s | %3$-60s | %4$-11s | %5$-5s |";
 	private static final String VIEW_HEADER = String.format(FORMAT, "ID", "Type", "Description", "Deadline", "");
 	private static final String STRING_EMPTY = "";
 	private static final int OFFSET_ONE = 1;
@@ -58,7 +58,7 @@ public class UIController {
 	 * @return String array
 	 */
 	public String[] formatOutput(ArrayList<Task> taskList){
-		String[] output = new String[taskList.size() + OFFSET_ONE];
+		String[] output = new String[taskList.size() + OFFSET_ONE + OFFSET_ONE];
 
 		output[0] = VIEW_HEADER;
 		for(int i = 0; i < taskList.size(); i++){
@@ -80,6 +80,7 @@ public class UIController {
 				break;
 			}
 		}
+		output[output.length - 1] = "\n";
 		return output;
 	}
 	

@@ -12,8 +12,11 @@ public class DeleteTaskCommand extends Command {
 	public Pair<ArrayList<Task>,Boolean> execute() {
 		TaskController taskController = TaskController.getInstance();
 		int taskId = getOption("delete").getIntegerValue();
+		Task deletedTask = taskController.getTask(taskId);
 		boolean deleteTaskRes = taskController.deleteTask(taskId);
-		return new Pair<ArrayList<Task>, Boolean>(null, deleteTaskRes);
+		ArrayList<Task> taskList = new ArrayList<Task>();
+		taskList.add(deletedTask);
+		return new Pair<ArrayList<Task>, Boolean>(taskList, deleteTaskRes);
 	}
 
 }

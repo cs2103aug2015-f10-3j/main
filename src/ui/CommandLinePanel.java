@@ -38,6 +38,7 @@ public class CommandLinePanel extends Panel {
 		JTextArea textArea = prepareJTextArea();
 		JTextField inputField = prepareTextField(textArea);
 		JScrollPane areaScrollPane = prepareScrollPane(textArea);
+		areaScrollPane.setAutoscrolls(true);
 		Box box = prepareBoxComponent(inputField, areaScrollPane);
 		
 		panel.add(box, BorderLayout.PAGE_END);

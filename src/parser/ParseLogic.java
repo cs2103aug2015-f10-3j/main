@@ -11,7 +11,7 @@ import logic.command.*;
 class ParseLogic {
 	
 	private static final String SPACES = "\\s+";
-	private static final String CMD_PATTERN = "([^\"]\\S*|\".+?\")\\s*";
+	private static final String CMD_PATTERN = "([^\"]\\S*|\".+?\")";
 	private static final String EMPTY_STRING = "";
 
 	protected static enum COMMAND_TYPE {
@@ -206,7 +206,7 @@ class ParseLogic {
 			throw new Exception();
 		}
 		commandOption.addValue(Integer.parseInt(expectedInt));
-		while (!isOption(commandList.get(0))) {
+		while (!commandList.isEmpty() && !isOption(commandList.get(0))) {
 			commandOption.addValue(Integer.parseInt(commandList.remove(0)));
 		}
 		return commandOption;
@@ -238,7 +238,10 @@ class ParseLogic {
 		if (isOption(expectedDate)) {
 			throw new Exception();
 		}
-		String expectedTime = commandList.remove(0);
+		String expectedTime = EMPTY_STRING;
+		if (!commandList.isEmpty()) {
+			expectedTime = commandList.remove(0);
+		}
 		if (isOption(expectedTime)) {
 			commandList.add(0, expectedTime);
 			expectedTime = EMPTY_STRING;
@@ -249,8 +252,13 @@ class ParseLogic {
 	
 	private LocalDateTime convertToDate(String date, String time) throws Exception {
 		if (!isDate(date)) {
-			time = date;
-			date = DateTimeCommon.getDate(DateTimeCommon.now());
+			if (isDate(time)) {
+				String temp = date;
+				time = date;
+				time = temp;
+			} else {
+				date = DateTimeCommon.getDate(DateTimeCommon.now());
+			}
 		} else if (!isTime(time)) {
 			time = "23:59";
 		}
