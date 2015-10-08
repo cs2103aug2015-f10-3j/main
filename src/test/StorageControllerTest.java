@@ -21,6 +21,7 @@ import org.w3c.dom.Document;
 
 public class StorageControllerTest {
     /*** Variables ***/
+    protected static final String FILE_NAME = "task.xml";
     StorageController sdParser;
     ArrayList<Task> testTaskList;
     
@@ -78,11 +79,16 @@ public class StorageControllerTest {
             assert false;
         }
         
-        testTaskList = new ArrayList<Task>();
-        m = sdParser.getClass().getDeclaredMethod("parseXml");
+        file = new File(FILE_NAME);
+        file.delete();
+        m = sdParser.getClass().getDeclaredMethod("getFile");
         m.setAccessible(true);
-        Document doc = (Document)m.invoke(sdParser);
-        assertNotNull(doc);
+        file = (File)m.invoke(sdParser);
+        if (file.exists()) {
+            assert true;
+        } else {
+            assert false;
+        }
     }
 
     @Test

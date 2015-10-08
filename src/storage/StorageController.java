@@ -3,6 +3,7 @@ package storage;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -47,9 +48,10 @@ public class StorageController {
             // Create file if it does not exist
             try {
                 file.createNewFile();
-                ArrayList<Task> taskList = new ArrayList<Task>();
-                Document doc = parseTask(taskList);
-                writeXml(doc);
+                String xml = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"no\"?><task></task>";
+                FileWriter fw = new FileWriter(FILE_NAME);
+                fw.write(xml);
+                fw.close();
             } catch (IOException e) {
                 e.printStackTrace();
                 return null;
@@ -308,6 +310,7 @@ public class StorageController {
             return false;
         } catch (TransformerException e) {
             System.out.println("Error initializing transformer");
+            e.printStackTrace();
             return false;
         }   
         
