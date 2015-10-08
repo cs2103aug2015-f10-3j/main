@@ -13,6 +13,9 @@ class ParseLogic {
 	private static final String SPACE_REGEX = "\\s+";
 	private static final String EMPTY_STRING = "";
 	private static final String SPACE = " ";
+	
+	private static final boolean OPTIONAL = true;
+	private static final boolean NOT_OPTIONAL = false;
 
 	protected static enum COMMAND_TYPE {
 		ADD, VIEW, EDIT, DELETE,
@@ -141,15 +144,15 @@ class ParseLogic {
 	
 	private Option getOption(String option, List<String> commandList) throws Exception{
 		if (option.equals(OPTIONS.ADD.toString())) {
-			return expectString(commandList);
+			return expectString(commandList, NOT_OPTIONAL);
 		} else if (option.equals(OPTIONS.VIEW.toString())) {
 			return null;
 		} else if (option.equals(OPTIONS.EDIT.toString())) {
-			return expectInteger(commandList);
+			return expectInteger(commandList, NOT_OPTIONAL);
 		} else if (option.equals(OPTIONS.DELETE.toString())) {
-			return expectIntegerArray(commandList);
+			return expectIntegerArray(commandList, OPTIONAL);
 		} else if (option.equals(OPTIONS.COMPLETE.toString())) {
-			return expectIntegerArray(commandList);
+			return expectIntegerArray(commandList, NOT_OPTIONAL);
 		} else if (option.equals(OPTIONS.SEARCH.toString())) {
 			return null;
 		} else if (option.equals(OPTIONS.UNDO.toString())) {
@@ -159,17 +162,17 @@ class ParseLogic {
 		} else if (option.equals(OPTIONS.EXIT.toString())) {
 			return null;
 		} else if (option.equals(OPTIONS.BY.toString())) {
-			return expectDate(commandList);
+			return expectDate(commandList, NOT_OPTIONAL);
 		} else if (option.equals(OPTIONS.BETWEEN.toString())) {
-			return expectDate(commandList);
+			return expectDate(commandList, NOT_OPTIONAL);
 		} else if (option.equals(OPTIONS.AND.toString())) {
-			return expectDate(commandList);
+			return expectDate(commandList, NOT_OPTIONAL);
 		} else if (option.equals(OPTIONS.NAME.toString())) {
-			return expectString(commandList);
+			return expectString(commandList, NOT_OPTIONAL);
 		} else if (option.equals(OPTIONS.START.toString())) {
-			return expectDate(commandList);
+			return expectDate(commandList, NOT_OPTIONAL);
 		} else if (option.equals(OPTIONS.END.toString())) {
-			return expectDate(commandList);
+			return expectDate(commandList, NOT_OPTIONAL);
 		} else if (option.equals(OPTIONS.ALL.toString())) {
 			return null;
 		} else if (option.equals(OPTIONS.FLOATING.toString())) {
@@ -191,10 +194,14 @@ class ParseLogic {
 		}
 	}
 	
-	private Option expectIntegerArray(List<String> commandList) throws Exception {
+	private Option expectIntegerArray(List<String> commandList, boolean optional) throws Exception {
 		Option commandOption = new Option();
 		String expectedInt = commandList.remove(0);
 		if (isOption(expectedInt)) {
+			if (optional) {
+				commandList.add(0, expectedInt);
+				return null;
+			}
 			throw new Exception();
 		}
 		commandOption.addValue(Integer.parseInt(expectedInt));
@@ -204,11 +211,14 @@ class ParseLogic {
 		return commandOption;
 	}
 	
-	private Option expectString(List<String> commandList) throws Exception {
+	private Option expectString(List<String> commandList, boolean optional) throws Exception {
 		Option commandOption = new Option();
 		StringBuilder stringOption = new StringBuilder();
 		String expectedString = commandList.get(0);
 		if (isOption(expectedString)) {
+			if (optional) {
+				return null;
+			}
 			throw new Exception();
 		}
 		do {
@@ -225,20 +235,28 @@ class ParseLogic {
 		return commandOption;
 	}
 	
-	private Option expectInteger(List<String> commandList) throws Exception {
+	private Option expectInteger(List<String> commandList, boolean optional) throws Exception {
 		Option commandOption = new Option();
 		String expectedInt = commandList.remove(0);
 		if (isOption(expectedInt)) {
+			if (optional) {
+				commandList.add(0, expectedInt);
+				return null;
+			}
 			throw new Exception();
 		}
 		commandOption.addValue(Integer.parseInt(expectedInt));
 		return commandOption;
 	}
 	
-	private Option expectDate(List<String> commandList) throws Exception {
+	private Option expectDate(List<String> commandList, boolean optional) throws Exception {
 		Option commandOption = new Option();
 		String expectedDate = commandList.remove(0);
 		if (isOption(expectedDate)) {
+			if (optional) {
+				commandList.add(0, expectedDate);
+				return null;
+			}
 			throw new Exception();
 		}
 		String expectedTime = EMPTY_STRING;
@@ -264,7 +282,7 @@ class ParseLogic {
 				date = DateTimeCommon.getDate(DateTimeCommon.now());
 			}
 		} else if (!isTime(time)) {
-			time = "23:59";
+			time = "00:00";
 		}
 		LocalDateTime dateTime = DateTimeCommon.parseStringToDateTime(date + " " + time);
 		if (dateTime == null) {
