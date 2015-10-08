@@ -22,7 +22,8 @@ public class EditTaskCommand extends Command {
 	private ArrayList<Task> taskListToReturn;
 	private Task originalTask;
 	private Task editedTask;
-	private String newDescription = "";
+	private String originalTaskType = null;
+	private String newDescription = null;
 	private int taskId;
 	private LocalDateTime newStart = null;
 	private LocalDateTime newEnd = null;
@@ -39,6 +40,7 @@ public class EditTaskCommand extends Command {
 	public Pair<ArrayList<Task>,Boolean> execute() {
 		retrieveOptions();
 		getTaskFromStorage(taskId);
+		determineOriginalTaskType();
 		createEditedTask();
 		taskListToReturn.add(editedTask);
 		prepareExecutionResult();
@@ -74,8 +76,8 @@ public class EditTaskCommand extends Command {
 	 * @return		a String that indicates the appropriate Task type for the Task object to be modified
 	 */
 	private String determineEditedTaskType() {
-		switch(originalTask.getType()) {
-		case FLOATING:
+		switch(originalTaskType) {
+		case TASK_TYPE_FLOATING:
 			if (newStart == null && newEnd == null) { // If no start/end date/time is specified, task.type is still floating
 				return TASK_TYPE_FLOATING;
 			} else if (newStart == null) { // If only an end date/time is specified, task.type is now a deadline task
@@ -86,14 +88,14 @@ public class EditTaskCommand extends Command {
 				return TASK_TYPE_INVALID;
 			}
 
-		case DEADLINE :
+		case TASK_TYPE_DEADLINE :
 			if (newStart == null) {
 				return TASK_TYPE_DEADLINE;
 			} else {
 				return TASK_TYPE_TIMED;
 			}
 
-		case TIMED :
+		case TASK_TYPE_TIMED :
 			return TASK_TYPE_TIMED;
 
 		default :
@@ -101,6 +103,22 @@ public class EditTaskCommand extends Command {
 		}
 	}
 
+	private void determineOriginalTaskType() {
+		switch (originalTask.getType()) {
+		case FLOATING:
+			originalTaskType = TASK_TYPE_FLOATING;
+			break;
+		case DEADLINE:
+			originalTaskType = TASK_TYPE_DEADLINE;
+			break;
+		case TIMED:
+			originalTaskType = TASK_TYPE_TIMED;
+			break;
+		default:
+			originalTaskType = TASK_TYPE_INVALID;
+		}
+	}
+	
 	/**
 	 * Instantiates the task object to be modified to the appropriate Task type with
 	 * the appropriate attributes
@@ -169,12 +187,17 @@ public class EditTaskCommand extends Command {
 	}
 
 	private LocalDateTime getEditedTaskEnd(){
+		LocalDateTime newEditedTaskEnd = null;
 		if (newEnd != null) {
 			return newEnd;
-		} else {
+		} else if (originalTaskType.equals(TASK_TYPE_DEADLINE)) {
 			DeadlineTask castedOriginalTask = (DeadlineTask) originalTask;
-			return castedOriginalTask.getEnd();
+			newEditedTaskEnd = castedOriginalTask.getEnd();
+		} else if (originalTaskType.equals(TASK_TYPE_TIMED)) {
+			TimedTask castedOriginalTask = (TimedTask) originalTask;
+			newEditedTaskEnd = castedOriginalTask.getEnd();
 		}
+		return newEditedTaskEnd;
 	}
 
 	private void getTaskFromStorage(int taskId) {
