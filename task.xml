@@ -1,2 +1,12 @@
 <?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
-<task/>
+<task>
+    <item>
+        <taskId>3</taskId>
+        <description>3</description>
+        <createdAt>08/10/2015 22:34</createdAt>
+        <type>FLOATING</type>
+        <complete>false</complete>
+        <start/>
+        <end/>
+    </item>
+</task>

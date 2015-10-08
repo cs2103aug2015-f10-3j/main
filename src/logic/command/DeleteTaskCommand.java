@@ -22,7 +22,7 @@ public class DeleteTaskCommand extends Command {
 	@Override
 	public Pair<ArrayList<Task>,Boolean> execute() {
 	    taskController = TaskController.getInstance();
-	    if (hasOption(KEYWORD_DELETE)) {
+	    if (hasOption(KEYWORD_DELETE) && getOption(KEYWORD_DELETE) != null) {
 	        return deleteByTaskId();
 	    } else if (hasOption(KEYWORD_BETWEEN) && hasOption(KEYWORD_AND)) {
 	        return deleteByPeriod();
@@ -66,9 +66,7 @@ public class DeleteTaskCommand extends Command {
         
         // Get period
         LocalDateTime start = getOption(KEYWORD_BETWEEN).getDateValue();
-        System.out.println("deleteByPeriod : start - " + DateTimeCommon.parseDateTimeToString(start));
         LocalDateTime end = getOption(KEYWORD_AND).getDateValue();
-        System.out.println("deleteByPeriod : end - " + DateTimeCommon.parseDateTimeToString(end));
         
         // Get task within period
         ArrayList<Task> filteredtaskList = getTaskByPeriod(start, end);
