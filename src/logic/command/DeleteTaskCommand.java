@@ -1,47 +1,117 @@
 package logic.command;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
+import commons.DateTimeCommon;
 import commons.Pair;
 import logic.TaskController;
+import logic.data.DeadlineTask;
 import logic.data.Task;
+import logic.data.TimedTask;
 
 public class DeleteTaskCommand extends Command {
 
     /*** Variables ***/
     private static final String KEYWORD_DELETE = "delete";
-    //private static final String KEYWORD_BETWEEN = "between";
-    //private static final String KEYWORD_AND = "and";
+    private static final String KEYWORD_BETWEEN = "between";
+    private static final String KEYWORD_AND = "and";
     
     private TaskController taskController;
     
 	@Override
 	public Pair<ArrayList<Task>,Boolean> execute() {
-	    ArrayList<Task> taskList = new ArrayList<Task>();
-	    boolean deleteTaskResult = false;
-	    int numOfValues = -1;
-	    
 	    taskController = TaskController.getInstance();
-	    numOfValues = getOption(KEYWORD_DELETE).getValuesCount();
-	    
-	    for (int i = 0; i < numOfValues; i++) {
-	        // Get params
-	        int taskId = -1;
-	        taskId = getOption("delete").getIntegerValue(i);
-	        
-	        // Check if task exist
-	        Task task = taskController.getTask(taskId);
-	        
-	        // Delete task
-	        if (task != null) {
-	            deleteTaskResult = taskController.deleteTask(taskId);
-	            if (deleteTaskResult = true) {
-	                taskList.add(task);
-	            }
-	        }
+	    if (hasOption(KEYWORD_DELETE)) {
+	        return deleteByTaskId();
+	    } else if (hasOption(KEYWORD_BETWEEN) && hasOption(KEYWORD_AND)) {
+	        return deleteByPeriod();
+	    } else {
+	        return new Pair<ArrayList<Task>, Boolean>(null, false);
 	    }
-	    
-		return new Pair<ArrayList<Task>, Boolean>(taskList, deleteTaskResult);
 	}
+	
+	private Pair<ArrayList<Task>,Boolean> deleteByTaskId() {
+	    ArrayList<Task> taskList = new ArrayList<Task>();
+        boolean deleteTaskResult = false;
+        int numOfValues = -1;
+        
+        numOfValues = getOption(KEYWORD_DELETE).getValuesCount();
+        
+        for (int i = 0; i < numOfValues; i++) {
+            // Get params
+            int taskId = -1;
+            taskId = getOption(KEYWORD_DELETE).getIntegerValue(i);
+            
+            // Check if task exist
+            Task task = taskController.getTask(taskId);
+            
+            // Delete task
+            if (task != null) {
+                deleteTaskResult = taskController.deleteTask(taskId);
+                if (deleteTaskResult == true) {
+                    taskList.add(task);
+                } else {
+                    return new Pair<ArrayList<Task>, Boolean>(taskList, deleteTaskResult);
+                }
+            }
+        }
+        
+        return new Pair<ArrayList<Task>, Boolean>(taskList, deleteTaskResult);
+	}
+	
+	private Pair<ArrayList<Task>,Boolean> deleteByPeriod() {
+	    ArrayList<Task> taskList = new ArrayList<Task>();
+        boolean deleteTaskResult = false;
+        
+        // Get period
+        LocalDateTime start = getOption(KEYWORD_BETWEEN).getDateValue();
+        System.out.println("deleteByPeriod : start - " + DateTimeCommon.parseDateTimeToString(start));
+        LocalDateTime end = getOption(KEYWORD_AND).getDateValue();
+        System.out.println("deleteByPeriod : end - " + DateTimeCommon.parseDateTimeToString(end));
+        
+        // Get task within period
+        ArrayList<Task> filteredtaskList = getTaskByPeriod(start, end);
+        
+        // Delete task
+        for (int i = 0; i < filteredtaskList.size(); i++) {
+            Task task = filteredtaskList.get(i);
+            deleteTaskResult = taskController.deleteTask(task.getTaskId());
+            if (deleteTaskResult == true) {
+                taskList.add(task);
+            } else {
+                return new Pair<ArrayList<Task>, Boolean>(taskList, deleteTaskResult);
+            }
+        }
+        
+        return new Pair<ArrayList<Task>,Boolean>(taskList, true);
+	}
+
+    private ArrayList<Task> getTaskByPeriod(LocalDateTime start, LocalDateTime end) {
+        ArrayList<Task> allTask = taskController.getTask();
+        ArrayList<Task> filteredTask = new ArrayList<Task>();
+        
+        for (Task task : allTask) {
+            switch (task.getType()) {
+                case FLOATING:
+                    break;
+                case TIMED:
+                    if ((((TimedTask) task).getStart().compareTo(start) >= 0) ||
+                            (((TimedTask) task).getEnd().compareTo(end) <= 0)) {
+                        filteredTask.add(task);
+                    }
+                    break;
+                case DEADLINE:
+                    if (((DeadlineTask) task).getEnd().compareTo(end) <= 0) {
+                        filteredTask.add(task);
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+        
+        return filteredTask;
+    }
 
 }

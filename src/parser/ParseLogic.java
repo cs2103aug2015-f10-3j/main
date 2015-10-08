@@ -18,7 +18,7 @@ class ParseLogic {
 	private static final boolean NOT_OPTIONAL = false;
 
 	protected static enum COMMAND_TYPE {
-		ADD, VIEW, EDIT, DELETE,
+		ADD, VIEW, EDIT, DELETE, COMPLETE,
 		SEARCH, UNDO, REDO, 
 		INVALID, EXIT
 	}
@@ -74,6 +74,9 @@ class ParseLogic {
 		else if (mainCommand.equals(COMMANDS.DELETE.toString())) {
 			return COMMAND_TYPE.DELETE;
 		}
+		else if (mainCommand.equals(COMMANDS.COMPLETE.toString())) {
+            return COMMAND_TYPE.COMPLETE;
+        }
 		else if (mainCommand.equals(COMMANDS.SEARCH.toString())) {
 			return COMMAND_TYPE.SEARCH;
 		}
@@ -114,6 +117,8 @@ class ParseLogic {
 				return new EditTaskCommand();
 			case DELETE:
 				return new DeleteTaskCommand();
+			case COMPLETE:
+                return new CompleteTaskCommand();
 			case SEARCH:
 				return null;//new SearchTaskCommand();
 			case UNDO:
