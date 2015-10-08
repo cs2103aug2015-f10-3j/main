@@ -11,7 +11,11 @@ public class UIController {
 	/*** Variables ***/
 	private static final String ERROR_INCORRECT_FORMAT = "Invalid Format";
 	private static final String ERROR_BAD_COMMAND = "Command fail to execute";
-
+	private static final String FORMAT = "%1$-5s %2$-10s %3$-60s %4$-11s %5$-5s";
+	private static final String VIEW_HEADER = String.format(FORMAT, "ID", "Type", "Description", "Deadline", "");
+	private static final String STRING_EMPTY = "";
+	private static final int OFFSET_ONE = 1;
+	
 	/*** Constructor ***/
 	public UIController(){
 
@@ -33,41 +37,46 @@ public class UIController {
 		Boolean confirmation = result.getSecond();
 
 		if(taskList == null){
-			output = new String[1];
+			output = new String[OFFSET_ONE];
 			output[0] = ERROR_INCORRECT_FORMAT;
 		}
 		else if(!confirmation){
-			output = new String[1];
+			output = new String[OFFSET_ONE];
 			output[0] = ERROR_BAD_COMMAND;
 		}else{
-
 			output = formatOutput(taskList);
-			/*
-			output = new String[taskList.size()];
-			for(int i = 0; i < taskList.size(); i++){
-				Task selectedTask = taskList.get(i);
-				output[i] = selectedTask.toString();
-			}*/
 		}
 		return output;
 	}
 	
+	/**
+	 * This method formats the variable needed from each task to string
+	 * and store them into a string array.
+	 * 
+	 * @param ArrayList 
+	 *            Array list of task
+	 * @return String array
+	 */
 	public String[] formatOutput(ArrayList<Task> taskList){
-		String[] output = new String[taskList.size() + 1];
-		String format = "%1$-5s %2$-10s %3$-60s %4$-11s %5$-5s";
-		output[0] = String.format(format, "ID", "Type", "Description", "Deadline", "");
+		String[] output = new String[taskList.size() + OFFSET_ONE];
+
+		output[0] = VIEW_HEADER;
 		for(int i = 0; i < taskList.size(); i++){
 			Task selectedTask = taskList.get(i);
 			String[] taskDetails = selectedTask.toString().split(" ");
+			int detailsPointer = 0;
 			switch(taskDetails.length){
 			case 3:
-				output[i+1] = String.format(format, taskDetails[0],taskDetails[1], taskDetails[2], "", "");
+				output[i+OFFSET_ONE] = String.format(FORMAT, taskDetails[detailsPointer],taskDetails[++detailsPointer], 
+									   taskDetails[++detailsPointer], STRING_EMPTY, STRING_EMPTY);
 				break;
 			case 4:
-				output[i+1] = String.format(format, taskDetails[0],taskDetails[1], taskDetails[2], taskDetails[3], "");
+				output[i+OFFSET_ONE] = String.format(FORMAT, taskDetails[detailsPointer],taskDetails[++detailsPointer], 
+									   taskDetails[++detailsPointer], taskDetails[++detailsPointer], STRING_EMPTY);
 				break;
 			case 5:
-				output[i+1] = String.format(format, taskDetails[0],taskDetails[1], taskDetails[2], taskDetails[3], taskDetails[4]);
+				output[i+OFFSET_ONE] = String.format(FORMAT, taskDetails[detailsPointer],taskDetails[++detailsPointer], 
+									   taskDetails[++detailsPointer], taskDetails[++detailsPointer], taskDetails[++detailsPointer]);
 				break;
 			}
 		}
