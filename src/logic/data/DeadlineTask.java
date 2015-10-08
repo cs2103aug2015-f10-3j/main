@@ -38,9 +38,10 @@ public class DeadlineTask extends Task {
 		return false;
 	}
 	
-    public String toString(){
-    	String output = super.toString();
-    	output += DateTimeCommon.parseDateTimeToString(end) + " ";
-    	return output;
+    public String[] toDetailsArray(){
+    	String[] details = super.toDetailsArray();
+    	details[5] = DateTimeCommon.getDate(end);
+    	details[6] = DateTimeCommon.getTime(end);
+    	return details;
     }
 }

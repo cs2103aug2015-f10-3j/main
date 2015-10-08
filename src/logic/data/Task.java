@@ -11,6 +11,7 @@ public class Task {
 	private LocalDateTime createdAt;
 	private TASK_TYPE type;
     private boolean complete;
+    private String[] details = {"-","-","-","-","-","-","-"};
 
     public enum TASK_TYPE {
         FLOATING {
@@ -117,11 +118,11 @@ public class Task {
         return type;
     }
     
-    public String toString(){
-    	String output = "";
-    	output += taskId + " ";
-    	output += type.toString().toLowerCase() + " ";
-    	output += description + " ";
-    	return output;
+    public String[] toDetailsArray(){
+    	int counter = 0;
+    	details[counter] = taskId + "";
+    	details[++counter] = type.toString().toLowerCase();
+    	details[++counter] = description;
+    	return details;
     }
 }

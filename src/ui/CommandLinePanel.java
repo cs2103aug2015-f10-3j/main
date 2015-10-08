@@ -81,6 +81,7 @@ public class CommandLinePanel extends Panel {
 	private JTextField prepareTextField(final JTextArea textArea) {
 		final JTextField inputField = new JTextField();
 		inputField.setMaximumSize(new Dimension(inputField.getMaximumSize().width ,inputField.getPreferredSize().height));
+		inputField.requestFocus();
 		inputField.addActionListener(new ActionListener() {
 
 			@Override
@@ -92,6 +93,7 @@ public class CommandLinePanel extends Panel {
 				for(String s : output){
 					textArea.append( s + NEXT_LINE);
 				}
+				textArea.append(NEXT_LINE);
 				inputField.setText(STRING_EMPTY);
 			}
 		});
