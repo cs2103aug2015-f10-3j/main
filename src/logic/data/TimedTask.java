@@ -42,10 +42,13 @@ public class TimedTask extends Task {
 	}
 	
 	/*** Method ***/
-    public String toString(){
-    	String output = super.toString();
-    	output += DateTimeCommon.parseDateTimeToString(end) + " ";
+    public String[] toDetailsArray(){
+    	String[] details = super.toDetailsArray();
+    	details[3] = DateTimeCommon.getDate(start);
+    	details[4] = DateTimeCommon.getTime(start);
+    	details[5] = DateTimeCommon.getDate(end);
+    	details[6] = DateTimeCommon.getTime(end); 
     	
-    	return output;
+    	return details;
     }
 }
