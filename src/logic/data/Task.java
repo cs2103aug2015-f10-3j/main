@@ -120,7 +120,7 @@ public class Task {
     public String toString(){
     	String output = "";
     	output += taskId + " ";
-    	output += type.toString() + " ";
+    	output += type.toString().toLowerCase() + " ";
     	output += description + " ";
     	return output;
     }

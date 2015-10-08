@@ -54,7 +54,7 @@ public class UIController {
 	
 	public String[] formatOutput(ArrayList<Task> taskList){
 		String[] output = new String[taskList.size() + 1];
-		String format = "%1$-5s %2$-20s %3$-60s %4$-11s %5$-6s";
+		String format = "%1$-5s %2$-10s %3$-60s %4$-11s %5$-5s";
 		output[0] = String.format(format, "ID", "Type", "Description", "Deadline", "");
 		for(int i = 0; i < taskList.size(); i++){
 			Task selectedTask = taskList.get(i);
