@@ -94,13 +94,14 @@ public class DeleteTaskCommand extends Command {
                 case FLOATING:
                     break;
                 case TIMED:
-                    if ((((TimedTask) task).getStart().compareTo(start) >= 0) ||
+                    if ((((TimedTask) task).getStart().compareTo(start) >= 0) &&
                             (((TimedTask) task).getEnd().compareTo(end) <= 0)) {
                         filteredTask.add(task);
                     }
                     break;
                 case DEADLINE:
-                    if (((DeadlineTask) task).getEnd().compareTo(end) <= 0) {
+                    if ((((DeadlineTask) task).getEnd().compareTo(start) >= 0) && 
+                            (((DeadlineTask) task).getEnd().compareTo(end) <= 0)) {
                         filteredTask.add(task);
                     }
                     break;
