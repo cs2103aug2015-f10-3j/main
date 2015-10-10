@@ -9,19 +9,18 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
-import logic.TaskController;
-import logic.data.DeadlineTask;
-import logic.data.FloatingTask;
-import logic.data.Task;
-import logic.data.TimedTask;
-import logic.data.Task.TASK_TYPE;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.w3c.dom.Document;
 
-import storage.StorageController;
+import storage.api.StorageController;
+import task.api.TaskController;
+import task.entity.DeadlineTask;
+import task.entity.FloatingTask;
+import task.entity.Task;
+import task.entity.TimedTask;
+import task.entity.Task.TASK_TYPE;
 
 public class TaskControllerTest {
     /*** Variables ***/
@@ -33,9 +32,9 @@ public class TaskControllerTest {
     /*** Setup and Teardown ***/
     @Before
     public void setUp() throws Exception {
-        sController = new StorageController();
+        sController = StorageController.getInstance();
         testTaskList = repopulateTask();
-        tController = new TaskController();
+        tController = TaskController.getInstance();
     }
 
     @After

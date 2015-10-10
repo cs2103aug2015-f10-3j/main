@@ -9,4 +9,22 @@
         <start/>
         <end/>
     </item>
+    <item>
+        <taskId>1</taskId>
+        <description>clean my room</description>
+        <createdAt>08/10/2015 23:50</createdAt>
+        <type>TIMED</type>
+        <complete>false</complete>
+        <start>09/10/2015 00:00</start>
+        <end>15/10/2015 00:00</end>
+    </item>
+    <item>
+        <taskId>2</taskId>
+        <description>abc</description>
+        <createdAt>10/10/2015 13:09</createdAt>
+        <type>FLOATING</type>
+        <complete>false</complete>
+        <start/>
+        <end/>
+    </item>
 </task>

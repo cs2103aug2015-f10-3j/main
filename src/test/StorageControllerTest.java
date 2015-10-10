@@ -8,16 +8,16 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
-import logic.data.DeadlineTask;
-import logic.data.FloatingTask;
-import logic.data.Task;
-import logic.data.TimedTask;
-import storage.StorageController;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.w3c.dom.Document;
+
+import storage.api.StorageController;
+import task.entity.DeadlineTask;
+import task.entity.FloatingTask;
+import task.entity.Task;
+import task.entity.TimedTask;
 
 public class StorageControllerTest {
     /*** Variables ***/
@@ -28,7 +28,7 @@ public class StorageControllerTest {
     /*** Setup and Teardown ***/
     @Before
     public void setUp() throws Exception {
-        sdParser = new StorageController();
+        sdParser = StorageController.getInstance();
     }
 
     @After

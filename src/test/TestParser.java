@@ -4,8 +4,8 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import logic.command.Command;
-import parser.CommandParser;
+import command.api.Command;
+import parser.api.CommandParser;
 
 public class TestParser {
 
