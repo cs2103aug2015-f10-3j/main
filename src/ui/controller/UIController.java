@@ -13,7 +13,6 @@ public class UIController {
 	private static final String ERROR_BAD_COMMAND = "Command fail to execute";
 	private static final String FORMAT = "| %1$-5s | %2$-10s | %3$-60s | %4$-11s | %5$-5s | %6$-11s | %7$-5s |";
 	private static final String VIEW_HEADER = String.format(FORMAT, "ID", "Type", "Description", "Start Date","","Deadline", "");
-	private static final String STRING_EMPTY = "-";
 	private static final int OFFSET_ONE = 1;
 
 	/*** Constructor ***/

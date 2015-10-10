@@ -5,14 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import command.*;
-import command.api.AddTaskCommand;
-import command.api.Command;
-import command.api.CompleteTaskCommand;
-import command.api.DeleteTaskCommand;
-import command.api.EditTaskCommand;
-import command.api.ExitCommand;
-import command.api.ViewTaskCommand;
+import command.api.*;
 import command.data.Option;
 import common.util.DateTimeHelper;
 
