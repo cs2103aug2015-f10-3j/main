@@ -20,7 +20,7 @@ public class CommandLinePanel extends Panel {
 	
 	/*** Constructors ***/
 	public CommandLinePanel(){
-		uiController = new UIController();
+		uiController = UIController.getInstance();
 	}
 	
 	/*** Methods ***/
