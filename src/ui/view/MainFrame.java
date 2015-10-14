@@ -15,6 +15,7 @@ public class MainFrame {
 	/*** Variables ***/
 	private static final String TITLE = "PaddleTask";
 	private static final String LOOK_AND_FEEL = "com.seaglasslookandfeel.SeaGlassLookAndFeel";
+	private static JFrame frame;
 	
 	/*** Methods ***/
     /**
@@ -44,8 +45,10 @@ public class MainFrame {
 			//UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
 			UIManager.setLookAndFeel(LOOK_AND_FEEL);
 		} catch (Exception e) { }
-
 		prepareFrame();
+		if (isSystemTrayReady()) {
+			minimizeToTray();
+		}
 	}
 
     /**
@@ -55,11 +58,11 @@ public class MainFrame {
      */
 	
 	public static void prepareFrame() {
-		JFrame frame = new JFrame(TITLE);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame = new JFrame(TITLE);
+		frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		frame.addWindowListener(new WindowAdapter() {
-			public void windowClosing(WindowEvent e) {
-				System.exit(0);
+			public void windowIconified(WindowEvent e) {
+				minimizeToTray();
 			}
 		});
 		CommandLinePanel panel = new CommandLinePanel();
@@ -74,5 +77,39 @@ public class MainFrame {
 		frame.setVisible(true);
 	}
 
+	private static void minimizeToTray() {
+		int state = frame.getExtendedState(); // get current state
+		state = state | Frame.ICONIFIED; // add minimized to the state
+		frame.setExtendedState(state);
+		frame.setVisible(false);
+	}
 
+	private static void restoreToDesktop() {
+		int state = frame.getExtendedState(); // get current state
+		state = state & ~Frame.ICONIFIED; // remove minimized to the state
+		frame.setExtendedState(state);
+		frame.setVisible(true);
+		frame.toFront();
+	}
+
+	private static boolean isSystemTrayReady() {
+		if (!SystemTray.isSupported()) {
+			return false;
+		}
+		SystemTray tray = SystemTray.getSystemTray();
+		Image image = Toolkit.getDefaultToolkit().getImage("src/images/bulb.gif");
+		TrayIcon trayIcon = new TrayIcon(image, "PaddleTask");
+		trayIcon.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+                restoreToDesktop();
+			}
+		});
+		try {
+			tray.add(trayIcon);
+		} catch (AWTException e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
 }
