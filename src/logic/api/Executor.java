@@ -14,7 +14,7 @@ public class Executor {
 	private static CommandParser commandParser;
 	private static Observer mainCommandLinePanel;
 	/*** API ***/
-	public static Pair<ArrayList<Task>,Boolean> processCommand(CommandLinePanel panel, String userInput) {
+	public static Pair<ArrayList<Task>,Boolean> processCommand(Observer panel, String userInput) {
 		if (logicExecutor == null) {
 			logicExecutor = new Executor();
 		}
