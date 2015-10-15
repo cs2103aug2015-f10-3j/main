@@ -70,4 +70,6 @@ public abstract class Command {
 	}
 	
 	public abstract Pair<ArrayList<Task>,Boolean> execute();
+	
+	public abstract Pair<ArrayList<Task>,Boolean> undo();
 }

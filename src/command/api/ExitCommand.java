@@ -16,4 +16,10 @@ public class ExitCommand extends Command {
 	private void exitProgram() {
 		System.exit(0);
 	}
+
+	@Override
+	public Pair<ArrayList<Task>, Boolean> undo() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

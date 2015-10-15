@@ -176,4 +176,10 @@ public class ViewTaskCommand extends Command {
 		}
 		return beforeThisTime;
 	}
+
+	@Override
+	public Pair<ArrayList<Task>, Boolean> undo() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
