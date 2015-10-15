@@ -7,7 +7,7 @@ import javax.swing.text.DefaultCaret;
 import ui.controller.UIController;
 
 @SuppressWarnings("serial")
-public class CommandLinePanel extends Panel {
+public class CommandLinePanel extends Panel implements Observer{
 	
 	 /*** Variables ***/
 	protected static int NUM_COMPONENTS = 3;
@@ -16,12 +16,13 @@ public class CommandLinePanel extends Panel {
 	private static Font font = new Font("Courier",Font.PLAIN, 12);
 	private static final String NEXT_LINE = "\n";
 	private JTextField inputField;
+	private JTextArea inputTextArea;
 	//protected static boolean restrictSize = true;
 	//protected static boolean sizeIsRandom = false;
 	
 	/*** Constructors ***/
 	public CommandLinePanel(){
-		uiController = new UIController();
+		uiController = new UIController(this);
 	}
 	
 	/*** Methods ***/
@@ -110,13 +111,13 @@ public class CommandLinePanel extends Panel {
      * @return JTextArea for display
      */
 	private JTextArea prepareJTextArea() {
-		JTextArea textArea = new JTextArea();
-		textArea.setFont(font);
-		textArea.setLineWrap(true);
-		textArea.setEditable(false);
-		DefaultCaret caret = (DefaultCaret)textArea.getCaret();
+		inputTextArea = new JTextArea();
+		inputTextArea.setFont(font);
+		inputTextArea.setLineWrap(true);
+		inputTextArea.setEditable(false);
+		DefaultCaret caret = (DefaultCaret)inputTextArea.getCaret();
 		caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
-		return textArea;
+		return inputTextArea;
 	}
 
 	/*public void itemStateChanged(ItemEvent e) {
@@ -129,6 +130,18 @@ public class CommandLinePanel extends Panel {
 	
 	public boolean setInputFocus() {
 		return inputField.requestFocusInWindow();
+	}
+
+	@Override
+	public void print(String input) {
+		inputTextArea.append(input + NEXT_LINE);
+		inputTextArea.append(NEXT_LINE);
+		inputField.setText(STRING_EMPTY);
+	}
+
+	@Override
+	public void clear() {
+		inputTextArea.setText(null);
 	}
 
 }
