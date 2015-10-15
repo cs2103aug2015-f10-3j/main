@@ -1,6 +1,7 @@
 package parser.api;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 import command.api.Command;
 import parser.logic.ParseLogic;
@@ -8,8 +9,10 @@ import parser.logic.ParseLogic;
 public final class CommandParser {
 
 	private ParseLogic parserLogic;
+	private static final Logger LOGGER = Logger.getLogger(CommandParser.class.getName());
 	
 	public CommandParser() {
+		LOGGER.info("Initiating CommandParser\n");
 		parserLogic = new ParseLogic();
 	}
 	

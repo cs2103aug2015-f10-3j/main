@@ -4,10 +4,14 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import command.api.*;
 import command.data.Option;
+import common.exception.InvalidCommandException;
 import common.util.DateTimeHelper;
+import parser.api.CommandParser;
 
 public class ParseLogic {
 	
@@ -17,6 +21,8 @@ public class ParseLogic {
 	
 	private static final boolean OPTIONAL = true;
 	private static final boolean NOT_OPTIONAL = false;
+	
+	private static final Logger LOGGER = Logger.getLogger(ParseLogic.class.getName());
 
 	public static enum COMMAND_TYPE {
 		ADD, VIEW, EDIT, DELETE, COMPLETE,
@@ -60,8 +66,14 @@ public class ParseLogic {
 			return optionText;
 		}
 	}
+	
+	public ParseLogic() {
+		LOGGER.info("Initiating ParseLogic\n");
+	}
 
-	public COMMAND_TYPE determineCommandType(String userCommand) {
+	public COMMAND_TYPE determineCommandType(String userCommand) throws InvalidCommandException {
+		assert(userCommand != null);
+		LOGGER.log(Level.INFO, "Attempt to determine command type from user input -> {0}\n", userCommand);
 		String mainCommand = getMainCommand(userCommand);
 		if (mainCommand.equals(COMMANDS.ADD.toString())) {
 			return COMMAND_TYPE.ADD;
@@ -101,11 +113,15 @@ public class ParseLogic {
 		return commandLine;
 	}
 	
-	private String getMainCommand(String userCommand) {
-		if (userCommand == null) {
-			return null;
+	private String getMainCommand(String userCommand) throws InvalidCommandException {
+		LOGGER.log(Level.INFO, "Get first word of user input -> {0}\n", userCommand);
+		LOGGER.warning("Might cause array out of bounds exception\n");
+		try {
+			return userCommand.split(SPACE_REGEX)[0];
+		} catch (ArrayIndexOutOfBoundsException e) {
+			LOGGER.log(Level.SEVERE, "User input was empty\n", e);
+			throw new InvalidCommandException("Empty string supplied\n");
 		}
-		return userCommand.split(SPACE_REGEX)[0];
 	}
 		
 	public Command createCommand(COMMAND_TYPE commandType) throws Exception {
