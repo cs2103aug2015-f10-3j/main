@@ -39,7 +39,11 @@ public class MainFrame {
 		javax.swing.SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				createAndShowGUI();
-				implementNativeKeyHook();
+				try {
+					implementNativeKeyHook();
+				} catch (Throwable e) {
+					System.exit(1);
+				}
 			}
 		});
 	}
@@ -133,14 +137,8 @@ public class MainFrame {
 		return true;
 	}
 
-	private static void implementNativeKeyHook() {
-		try {
-			GlobalScreen.registerNativeHook();
-		}
-		catch (NativeHookException ex) {
-			//an instance is already running
-			System.exit(1);
-		}
+	private static void implementNativeKeyHook() throws Exception {
+		GlobalScreen.registerNativeHook();
 		
 		Logger logger = Logger.getLogger(GlobalScreen.class.getPackage().getName());
 		logger.setLevel(Level.WARNING);
