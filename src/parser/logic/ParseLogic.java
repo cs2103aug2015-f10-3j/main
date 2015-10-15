@@ -313,4 +313,14 @@ public class ParseLogic {
 		}
 		return false;
 	}
+	
+	public boolean isInvalidTypeToAdd(COMMAND_TYPE commandType) {
+		switch (commandType) {
+			case UNDO:
+			case REDO:
+				return false;
+			default:
+				return true;
+		}
+	}
 }
