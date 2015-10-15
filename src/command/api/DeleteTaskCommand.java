@@ -112,4 +112,10 @@ public class DeleteTaskCommand extends Command {
         return filteredTask;
     }
 
+	@Override
+	public Pair<ArrayList<Task>, Boolean> undo() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

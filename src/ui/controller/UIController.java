@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import common.data.Pair;
 import logic.api.Executor;
 import task.entity.Task;
+import ui.view.CommandLinePanel;
 
 public class UIController {
 
@@ -14,11 +15,19 @@ public class UIController {
 	private static final String FORMAT = "| %1$-5s | %2$-10s | %3$-60s | %4$-11s | %5$-5s | %6$-11s | %7$-5s |";
 	private static final String VIEW_HEADER = String.format(FORMAT, "ID", "Type", "Description", "Start Date","","Deadline", "");
 	private static final int OFFSET_ONE = 1;
+<<<<<<< HEAD
 	
 	private static UIController instance = null;
 
 	/*** Constructor ***/
 	private UIController(){
+=======
+	private static CommandLinePanel mainCommandLinePanel;
+	
+	/*** Constructor ***/
+	public UIController(CommandLinePanel panel){
+		mainCommandLinePanel = panel;
+>>>>>>> 86c72f98afa28bdbe786b71a231c78286f5027b6
 	}
 
 	/*** Methods ***/
@@ -45,7 +54,7 @@ public class UIController {
 	 */
 	public String[] processUserInput(String input){
 		String[] output = null;
-		Pair<ArrayList<Task>, Boolean> result = Executor.processCommand(input);
+		Pair<ArrayList<Task>, Boolean> result = Executor.processCommand(mainCommandLinePanel,input);
 		ArrayList<Task> taskList = result.getFirst();
 		Boolean confirmation = result.getSecond();
 

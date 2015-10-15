@@ -15,19 +15,21 @@ public class AddTaskCommand extends Command {
 	private static final String KEYWORD_BY = "by";
 	private static final String KEYWORD_BETWEEN = "between";
 	private static final String KEYWORD_AND = "and";
+	ArrayList<Task> taskList = new ArrayList<Task>();
+	private Task userTask;
 	
 	public Pair<ArrayList<Task>,Boolean> execute() {
-		Task userTask = createTask();
+		assert(taskList != null);
+		taskList.clear();
+		userTask = createTask();
 		TaskController taskController = TaskController.getInstance();
-		boolean addTaskRes = taskController.addTask(userTask);
-		ArrayList<Task> taskList = new ArrayList<Task>();
-		taskList.add(userTask);
-		Pair<ArrayList<Task>, Boolean> result = new Pair<ArrayList<Task>, Boolean>(taskList, addTaskRes); //will change to res class
+		boolean addTaskResult = taskController.addTask(userTask);
+		addTaskResult &= taskList.add(userTask);
+		Pair<ArrayList<Task>, Boolean> result = new Pair<ArrayList<Task>, Boolean>(taskList, addTaskResult); //will change to res class
 		return result;
 	}
 	
 	private Task createTask() {
-		Task userTask;
 		String description = getOption(KEYWORD_ADD).getStringValue();
 		if (hasOption(KEYWORD_BY)) {
 			userTask = new DeadlineTask(description, getOption(KEYWORD_BY).getDateValue());
@@ -39,5 +41,13 @@ public class AddTaskCommand extends Command {
 			userTask = new FloatingTask(description);
 		}
 		return userTask;
+	}
+
+	@Override
+	public Pair<ArrayList<Task>, Boolean> undo() {
+		assert(userTask != null);
+		boolean deleteTaskResult = TaskController.getInstance().deleteTask(userTask.getTaskId());
+		Pair<ArrayList<Task>, Boolean> result = new Pair<ArrayList<Task>, Boolean>(taskList, deleteTaskResult);
+		return result;
 	}
 }
