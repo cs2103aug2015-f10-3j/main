@@ -318,9 +318,9 @@ public class ParseLogic {
 		switch (commandType) {
 			case UNDO:
 			case REDO:
-				return false;
-			default:
 				return true;
+			default:
+				return false;
 		}
 	}
 }
