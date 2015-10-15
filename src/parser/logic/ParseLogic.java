@@ -9,7 +9,7 @@ import java.util.logging.Logger;
 
 import command.api.*;
 import command.data.Option;
-import common.exception.InvalidCommandException;
+import common.exception.InvalidCommandFormatException;
 import common.util.DateTimeHelper;
 import parser.api.CommandParser;
 
@@ -71,7 +71,7 @@ public class ParseLogic {
 		LOGGER.info("Initiating ParseLogic\n");
 	}
 
-	public COMMAND_TYPE determineCommandType(String userCommand) throws InvalidCommandException {
+	public COMMAND_TYPE determineCommandType(String userCommand) throws InvalidCommandFormatException {
 		assert(userCommand != null);
 		LOGGER.log(Level.INFO, "Attempt to determine command type from user input -> {0}\n", userCommand);
 		String mainCommand = getMainCommand(userCommand);
@@ -113,14 +113,14 @@ public class ParseLogic {
 		return commandLine;
 	}
 	
-	private String getMainCommand(String userCommand) throws InvalidCommandException {
+	private String getMainCommand(String userCommand) throws InvalidCommandFormatException {
 		LOGGER.log(Level.INFO, "Get first word of user input -> {0}\n", userCommand);
 		LOGGER.warning("Might cause array out of bounds exception\n");
 		try {
 			return userCommand.split(SPACE_REGEX)[0];
 		} catch (ArrayIndexOutOfBoundsException e) {
 			LOGGER.log(Level.SEVERE, "User input was empty\n", e);
-			throw new InvalidCommandException("Empty string supplied\n");
+			throw new InvalidCommandFormatException("Empty string supplied\n");
 		}
 	}
 		
