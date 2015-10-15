@@ -33,9 +33,13 @@ public final class CommandParser {
 	private Command createCommand(String userCommand) throws Exception {
 		ParseLogic.COMMAND_TYPE commandType = parserLogic.determineCommandType(userCommand);
 		Command newCommand = parserLogic.createCommand(commandType);
-		List<String> commandList = parserLogic.breakDownCommand(userCommand);
-		parserLogic.addOptionsToCommand(newCommand, commandList);
+		addOptions(newCommand, userCommand);
 		Command.getCommandList().add(newCommand);
 		return newCommand;
+	}
+	
+	private void addOptions(Command newCommand, String userCommand) throws Exception {
+		List<String> commandList = parserLogic.breakDownCommand(userCommand);
+		parserLogic.addOptionsToCommand(newCommand, commandList);
 	}
 }

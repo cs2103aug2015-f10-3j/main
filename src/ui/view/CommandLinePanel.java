@@ -15,6 +15,7 @@ public class CommandLinePanel extends Panel {
 	private static final String STRING_EMPTY = "";
 	private static Font font = new Font("Courier",Font.PLAIN, 12);
 	private static final String NEXT_LINE = "\n";
+	private JTextField inputField;
 	//protected static boolean restrictSize = true;
 	//protected static boolean sizeIsRandom = false;
 	
@@ -81,7 +82,7 @@ public class CommandLinePanel extends Panel {
 	}
 
 	private JTextField prepareTextField(final JTextArea textArea) {
-		final JTextField inputField = new JTextField();
+		inputField = new JTextField();
 		inputField.setMaximumSize(new Dimension(inputField.getMaximumSize().width ,inputField.getPreferredSize().height));
 		inputField.requestFocus();
 		inputField.addActionListener(new ActionListener() {
@@ -125,5 +126,9 @@ public class CommandLinePanel extends Panel {
 			restrictSize = false;
 		}
 	}*/
+	
+	public boolean setInputFocus() {
+		return inputField.requestFocusInWindow();
+	}
 
 }
