@@ -25,6 +25,7 @@ public class MainFrame {
 	private static final String LOOK_AND_FEEL = "com.seaglasslookandfeel.SeaGlassLookAndFeel";
 	private static JFrame frame;
 	private static CommandLinePanel panel;
+	private static boolean isMinimized = false;
 
 	/*** Methods ***/
 	/**
@@ -57,7 +58,8 @@ public class MainFrame {
 		} catch (Exception e) { }
 		prepareFrame();
 		if (isSystemTrayReady()) {
-			minimizeToTray();
+			isMinimized = false;
+			//minimizeToTray();
 		}
 	}
 
@@ -74,6 +76,10 @@ public class MainFrame {
 			public void windowIconified(WindowEvent e) {
 				minimizeToTray();
 			}
+			
+			public void windowClosing(WindowEvent e) {
+				minimizeToTray();
+			}
 		});
 		panel = new CommandLinePanel();
 		panel.populateContentPane(frame.getContentPane());
@@ -84,7 +90,8 @@ public class MainFrame {
 		frame.setSize(size);
 		//frame.pack();
 		frame.setLocationRelativeTo(null);
-		//frame.setVisible(true);
+		frame.setVisible(true);
+		panel.setInputFocus();
 	}
 
 	private static void minimizeToTray() {
@@ -92,6 +99,7 @@ public class MainFrame {
 		state = state | Frame.ICONIFIED; // add minimized to the state
 		frame.setExtendedState(state);
 		frame.setVisible(false);
+		isMinimized = true;
 	}
 
 	private static void restoreToDesktop() {
@@ -101,6 +109,7 @@ public class MainFrame {
 		frame.setVisible(true);
 		frame.toFront();
 		panel.setInputFocus();
+		isMinimized = false;
 	}
 
 	private static boolean isSystemTrayReady() {
@@ -129,10 +138,7 @@ public class MainFrame {
 			GlobalScreen.registerNativeHook();
 		}
 		catch (NativeHookException ex) {
-			System.err.println("There was a problem registering the native hook.");
-			System.err.println(ex.getMessage());
-			ex.printStackTrace();
-
+			//an instance is already running
 			System.exit(1);
 		}
 		
@@ -149,9 +155,13 @@ public class MainFrame {
 
 			@Override
 			public void nativeKeyPressed(NativeKeyEvent e) {
-				if (e.getModifiers() == NativeKeyEvent.ALT_L_MASK) {
+				if (e.getModifiers() == (NativeKeyEvent.CTRL_L_MASK)) {
 					if (e.getKeyCode() == NativeKeyEvent.VC_SPACE) {
-						restoreToDesktop();
+						if (isMinimized) {
+							restoreToDesktop();
+						} else {
+							minimizeToTray();
+						}
 					}
 				}
 			}
