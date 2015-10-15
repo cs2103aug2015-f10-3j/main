@@ -133,9 +133,10 @@ public class CommandLinePanel extends Panel implements Observer{
 	}
 
 	@Override
-	public void print() {
-		// TODO Auto-generated method stub
-		
+	public void print(String input) {
+		inputTextArea.append(input + NEXT_LINE);
+		inputTextArea.append(NEXT_LINE);
+		inputField.setText(STRING_EMPTY);
 	}
 
 	@Override

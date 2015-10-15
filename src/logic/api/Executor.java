@@ -6,13 +6,13 @@ import command.api.Command;
 import common.data.Pair;
 import parser.api.CommandParser;
 import task.entity.Task;
-import ui.view.CommandLinePanel;
+import ui.view.Observer;
 
 public class Executor {
 	/*** Variable ***/
 	private static Executor logicExecutor;
 	private static CommandParser commandParser;
-	private static CommandLinePanel mainCommandLinePanel;
+	private static Observer mainCommandLinePanel;
 	/*** API ***/
 	public static Pair<ArrayList<Task>,Boolean> processCommand(CommandLinePanel panel, String userInput) {
 		if (logicExecutor == null) {
