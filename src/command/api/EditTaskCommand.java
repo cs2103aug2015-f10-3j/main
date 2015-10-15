@@ -216,4 +216,10 @@ public class EditTaskCommand extends Command {
 	private boolean storeTaskToStorage(Task task) {
 		return taskController.updateTask(task);
 	}
+
+	@Override
+	public Pair<ArrayList<Task>, Boolean> undo() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

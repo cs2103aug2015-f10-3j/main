@@ -40,4 +40,10 @@ public class AddTaskCommand extends Command {
 		}
 		return userTask;
 	}
+
+	@Override
+	public Pair<ArrayList<Task>, Boolean> undo() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

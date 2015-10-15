@@ -53,4 +53,10 @@ public class CompleteTaskCommand extends Command {
         
         return new Pair<ArrayList<Task>, Boolean>(taskList, deleteTaskResult);
 	}
+
+	@Override
+	public Pair<ArrayList<Task>, Boolean> undo() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

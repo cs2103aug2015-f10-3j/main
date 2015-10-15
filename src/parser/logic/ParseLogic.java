@@ -123,9 +123,9 @@ public class ParseLogic {
 			case SEARCH:
 				return null;//new SearchTaskCommand();
 			case UNDO:
-				return null;//new UndoTaskCommand();
+				return new UndoCommand();
 			case REDO:
-				return null;//new RedoTaskCommand();
+				return new RedoCommand();
 			case EXIT:
 				return new ExitCommand();
 			case INVALID:

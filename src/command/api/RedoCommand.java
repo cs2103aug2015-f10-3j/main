@@ -5,12 +5,14 @@ import java.util.ArrayList;
 import common.data.Pair;
 import task.entity.Task;
 
-public class ClearCommand extends Command {
+public class RedoCommand extends Command {
 
 	@Override
 	public Pair<ArrayList<Task>, Boolean> execute() {
-		// TODO Auto-generated method stub
-		return null;
+		ArrayList<Command> undoCommandList = getUndoCommandList();
+		Command previousCommand = undoCommandList.remove(undoCommandList.size() - 1);
+		getCommandList().add(previousCommand);
+		return previousCommand.execute();
 	}
 
 	@Override
@@ -18,5 +20,5 @@ public class ClearCommand extends Command {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 }
