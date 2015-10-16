@@ -18,6 +18,7 @@ public class Executor {
 	/*** API ***/
 	public Executor() {
 		LOGGER.info("Initialising Executor\n");
+		commandParser = new CommandParser();
 	}
 	
 	public static ArrayList<Task> processCommand(Observer panel, String userInput) {
@@ -25,7 +26,6 @@ public class Executor {
 			logicExecutor = new Executor();
 		}
 		mainCommandLinePanel = panel;
-		commandParser = new CommandParser(panel);
 		return logicExecutor.parseCommand(userInput);
 	}
 	

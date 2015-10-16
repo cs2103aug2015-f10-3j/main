@@ -7,17 +7,15 @@ import java.util.logging.Logger;
 import command.api.Command;
 import common.exception.InvalidCommandFormatException;
 import parser.logic.ParseLogic;
-import ui.view.Observer;
 
 public final class CommandParser {
 
 	private ParseLogic parserLogic;
 	private static final Logger LOGGER = Logger.getLogger(CommandParser.class.getName());
 	
-	public CommandParser(Observer panel) {
+	public CommandParser() {
 		LOGGER.info("Initiating CommandParser");
-		assert(panel != null);
-		parserLogic = new ParseLogic(panel);
+		parserLogic = new ParseLogic();
 	}
 	
 	public Command parse(String userCommand) throws InvalidCommandFormatException {

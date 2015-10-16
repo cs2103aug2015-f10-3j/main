@@ -48,7 +48,7 @@ public class TestEditTaskCommand {
 		storageControllerInstance = StorageController.getInstance();
 		testTaskList = repopulateTask();
 		taskControllerInstance = TaskController.getInstance();
-        commandParserInstance = new CommandParser(null);
+        commandParserInstance = new CommandParser();
 	}
 
 	public ArrayList<Task> repopulateTask() {

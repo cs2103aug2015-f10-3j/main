@@ -11,7 +11,6 @@ import command.api.*;
 import command.data.Option;
 import common.exception.InvalidCommandFormatException;
 import common.util.DateTimeHelper;
-import ui.view.Observer;
 
 public class ParseLogic {
 	
@@ -23,7 +22,6 @@ public class ParseLogic {
 	private static final boolean NOT_OPTIONAL = false;
 	
 	private static final Logger LOGGER = Logger.getLogger(ParseLogic.class.getName());
-	private Observer panel;
 
 	public static enum COMMAND_TYPE {
 		ADD, VIEW, EDIT, DELETE, COMPLETE,
@@ -68,10 +66,8 @@ public class ParseLogic {
 		}
 	}
 	
-	public ParseLogic(Observer panel) {
+	public ParseLogic() {
 		LOGGER.info("Initiating ParseLogic");
-		assert(panel != null);
-		this.panel = panel;
 	}
 
 	public COMMAND_TYPE determineCommandType(String userCommand) {
@@ -148,7 +144,7 @@ public class ParseLogic {
 			case REDO:
 				return new RedoCommand();
 			case CLEAR:
-				return new ClearCommand(panel);
+				return new ClearCommand();
 			case EXIT:
 				return new ExitCommand();
 			case INVALID:
