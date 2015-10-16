@@ -7,7 +7,7 @@ import javax.swing.text.DefaultCaret;
 import ui.controller.UIController;
 
 @SuppressWarnings("serial")
-public class CommandLinePanel extends Panel implements Observer{
+public class CommandLinePanel extends JPanel implements Observer{
 	
 	 /*** Variables ***/
 	protected static int NUM_COMPONENTS = 3;
@@ -47,6 +47,7 @@ public class CommandLinePanel extends Panel implements Observer{
 		
 		panel.add(box, BorderLayout.PAGE_END);
 		contentPane.add(panel, BorderLayout.CENTER);
+		this.setInputFocus();
 	}
 
     /**

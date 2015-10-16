@@ -21,6 +21,7 @@ public class ViewTaskCommand extends Command {
 	private static final String TYPE_FLOATING = "floating";
 	private static final String TYPE_DEADLINE = "deadline";
 	private static final String TYPE_TIMED = "timed";
+	private static final String TYPE_COMPLETE = "complete";
 	
 	private static final String PERIOD_TODAY = "today";
 	private static final String PERIOD_TOMORROW = "tomorrow";
@@ -71,6 +72,8 @@ public class ViewTaskCommand extends Command {
 			this.type = TYPE_DEADLINE;
 		} else if (hasOption(TYPE_TIMED)) {
 			this.type = TYPE_TIMED;
+		} else if (hasOption(TYPE_COMPLETE)) {
+			this.type = TYPE_COMPLETE;
 		} else {
 			this.type = TYPE_ALL;
 		}
@@ -97,8 +100,23 @@ public class ViewTaskCommand extends Command {
      * @return Array list of selected tasks
      */
 	private ArrayList<Task> selectTasksByType(ArrayList<Task> allTask) throws Exception{
-		TASK_TYPE taskType = Task.determineType(type);
-		ArrayList<Task> selectedTask = taskController.getTask(taskType);
+		ArrayList<Task> selectedTask = new ArrayList<Task>();
+		if(type.equals(TYPE_COMPLETE)){
+			allTask = taskController.getTask();
+			for(Task t : allTask){
+				if(t.isComplete()){
+					selectedTask.add(t);
+				}
+			}
+		} else{
+			TASK_TYPE taskType = Task.determineType(type);
+			allTask = taskController.getTask(taskType);
+			for(Task t : allTask){
+				if(!t.isComplete()){
+					selectedTask.add(t);
+				}
+			}
+		}
 		return selectedTask;
 	}
 
@@ -111,7 +129,7 @@ public class ViewTaskCommand extends Command {
      *            a list of tasks to select from
      * @return Array list of selected tasks
      */
-	private ArrayList<Task> selectTaskByPeriod(ArrayList<Task> allTask) throws Exception{
+	public ArrayList<Task> selectTaskByPeriod(ArrayList<Task> allTask) throws Exception{
 		if (this.period == PERIOD_ALL) {
 			return allTask;
 		}
@@ -138,6 +156,8 @@ public class ViewTaskCommand extends Command {
 					if(deadline.isBefore(beforeThisTime)){
 						selectedTask.add(t);
 					}
+				} else{
+					assert false : t; //Task should be belong to either floating, deadline or timed. 
 				}
 			}
 		}
@@ -170,9 +190,10 @@ public class ViewTaskCommand extends Command {
 			break;
 
 		case "today":
-		default:
 			beforeThisTime = beforeThisTime.withHour(OFFSET_ZERO).withMinute(OFFSET_ZERO).withSecond(OFFSET_ZERO)
-							.withNano(OFFSET_ZERO).plusDays(OFFSET_ONE);
+				.withNano(OFFSET_ZERO).plusDays(OFFSET_ONE);
+		default:
+			assert false : period;		//This switch should not have any default;
 		}
 		return beforeThisTime;
 	}

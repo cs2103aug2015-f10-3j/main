@@ -24,7 +24,7 @@ public class MainFrame {
 	private static final String TITLE = "PaddleTask";
 	private static final String LOOK_AND_FEEL = "com.seaglasslookandfeel.SeaGlassLookAndFeel";
 	private static JFrame frame;
-	private static CommandLinePanel panel;
+	private static MainPanel panel;
 	private static boolean isMinimized = false;
 
 	/*** Methods ***/
@@ -85,7 +85,7 @@ public class MainFrame {
 				minimizeToTray();
 			}
 		});
-		panel = new CommandLinePanel();
+		panel = new MainPanel();
 		panel.populateContentPane(frame.getContentPane());
 
 		//Display the window.
@@ -95,7 +95,7 @@ public class MainFrame {
 		//frame.pack();
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
-		panel.setInputFocus();
+
 	}
 
 	private static void minimizeToTray() {
