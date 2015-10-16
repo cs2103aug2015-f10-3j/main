@@ -12,52 +12,51 @@ import ui.view.Observer;
 public final class CommandParser {
 
 	private ParseLogic parserLogic;
-	private Observer panel;
 	private static final Logger LOGGER = Logger.getLogger(CommandParser.class.getName());
 	
-	private CommandParser() {
-		LOGGER.info("Initiating CommandParser\n");
-		parserLogic = new ParseLogic();
-	}
-	
 	public CommandParser(Observer panel) {
-		this();
+		LOGGER.info("Initiating CommandParser");
 		assert(panel != null);
-		this.panel = panel;
+		parserLogic = new ParseLogic(panel);
 	}
 	
-	public Command tryParse(String userCommand) throws InvalidCommandFormatException {
+	public Command parse(String userCommand) throws InvalidCommandFormatException {
+		assert(userCommand != null);
 		try {
-			return parse(userCommand);
+			userCommand = userCommand.trim();
+			if (userCommand.length() <= 0) {
+				LOGGER.severe("User input string is of 0 length");
+				throw new InvalidCommandFormatException("User input is blank");
+			}
+			return createCommand(userCommand);
 		}
 		catch (Throwable e) {
-			LOGGER.log(Level.SEVERE, "Parsing of user command -> {0} failed", userCommand);
+			String message = String.format("Failed to parse user input: %1$s", userCommand);
+			LOGGER.log(Level.SEVERE, message, e);
 			throw new InvalidCommandFormatException("User input supplied was in an invalid format");
 		}
 	}
-
-	private Command parse(String userCommand) throws Exception {
-		userCommand = userCommand.trim();
-		if (userCommand.length() <= 0) {
-			return null;
-		}
-		return createCommand(userCommand);
-	}
 	
 	private Command createCommand(String userCommand) throws Exception {
+		assert(userCommand != null && parserLogic != null);
 		ParseLogic.COMMAND_TYPE commandType = parserLogic.determineCommandType(userCommand);
 		Command newCommand = parserLogic.createCommand(commandType);
+		if (newCommand == null) {
+			throw new InvalidCommandFormatException("Unable to create command with specified user input");
+		}
 		addOptions(newCommand, userCommand);
 		addCommandToList(newCommand, commandType);
 		return newCommand;
 	}
 	
 	private void addOptions(Command newCommand, String userCommand) throws Exception {
+		assert(newCommand != null && userCommand != null && parserLogic != null);
 		List<String> commandList = parserLogic.breakDownCommand(userCommand);
 		parserLogic.addOptionsToCommand(newCommand, commandList);
 	}
 	
 	private void addCommandToList(Command newCommand, ParseLogic.COMMAND_TYPE commandType) {
+		assert(newCommand != null && parserLogic != null);
 		if (!parserLogic.isInvalidTypeToAdd(commandType)) {
 			Command.getCommandList().add(newCommand);
 		}

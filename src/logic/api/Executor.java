@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import command.api.Command;
 import common.data.Pair;
+import common.exception.InvalidCommandFormatException;
 import parser.api.CommandParser;
 import task.entity.Task;
 import ui.view.Observer;
@@ -26,11 +27,13 @@ public class Executor {
 	/*** Methods ***/
 	
 	private Pair<ArrayList<Task>,Boolean> parseCommand(String userInput) {
-		Command cmd = commandParser.tryParse(userInput);
-		if (cmd == null) {
-			return new Pair<ArrayList<Task>,Boolean>(null, false);
-		} else {
+		Command cmd;
+		try {
+			cmd = commandParser.parse(userInput);
+			assert(cmd != null);
 			return executeCommand(cmd);
+		} catch (InvalidCommandFormatException e) {
+			return new Pair<ArrayList<Task>,Boolean>(null, false);
 		}
 	}
 	

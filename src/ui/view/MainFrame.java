@@ -12,6 +12,8 @@ import org.jnativehook.NativeHookException;
 import org.jnativehook.keyboard.NativeKeyEvent;
 import org.jnativehook.keyboard.NativeKeyListener;
 
+import common.util.LoggingHandler;
+
 /**
  * Create the GUI and show it.  For thread safety,
  * this method should be invoked from the
@@ -39,6 +41,8 @@ public class MainFrame {
 		javax.swing.SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				createAndShowGUI();
+				LoggingHandler handler = new LoggingHandler();
+				handler.setupLoggingHandler();
 				try {
 					implementNativeKeyHook();
 				} catch (Throwable e) {
