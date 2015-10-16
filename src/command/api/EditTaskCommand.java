@@ -5,10 +5,8 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import common.data.Pair;
 import common.exception.NoSuchTaskException;
 import common.exception.UpdateTaskException;
-import logic.api.Executor;
 import task.api.*;
 import task.entity.DeadlineTask;
 import task.entity.FloatingTask;
@@ -26,8 +24,7 @@ public class EditTaskCommand extends Command {
 	
 	private TaskController taskController = TaskController.getInstance();
 	
-	private Pair<ArrayList<Task>,Boolean> executionResult;
-	private ArrayList<Task> result;
+	private ArrayList<Task> executionResult;
 	private ArrayList<Task> taskListToReturn;
 	private int taskId;
 	private Task originalTask, editedTask;
@@ -45,7 +42,7 @@ public class EditTaskCommand extends Command {
 	 * @throws NoSuchTaskException 
 	 */
 	@Override
-	public Pair<ArrayList<Task>,Boolean> execute() {
+	public ArrayList<Task> execute() {
 		LOGGER.info("Executing EditTaskCommand\n");
 		retrieveOptions();
 		try {
@@ -68,7 +65,7 @@ public class EditTaskCommand extends Command {
 	 *  
 	 * @return		an ArrayList of Task objects that contains the modified Task object
 	 */
-	public Pair<ArrayList<Task>,Boolean> undo() {
+	public ArrayList<Task> undo() {
 		prepareUndoTask();
 		try {
 			prepareExecutionResult();
@@ -113,10 +110,11 @@ public class EditTaskCommand extends Command {
 			taskListToReturn.add(editedTask);	// Legacy
 			//result.clear();					// To be supported
 			//result.add(editedTask);			// To be supported
-			executionResult = new Pair<ArrayList<Task>,Boolean>(taskListToReturn,storeTaskToStorage(editedTask)); //Legacy
+			storeTaskToStorage(editedTask);
+			executionResult = taskListToReturn; //Legacy
 			//storeTaskToStorage(editedTask);	// To be supported
 		} else {
-			executionResult = new Pair<ArrayList<Task>,Boolean>(null,false); //Legacy
+			executionResult = null; //Legacy
 		}
 	}
 	

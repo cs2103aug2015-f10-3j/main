@@ -22,11 +22,7 @@ public class CommandLinePanel extends JPanel implements Observer{
 	
 	/*** Constructors ***/
 	public CommandLinePanel(){
-<<<<<<< HEAD
 		uiController = UIController.getInstance();
-=======
-		uiController = new UIController(this);
->>>>>>> 86c72f98afa28bdbe786b71a231c78286f5027b6
 	}
 	
 	/*** Methods ***/

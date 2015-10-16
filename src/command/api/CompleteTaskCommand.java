@@ -1,8 +1,6 @@
 package command.api;
 
 import java.util.ArrayList;
-
-import common.data.Pair;
 import task.api.TaskController;
 import task.entity.Task;
 
@@ -14,16 +12,16 @@ public class CompleteTaskCommand extends Command {
     private TaskController taskController;
     
 	@Override
-	public Pair<ArrayList<Task>,Boolean> execute() {
+	public ArrayList<Task> execute() {
 	    taskController = TaskController.getInstance();
 	    if (hasOption(KEYWORD_COMPLETE)) {
 	        return completeTask();
 	    } else {
-	        return new Pair<ArrayList<Task>, Boolean>(null, false);
+	        return null;
 	    }
 	}
 	
-	private Pair<ArrayList<Task>,Boolean> completeTask() {
+	private ArrayList<Task> completeTask() {
 	    ArrayList<Task> taskList = new ArrayList<Task>();
         boolean deleteTaskResult = false;
         int numOfValues = -1;
@@ -46,16 +44,16 @@ public class CompleteTaskCommand extends Command {
                 if (deleteTaskResult == true) {
                     taskList.add(task);
                 } else {
-                    return new Pair<ArrayList<Task>, Boolean>(taskList, deleteTaskResult);
+                    return taskList;
                 }
             }
         }
         
-        return new Pair<ArrayList<Task>, Boolean>(taskList, deleteTaskResult);
+        return taskList;
 	}
 
 	@Override
-	public Pair<ArrayList<Task>, Boolean> undo() {
+	public ArrayList<Task> undo() {
 		// TODO Auto-generated method stub
 		return null;
 	}

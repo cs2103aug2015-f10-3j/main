@@ -10,8 +10,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.w3c.dom.Document;
 
-import command.api.AddTaskCommand;
-import command.api.DeleteTaskCommand;
 import command.api.EditTaskCommand;
 import storage.api.StorageController;
 import task.api.TaskController;
@@ -87,7 +85,7 @@ public class TestEditTaskCommand {
 				testDescription,dummy_floatingTask.getDescription());
 		
 		// Execute edit command
-		dummy_editTaskCommand = (EditTaskCommand)commandParserInstance.tryParse(dummy_userCommand);
+		dummy_editTaskCommand = (EditTaskCommand)commandParserInstance.parse(dummy_userCommand);
 		dummy_editTaskCommand.execute();
 		
 		// Verify if task description has been correctly set
@@ -109,7 +107,7 @@ public class TestEditTaskCommand {
 		dummy_floatingTask = (FloatingTask)taskControllerInstance.getTask(0);
 		
 		//Execute command
-		dummy_editTaskCommand = (EditTaskCommand)commandParserInstance.tryParse(dummy_userCommand);
+		dummy_editTaskCommand = (EditTaskCommand)commandParserInstance.parse(dummy_userCommand);
 		dummy_editTaskCommand.execute();
 		
 		// Verify become Deadline
@@ -133,7 +131,7 @@ public class TestEditTaskCommand {
 	}	
 	
 	@Test
-	public void addEndDateToFloating() {
+	public void addEndDateToFloating() throws InvalidCommandFormatException {
 		testTaskList = repopulateTask();
 		Task.setTaskList(testTaskList);
 		// build my date with current date and fixed time
@@ -145,7 +143,7 @@ public class TestEditTaskCommand {
 		dummy_floatingTask = (FloatingTask)taskControllerInstance.getTask(0);
 		
 		//Execute command
-		dummy_editTaskCommand = (EditTaskCommand)commandParserInstance.tryParse(dummy_userCommand);
+		dummy_editTaskCommand = (EditTaskCommand)commandParserInstance.parse(dummy_userCommand);
 		dummy_editTaskCommand.execute();
 		
 		// Verify become Deadline
@@ -160,12 +158,12 @@ public class TestEditTaskCommand {
 		// Verify new End Date is given default value of now() date
 		String editedEndDate = DateTimeHelper.getDate(editedEnd);
 		assertEquals("test addEndTimeToFloating: verify edited task end date default to today's date",
-				currentDate,editedEndDate);
+				testDate, editedEndDate);
 		
 		// Verify new End Time is given user specified value
 		String editedEndTime = DateTimeHelper.getTime(editedEnd);
 		assertEquals("test addEndTimeToFloating: verify edited task end time",
-				testTime, editedEndTime);
+				defaultTime, editedEndTime);
 	}
 	
 	@Test
