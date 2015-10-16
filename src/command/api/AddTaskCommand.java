@@ -16,8 +16,9 @@ public class AddTaskCommand extends Command {
 	private static final String KEYWORD_BETWEEN = "between";
 	private static final String KEYWORD_AND = "and";
 	ArrayList<Task> taskList = new ArrayList<Task>();
-	private Task userTask;
-	
+	private Task userTask = null;
+
+	@Override
 	public Pair<ArrayList<Task>,Boolean> execute() {
 		assert(taskList != null);
 		taskList.clear();
@@ -30,6 +31,7 @@ public class AddTaskCommand extends Command {
 	}
 	
 	private Task createTask() {
+		assert(hasOption(KEYWORD_ADD));
 		String description = getOption(KEYWORD_ADD).getStringValue();
 		if (hasOption(KEYWORD_BY)) {
 			userTask = new DeadlineTask(description, getOption(KEYWORD_BY).getDateValue());

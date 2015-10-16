@@ -11,9 +11,6 @@ public class TestParser {
 
 	@Test
 	public void test() {
-		CommandParser cp = new CommandParser();
-		Command a = cp.tryParse("add \"abc\"");
-		assertNotEquals(null, a);
 	}
 
 }
