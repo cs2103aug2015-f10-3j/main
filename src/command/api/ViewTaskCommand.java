@@ -2,8 +2,6 @@ package command.api;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-
-import common.data.Pair;
 import task.api.TaskController;
 import task.entity.DeadlineTask;
 import task.entity.FloatingTask;
@@ -48,11 +46,12 @@ public class ViewTaskCommand extends Command {
      * 
      */
 	@Override
-	public Pair<ArrayList<Task>,Boolean> execute() {
+	public ArrayList<Task> execute() {
 		// TODO Auto-generated method stub
 		
 		determineTypePeriod();
 		
+		@SuppressWarnings("unused")
 		boolean result = true;
 		ArrayList<Task> taskList = null;
 		try{
@@ -62,7 +61,7 @@ public class ViewTaskCommand extends Command {
 			result = false;
 		}
 		
-		return new Pair<ArrayList<Task>,Boolean>(taskList, result);
+		return taskList;
 	}
 	
 	private void determineTypePeriod() {
@@ -199,7 +198,7 @@ public class ViewTaskCommand extends Command {
 	}
 
 	@Override
-	public Pair<ArrayList<Task>, Boolean> undo() {
+	public ArrayList<Task> undo() {
 		// TODO Auto-generated method stub
 		return null;
 	}

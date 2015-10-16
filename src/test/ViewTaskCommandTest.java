@@ -1,11 +1,7 @@
 package test;
 
-import static org.junit.Assert.*;
-
 import java.util.ArrayList;
-
 import org.junit.Test;
-
 import command.api.ViewTaskCommand;
 import task.entity.Task;
 

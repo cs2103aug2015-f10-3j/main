@@ -2,7 +2,6 @@ package command.api;
 
 import java.util.ArrayList;
 
-import common.data.Pair;
 import task.entity.Task;
 import ui.view.Observer;
 
@@ -16,13 +15,13 @@ public class ClearCommand extends Command {
 	}
 	
 	@Override
-	public Pair<ArrayList<Task>, Boolean> execute() {
+	public ArrayList<Task> execute() {
 		panel.clear();
 		return null;
 	}
 
 	@Override
-	public Pair<ArrayList<Task>, Boolean> undo() {
+	public ArrayList<Task> undo() {
 		// TODO Auto-generated method stub
 		return null;
 	}

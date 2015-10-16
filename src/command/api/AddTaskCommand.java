@@ -2,7 +2,6 @@ package command.api;
 
 import java.util.ArrayList;
 
-import common.data.Pair;
 import task.api.*;
 import task.entity.DeadlineTask;
 import task.entity.FloatingTask;
@@ -19,15 +18,14 @@ public class AddTaskCommand extends Command {
 	private Task userTask = null;
 
 	@Override
-	public Pair<ArrayList<Task>,Boolean> execute() {
+	public ArrayList<Task> execute() {
 		assert(taskList != null);
 		taskList.clear();
 		userTask = createTask();
 		TaskController taskController = TaskController.getInstance();
-		boolean addTaskResult = taskController.addTask(userTask);
-		addTaskResult &= taskList.add(userTask);
-		Pair<ArrayList<Task>, Boolean> result = new Pair<ArrayList<Task>, Boolean>(taskList, addTaskResult); //will change to res class
-		return result;
+		taskController.addTask(userTask);
+		taskList.add(userTask);
+		return taskList;
 	}
 	
 	private Task createTask() {
@@ -46,10 +44,9 @@ public class AddTaskCommand extends Command {
 	}
 
 	@Override
-	public Pair<ArrayList<Task>, Boolean> undo() {
+	public ArrayList<Task> undo() {
 		assert(userTask != null);
-		boolean deleteTaskResult = TaskController.getInstance().deleteTask(userTask.getTaskId());
-		Pair<ArrayList<Task>, Boolean> result = new Pair<ArrayList<Task>, Boolean>(taskList, deleteTaskResult);
-		return result;
+		TaskController.getInstance().deleteTask(userTask.getTaskId());
+		return taskList;
 	}
 }

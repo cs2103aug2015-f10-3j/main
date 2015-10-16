@@ -3,7 +3,6 @@ package command.api;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
-import common.data.Pair;
 import task.api.TaskController;
 import task.entity.DeadlineTask;
 import task.entity.Task;
@@ -19,18 +18,18 @@ public class DeleteTaskCommand extends Command {
     private TaskController taskController;
     
 	@Override
-	public Pair<ArrayList<Task>,Boolean> execute() {
+	public ArrayList<Task> execute() {
 	    taskController = TaskController.getInstance();
 	    if (hasOption(KEYWORD_DELETE) && getOption(KEYWORD_DELETE) != null) {
 	        return deleteByTaskId();
 	    } else if (hasOption(KEYWORD_BETWEEN) && hasOption(KEYWORD_AND)) {
 	        return deleteByPeriod();
 	    } else {
-	        return new Pair<ArrayList<Task>, Boolean>(null, false);
+	        return null;
 	    }
 	}
 	
-	private Pair<ArrayList<Task>,Boolean> deleteByTaskId() {
+	private ArrayList<Task> deleteByTaskId() {
 	    ArrayList<Task> taskList = new ArrayList<Task>();
         boolean deleteTaskResult = false;
         int numOfValues = -1;
@@ -51,15 +50,15 @@ public class DeleteTaskCommand extends Command {
                 if (deleteTaskResult == true) {
                     taskList.add(task);
                 } else {
-                    return new Pair<ArrayList<Task>, Boolean>(taskList, deleteTaskResult);
+                    break;
                 }
             }
         }
         
-        return new Pair<ArrayList<Task>, Boolean>(taskList, deleteTaskResult);
+        return taskList;
 	}
 	
-	private Pair<ArrayList<Task>,Boolean> deleteByPeriod() {
+	private ArrayList<Task> deleteByPeriod() {
 	    ArrayList<Task> taskList = new ArrayList<Task>();
         boolean deleteTaskResult = false;
         
@@ -77,11 +76,11 @@ public class DeleteTaskCommand extends Command {
             if (deleteTaskResult == true) {
                 taskList.add(task);
             } else {
-                return new Pair<ArrayList<Task>, Boolean>(taskList, deleteTaskResult);
+                break;
             }
         }
         
-        return new Pair<ArrayList<Task>,Boolean>(taskList, true);
+        return taskList;
 	}
 
     private ArrayList<Task> getTaskByPeriod(LocalDateTime start, LocalDateTime end) {
@@ -113,7 +112,7 @@ public class DeleteTaskCommand extends Command {
     }
 
 	@Override
-	public Pair<ArrayList<Task>, Boolean> undo() {
+	public ArrayList<Task> undo() {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -6,9 +6,7 @@ package command.api;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-
 import command.data.Option;
-import common.data.Pair;
 import task.entity.Task;
 
 public abstract class Command {
@@ -69,7 +67,7 @@ public abstract class Command {
 		Command.undoCommandList = undoCommandList;
 	}
 	
-	public abstract Pair<ArrayList<Task>,Boolean> execute();
+	public abstract ArrayList<Task> execute() throws Exception;
 	
-	public abstract Pair<ArrayList<Task>,Boolean> undo();
+	public abstract ArrayList<Task> undo() throws Exception;
 }

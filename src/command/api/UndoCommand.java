@@ -1,14 +1,12 @@
 package command.api;
 
 import java.util.ArrayList;
-
-import common.data.Pair;
 import task.entity.Task;
 
 public class UndoCommand extends Command {
 
 	@Override
-	public Pair<ArrayList<Task>, Boolean> execute() {
+	public ArrayList<Task> execute() throws Exception {
 		ArrayList<Command> commandList = getCommandList();
 		Command previousCommand = commandList.remove(commandList.size() - 1);
 		getUndoCommandList().add(previousCommand);
@@ -16,7 +14,7 @@ public class UndoCommand extends Command {
 	}
 
 	@Override
-	public Pair<ArrayList<Task>, Boolean> undo() {
+	public ArrayList<Task> undo() {
 		return null;
 	}
 }

@@ -2,9 +2,7 @@ package logic.api;
 
 import java.util.ArrayList;
 import java.util.logging.Logger;
-
 import command.api.Command;
-import common.data.Pair;
 import common.exception.InvalidCommandFormatException;
 import parser.api.CommandParser;
 import task.entity.Task;
@@ -22,7 +20,7 @@ public class Executor {
 		LOGGER.info("Initialising Executor\n");
 	}
 	
-	public static Pair<ArrayList<Task>,Boolean> processCommand(Observer panel, String userInput) {
+	public static ArrayList<Task> processCommand(Observer panel, String userInput) {
 		if (logicExecutor == null) {
 			logicExecutor = new Executor();
 		}
@@ -33,11 +31,11 @@ public class Executor {
 	
 	/*** Methods 
 	 * @throws InvalidCommandFormatException ***/
-	private Pair<ArrayList<Task>,Boolean> parseCommand(String userInput) {
+	private ArrayList<Task> parseCommand(String userInput) {
 		assert (userInput != null);
 		
 		try {
-			Command cmd = commandParser.tryParse(userInput);
+			Command cmd = commandParser.parse(userInput);
 			return executeCommand(cmd);
 		}
 		catch (InvalidCommandFormatException e) {
@@ -46,7 +44,7 @@ public class Executor {
 		}
 	}
 	
-	private Pair<ArrayList<Task>,Boolean> executeCommand(Command cmd) {
+	private ArrayList<Task> executeCommand(Command cmd) {
 		try {
 			return cmd.execute();
 		}
