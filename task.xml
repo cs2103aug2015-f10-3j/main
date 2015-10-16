@@ -1,39 +1,30 @@
 <?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
 <task>
     <item>
-        <taskId>3</taskId>
-        <description>3</description>
-        <createdAt>08/10/2015 22:34</createdAt>
-        <type>FLOATING</type>
+        <taskId>1</taskId>
+        <description>Testing Floating Description Change!</description>
+        <createdAt>01/01/2015 00:00</createdAt>
+        <type>DEADLINE</type>
         <complete>false</complete>
         <start/>
-        <end/>
-    </item>
-    <item>
-        <taskId>1</taskId>
-        <description>haha</description>
-        <createdAt>08/10/2015 23:50</createdAt>
-        <type>TIMED</type>
-        <complete>false</complete>
-        <start>09/10/2015 00:00</start>
-        <end>15/10/2015 00:00</end>
+        <end>11/11/2015 00:00</end>
     </item>
     <item>
         <taskId>2</taskId>
-        <description>abc</description>
-        <createdAt>10/10/2015 13:09</createdAt>
-        <type>FLOATING</type>
+        <description>CS2103 CE2</description>
+        <createdAt>02/01/2015 20:15</createdAt>
+        <type>DEADLINE</type>
         <complete>false</complete>
         <start/>
-        <end/>
+        <end>02/01/2015 23:59</end>
     </item>
     <item>
-        <taskId>4</taskId>
-        <description>yol</description>
-        <createdAt>15/10/2015 21:41</createdAt>
-        <type>FLOATING</type>
+        <taskId>3</taskId>
+        <description>Appointment with dentist</description>
+        <createdAt>03/01/2015 12:34</createdAt>
+        <type>TIMED</type>
         <complete>false</complete>
-        <start/>
-        <end/>
+        <start>03/01/2015 23:59</start>
+        <end>10/09/2015 15:30</end>
     </item>
 </task>
