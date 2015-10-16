@@ -2,8 +2,13 @@ package command.api;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import common.data.Pair;
+import common.exception.NoSuchTaskException;
+import common.exception.UpdateTaskException;
+import logic.api.Executor;
 import task.api.*;
 import task.entity.DeadlineTask;
 import task.entity.FloatingTask;
@@ -13,6 +18,7 @@ import task.entity.TimedTask;
 public class EditTaskCommand extends Command {
 
 	/*** Variables ***/
+	private static final Logger LOGGER = Logger.getLogger(EditTaskCommand.class.getName());
 	private static final String TASK_TYPE_DEADLINE = "deadline";
 	private static final String TASK_TYPE_TIMED = "timed";
 	private static final String TASK_TYPE_FLOATING = "floating";
@@ -21,14 +27,12 @@ public class EditTaskCommand extends Command {
 	private TaskController taskController = TaskController.getInstance();
 	
 	private Pair<ArrayList<Task>,Boolean> executionResult;
+	private ArrayList<Task> result;
 	private ArrayList<Task> taskListToReturn;
-	private Task originalTask;
-	private Task editedTask;
-	private String originalTaskType = null;
-	private String newDescription = null;
 	private int taskId;
-	private LocalDateTime newStart = null;
-	private LocalDateTime newEnd = null;
+	private Task originalTask, editedTask;
+	private String originalTaskType, newDescription = null;
+	private LocalDateTime newStart, newEnd = null;
 	private boolean validity = true;
 
 	/*** Methods ***/
@@ -37,18 +41,48 @@ public class EditTaskCommand extends Command {
 	 * 
 	 * @param 
 	 * @return		an ArrayList of Task objects that contains the modified Task object
+	 * @throws  
+	 * @throws NoSuchTaskException 
 	 */
 	@Override
 	public Pair<ArrayList<Task>,Boolean> execute() {
+		LOGGER.info("Executing EditTaskCommand\n");
 		retrieveOptions();
-		getTaskFromStorage(taskId);
+		try {
+			getTaskFromStorage(taskId);
+		} catch (Exception e) {
+			return null;
+		}
 		determineOriginalTaskType();
 		createEditedTask();
-		taskListToReturn.add(editedTask);
-		prepareExecutionResult();
+		try {
+			prepareExecutionResult();
+		} catch (Exception e) {
+			return null;
+		}
 		return executionResult;
 	}
 	
+	/**
+	 * This method reverse the previous execute() of the previous EditTaskCommand
+	 *  
+	 * @return		an ArrayList of Task objects that contains the modified Task object
+	 */
+	public Pair<ArrayList<Task>,Boolean> undo() {
+		prepareUndoTask();
+		try {
+			prepareExecutionResult();
+		}
+		catch (Throwable e) {
+			
+		}
+		return executionResult;
+	}
+	
+	/**
+	 * This method retrieves the parsed parameters stored in the Option object in
+	 * this EditTaskCommand
+	 */
 	private void retrieveOptions() {
 		taskListToReturn = new ArrayList<Task>();
 		taskId = getOption("edit").getIntegerValue();
@@ -62,12 +96,27 @@ public class EditTaskCommand extends Command {
 			newEnd = getOption("end").getDateValue();
 		}
 	}
-
-	private void prepareExecutionResult() {
+	
+	private void prepareUndoTask() {
+		Task temp = editedTask;
+		editedTask = originalTask;
+		originalTask = temp;
+	}
+	
+	/**
+	 * Prepare execution result
+	 * @throws UpdateTaskException 
+	 */
+	private void prepareExecutionResult() throws UpdateTaskException {
 		if (validity) {
-			executionResult = new Pair<ArrayList<Task>,Boolean>(taskListToReturn,storeTaskToStorage(editedTask));
+			taskListToReturn.clear();			// Legacy
+			taskListToReturn.add(editedTask);	// Legacy
+			//result.clear();					// To be supported
+			//result.add(editedTask);			// To be supported
+			executionResult = new Pair<ArrayList<Task>,Boolean>(taskListToReturn,storeTaskToStorage(editedTask)); //Legacy
+			//storeTaskToStorage(editedTask);	// To be supported
 		} else {
-			executionResult = new Pair<ArrayList<Task>,Boolean>(null,false);
+			executionResult = new Pair<ArrayList<Task>,Boolean>(null,false); //Legacy
 		}
 	}
 	
@@ -202,8 +251,13 @@ public class EditTaskCommand extends Command {
 		return newEditedTaskEnd;
 	}
 
-	private void getTaskFromStorage(int taskId) {
+	private void getTaskFromStorage(int taskId) throws NoSuchTaskException {
 		originalTask = taskController.getTask(taskId);
+		if (originalTask == null) {
+			LOGGER.log(Level.SEVERE, "Retrieve Task with taskId -> {0} failed", taskId);
+			throw new NoSuchTaskException("Task with the following Task ID does not exist!");
+		}
+		LOGGER.info("EditTaskCommand: Retrieved Task with taskId: " + taskId + "\n");
 	}
 
 	/**
@@ -213,13 +267,8 @@ public class EditTaskCommand extends Command {
 	 * @return returns <code>True</code> if the operation is a success,
 	 * 		   returns <code>False</code> otherwise
 	 */
-	private boolean storeTaskToStorage(Task task) {
+	private boolean storeTaskToStorage(Task task)  {
+		LOGGER.info("EditTaskCommand: Storing updated task to Storage\n");
 		return taskController.updateTask(task);
-	}
-
-	@Override
-	public Pair<ArrayList<Task>, Boolean> undo() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 }
