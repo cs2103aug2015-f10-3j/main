@@ -15,15 +15,36 @@ public class UIController {
 	private static final String FORMAT = "| %1$-5s | %2$-10s | %3$-60s | %4$-11s | %5$-5s | %6$-11s | %7$-5s |";
 	private static final String VIEW_HEADER = String.format(FORMAT, "ID", "Type", "Description", "Start Date","","Deadline", "");
 	private static final int OFFSET_ONE = 1;
+<<<<<<< HEAD
+	
+	private static UIController instance = null;
+
+	/*** Constructor ***/
+	private UIController(){
+=======
 	private static CommandLinePanel mainCommandLinePanel;
 	
 	/*** Constructor ***/
 	public UIController(CommandLinePanel panel){
 		mainCommandLinePanel = panel;
+>>>>>>> 86c72f98afa28bdbe786b71a231c78286f5027b6
 	}
 
 	/*** Methods ***/
-
+	/**
+	 * This method returns an instance of the UIController. 
+	 * This is an implementation of Singleton Class.
+	 * 
+	 * @return String array
+	 */
+	public static UIController getInstance(){
+		if(instance == null){
+			instance = new UIController();
+		}
+		
+		return instance;
+	}
+	
 	/**
 	 * This method returns an array of output from Logic Component, Executor class.
 	 * 
