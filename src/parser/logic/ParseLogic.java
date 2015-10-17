@@ -49,7 +49,7 @@ public class ParseLogic {
 	protected static enum OPTIONS {
 		ADD("add"), VIEW("view"), EDIT("edit"), DELETE("delete"), 
 		COMPLETE("complete"), SEARCH("search"), BY("by"), UNDO("undo"), 
-		REDO("redo"), CLEAR("clear"), EXIT("exit"), BETWEEN("between"), AND("and"),
+		REDO("redo"), REMIND("remind"), CLEAR("clear"), EXIT("exit"), BETWEEN("between"), AND("and"),
 		NAME("name"), START("start"), END("end"), ALL("all"),
 		FLOATING("floating"), DEADLINE("deadline"), TIMED("timed"),
 		TODAY("today"), TOMORROW("tomorrow"), WEEK("week"), MONTH("month");
@@ -73,7 +73,7 @@ public class ParseLogic {
 	public COMMAND_TYPE determineCommandType(String userCommand) {
 		LOGGER.log(Level.INFO, "Attempt to determine command type from user input: {0}", userCommand);
 		assert(userCommand != null);
-		String mainCommand = getMainCommand(userCommand);
+		String mainCommand = getMainCommand(userCommand).toLowerCase();
 		if (mainCommand.equals(COMMANDS.ADD.toString())) {
 			return COMMAND_TYPE.ADD;
 		}
@@ -224,6 +224,8 @@ public class ParseLogic {
 			return null;
 		} else if (option.equals(OPTIONS.MONTH.toString())) {
 			return null;
+		} else if (option.equals(OPTIONS.REMIND.toString())) {
+			return expectDate(commandList, NOT_OPTIONAL);
 		} else {
 			LOGGER.severe("option keyword is not within expectations");
 			throw new Error("corrupted variable: option");
@@ -357,7 +359,7 @@ public class ParseLogic {
 	
 	private boolean isOption(String option) {
 		for (OPTIONS value : OPTIONS.values()) {
-			if (value.toString().equals(option)) {
+			if (value.toString().equalsIgnoreCase(option)) {
 				return true;
 			}
 		}
