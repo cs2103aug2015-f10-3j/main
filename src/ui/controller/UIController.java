@@ -22,7 +22,7 @@ public class UIController {
 
 	/*** Constructor ***/
 	private UIController(){
-		executor = new Executor();
+		executor = new Executor(observer);
 	}
 
 	/*** Methods ***/
@@ -50,7 +50,7 @@ public class UIController {
 	 */
 	public String[] processUserInput(String input){
 		String[] output = null;
-		ArrayList<Task> taskList = executor.processCommand(observer,input);
+		ArrayList<Task> taskList = executor.processCommand(input);
 
 		if(taskList == null){
 			output = new String[OFFSET_ONE];

@@ -18,16 +18,13 @@ public class Executor extends Observable {
 	private static Observer mainObserver;
 	
 	/*** API ***/
-	public Executor() {
+	public Executor(Observer observer) {
 		LOGGER.info("Initialising Executor\n");
+		mainObserver = observer;
 		commandParser = new CommandParser();
 	}
 	
-	public ArrayList<Task> processCommand(Observer observer, String userInput) {
-		if (logicExecutor == null) {
-			logicExecutor = new Executor();
-		}
-		mainObserver = observer;
+	public ArrayList<Task> processCommand(String userInput) {
 		return logicExecutor.parseCommand(userInput);
 	}
 	
