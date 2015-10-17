@@ -6,10 +6,12 @@ package command.api;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Observable;
+
 import command.data.Option;
 import task.entity.Task;
 
-public abstract class Command {
+public abstract class Command extends Observable {
 	
 	private static ArrayList<Command> commandList;
 	private static ArrayList<Command> undoCommandList;

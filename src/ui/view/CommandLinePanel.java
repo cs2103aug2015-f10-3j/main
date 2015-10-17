@@ -1,13 +1,16 @@
 package ui.view;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.Observable;
+import java.util.Observer;
+
 import javax.swing.*;
 import javax.swing.text.DefaultCaret;
 
 import ui.controller.UIController;
 
 @SuppressWarnings("serial")
-public class CommandLinePanel extends JPanel implements Observer{
+public class CommandLinePanel extends JPanel implements Observer {
 	
 	 /*** Variables ***/
 	protected static int NUM_COMPONENTS = 3;
@@ -22,7 +25,7 @@ public class CommandLinePanel extends JPanel implements Observer{
 	
 	/*** Constructors ***/
 	public CommandLinePanel(){
-		uiController = UIController.getInstance();
+		uiController = UIController.getInstance(this);
 	}
 	
 	/*** Methods ***/
@@ -134,15 +137,15 @@ public class CommandLinePanel extends JPanel implements Observer{
 	}
 
 	@Override
-	public void print(String input) {
-		inputTextArea.append(input + NEXT_LINE);
-		inputTextArea.append(NEXT_LINE);
-		inputField.setText(STRING_EMPTY);
-	}
-
-	@Override
-	public void clear() {
-		inputTextArea.setText(null);
+	public void update(Observable o, Object arg) {
+		if (arg == null) {
+			inputTextArea.setText(null);
+		} else {
+			String msg = (String)arg;
+			inputTextArea.append(msg);
+			inputTextArea.append(NEXT_LINE);
+			inputTextArea.append(NEXT_LINE);
+		}
 	}
 
 }

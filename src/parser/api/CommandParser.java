@@ -35,6 +35,11 @@ public final class CommandParser {
 		}
 	}
 	
+	public boolean isEditDeleteCommand(String userCommand) {
+		ParseLogic.COMMAND_TYPE commandType = parserLogic.determineCommandType(userCommand);
+		return parserLogic.isEditDeleteCommand(commandType);
+	}
+	
 	private Command createCommand(String userCommand) throws Exception {
 		assert(userCommand != null && parserLogic != null);
 		ParseLogic.COMMAND_TYPE commandType = parserLogic.determineCommandType(userCommand);

@@ -1,19 +1,21 @@
 package logic.api;
 
 import java.util.ArrayList;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.logging.Logger;
+
 import command.api.Command;
 import common.exception.InvalidCommandFormatException;
 import parser.api.CommandParser;
 import task.entity.Task;
-import ui.view.Observer;
 
-public class Executor {
+public class Executor extends Observable {
 	/*** Variable ***/
 	private static final Logger LOGGER = Logger.getLogger(Executor.class.getName());
 	private static Executor logicExecutor;
 	private static CommandParser commandParser;
-	private static Observer mainCommandLinePanel;
+	private static Observer mainObserver;
 	
 	/*** API ***/
 	public Executor() {
@@ -21,11 +23,11 @@ public class Executor {
 		commandParser = new CommandParser();
 	}
 	
-	public static ArrayList<Task> processCommand(Observer panel, String userInput) {
+	public ArrayList<Task> processCommand(Observer observer, String userInput) {
 		if (logicExecutor == null) {
 			logicExecutor = new Executor();
 		}
-		mainCommandLinePanel = panel;
+		mainObserver = observer;
 		return logicExecutor.parseCommand(userInput);
 	}
 	
@@ -36,10 +38,13 @@ public class Executor {
 		
 		try {
 			Command cmd = commandParser.parse(userInput);
-			return executeCommand(cmd);
+			ArrayList<Task> executionResult = executeCommand(cmd);
+			cmd.addObserver(mainObserver);
+			return executionResult;
 		}
 		catch (InvalidCommandFormatException e) {
-			mainCommandLinePanel.print(e.getMessage());
+			notifyObservers(e.getMessage());
+			//mainCommandLinePanel.print(e.getMessage());
 			return null;
 		}
 	}
@@ -49,7 +54,8 @@ public class Executor {
 			return cmd.execute();
 		}
 		catch (Exception e) {
-			mainCommandLinePanel.print(e.getMessage());
+			notifyObservers(e.getMessage());
+			//mainCommandLinePanel.print(e.getMessage());
 			return null;
 		}
 	}

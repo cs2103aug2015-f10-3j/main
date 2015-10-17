@@ -1,9 +1,10 @@
 package ui.controller;
 
 import java.util.ArrayList;
+import java.util.Observer;
+
 import logic.api.Executor;
 import task.entity.Task;
-import ui.view.CommandLinePanel;
 
 public class UIController {
 
@@ -16,14 +17,12 @@ public class UIController {
 	private static final int OFFSET_ONE = 1;
 	
 	private static UIController instance = null;
+	private static Observer observer;
+	private static Executor executor;
 
 	/*** Constructor ***/
-	private UIController(){}
-	private static CommandLinePanel mainCommandLinePanel;
-	
-	/*** Constructor ***/
-	public UIController(CommandLinePanel panel){
-		mainCommandLinePanel = panel;
+	private UIController(){
+		executor = new Executor();
 	}
 
 	/*** Methods ***/
@@ -33,8 +32,9 @@ public class UIController {
 	 * 
 	 * @return String array
 	 */
-	public static UIController getInstance(){
+	public static UIController getInstance(Observer observer){
 		if(instance == null){
+			UIController.observer = observer;
 			instance = new UIController();
 		}
 		
@@ -50,7 +50,7 @@ public class UIController {
 	 */
 	public String[] processUserInput(String input){
 		String[] output = null;
-		ArrayList<Task> taskList = Executor.processCommand(mainCommandLinePanel,input);
+		ArrayList<Task> taskList = executor.processCommand(observer,input);
 
 		if(taskList == null){
 			output = new String[OFFSET_ONE];

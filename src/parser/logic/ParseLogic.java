@@ -373,4 +373,15 @@ public class ParseLogic {
 				return false;
 		}
 	}
+	
+	public boolean isEditDeleteCommand(COMMAND_TYPE commandType) {
+		switch (commandType) {
+			case EDIT:
+			case DELETE:
+				return true;
+			default:
+				return false;
+		}
+	}
+	
 }
