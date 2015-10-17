@@ -1,7 +1,9 @@
 package command.api;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
+import common.util.DateTimeHelper;
 import task.api.*;
 import task.entity.DeadlineTask;
 import task.entity.FloatingTask;
@@ -14,6 +16,7 @@ public class AddTaskCommand extends Command {
 	private static final String KEYWORD_BY = "by";
 	private static final String KEYWORD_BETWEEN = "between";
 	private static final String KEYWORD_AND = "and";
+	private static final String KEYWORD_REMIND = "remind";
 	ArrayList<Task> taskList = new ArrayList<Task>();
 	private Task userTask = null;
 
@@ -32,15 +35,26 @@ public class AddTaskCommand extends Command {
 		assert(hasOption(KEYWORD_ADD));
 		String description = getOption(KEYWORD_ADD).getStringValue();
 		if (hasOption(KEYWORD_BY)) {
-			userTask = new DeadlineTask(description, getOption(KEYWORD_BY).getDateValue());
+			LocalDateTime deadLineDate = getOption(KEYWORD_BY).getDateValue();
+			LocalDateTime reminderDate = getReminderDate(deadLineDate);
+			userTask = new DeadlineTask(description, deadLineDate);
 		} else if (hasOption(KEYWORD_BETWEEN) && hasOption(KEYWORD_AND)) {
-			userTask = new TimedTask(description, 
-					getOption(KEYWORD_BETWEEN).getDateValue(), 
-					getOption(KEYWORD_AND).getDateValue());
+			LocalDateTime startDate = getOption(KEYWORD_BETWEEN).getDateValue();
+			LocalDateTime deadLineDate = getOption(KEYWORD_AND).getDateValue();
+			LocalDateTime reminderDate = getReminderDate(deadLineDate);
+			userTask = new TimedTask(description, startDate, deadLineDate);
 		} else {
 			userTask = new FloatingTask(description);
 		}
 		return userTask;
+	}
+
+	private LocalDateTime getReminderDate(LocalDateTime deadLineDate) {
+		if (hasOption(KEYWORD_REMIND)) {
+			return getOption(KEYWORD_REMIND).getDateValue();
+		} else {
+			return DateTimeHelper.addMinutes(deadLineDate, -5);
+		}
 	}
 
 	@Override
