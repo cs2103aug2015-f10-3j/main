@@ -25,7 +25,6 @@ public class EditTaskCommand extends Command {
 	private TaskController taskController = TaskController.getInstance();
 	
 	private ArrayList<Task> executionResult;
-	private ArrayList<Task> taskListToReturn;
 	private int taskId;
 	private Task originalTask, editedTask;
 	private String originalTaskType, newDescription = null;
@@ -38,25 +37,16 @@ public class EditTaskCommand extends Command {
 	 * 
 	 * @param 
 	 * @return		an ArrayList of Task objects that contains the modified Task object
-	 * @throws  
+	 * @throws UpdateTaskException 
 	 * @throws NoSuchTaskException 
 	 */
 	@Override
-	public ArrayList<Task> execute() {
-		LOGGER.info("Executing EditTaskCommand\n");
+	public ArrayList<Task> execute() throws NoSuchTaskException, UpdateTaskException{
 		retrieveOptions();
-		try {
-			getTaskFromStorage(taskId);
-		} catch (Exception e) {
-			return null;
-		}
+		getTaskFromStorage(taskId);
 		determineOriginalTaskType();
 		createEditedTask();
-		try {
-			prepareExecutionResult();
-		} catch (Exception e) {
-			return null;
-		}
+		prepareExecutionResult();
 		return executionResult;
 	}
 	
@@ -64,15 +54,11 @@ public class EditTaskCommand extends Command {
 	 * This method reverse the previous execute() of the previous EditTaskCommand
 	 *  
 	 * @return		an ArrayList of Task objects that contains the modified Task object
+	 * @throws UpdateTaskException 
 	 */
-	public ArrayList<Task> undo() {
+	public ArrayList<Task> undo() throws UpdateTaskException {
 		prepareUndoTask();
-		try {
-			prepareExecutionResult();
-		}
-		catch (Throwable e) {
-			
-		}
+		prepareExecutionResult();
 		return executionResult;
 	}
 	
@@ -81,7 +67,7 @@ public class EditTaskCommand extends Command {
 	 * this EditTaskCommand
 	 */
 	private void retrieveOptions() {
-		taskListToReturn = new ArrayList<Task>();
+		executionResult = new ArrayList<Task>();
 		taskId = getOption("edit").getIntegerValue();
 		if (hasOption("name")) {
 			newDescription = getOption("name").getStringValue();
@@ -106,15 +92,11 @@ public class EditTaskCommand extends Command {
 	 */
 	private void prepareExecutionResult() throws UpdateTaskException {
 		if (validity) {
-			taskListToReturn.clear();			// Legacy
-			taskListToReturn.add(editedTask);	// Legacy
-			//result.clear();					// To be supported
-			//result.add(editedTask);			// To be supported
+			executionResult.clear();
+			executionResult.add(editedTask);
 			storeTaskToStorage(editedTask);
-			executionResult = taskListToReturn; //Legacy
-			//storeTaskToStorage(editedTask);	// To be supported
 		} else {
-			executionResult = null; //Legacy
+			executionResult = null;
 		}
 	}
 	
@@ -188,7 +170,7 @@ public class EditTaskCommand extends Command {
 			break;
 		}
 	}
-
+	
 	private void createNewFloatingTask() {
 		editedTask = new FloatingTask(
 				originalTask.getTaskId(),
@@ -217,7 +199,6 @@ public class EditTaskCommand extends Command {
 	}
 
 	/*** Setter and Getter Methods ***/
-
 	private String getEditedTaskDescription() {
 		if (newDescription != null) {
 			return newDescription;
@@ -225,7 +206,7 @@ public class EditTaskCommand extends Command {
 			return originalTask.getDescription();
 		}
 	}
-
+	
 	private LocalDateTime getEditedTaskStart() {
 		if (newStart != null) {
 			return newStart;
@@ -252,7 +233,7 @@ public class EditTaskCommand extends Command {
 	private void getTaskFromStorage(int taskId) throws NoSuchTaskException {
 		originalTask = taskController.getTask(taskId);
 		if (originalTask == null) {
-			LOGGER.log(Level.SEVERE, "Retrieve Task with taskId -> {0} failed", taskId);
+			LOGGER.log(Level.SEVERE, "Executing EditTaskCommand: Retrieve Task with taskId -> {0} failed", taskId);
 			throw new NoSuchTaskException("Task with the following Task ID does not exist!");
 		}
 		LOGGER.info("EditTaskCommand: Retrieved Task with taskId: " + taskId + "\n");

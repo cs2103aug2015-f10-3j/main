@@ -8,6 +8,8 @@ public class ClearCommand extends Command {
 	
 	@Override
 	public ArrayList<Task> execute() {
+		setChanged();
+		notifyObservers(null);
 		return null;
 	}
 
