@@ -138,7 +138,7 @@ public class ParseLogic {
 			case COMPLETE:
                 return new CompleteTaskCommand();
 			case SEARCH:
-				return null;//new SearchTaskCommand();
+				return new SearchTaskCommand();
 			case UNDO:
 				return new UndoCommand();
 			case REDO:
@@ -187,7 +187,7 @@ public class ParseLogic {
 		} else if (option.equals(OPTIONS.COMPLETE.toString())) {
 			return expectIntegerArray(commandList, NOT_OPTIONAL);
 		} else if (option.equals(OPTIONS.SEARCH.toString())) {
-			return null;
+			return expectString(commandList, NOT_OPTIONAL);
 		} else if (option.equals(OPTIONS.BY.toString())) {
 			return expectDate(commandList, NOT_OPTIONAL);
 		} else if (option.equals(OPTIONS.CLEAR.toString())) {
