@@ -62,6 +62,7 @@ public class MainPanel extends JPanel{
 				contentPane.removeAll();
 				CommandLinePanel nextPanel = new CommandLinePanel();
 				nextPanel.populateContentPane(contentPane);
+				contentPane.validate();
 			}
 		});
 		return button;

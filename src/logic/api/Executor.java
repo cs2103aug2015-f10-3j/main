@@ -13,7 +13,6 @@ import task.entity.Task;
 public class Executor extends Observable {
 	/*** Variable ***/
 	private static final Logger LOGGER = Logger.getLogger(Executor.class.getName());
-	private static Executor logicExecutor;
 	private static CommandParser commandParser;
 	private static Observer mainObserver;
 	
@@ -25,7 +24,7 @@ public class Executor extends Observable {
 	}
 	
 	public ArrayList<Task> processCommand(String userInput) {
-		return logicExecutor.parseCommand(userInput);
+		return parseCommand(userInput);
 	}
 	
 	/*** Methods 
