@@ -13,46 +13,59 @@ import task.entity.Task;
 public class Executor extends Observable {
 	/*** Variable ***/
 	private static final Logger LOGGER = Logger.getLogger(Executor.class.getName());
+	private static Executor thisInstance;
 	private static CommandParser commandParser;
-	private static Observer mainObserver;
-	
-	/*** API ***/
-	public Executor(Observer observer) {
-		LOGGER.info("Initialising Executor\n");
-		mainObserver = observer;
+	private static Observer observer;
+	private static ArrayList<Task> deliveredTaskState;
+
+	/*** Constructor ***/
+	public Executor() {
+		LOGGER.info("Initialising Executor");
 		commandParser = new CommandParser();
+		deliveredTaskState = new ArrayList<Task>();
+	}
+
+	/*** API Methods ***/
+	
+	public static Executor getInstance(Observer mainObserver) {
+		if (thisInstance == null) {
+			observer = mainObserver;
+			thisInstance = new Executor();
+		}
+		return thisInstance;
 	}
 	
 	public ArrayList<Task> processCommand(String userInput) {
-		return parseCommand(userInput);
+		return handleCommand(userInput);
 	}
-	
-	/*** Methods 
-	 * @throws InvalidCommandFormatException ***/
-	private ArrayList<Task> parseCommand(String userInput) {
+
+	private Command parseCommand(String userInput) throws InvalidCommandFormatException {
+		// Userinput should not be null after UI sends it to Executor
 		assert (userInput != null);
-		
-		try {
-			Command cmd = commandParser.parse(userInput);
-			ArrayList<Task> executionResult = executeCommand(cmd);
-			cmd.addObserver(mainObserver);
-			return executionResult;
-		}
-		catch (InvalidCommandFormatException e) {
-			notifyObservers(e.getMessage());
-			//mainCommandLinePanel.print(e.getMessage());
-			return null;
-		}
+		return commandParser.parse(userInput);
 	}
 	
-	private ArrayList<Task> executeCommand(Command cmd) {
+	private ArrayList<Task> executeCommand(Command cmd) throws Exception {
+		cmd.addObserver(observer);
+		return cmd.execute();
+	}
+	
+	// For running index || Get Task ID 
+	public int getTaskIdWithStateIndex(int stateIndex) {
+		return deliveredTaskState.get(stateIndex).getTaskId();
+	}
+	
+	/*** Helper Methods ***/
+
+	private ArrayList<Task> handleCommand(String userInput) {
 		try {
-			return cmd.execute();
-		}
-		catch (Exception e) {
+			Command cmd = parseCommand(userInput);
+			deliveredTaskState = executeCommand(cmd);
+		}	catch (Exception e) {
+			setChanged();
 			notifyObservers(e.getMessage());
-			//mainCommandLinePanel.print(e.getMessage());
 			return null;
 		}
+		return deliveredTaskState;
 	}
 }

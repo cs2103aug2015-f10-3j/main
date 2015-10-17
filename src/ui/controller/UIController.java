@@ -22,7 +22,8 @@ public class UIController {
 
 	/*** Constructor ***/
 	private UIController(){
-		executor = new Executor(observer);
+		executor = Executor.getInstance(observer);
+		executor.addObserver(observer);
 	}
 
 	/*** Methods ***/
@@ -49,13 +50,10 @@ public class UIController {
 	 * @return String array
 	 */
 	public String[] processUserInput(String input){
-		String[] output = null;
+		String[] output = new String[0];
 		ArrayList<Task> taskList = executor.processCommand(input);
 
-		if(taskList == null){
-			output = new String[OFFSET_ONE];
-			output[0] = ERROR_INCORRECT_FORMAT;
-		}else{
+		if(taskList != null){
 			output = formatOutput(taskList);
 		}
 		return output;

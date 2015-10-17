@@ -95,13 +95,15 @@ public class CommandLinePanel extends JPanel implements Observer {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				String input = inputField.getText();
-				
-				String[] output = uiController.processUserInput(input);
-				textArea.append( input + NEXT_LINE);
-				for(String s : output){
-					textArea.append( s + NEXT_LINE);
-				}
+				textArea.append(input);
 				textArea.append(NEXT_LINE);
+				String[] output = uiController.processUserInput(input);
+				if (textArea.getText().length() > 0) {
+					for(String s : output){
+						textArea.append( s + NEXT_LINE);
+					}
+					textArea.append(NEXT_LINE);
+				}
 				inputField.setText(STRING_EMPTY);
 			}
 		});
@@ -143,7 +145,6 @@ public class CommandLinePanel extends JPanel implements Observer {
 		} else {
 			String msg = (String)arg;
 			inputTextArea.append(msg);
-			inputTextArea.append(NEXT_LINE);
 			inputTextArea.append(NEXT_LINE);
 		}
 	}
