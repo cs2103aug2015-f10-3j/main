@@ -1,2 +1,100 @@
 <?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
-<task/>
+<task>
+    <item>
+        <taskId>1</taskId>
+        <description>CS2103 CE2</description>
+        <createdAt>01/09/2015 12:30</createdAt>
+        <type>DEADLINE</type>
+        <complete>true</complete>
+        <start/>
+        <end>10/09/2015 12:30</end>
+        <reminder>10/09/2015 12:25</reminder>
+    </item>
+    <item>
+        <taskId>2</taskId>
+        <description>Appointment with dentist</description>
+        <createdAt>02/09/2015 16:34</createdAt>
+        <type>TIMED</type>
+        <complete>false</complete>
+        <start>10/09/2015 14:30</start>
+        <end>10/09/2015 15:30</end>
+        <reminder>10/09/2015 15:25</reminder>
+    </item>
+    <item>
+        <taskId>3</taskId>
+        <description>Buy chicken</description>
+        <createdAt>05/09/2015 13:03</createdAt>
+        <type>FLOATING</type>
+        <complete>true</complete>
+        <start/>
+        <end/>
+    </item>
+    <item>
+        <taskId>4</taskId>
+        <description>Submit CS2106 Lab 1</description>
+        <createdAt>06/09/2015 22:16</createdAt>
+        <type>DEADLINE</type>
+        <complete>false</complete>
+        <start/>
+        <end>10/09/2015 23:59</end>
+        <reminder>10/09/2015 23:54</reminder>
+    </item>
+    <item>
+        <taskId>5</taskId>
+        <description>Go out gai gai</description>
+        <createdAt>07/09/2015 23:00</createdAt>
+        <type>TIMED</type>
+        <complete>true</complete>
+        <start>17/09/2015 13:00</start>
+        <end>17/09/2015 17:00</end>
+        <reminder>17/09/2015 16:55</reminder>
+    </item>
+    <item>
+        <taskId>6</taskId>
+        <description>Eat more chicken</description>
+        <createdAt>07/09/2015 23:01</createdAt>
+        <type>FLOATING</type>
+        <complete>false</complete>
+        <start/>
+        <end/>
+    </item>
+    <item>
+        <taskId>7</taskId>
+        <description>Pay money for steamboat</description>
+        <createdAt>08/09/2015 08:55</createdAt>
+        <type>DEADLINE</type>
+        <complete>false</complete>
+        <start/>
+        <end>10/09/2015 23:59</end>
+        <reminder>10/09/2015 23:54</reminder>
+    </item>
+    <item>
+        <taskId>8</taskId>
+        <description>Walk the neighbor's dog</description>
+        <createdAt>08/09/2015 10:20</createdAt>
+        <type>TIMED</type>
+        <complete>true</complete>
+        <start>13/09/2015 17:00</start>
+        <end>13/09/2015 18:00</end>
+        <reminder>13/09/2015 17:55</reminder>
+    </item>
+    <item>
+        <taskId>9</taskId>
+        <description>Stock up locker</description>
+        <createdAt>10/09/2015 11:45</createdAt>
+        <type>FLOATING</type>
+        <complete>true</complete>
+        <start/>
+        <end/>
+    </item>
+    <item>
+        <taskId>10</taskId>
+        <description>Sign up for chicken eating competition</description>
+        <createdAt>14/09/2015 21:10</createdAt>
+        <type>DEADLINE</type>
+        <complete>false</complete>
+        <start/>
+        <end>20/09/2015 23:59</end>
+        <reminder>20/09/2015 23:54</reminder>
+    </item>
+</task>
