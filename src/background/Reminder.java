@@ -46,23 +46,26 @@ public class Reminder extends Observable {
                     LocalDateTime now = LocalDateTime.now();
                     Duration duration;
                     for (Task task : taskList) {
-                        switch (task.getType()) {
-                            case TIMED:
-                                reminder = ((TimedTask) task).getReminder();
-                                duration = Duration.between(reminder, now);
-                                if (duration.getSeconds() < 60) {
-                                    dueTaskList.add(task);
-                                }
-                                break;
-                            case DEADLINE:
-                                reminder = ((TimedTask) task).getReminder();
-                                duration = Duration.between(reminder, now);
-                                if (duration.getSeconds() < 61) {
-                                    dueTaskList.add(task);
-                                }
-                                break;
-                            default:
-                                break;
+                        // Select tasks that are not completed only
+                        if (!task.isComplete()) {
+                            switch (task.getType()) {
+                                case TIMED:
+                                    reminder = ((TimedTask) task).getReminder();
+                                    duration = Duration.between(reminder, now);
+                                    if (duration.getSeconds() < 60) {
+                                        dueTaskList.add(task);
+                                    }
+                                    break;
+                                case DEADLINE:
+                                    reminder = ((TimedTask) task).getReminder();
+                                    duration = Duration.between(reminder, now);
+                                    if (duration.getSeconds() < 61) {
+                                        dueTaskList.add(task);
+                                    }
+                                    break;
+                                default:
+                                    break;
+                            }
                         }
                     }
                     
