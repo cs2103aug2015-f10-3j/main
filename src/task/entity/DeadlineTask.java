@@ -8,20 +8,23 @@ public class DeadlineTask extends Task {
 	/*** Variables ***/
 	private static final String TASK_TYPE = "deadline";
 	private LocalDateTime end;
+	private LocalDateTime reminder;
 	
 	/*** Constructors ***/
 	public DeadlineTask() {
 		super();
 	}
 	
-	public DeadlineTask(String description, LocalDateTime end) {
+	public DeadlineTask(String description, LocalDateTime end, LocalDateTime reminder) {
 		super(description, TASK_TYPE);
 		this.end = end;
+		this.reminder = reminder;
 	}
 	
-	public DeadlineTask(int taskId, String description, LocalDateTime createdAt, LocalDateTime end, boolean complete) {
+	public DeadlineTask(int taskId, String description, LocalDateTime createdAt, LocalDateTime end, LocalDateTime reminder, boolean complete) {
         super(taskId, description, createdAt, complete, TASK_TYPE);
         this.end = end;
+        this.reminder = reminder;
     }
 	
 	/*** Assessors ***/
@@ -31,6 +34,12 @@ public class DeadlineTask extends Task {
 	public void setEnd(LocalDateTime end) {
 		this.end = end;
 	}
+    public LocalDateTime getReminder() {
+        return reminder;
+    }
+    public void setReminder(LocalDateTime reminder) {
+        this.reminder = reminder;
+    }
 	
 	/*** Methods ***/
 	public boolean completeTask(int taskId) {
