@@ -14,16 +14,20 @@ public class DeleteTaskCommand extends Command {
     private static final String KEYWORD_DELETE = "delete";
     private static final String KEYWORD_BETWEEN = "between";
     private static final String KEYWORD_AND = "and";
+    private static ArrayList<Task> deletedTaskList;
     
     private TaskController taskController;
     
+    /*** Methods ***/
 	@Override
 	public ArrayList<Task> execute() {
 	    taskController = TaskController.getInstance();
 	    if (hasOption(KEYWORD_DELETE) && getOption(KEYWORD_DELETE) != null) {
-	        return deleteByTaskId();
+            deletedTaskList = deleteByTaskId();
+	        return deletedTaskList;
 	    } else if (hasOption(KEYWORD_BETWEEN) && hasOption(KEYWORD_AND)) {
-	        return deleteByPeriod();
+	        deletedTaskList = deleteByPeriod();
+            return deletedTaskList;
 	    } else {
 	        return null;
 	    }
@@ -113,8 +117,12 @@ public class DeleteTaskCommand extends Command {
 
 	@Override
 	public ArrayList<Task> undo() {
-		// TODO Auto-generated method stub
-		return null;
+		if (deletedTaskList != null) {
+		    for (Task task : deletedTaskList) {
+		        TaskController.getInstance().addTask(task);
+		    }
+		}
+		return deletedTaskList;
 	}
 
 }
