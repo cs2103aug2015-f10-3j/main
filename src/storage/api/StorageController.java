@@ -123,6 +123,8 @@ public class StorageController {
                     LocalDateTime start_localdatetime;
                     String end;
                     LocalDateTime end_localdatetime;
+                    String reminder;
+                    LocalDateTime reminder_localdatetime;
                     switch (taskType) {
                         case FLOATING:
                             task = new FloatingTask(taskId_int, description, createdAt_localdatetime, complete_boolean);
@@ -135,15 +137,23 @@ public class StorageController {
                             // end
                             end = eElement.getElementsByTagName("end").item(0).getTextContent();
                             end_localdatetime = DateTimeHelper.parseStringToDateTime(end);
-                           
-                            task = new TimedTask(taskId_int, description, createdAt_localdatetime, start_localdatetime, end_localdatetime, complete_boolean);
+                            
+                            // reminder
+                            reminder = eElement.getElementsByTagName("reminder").item(0).getTextContent();
+                            reminder_localdatetime = DateTimeHelper.parseStringToDateTime(reminder);
+                            
+                            task = new TimedTask(taskId_int, description, createdAt_localdatetime, start_localdatetime, end_localdatetime, reminder_localdatetime, complete_boolean);
                             break;
                         case DEADLINE:
                             // end
                             end = eElement.getElementsByTagName("end").item(0).getTextContent();
                             end_localdatetime = DateTimeHelper.parseStringToDateTime(end);
-                           
-                            task = new DeadlineTask(taskId_int, description, createdAt_localdatetime, end_localdatetime, complete_boolean);
+                            
+                            // reminder
+                            reminder = eElement.getElementsByTagName("reminder").item(0).getTextContent();
+                            reminder_localdatetime = DateTimeHelper.parseStringToDateTime(reminder);
+                            
+                            task = new DeadlineTask(taskId_int, description, createdAt_localdatetime, end_localdatetime, reminder_localdatetime, complete_boolean);
                             break;
                         default:
                             break;
@@ -216,6 +226,7 @@ public class StorageController {
                 
                 Element start;
                 Element end;
+                Element reminder;
                 switch (task.getType()) {
                     case FLOATING:
                         // start
@@ -240,6 +251,13 @@ public class StorageController {
                         formattedDateTime = DateTimeHelper.parseDateTimeToString(((TimedTask) task).getEnd());
                         end.appendChild(doc.createTextNode(formattedDateTime));
                         item.appendChild(end);
+                        
+                        // reminder
+                        reminder = doc.createElement("reminder");
+                        formattedDateTime = DateTimeHelper.parseDateTimeToString(((TimedTask) task).getReminder());
+                        reminder.appendChild(doc.createTextNode(formattedDateTime));
+                        item.appendChild(reminder);
+                        
                         break;
                     case DEADLINE:
                         // start
@@ -252,6 +270,13 @@ public class StorageController {
                         formattedDateTime = DateTimeHelper.parseDateTimeToString(((DeadlineTask) task).getEnd());
                         end.appendChild(doc.createTextNode(formattedDateTime));
                         item.appendChild(end);
+                        
+                        // reminder
+                        reminder = doc.createElement("reminder");
+                        formattedDateTime = DateTimeHelper.parseDateTimeToString(((DeadlineTask) task).getReminder());
+                        reminder.appendChild(doc.createTextNode(formattedDateTime));
+                        item.appendChild(reminder);
+                        
                         break;
                     default:
                         break;
