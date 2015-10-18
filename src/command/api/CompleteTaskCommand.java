@@ -8,14 +8,17 @@ public class CompleteTaskCommand extends Command {
 
     /*** Variables ***/
     private static final String KEYWORD_COMPLETE = "complete";
+    private static ArrayList<Task> completedTaskList;
     
     private TaskController taskController;
     
+    /*** Methods ***/
 	@Override
 	public ArrayList<Task> execute() {
 	    taskController = TaskController.getInstance();
 	    if (hasOption(KEYWORD_COMPLETE)) {
-	        return completeTask();
+	        completedTaskList = completeTask();
+	        return completedTaskList;
 	    } else {
 	        return null;
 	    }
@@ -54,7 +57,12 @@ public class CompleteTaskCommand extends Command {
 
 	@Override
 	public ArrayList<Task> undo() {
-		// TODO Auto-generated method stub
-		return null;
+	    if (completedTaskList != null) {
+            for (Task task : completedTaskList) {
+                task.setComplete(!task.isComplete());
+                TaskController.getInstance().updateTask(task);
+            }
+        }
+        return completedTaskList;
 	}
 }
