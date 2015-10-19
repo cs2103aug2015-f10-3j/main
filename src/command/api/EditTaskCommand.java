@@ -28,7 +28,7 @@ public class EditTaskCommand extends Command {
 	private int taskId;
 	private Task originalTask, editedTask;
 	private String originalTaskType, newDescription = null;
-	private LocalDateTime newStart, newEnd = null;
+	private LocalDateTime newStart, newEnd, newReminder = null;
 	private boolean validity = true;
 
 	/*** Methods ***/
@@ -77,6 +77,9 @@ public class EditTaskCommand extends Command {
 		}
 		if (hasOption("end")) {
 			newEnd = getOption("end").getDateValue();
+		}
+		if (hasOption("remind")) {
+			newReminder = getOption("remind").getDateValue();
 		}
 	}
 	
