@@ -189,7 +189,7 @@ public class EditTaskCommand extends Command {
 				getEditedTaskDescription(),
 				originalTask.getCreatedAt(),
 				getEditedTaskEnd(),
-				newReminder,
+				getEditedTaskReminder(),
 				originalTask.isComplete());
 	}
 
@@ -200,7 +200,7 @@ public class EditTaskCommand extends Command {
 				originalTask.getCreatedAt(),
 				getEditedTaskStart(),
 				getEditedTaskEnd(),
-				newReminder,
+				getEditedTaskReminder(),
 				originalTask.isComplete());
 	}
 
@@ -236,6 +236,20 @@ public class EditTaskCommand extends Command {
 		return newEditedTaskEnd;
 	}
 
+	private LocalDateTime getEditedTaskReminder() {
+		LocalDateTime newEditedTaskReminder = null;
+		if (newReminder != null) {
+			return newReminder;
+		} else if (originalTaskType.equals(TASK_TYPE_DEADLINE)) {
+			DeadlineTask castedOriginalTask = (DeadlineTask) originalTask;
+			newEditedTaskReminder = castedOriginalTask.getReminder();
+		} else if (originalTaskType.equals(TASK_TYPE_TIMED)) {
+			TimedTask castedOriginalTask = (TimedTask) originalTask;
+			newEditedTaskReminder = castedOriginalTask.getReminder();
+		}
+		return newEditedTaskReminder;
+	}
+	
 	private void getTaskFromStorage(int taskId) throws NoSuchTaskException {
 		originalTask = taskController.getTask(taskId);
 		if (originalTask == null) {
