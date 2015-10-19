@@ -24,6 +24,7 @@ public class SearchTaskCommand extends Command{
 	
 	@Override
 	public ArrayList<Task> execute() throws Exception {
+		retrieveOptions();
 		prepareExecutionResult();
 		return executionResult;
 	}
@@ -52,7 +53,7 @@ public class SearchTaskCommand extends Command{
 		assert allTasks != null: "Retrieving all tasks";
 		
 		for (Task task: allTasks) {
-			if (task.getDescription().contains(searchString)) {
+			if (task.getDescription().toLowerCase().contains(searchString.toLowerCase())) {
 				matchingTasks.add(task);
 			}
 		}
