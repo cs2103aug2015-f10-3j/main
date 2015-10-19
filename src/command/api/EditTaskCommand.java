@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import background.Reminder;
 import common.exception.NoSuchTaskException;
 import common.exception.UpdateTaskException;
 import task.api.*;
@@ -188,6 +189,7 @@ public class EditTaskCommand extends Command {
 				getEditedTaskDescription(),
 				originalTask.getCreatedAt(),
 				getEditedTaskEnd(),
+				newReminder,
 				originalTask.isComplete());
 	}
 
@@ -198,6 +200,7 @@ public class EditTaskCommand extends Command {
 				originalTask.getCreatedAt(),
 				getEditedTaskStart(),
 				getEditedTaskEnd(),
+				newReminder,
 				originalTask.isComplete());
 	}
 
