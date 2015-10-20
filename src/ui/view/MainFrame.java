@@ -83,14 +83,17 @@ public class MainFrame {
 			public void windowIconified(WindowEvent e) {
 				minimizeToTray();
 			}
-			
+
 			public void windowClosing(WindowEvent e) {
 				minimizeToTray();
 			}
 		});
+		removeDefaultButtons(frame);
 		panel = new MainPanel();
 		panel.populateContentPane(frame.getContentPane());
-
+		UIManager.put("InternalFrameTitlePane.closeButtonToolTip", "Close PaddleTask");
+		UIManager.put("InternalFrameTitlePane.minimizeButtonText", "Minimize");
+		UIManager.put("InternalFrameTitlePane.maximizeButtonText", "Maximize");
 		//Display the window.
 		Dimension size = frame.getToolkit().getScreenSize();
 		size.setSize(size.width / 2, size.height / 2);
@@ -99,6 +102,30 @@ public class MainFrame {
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
 
+	}
+
+	/**
+	 * This method removes the default buttons of minimize, maximise and close
+	 * on the frame. 
+	 * 
+	 *  @param  Component 
+	 *  			JFrame frame
+	 */
+	
+	public static void removeDefaultButtons(Component com){
+		if(com instanceof JButton){
+			String name = ((JButton) com).getAccessibleContext().getAccessibleName();
+			if(name.equals("Maximize")|| name.equals("Iconify")||
+					name.equals("Close")){
+				com.getParent().remove(com);
+			}
+		}
+		if (com instanceof Container){
+			Component[] comps = ((Container)com).getComponents();
+			for(int x = 0, y = comps.length; x < y; x++){
+				removeDefaultButtons(comps[x]);
+			}
+		}
 	}
 
 	private static void minimizeToTray() {
@@ -142,7 +169,7 @@ public class MainFrame {
 
 	private static void implementNativeKeyHook() throws Exception {
 		GlobalScreen.registerNativeHook();
-		
+
 		Logger logger = Logger.getLogger(GlobalScreen.class.getPackage().getName());
 		logger.setLevel(Level.WARNING);
 

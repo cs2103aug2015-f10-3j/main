@@ -2,6 +2,7 @@ package ui.view;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -28,12 +29,12 @@ public class MainPanel extends JPanel{
 		JPanel panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
 		panel.setBorder(BorderFactory.createLineBorder(Color.black));
-		
+		panel.setBackground(Color.white);
 		JButton commandLineButton = prepareCliButton();
 		JButton graphicButton = prepareGraphicButton();
 		Box box = prepareBoxComponent(commandLineButton, graphicButton);
 		
-		panel.add(box, BorderLayout.CENTER);
+		panel.add(box, BorderLayout.PAGE_END );
 		contentPane.add(panel, BorderLayout.CENTER);
 	}
 	
@@ -41,6 +42,8 @@ public class MainPanel extends JPanel{
 		Box box = Box.createVerticalBox();
 		box.add(first);
 		box.add(second);
+		box.setAlignmentX(Component.CENTER_ALIGNMENT);
+		//box.setLayout(BorderLayout.CENTER);
 		return box;
 	}
 	
@@ -53,7 +56,7 @@ public class MainPanel extends JPanel{
 			e.printStackTrace();
 		}
 		JButton button = new JButton(new ImageIcon(buttonIcon));
-		//button.setPreferredSize(new Dimension(buttonIcon.getHeight(), buttonIcon.getWidth()));
+		button.setPreferredSize(new Dimension(buttonIcon.getHeight(), buttonIcon.getWidth()));
 		button.setBorder(BorderFactory.createEmptyBorder());
 		button.addActionListener(new ActionListener() {
 

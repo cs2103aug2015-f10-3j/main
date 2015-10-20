@@ -191,6 +191,7 @@ public class ViewTaskCommand extends Command {
 		case "today":
 			beforeThisTime = beforeThisTime.withHour(OFFSET_ZERO).withMinute(OFFSET_ZERO).withSecond(OFFSET_ZERO)
 				.withNano(OFFSET_ZERO).plusDays(OFFSET_ONE);
+			break;
 		default:
 			assert false : period;		//This switch should not have any default;
 		}
