@@ -9,7 +9,7 @@ import task.entity.Task;
 public class UIController {
 
 	/*** Variables ***/
-	private static final String ERROR_INCORRECT_FORMAT = "Invalid Format";
+	//private static final String ERROR_INCORRECT_FORMAT = "Invalid Format";
 	@SuppressWarnings("unused")
 	private static final String ERROR_BAD_COMMAND = "Command fail to execute";
 	private static final String FORMAT = "| %1$-5s | %2$-10s | %3$-60s | %4$-11s | %5$-5s | %6$-11s | %7$-5s |";
@@ -75,7 +75,7 @@ public class UIController {
 			Task selectedTask = taskList.get(i);
 			String[] taskDetails = selectedTask.toDetailsArray();
 			int detailsPointer = 0;
-			output[i+OFFSET_ONE] = String.format(FORMAT, taskDetails[detailsPointer],taskDetails[++detailsPointer], 
+			output[i+OFFSET_ONE] = String.format(FORMAT, i+1,taskDetails[++detailsPointer], 
 								   taskDetails[++detailsPointer], taskDetails[++detailsPointer], taskDetails[++detailsPointer],
 								   taskDetails[++detailsPointer],taskDetails[++detailsPointer]);
 		}
