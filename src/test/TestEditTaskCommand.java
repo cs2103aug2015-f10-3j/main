@@ -61,9 +61,9 @@ public class TestEditTaskCommand {
 		Task task;
 		task = new FloatingTask(1, "Dabian", DateTimeHelper.now(), false);
 		testTaskList.add(task);
-		task = new DeadlineTask(2, "CS2103 CE2", DateTimeHelper.now(), LocalDateTime.parse("2015-01-02 23:59", formatter), false);
+		task = new DeadlineTask(2, "CS2103 CE2", DateTimeHelper.now(), LocalDateTime.parse("2015-01-02 23:59", formatter), DateTimeHelper.now(),false);
 		testTaskList.add(task);
-		task = new TimedTask(3, "Appointment with dentist", DateTimeHelper.now(), LocalDateTime.parse("2015-01-03 23:59", formatter), LocalDateTime.parse("2015-09-10 15:30", formatter), false);
+		task = new TimedTask(3, "Appointment with dentist", DateTimeHelper.now(), LocalDateTime.parse("2015-01-03 23:59", formatter), LocalDateTime.parse("2015-09-10 15:30", formatter), DateTimeHelper.now(), false);
 		testTaskList.add(task);
 		Document doc = storageControllerInstance.parseTask(testTaskList);
 		storageControllerInstance.writeXml(doc);
