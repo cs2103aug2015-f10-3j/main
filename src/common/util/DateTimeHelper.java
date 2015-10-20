@@ -5,6 +5,8 @@ import java.time.format.DateTimeFormatter;
 
 public class DateTimeHelper {
 	private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+	private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+	private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
 
 	public static LocalDateTime parseStringToDateTime(String inputString) {
 		try {
@@ -24,7 +26,7 @@ public class DateTimeHelper {
 
 	public static String getDate(LocalDateTime inputDateTime) {
 		try {
-			return inputDateTime.toLocalDate().format(DATE_TIME_FORMATTER);
+			return inputDateTime.toLocalDate().format(DATE_FORMATTER);
 		} catch (DateTimeException e) {
 			return null;
 		}
@@ -32,7 +34,7 @@ public class DateTimeHelper {
 
 	public static String getTime(LocalDateTime inputDateTime) {
 		try {
-			return inputDateTime.toLocalTime().format(DATE_TIME_FORMATTER);
+			return inputDateTime.toLocalTime().format(TIME_FORMATTER);
 		} catch (DateTimeException e) {
 			return null;
 		}
