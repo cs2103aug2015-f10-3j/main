@@ -1,16 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
 <task>
     <item>
-        <taskId>1</taskId>
-        <description>CS2103 CE2</description>
-        <createdAt>01/09/2015 12:30</createdAt>
-        <type>DEADLINE</type>
-        <complete>true</complete>
-        <start/>
-        <end>10/09/2015 12:30</end>
-        <reminder>10/09/2015 12:25</reminder>
-    </item>
-    <item>
         <taskId>2</taskId>
         <description>Appointment with dentist</description>
         <createdAt>02/09/2015 16:34</createdAt>
@@ -115,5 +105,15 @@
         <start/>
         <end>21/10/2015 00:00</end>
         <reminder>20/10/2015 19:28</reminder>
+    </item>
+    <item>
+        <taskId>1</taskId>
+        <description>CS2103 CE2</description>
+        <createdAt>01/09/2015 12:30</createdAt>
+        <type>DEADLINE</type>
+        <complete>true</complete>
+        <start/>
+        <end>10/09/2015 12:30</end>
+        <reminder>10/09/2015 12:25</reminder>
     </item>
 </task>

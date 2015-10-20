@@ -23,11 +23,19 @@ public class DateTimeHelper {
 	}
 
 	public static String getDate(LocalDateTime inputDateTime) {
-		return inputDateTime.toLocalDate().toString();
+		try {
+			return inputDateTime.toLocalDate().format(DATE_TIME_FORMATTER);
+		} catch (DateTimeException e) {
+			return null;
+		}
 	}
 
 	public static String getTime(LocalDateTime inputDateTime) {
-		return inputDateTime.toLocalTime().toString();
+		try {
+			return inputDateTime.toLocalTime().format(DATE_TIME_FORMATTER);
+		} catch (DateTimeException e) {
+			return null;
+		}
 	}
 
 	public static LocalDateTime now() {
