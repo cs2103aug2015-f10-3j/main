@@ -1,14 +1,18 @@
 package ui.view;
 import java.awt.*;
+import java.awt.Dialog.ModalityType;
 import java.awt.event.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 
 import javax.swing.*;
 import javax.swing.text.DefaultCaret;
 
+import background.Reminder;
 import common.util.DateTimeHelper;
+import task.entity.Task;
 import ui.controller.UIController;
 
 @SuppressWarnings("serial")
@@ -24,8 +28,10 @@ public class CommandLinePanel extends JPanel implements Observer {
 	protected static int NUM_COMPONENTS = 3;
 	protected UIController uiController = null;
 	private static Font font = new Font("Courier",Font.PLAIN, 12);
-	private JTextField inputField;
-	private JTextArea inputTextArea;
+	private JTextField inputField = null;
+	private JTextArea textArea = null;
+	public static JDialog reminderDialog = null;
+	private JPanel panel = null;
 
 	//protected static boolean restrictSize = true;
 	//protected static boolean sizeIsRandom = false;
@@ -45,14 +51,13 @@ public class CommandLinePanel extends JPanel implements Observer {
 	 * 
 	 */
 	public void populateContentPane(Container contentPane) {
-		JPanel panel = new JPanel();
+		panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
 		panel.setBorder(BorderFactory.createLineBorder(Color.black));
 
-		JTextArea textArea = prepareJTextArea();
+		textArea = prepareJTextArea();
 		JTextField inputField = prepareTextField(textArea);
 		JScrollPane areaScrollPane = prepareScrollPane(textArea);
-		areaScrollPane.setAutoscrolls(true);
 		Box box = prepareBoxComponent(inputField, areaScrollPane);
 
 		panel.add(box, BorderLayout.PAGE_END);
@@ -73,8 +78,8 @@ public class CommandLinePanel extends JPanel implements Observer {
 		outputs[counter++] = WELCOME_MSG_1;
 		outputs[counter++] = String.format(WELCOME_MSG_2, today);
 		outputs[counter++] = WELCOME_MSG_3;
-		appendTexts(inputTextArea, outputs);
-		appendTexts(inputTextArea, FIRST_COMMAND);
+		appendTexts(textArea, outputs);
+		appendTexts(textArea, FIRST_COMMAND);
 	}
 
 	/**
@@ -107,6 +112,7 @@ public class CommandLinePanel extends JPanel implements Observer {
 		JScrollPane areaScrollPane = new JScrollPane(textArea);
 		areaScrollPane.setVerticalScrollBarPolicy(
 				JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+		areaScrollPane.setAutoscrolls(true);
 		return areaScrollPane;
 	}
 
@@ -178,7 +184,7 @@ public class CommandLinePanel extends JPanel implements Observer {
 	 * @return JTextArea for display
 	 */
 	private JTextArea prepareJTextArea() {
-		inputTextArea = new JTextArea();
+		JTextArea inputTextArea = new JTextArea();
 		inputTextArea.setFont(font);
 		inputTextArea.setLineWrap(true);
 		inputTextArea.setEditable(false);
@@ -204,17 +210,39 @@ public class CommandLinePanel extends JPanel implements Observer {
 		return inputField.requestFocusInWindow();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void update(Observable o, Object arg) {
 		if (arg == null) {
-			inputTextArea.setText(null);
+			textArea.setText(null);
+		} else if(o instanceof Reminder){
+			createReminder((ArrayList<Task>)arg);
 		} else {
 			String msg = (String)arg;
-			inputTextArea.append(msg);
-			inputTextArea.append(NEXT_LINE);
+			textArea.append(msg);
+			textArea.append(NEXT_LINE);
 		}
 	}
-
+	
+	public void createReminder(ArrayList<Task> taskList){
+		System.out.println("Reminder alert");
+        if (reminderDialog == null) {
+            Window topWindow = SwingUtilities.getWindowAncestor(panel);
+            reminderDialog = new JDialog(topWindow, "Modal Dialog", ModalityType.APPLICATION_MODAL);
+            reminderDialog.getContentPane().add(new ReminderPanel(taskList, reminderDialog).getMainPanel());
+            reminderDialog.pack();
+            reminderDialog.setLocationRelativeTo(topWindow);
+            reminderDialog.setVisible(true);
+        } else {
+            reminderDialog.getContentPane().add(new ReminderPanel(taskList, reminderDialog).getMainPanel());
+            reminderDialog.pack();
+            reminderDialog.setVisible(true);
+        }
+	}
+	
+	public static void setDialogNull(){
+		reminderDialog = null;
+	}
 
 
 }
