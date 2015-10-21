@@ -3,6 +3,7 @@ package ui.controller;
 import java.util.ArrayList;
 import java.util.Observer;
 
+import background.Reminder;
 import logic.api.Executor;
 import task.entity.Task;
 
@@ -20,11 +21,14 @@ public class UIController {
 	private static UIController instance = null;
 	private static Observer observer;
 	private static Executor executor;
+	private static Reminder reminder;
 
 	/*** Constructor ***/
 	private UIController(){
 		executor = Executor.getInstance(observer);
 		executor.addObserver(observer);
+		reminder = Reminder.getInstance(observer);
+		reminder.addObserver(observer);
 	}
 
 	/*** Methods ***/
