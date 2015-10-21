@@ -11,6 +11,7 @@ import javax.swing.*;
 import javax.swing.text.DefaultCaret;
 
 import background.Reminder;
+import command.api.ClearCommand;
 import common.util.DateTimeHelper;
 import task.entity.Task;
 import ui.controller.UIController;
@@ -213,7 +214,7 @@ public class CommandLinePanel extends JPanel implements Observer {
 	@SuppressWarnings("unchecked")
 	@Override
 	public void update(Observable o, Object arg) {
-		if (arg == null) {
+		if (o instanceof ClearCommand) {
 			textArea.setText(null);
 		} else if(o instanceof Reminder){
 			createReminder((ArrayList<Task>)arg);
