@@ -40,9 +40,8 @@ public class SearchTaskCommand extends Command{
 	public void retrieveOptions() {
 		if (hasOption("search")) {
 			int numSearchString = getOption("search").getValuesCount();
-			while (numSearchString > 0) {
-				searchSequences.add(getOption("search").getStringValue());
-				numSearchString--;
+			for (int i=0; i<numSearchString; i++) {
+				searchSequences.add((getOption("search").getStringValue(i)));
 			}
 		}
 	}
