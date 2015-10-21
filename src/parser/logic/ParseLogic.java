@@ -192,7 +192,7 @@ public class ParseLogic {
 		} else if (option.equals(OPTIONS.COMPLETE.toString())) {
 			return expectIntegerArray(commandList, NOT_OPTIONAL);
 		} else if (option.equals(OPTIONS.SEARCH.toString())) {
-			return expectString(commandList, NOT_OPTIONAL);
+			return expectStringArray(commandList, NOT_OPTIONAL);
 		} else if (option.equals(OPTIONS.BY.toString())) {
 			return expectDate(commandList, NOT_OPTIONAL);
 		} else if (option.equals(OPTIONS.CLEAR.toString())) {
