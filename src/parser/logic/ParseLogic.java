@@ -198,7 +198,7 @@ public class ParseLogic {
 		} else if (option.equals(OPTIONS.CLEAR.toString())) {
 			return null;
 		} else if (option.equals(OPTIONS.HELP.toString())) {
-			return expectStringArray(commandList, OPTIONAL);
+			return expectString(commandList, OPTIONAL);
 		} else if (option.equals(OPTIONS.UNDO.toString())) {
 			return null;
 		} else if (option.equals(OPTIONS.REDO.toString())) {
@@ -328,7 +328,7 @@ public class ParseLogic {
 		while (!commandList.isEmpty() && !isOption(commandList.get(0))) {
 			LOGGER.fine("Continue expecting a list of integers");
 			LOGGER.warning("May cause NumberFormatException when string is not an integer");
-			commandOption.addValue(expectedString);
+			commandOption.addValue(commandList.remove(0));
 		}
 		return commandOption;
 	}
