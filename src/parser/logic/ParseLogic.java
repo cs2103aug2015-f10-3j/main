@@ -414,6 +414,7 @@ public class ParseLogic {
 		switch (commandType) {
 			case EDIT:
 			case DELETE:
+			case COMPLETE:
 				return true;
 			default:
 				return false;
