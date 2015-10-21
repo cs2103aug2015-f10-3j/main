@@ -44,7 +44,7 @@ public class Executor extends Observable {
 		assert (userInput != null);
 		Command cmd;
 		if (commandParser.isStatefulCommand(userInput)) {
-			cmd = commandParser.parse(userInput, deliveredTaskState);
+			cmd = commandParser.parse(userInput, getStateTaskId());
 		} else { 
 			cmd = commandParser.parse(userInput);
 		}
@@ -74,5 +74,14 @@ public class Executor extends Observable {
 			return null;
 		}
 		return deliveredTaskState;
+	}
+	
+	private int[] getStateTaskId() {
+		int numId = deliveredTaskState.size();
+		int[] stateIndexes = new int[numId];
+		for (int i=0; i<numId; i++) {
+			stateIndexes[i] = deliveredTaskState.get(i).getTaskId();
+		}
+		return stateIndexes;
 	}
 }
