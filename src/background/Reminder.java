@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 
+import task.entity.DeadlineTask;
 import task.entity.Task;
 import task.entity.TimedTask;
 
@@ -22,7 +23,7 @@ public class Reminder extends Observable {
 		createRunnable();
 		thread = new Thread(r);
 		thread.start();
-		System.out.println("Reminder Thread exited...\n");
+		System.out.println("Reminder Thread started...\n");
 	}
 
 	public static Reminder getInstance(Observer reminderObserver) {
@@ -58,7 +59,7 @@ public class Reminder extends Observable {
 									}
 									break;
 								case DEADLINE:
-									reminder = ((TimedTask) task).getReminder();
+									reminder = ((DeadlineTask) task).getReminder();
 									duration = Duration.between(reminder, now);
 									if ((reminder.isAfter(now)) && (duration.getSeconds() < 61)) {
 										dueTaskList.add(task);
@@ -70,6 +71,8 @@ public class Reminder extends Observable {
 							}
 						}
 					}
+					
+					//System.out.println("dueTaskList.size(): " + dueTaskList.size());
 
 					// Notify observers
 					if (dueTaskList.size() > 0) {
@@ -79,12 +82,12 @@ public class Reminder extends Observable {
 
 					// Sleep for 1 minute
 					try {
+					    //System.out.println("Go to sleep");
 						Thread.sleep(60000);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
 				}
-
 			}
 		};
 	}
