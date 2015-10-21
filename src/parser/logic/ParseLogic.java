@@ -430,4 +430,24 @@ public class ParseLogic {
 				return false;
 		}
 	}
+	
+	public String replaceRunningIndex(String userCommand, int[] stateArray) throws Exception {
+		String[] commandIntegers = extractIntegers(userCommand);
+		for (int i = 0; i < commandIntegers.length; i++) {
+			int taskID = Integer.parseInt(commandIntegers[i]);
+			if (taskID <= 0) {
+				String message = String.format("Failed to parse user input: %1$s", userCommand);
+				LOGGER.log(Level.SEVERE, message, "Invalid ID provided");
+				throw new InvalidCommandFormatException("User input supplied was in an invalid format");
+			}
+			String oldID = String.format("\\s+%1$d(\\s+|$)", taskID);
+			String newID = String.format(" %1$d ", stateArray[taskID - 1]);
+			userCommand = userCommand.replaceAll(oldID, newID);
+		}
+		return userCommand;
+	}
+	
+	private String[] extractIntegers(String s1) {
+		return s1.replaceAll("[^0-9]", " ").trim().split(" ");
+	}
 }
