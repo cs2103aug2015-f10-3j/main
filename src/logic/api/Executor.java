@@ -25,8 +25,8 @@ public class Executor extends Observable {
 		deliveredTaskState = new ArrayList<Task>();
 	}
 
-	/*** API Methods ***/
-	
+	/*** Methods ***/
+
 	public static Executor getInstance(Observer mainObserver) {
 		if (thisInstance == null) {
 			observer = mainObserver;
@@ -34,7 +34,7 @@ public class Executor extends Observable {
 		}
 		return thisInstance;
 	}
-	
+
 	public ArrayList<Task> processCommand(String userInput) {
 		return handleCommand(userInput);
 	}
@@ -42,25 +42,32 @@ public class Executor extends Observable {
 	private Command parseCommand(String userInput) throws InvalidCommandFormatException {
 		// Userinput should not be null after UI sends it to Executor
 		assert (userInput != null);
-		return commandParser.parse(userInput);
+		Command cmd;
+		if (commandParser.isStatefulCommand(userInput)) {
+			cmd = commandParser.parse(userInput, deliveredTaskState);
+		} else { 
+			cmd = commandParser.parse(userInput);
+		}
+		
+		return cmd;
 	}
-	
-	private ArrayList<Task> executeCommand(Command cmd) throws Exception {
+
+	private ArrayList<Task> executeCommand(Command cmd, String userInput) throws Exception {
 		cmd.addObserver(observer);
-		return cmd.execute();
+		ArrayList<Task> executionResult = new ArrayList<Task>();
+		if (commandParser.isSaveStateCommand(userInput)) {
+			executionResult = cmd.execute();
+			deliveredTaskState = executionResult;
+		} else {
+			executionResult = cmd.execute();
+		}
+		return executionResult;
 	}
-	
-	// For running index || Get Task ID 
-	public int getTaskIdWithStateIndex(int stateIndex) {
-		return deliveredTaskState.get(stateIndex).getTaskId();
-	}
-	
-	/*** Helper Methods ***/
 
 	private ArrayList<Task> handleCommand(String userInput) {
 		try {
 			Command cmd = parseCommand(userInput);
-			deliveredTaskState = executeCommand(cmd);
+			deliveredTaskState = executeCommand(cmd,userInput);
 		}	catch (Exception e) {
 			setChanged();
 			notifyObservers(e.getMessage());
