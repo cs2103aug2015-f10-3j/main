@@ -22,6 +22,7 @@ public class SearchTaskCommand extends Command{
 
 	public SearchTaskCommand() {
 		executionResult = new ArrayList<Task>();
+		searchSequences = new ArrayList<String>();
 	}
 
 	@Override
@@ -38,7 +39,11 @@ public class SearchTaskCommand extends Command{
 
 	public void retrieveOptions() {
 		if (hasOption("search")) {
-			searchSequences = getOption("search").getStringList();
+			int numSearchString = getOption("search").getValuesCount();
+			while (numSearchString > 0) {
+				searchSequences.add(getOption("search").getStringValue());
+				numSearchString--;
+			}
 		}
 	}
 
