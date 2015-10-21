@@ -26,13 +26,13 @@ public class ParseLogic {
 	public static enum COMMAND_TYPE {
 		ADD, VIEW, EDIT, DELETE, COMPLETE,
 		SEARCH, UNDO, REDO, 
-		INVALID, EXIT, CLEAR
+		INVALID, EXIT, CLEAR, HELP
 	}
 
 	protected static enum COMMANDS {
 		ADD("add"), VIEW("view"), EDIT("edit"), DELETE("delete"), 
 		COMPLETE("complete"), SEARCH("search"), UNDO("undo"), REDO("redo"),
-		EXIT("exit"), CLEAR("clear");
+		EXIT("exit"), CLEAR("clear"), HELP("help");
 
 		private final String commandText;
 		
@@ -52,7 +52,7 @@ public class ParseLogic {
 		REDO("redo"), REMIND("remind"), CLEAR("clear"), EXIT("exit"), BETWEEN("between"), AND("and"),
 		NAME("name"), START("start"), END("end"), ALL("all"),
 		FLOATING("floating"), DEADLINE("deadline"), TIMED("timed"),
-		TODAY("today"), TOMORROW("tomorrow"), WEEK("week"), MONTH("month");
+		TODAY("today"), TOMORROW("tomorrow"), WEEK("week"), MONTH("month"), HELP("help");
 
 		private final String optionText;
 		
@@ -101,6 +101,9 @@ public class ParseLogic {
 		else if (mainCommand.equals(COMMANDS.CLEAR.toString())) {
 			return COMMAND_TYPE.CLEAR;
 		}
+		else if (mainCommand.equals(COMMANDS.HELP.toString())) {
+			return COMMAND_TYPE.HELP;
+		}
 		else if (mainCommand.equals(COMMANDS.EXIT.toString())) {
 			return COMMAND_TYPE.EXIT;
 		}
@@ -145,6 +148,8 @@ public class ParseLogic {
 				return new RedoCommand();
 			case CLEAR:
 				return new ClearCommand();
+			case HELP:
+				return new HelpCommand();
 			case EXIT:
 				return new ExitCommand();
 			case INVALID:
@@ -192,6 +197,8 @@ public class ParseLogic {
 			return expectDate(commandList, NOT_OPTIONAL);
 		} else if (option.equals(OPTIONS.CLEAR.toString())) {
 			return null;
+		} else if (option.equals(OPTIONS.HELP.toString())) {
+			return expectStringArray(commandList, OPTIONAL);
 		} else if (option.equals(OPTIONS.UNDO.toString())) {
 			return null;
 		} else if (option.equals(OPTIONS.REDO.toString())) {
@@ -300,6 +307,29 @@ public class ParseLogic {
 		}
 		LOGGER.warning("May cause NumberFormatException when string is not an integer");
 		commandOption.addValue(Integer.parseInt(expectedInt));
+		return commandOption;
+	}
+	
+	private Option expectStringArray(List<String> commandList, boolean optional) throws Exception {
+		LOGGER.log(Level.INFO, "Attempt to parse expected array of Strings from user input");
+		assert(commandList != null);
+		Option commandOption = new Option();
+		LOGGER.log(Level.WARNING, "expectedInt = commandList.remove(0) may cause index out of bounds exception");
+		String expectedString = commandList.remove(0);
+		if (isOption(expectedString)) {
+			if (optional) {
+				commandList.add(0, expectedString);
+				return null;
+			}
+			LOGGER.severe("Expected unoptional integer input but integer was not found");
+			throw new InvalidCommandFormatException("Integers were expected but not found.");
+		}
+		commandOption.addValue(expectedString);
+		while (!commandList.isEmpty() && !isOption(commandList.get(0))) {
+			LOGGER.fine("Continue expecting a list of integers");
+			LOGGER.warning("May cause NumberFormatException when string is not an integer");
+			commandOption.addValue(expectedString);
+		}
 		return commandOption;
 	}
 	
