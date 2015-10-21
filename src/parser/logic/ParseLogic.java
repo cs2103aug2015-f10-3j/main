@@ -400,6 +400,10 @@ public class ParseLogic {
 		switch (commandType) {
 			case UNDO:
 			case REDO:
+			case VIEW:
+			case CLEAR:
+			case HELP:
+			case SEARCH:
 				return true;
 			default:
 				return false;
