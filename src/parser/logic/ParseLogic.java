@@ -376,7 +376,7 @@ public class ParseLogic {
 		}
 	}
 	
-	public boolean isEditDeleteCommand(COMMAND_TYPE commandType) {
+	public boolean isStatefulCommand(COMMAND_TYPE commandType) {
 		switch (commandType) {
 			case EDIT:
 			case DELETE:
@@ -386,4 +386,13 @@ public class ParseLogic {
 		}
 	}
 	
+	public boolean isSaveStateCommand(COMMAND_TYPE commandType) {
+		switch (commandType) {
+			case VIEW:
+			case SEARCH:
+				return true;
+			default:
+				return false;
+		}
+	}
 }

@@ -35,9 +35,14 @@ public final class CommandParser {
 		}
 	}
 	
-	public boolean isEditDeleteCommand(String userCommand) {
+	public boolean isStatefulCommand(String userCommand) {
 		ParseLogic.COMMAND_TYPE commandType = parserLogic.determineCommandType(userCommand);
-		return parserLogic.isEditDeleteCommand(commandType);
+		return parserLogic.isStatefulCommand(commandType);
+	}
+	
+	public boolean isSaveStateCommand(String userCommand) {
+		ParseLogic.COMMAND_TYPE commandType = parserLogic.determineCommandType(userCommand);
+		return parserLogic.isSaveStateCommand(commandType);
 	}
 	
 	private Command createCommand(String userCommand) throws Exception {
