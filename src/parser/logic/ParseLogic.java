@@ -13,7 +13,7 @@ import command.data.Option;
 import common.exception.InvalidCommandFormatException;
 import common.util.DateTimeHelper;
 
-public class ParseLogic extends ParserBackend {
+public class ParseLogic extends Parser {
 	
 	private static final Logger LOGGER = Logger.getLogger(ParseLogic.class.getName());
 	

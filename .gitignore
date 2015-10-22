@@ -1,3 +1,4 @@
 /bin/
 *.lck
 /paddleTask.log*
+/task.xml

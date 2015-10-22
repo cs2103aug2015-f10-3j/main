@@ -1,8 +1,8 @@
 package parser.logic;
 
-public class ParserBackend implements ParserConstants {
+class Parser implements ParserConstants {
 
-	public ParserBackend() {
+	public Parser() {
 		setupCommandEnums();
 	}
 	
