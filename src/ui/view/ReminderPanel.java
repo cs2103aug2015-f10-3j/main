@@ -8,13 +8,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import javax.swing.Box;
-
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import javax.swing.SwingConstants;
 import javax.swing.text.DefaultCaret;
 
 import task.entity.Task;
@@ -48,15 +47,14 @@ public class ReminderPanel {
 	}
 
 	private void preparePanelComponents() {
+		reminderPanel.setLayout(new BoxLayout(reminderPanel, BoxLayout.PAGE_AXIS));
 		textArea = prepareJTextArea();
 		JScrollPane scrollPane = prepareScrollPane(textArea);
 		okButton = prepareButton();
 		prepareBoxComponent(scrollPane);
 		prepareBoxComponent(okButton);
 		reminderPanel.add(box, BorderLayout.PAGE_END);
-		Dimension size = reminderPanel.getToolkit().getScreenSize();
-		size.setSize(size.width / 8 * 3 , size.height / 3);
-		reminderPanel.setPreferredSize(size);
+
 	}
 	
 	private JScrollPane prepareScrollPane(JTextArea textArea) {
@@ -72,6 +70,9 @@ public class ReminderPanel {
 		textArea.setFont(font);
 		textArea.setLineWrap(true);
 		textArea.setEditable(false);
+		Dimension size = reminderPanel.getToolkit().getScreenSize();
+		size.setSize(size.width / 2 , size.height / 3);
+		textArea.setPreferredSize(size);
 		DefaultCaret caret = (DefaultCaret)textArea.getCaret();
 		caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
 		return textArea;
@@ -85,7 +86,7 @@ public class ReminderPanel {
 		if(box == null){
 			box = Box.createVerticalBox();
 		}
-		box.add(comp);
+		box.add(comp,BorderLayout.CENTER);
 		return box;
 	}
 	
@@ -93,7 +94,8 @@ public class ReminderPanel {
 		JButton button = new JButton();
 		//button.setPreferredSize(new Dimension(buttonIcon.getHeight(), buttonIcon.getWidth()));
 		button.setText(CLOSE_MSG);
-		button.setPreferredSize(buttonSize);
+		//button.setPreferredSize(buttonSize);
+		button.setAlignmentX(Component.CENTER_ALIGNMENT);
 		button.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
