@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 
 import command.api.Command;
 import common.exception.InvalidCommandFormatException;
+import common.exception.NoTaskStateException;
 import parser.api.CommandParser;
 import task.entity.Task;
 
@@ -39,13 +40,17 @@ public class LogicController extends Observable {
 		return handleCommand(userInput);
 	}
 
-	private Command parseCommand(String userInput) throws InvalidCommandFormatException {
+	private Command parseCommand(String userInput) throws Exception {
 		// Userinput should not be null after UI sends it to Executor
 		assert (userInput != null);
 		Command cmd;
 		if (commandParser.isStatefulCommand(userInput)) {
-			cmd = commandParser.parse(userInput, getStateTaskId());
-		} else { 
+			if (deliveredTaskState.isEmpty()) {
+				throw new NoTaskStateException("Please perform a view to retrieve a list of task so that you can perform this command!");
+			} else {
+				cmd = commandParser.parse(userInput, getStateTaskId());
+			}
+		}  else { 
 			cmd = commandParser.parse(userInput);
 		}
 		
