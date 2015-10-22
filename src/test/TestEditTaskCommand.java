@@ -40,12 +40,12 @@ public class TestEditTaskCommand {
 	protected static CommandParser commandParserInstance;
 	protected static int[] stateTaskId;
 	
-	protected static String dummy_userCommand;
-	protected static EditTaskCommand dummy_editTaskCommand;
-	protected static FloatingTask dummy_floatingTask;
-	protected static DeadlineTask dummy_deadlineTask;
-	protected static TimedTask dummy_timedTask;
-	protected static Task dummy_genericTask;
+	protected static String DUMMY_USERCOMMAND = "";
+	protected static EditTaskCommand DUMMY_EDIT_TASK_COMMAND = new EditTaskCommand();
+	protected static FloatingTask DUMMY_FLOATING_TASK = new FloatingTask();
+	protected static DeadlineTask DUMMY_DEADLINE_TASK = new DeadlineTask();
+	protected static TimedTask DUMMY_TIMED_TASK = new TimedTask();
+	protected static Task DUMMY_GENERIC_TASK = new Task();
 
 	/*** Setup ***/
 	@Before
@@ -80,7 +80,7 @@ public class TestEditTaskCommand {
 		testStateList = viewCommand.execute();
 	}
 	
-	public int[] initStateTaskId() {
+	public int[] getStateTaskId() {
 		int numIds = testStateList.size();
 		stateTaskId = new int[numIds];
 		for (int i=0; i<numIds; i++) {
@@ -89,64 +89,67 @@ public class TestEditTaskCommand {
 		return stateTaskId;
 	}
 	
-	public void prepareDummyData() throws Exception {
+	public void generateTestData() throws Exception {
 		testTaskList = repopulateTask();
 		Task.setTaskList(testTaskList);
 	}
 	
 	/*** Test Cases ***/
-
-	/*** FloatingTask related test cases 
-	 * @throws UpdateTaskException 
-	 * @throws NoSuchTaskException ***/
+	
+	@Test
+	public void testEditTaskCommand(String taskType) {
+		
+	}
+	
+	/*** FloatingTask related test cases ***/
 
 	@Test
 	public void editFloatingDescription() throws Exception {
-		prepareDummyData();
+		generateTestData();
 
 		// Initialize dummy user command and description that will be used for testing
 		String testDescription = "Testing Floating Description Change!";
-		dummy_userCommand = "edit 1 desc " + testDescription;
-		dummy_floatingTask = (FloatingTask) taskControllerInstance.getTask(1);
+		DUMMY_USERCOMMAND = "edit 1 desc " + testDescription;
+		DUMMY_FLOATING_TASK = (FloatingTask) taskControllerInstance.getTask(1);
 
 		// Verify that original task description is not the one that will be used for testing
 		assertNotEquals("test editFloatingDescription: initial description not equals the one used for testing",
-				testDescription,dummy_floatingTask.getDescription());
+				testDescription,DUMMY_FLOATING_TASK.getDescription());
 
 		// Execute edit command
-		dummy_editTaskCommand = (EditTaskCommand)commandParserInstance.parse(dummy_userCommand,initStateTaskId());
-		dummy_editTaskCommand.execute();
+		DUMMY_EDIT_TASK_COMMAND = (EditTaskCommand)commandParserInstance.parse(DUMMY_USERCOMMAND,getStateTaskId());
+		DUMMY_EDIT_TASK_COMMAND.execute();
 
 		// Verify if task description has been correctly set
-		dummy_floatingTask = (FloatingTask) taskControllerInstance.getTask(1);
+		DUMMY_FLOATING_TASK = (FloatingTask) taskControllerInstance.getTask(1);
 		assertEquals("test editFloatingDescription: new description set",
-				testDescription, dummy_floatingTask.getDescription());
+				testDescription, DUMMY_FLOATING_TASK.getDescription());
 	}
 
 	@Test
 	public void addEndTimeToFloating() throws Exception {
-		prepareDummyData();
+		generateTestData();
 
 		// Build my End with default date and custom time
 		String defaultDate = DateTimeHelper.getDate(DateTimeHelper.now());
 		String testTime = "11:11";
-		dummy_userCommand = "edit 1 end " + testTime;
+		DUMMY_USERCOMMAND = "edit 1 end " + testTime;
 
 		// Verify that task to edit is still Floating if casting is successful
-		dummy_floatingTask = (FloatingTask) taskControllerInstance.getTask(1);
+		DUMMY_FLOATING_TASK = (FloatingTask) taskControllerInstance.getTask(1);
 
 		//Execute command
-		dummy_editTaskCommand = (EditTaskCommand) commandParserInstance.parse(dummy_userCommand,initStateTaskId());
-		dummy_editTaskCommand.execute();
+		DUMMY_EDIT_TASK_COMMAND = (EditTaskCommand) commandParserInstance.parse(DUMMY_USERCOMMAND,getStateTaskId());
+		DUMMY_EDIT_TASK_COMMAND.execute();
 
 		// Verify become Deadline
-		dummy_genericTask = taskControllerInstance.getTask(1);
+		DUMMY_GENERIC_TASK = taskControllerInstance.getTask(1);
 		assertEquals("test addEndTimeToFloating: verify new task is deadline",
-				dummy_genericTask.getType(), Task.TASK_TYPE.DEADLINE);
+				DUMMY_GENERIC_TASK.getType(), Task.TASK_TYPE.DEADLINE);
 
 		// Verify new End is the expected End
-		dummy_deadlineTask = (DeadlineTask) dummy_genericTask;
-		LocalDateTime editedEnd = dummy_deadlineTask.getEnd();
+		DUMMY_DEADLINE_TASK = (DeadlineTask) DUMMY_GENERIC_TASK;
+		LocalDateTime editedEnd = DUMMY_DEADLINE_TASK.getEnd();
 
 		// Verify new End Date is given default value of now() date
 		String editedEndDate = DateTimeHelper.getDate(editedEnd);
@@ -161,89 +164,89 @@ public class TestEditTaskCommand {
 
 	@Test
 	public void addEndDateToFloating() throws Exception {
-		prepareDummyData();
+		generateTestData();
 
 		// Build my End with custom date and default time
 		String testDate = DateTimeHelper.getDate(DateTimeHelper.now());
 		String defaultTime = "00:00";
-		dummy_userCommand = "edit 1 end " + testDate;
+		DUMMY_USERCOMMAND = "edit 1 end " + testDate;
 
 		// Verify that task to edit is still Floating if casting is successful
-		dummy_floatingTask = (FloatingTask)taskControllerInstance.getTask(1);
+		DUMMY_FLOATING_TASK = (FloatingTask)taskControllerInstance.getTask(1);
 
 		//Execute command
-		dummy_editTaskCommand = (EditTaskCommand) commandParserInstance.parse(dummy_userCommand,initStateTaskId());
-		dummy_editTaskCommand.execute();
+		DUMMY_EDIT_TASK_COMMAND = (EditTaskCommand) commandParserInstance.parse(DUMMY_USERCOMMAND,getStateTaskId());
+		DUMMY_EDIT_TASK_COMMAND.execute();
 
 		// Verify become Deadline
-		dummy_genericTask = taskControllerInstance.getTask(1);
+		DUMMY_GENERIC_TASK = taskControllerInstance.getTask(1);
 		assertEquals("test addEndDateToFloating: verify new task is deadline",
-				dummy_genericTask.getType(), Task.TASK_TYPE.DEADLINE);
+				DUMMY_GENERIC_TASK.getType(), Task.TASK_TYPE.DEADLINE);
 
 		// Verify new End Date is given user specified date
-		dummy_deadlineTask = (DeadlineTask) dummy_genericTask;
-		String editedEndDate = DateTimeHelper.getDate(dummy_deadlineTask.getEnd());
+		DUMMY_DEADLINE_TASK = (DeadlineTask) DUMMY_GENERIC_TASK;
+		String editedEndDate = DateTimeHelper.getDate(DUMMY_DEADLINE_TASK.getEnd());
 		assertEquals("test addEndDateToFloating: verify edited task end date",
 				testDate, editedEndDate);
 
 		// Verify new End Time is given default time of 00:00
-		String editedEndTime = DateTimeHelper.getTime(dummy_deadlineTask.getEnd());
+		String editedEndTime = DateTimeHelper.getTime(DUMMY_DEADLINE_TASK.getEnd());
 		assertEquals("test addEndDateToFloating: verify edited task end time default to 00:00",
 				defaultTime, editedEndTime);
 	}
 
 	@Test
 	public void addEndDateAndTimeToFloating() throws Exception {
-		prepareDummyData();
+		generateTestData();
 
 		// Build my End with custom date and time
 		String testDateTime = "01/01/2015 12:34";
-		dummy_userCommand = "edit 1 end " + testDateTime;
+		DUMMY_USERCOMMAND = "edit 1 end " + testDateTime;
 
 		// Verify that task to edit is still Floating if casting is successful
-		dummy_floatingTask = (FloatingTask)taskControllerInstance.getTask(0);
+		DUMMY_FLOATING_TASK = (FloatingTask)taskControllerInstance.getTask(0);
 
 		//Execute command
-		dummy_editTaskCommand = (EditTaskCommand) commandParserInstance.parse(dummy_userCommand);
-		dummy_editTaskCommand.execute();
+		DUMMY_EDIT_TASK_COMMAND = (EditTaskCommand) commandParserInstance.parse(DUMMY_USERCOMMAND);
+		DUMMY_EDIT_TASK_COMMAND.execute();
 
 		// Verify become Deadline
-		dummy_genericTask = taskControllerInstance.getTask(1);
+		DUMMY_GENERIC_TASK = taskControllerInstance.getTask(1);
 		assertEquals("test addEndDateAndTimeToFloating: verify new task is deadline",
-				dummy_genericTask.getType(), Task.TASK_TYPE.DEADLINE);
+				DUMMY_GENERIC_TASK.getType(), Task.TASK_TYPE.DEADLINE);
 
 		// Verify new End is the expected End
-		dummy_deadlineTask = (DeadlineTask) dummy_genericTask;
-		String editedEnd = DateTimeHelper.parseDateTimeToString(dummy_deadlineTask.getEnd());
+		DUMMY_DEADLINE_TASK = (DeadlineTask) DUMMY_GENERIC_TASK;
+		String editedEnd = DateTimeHelper.parseDateTimeToString(DUMMY_DEADLINE_TASK.getEnd());
 		assertEquals("test addEndDateAndTimeToFloating: verify edited task end date and time",
 				testDateTime, editedEnd);
 	}
 
 	@Test
 	public void addStartAndEndToFloating() throws Exception {
-		prepareDummyData();
+		generateTestData();
 
 		// Build my Start and End with custom date and time
 		String testStart = "01/01/2015 10:00";
 		String testEnd = "01/02/2015 23:59";
-		dummy_userCommand = "edit 1 start " + testStart + " end " + testEnd;
+		DUMMY_USERCOMMAND = "edit 1 start " + testStart + " end " + testEnd;
 
 		// Verify that task to edit is still Floating if casting is successful
-		dummy_floatingTask = (FloatingTask)taskControllerInstance.getTask(0);
+		DUMMY_FLOATING_TASK = (FloatingTask)taskControllerInstance.getTask(0);
 
 		//Execute command
-		dummy_editTaskCommand = (EditTaskCommand) commandParserInstance.parse(dummy_userCommand);
-		dummy_editTaskCommand.execute();
+		DUMMY_EDIT_TASK_COMMAND = (EditTaskCommand) commandParserInstance.parse(DUMMY_USERCOMMAND);
+		DUMMY_EDIT_TASK_COMMAND.execute();
 
 		// Verify become Timed
-		dummy_genericTask = taskControllerInstance.getTask(1);
+		DUMMY_GENERIC_TASK = taskControllerInstance.getTask(1);
 		assertEquals("test addStartAndEndToFloating: verify new task is Timed",
-				dummy_genericTask.getType(), Task.TASK_TYPE.TIMED);
+				DUMMY_GENERIC_TASK.getType(), Task.TASK_TYPE.TIMED);
 		
 		// Verify new Start and End is the expected Start and End
-		dummy_timedTask = (TimedTask) dummy_genericTask;
-		String editedStart = DateTimeHelper.parseDateTimeToString(dummy_timedTask.getStart());
-		String editedEnd = DateTimeHelper.parseDateTimeToString(dummy_timedTask.getEnd());		
+		DUMMY_TIMED_TASK = (TimedTask) DUMMY_GENERIC_TASK;
+		String editedStart = DateTimeHelper.parseDateTimeToString(DUMMY_TIMED_TASK.getStart());
+		String editedEnd = DateTimeHelper.parseDateTimeToString(DUMMY_TIMED_TASK.getEnd());		
 		assertEquals("test addStartAndEndToFloating: verify edited task start",
 				testStart, editedStart);
 		assertEquals("test addStartAndEndToFloating: verify edited task start",
@@ -256,30 +259,61 @@ public class TestEditTaskCommand {
 	
 	@Test
 	public void editDeadlineDescription() throws Exception {
-		prepareDummyData();
+		generateTestData();
 
 		// Initialize dummy user command and description that will be used for testing
 		String testDescription = "Testing Deadline Description Change!";
-		dummy_userCommand = "edit 2 desc " + testDescription;
-		dummy_deadlineTask = (DeadlineTask) taskControllerInstance.getTask(2);
+		DUMMY_USERCOMMAND = "edit 2 desc " + testDescription;
+		DUMMY_DEADLINE_TASK = (DeadlineTask) taskControllerInstance.getTask(2);
 
 		// Verify that original task description is not the one that will be used for testing
 		assertNotEquals("test editDeadlineDescription: initial description not equals the one used for testing",
-				testDescription,dummy_deadlineTask.getDescription());
+				testDescription,DUMMY_DEADLINE_TASK.getDescription());
 
 		// Execute edit command
-		dummy_editTaskCommand = (EditTaskCommand) commandParserInstance.parse(dummy_userCommand);
-		dummy_editTaskCommand.execute();
+		DUMMY_EDIT_TASK_COMMAND = (EditTaskCommand) commandParserInstance.parse(DUMMY_USERCOMMAND);
+		DUMMY_EDIT_TASK_COMMAND.execute();
 
 		// Verify if task description has been correctly set
-		dummy_deadlineTask = (DeadlineTask) taskControllerInstance.getTask(2);
+		DUMMY_DEADLINE_TASK = (DeadlineTask) taskControllerInstance.getTask(2);
 		assertEquals("test editDeadlineDescription: new description set",
-				testDescription, dummy_deadlineTask.getDescription());
+				testDescription, DUMMY_DEADLINE_TASK.getDescription());
 	}
 
 	@Test
-	public void editDeadlineEndTime() {
-		
+	public void editDeadlineEndTime() throws Exception{
+		generateTestData();
+
+		// Build my End with default date and custom time
+		String defaultDate = DateTimeHelper.getDate(DateTimeHelper.now());
+		String testTime = "11:11";
+		DUMMY_USERCOMMAND = "edit 2 end " + testTime;
+
+		// Verify that task to edit is a Deadline Task
+		DUMMY_DEADLINE_TASK = (DeadlineTask) taskControllerInstance.getTask(2);
+
+		//Execute command
+		DUMMY_EDIT_TASK_COMMAND = (EditTaskCommand) commandParserInstance.parse(DUMMY_USERCOMMAND,getStateTaskId());
+		DUMMY_EDIT_TASK_COMMAND.execute();
+
+		// Verify still Deadline
+		DUMMY_GENERIC_TASK = taskControllerInstance.getTask(2);
+		assertEquals("test editDeadlineEndTime: verify task is still deadline Task",
+				DUMMY_GENERIC_TASK.getType(), Task.TASK_TYPE.DEADLINE);
+
+		// Verify new End is the expected End
+		DUMMY_DEADLINE_TASK = (DeadlineTask) DUMMY_GENERIC_TASK;
+		LocalDateTime editedEnd = DUMMY_DEADLINE_TASK.getEnd();
+
+		// Verify new End Date is given default value of now() date
+		String editedEndDate = DateTimeHelper.getDate(editedEnd);
+		assertEquals("test editDeadlineEndTime: verify edited task end date default to today's date",
+				defaultDate,editedEndDate);
+
+		// Verify new End Time is given user specified value
+		String editedEndTime = DateTimeHelper.getTime(editedEnd);
+		assertEquals("test editDeadlineEndTime: verify edited task end time",
+				testTime, editedEndTime);
 	}
 
 	@Test
