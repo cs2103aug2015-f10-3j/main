@@ -5,19 +5,20 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.Image;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
+import java.net.URL;
 
-import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
+
+import background.Reminder;
 
 @SuppressWarnings("serial")
 public class MainPanel extends JPanel{
@@ -48,15 +49,10 @@ public class MainPanel extends JPanel{
 	}
 	
 	public JButton prepareCliButton(){
-		BufferedImage buttonIcon = null;
-		try {
-			buttonIcon = ImageIO.read(new File("src/images/CLI.png"));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		URL resource = Reminder.class.getResource("/images/CLI.png");
+		Image buttonIcon = Toolkit.getDefaultToolkit().getImage(resource);
 		JButton button = new JButton(new ImageIcon(buttonIcon));
-		button.setPreferredSize(new Dimension(buttonIcon.getHeight(), buttonIcon.getWidth()));
+		button.setPreferredSize(new Dimension(buttonIcon.getHeight(null), buttonIcon.getWidth(null)));
 		button.setBorder(BorderFactory.createEmptyBorder());
 		button.addActionListener(new ActionListener() {
 
@@ -72,15 +68,10 @@ public class MainPanel extends JPanel{
 	}
 	
 	public JButton prepareGraphicButton(){
-		BufferedImage buttonIcon = null;
-		try {
-			buttonIcon = ImageIO.read(new File("src/images/GUI.png"));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		URL resource = Reminder.class.getResource("/images/GUI.png");
+		Image buttonIcon = Toolkit.getDefaultToolkit().getImage(resource);
 		JButton button = new JButton(new ImageIcon(buttonIcon));
-		button.setPreferredSize(new Dimension(buttonIcon.getHeight(), buttonIcon.getWidth()));
+		button.setPreferredSize(new Dimension(buttonIcon.getHeight(null), buttonIcon.getWidth(null)));
 		button.setBorder(BorderFactory.createEmptyBorder());
 		button.addActionListener(new ActionListener() {
 

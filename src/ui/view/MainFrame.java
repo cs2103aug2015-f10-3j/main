@@ -2,6 +2,7 @@ package ui.view;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -11,6 +12,7 @@ import org.jnativehook.GlobalScreen;
 import org.jnativehook.keyboard.NativeKeyEvent;
 import org.jnativehook.keyboard.NativeKeyListener;
 
+import background.Reminder;
 import common.util.LoggingHandler;
 
 /**
@@ -152,7 +154,8 @@ public class MainFrame {
 			return false;
 		}
 		SystemTray tray = SystemTray.getSystemTray();
-		Image image = Toolkit.getDefaultToolkit().getImage("src/images/bulb.gif");
+		URL resource = Reminder.class.getResource("/images/bulb.gif");
+		Image image = Toolkit.getDefaultToolkit().getImage(resource);
 		TrayIcon trayIcon = new TrayIcon(image, "PaddleTask");
 		trayIcon.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
