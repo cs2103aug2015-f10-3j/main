@@ -21,48 +21,48 @@ public class ParseLogic extends Parser {
 		LOGGER.log(Level.INFO, "Attempt to determine command type from user input: {0}", userCommand);
 		assert(userCommand != null);
 		String mainCommand = getMainCommand(userCommand).toLowerCase();
-		if (mainCommand.equals(COMMANDS.ADD.toString()) 
-			|| mainCommand.equals(COMMANDS.ADD_SHORT.toString())) {
+		if (mainCommand.equalsIgnoreCase(COMMANDS.ADD.toString()) 
+			|| mainCommand.equalsIgnoreCase(COMMANDS.ADD_SHORT.toString())) {
 			return COMMAND_TYPE.ADD;
 		}
-		else if (mainCommand.equals(COMMANDS.VIEW.toString())
-				|| mainCommand.equals(COMMANDS.VIEW_SHORT.toString())) {
+		else if (mainCommand.equalsIgnoreCase(COMMANDS.VIEW.toString())
+				|| mainCommand.equalsIgnoreCase(COMMANDS.VIEW_SHORT.toString())) {
 			return COMMAND_TYPE.VIEW;
 		}
-		else if (mainCommand.equals(COMMANDS.EDIT.toString())
-				|| mainCommand.equals(COMMANDS.EDIT_SHORT.toString())) {
+		else if (mainCommand.equalsIgnoreCase(COMMANDS.EDIT.toString())
+				|| mainCommand.equalsIgnoreCase(COMMANDS.EDIT_SHORT.toString())) {
 			return COMMAND_TYPE.EDIT;
 		}
-		else if (mainCommand.equals(COMMANDS.DELETE.toString())
-				|| mainCommand.equals(COMMANDS.DELETE_SHORT.toString())) {
+		else if (mainCommand.equalsIgnoreCase(COMMANDS.DELETE.toString())
+				|| mainCommand.equalsIgnoreCase(COMMANDS.DELETE_SHORT.toString())) {
 			return COMMAND_TYPE.DELETE;
 		}
-		else if (mainCommand.equals(COMMANDS.COMPLETE.toString())
-				|| mainCommand.equals(COMMANDS.COMPLETE_SHORT.toString())) {
+		else if (mainCommand.equalsIgnoreCase(COMMANDS.COMPLETE.toString())
+				|| mainCommand.equalsIgnoreCase(COMMANDS.COMPLETE_SHORT.toString())) {
             return COMMAND_TYPE.COMPLETE;
         }
-		else if (mainCommand.equals(COMMANDS.SEARCH.toString())
-				|| mainCommand.equals(COMMANDS.SEARCH_SHORT.toString())) {
+		else if (mainCommand.equalsIgnoreCase(COMMANDS.SEARCH.toString())
+				|| mainCommand.equalsIgnoreCase(COMMANDS.SEARCH_SHORT.toString())) {
 			return COMMAND_TYPE.SEARCH;
 		}
-		else if (mainCommand.equals(COMMANDS.UNDO.toString())
-				|| mainCommand.equals(COMMANDS.UNDO_SHORT.toString())) {
+		else if (mainCommand.equalsIgnoreCase(COMMANDS.UNDO.toString())
+				|| mainCommand.equalsIgnoreCase(COMMANDS.UNDO_SHORT.toString())) {
 			return COMMAND_TYPE.UNDO;
 		}
-		else if (mainCommand.equals(COMMANDS.REDO.toString())
-				|| mainCommand.equals(COMMANDS.REDO_SHORT.toString())) {
+		else if (mainCommand.equalsIgnoreCase(COMMANDS.REDO.toString())
+				|| mainCommand.equalsIgnoreCase(COMMANDS.REDO_SHORT.toString())) {
 			return COMMAND_TYPE.REDO;
 		}
-		else if (mainCommand.equals(COMMANDS.CLEAR.toString())
-				|| mainCommand.equals(COMMANDS.CLEAR_SHORT.toString())) {
+		else if (mainCommand.equalsIgnoreCase(COMMANDS.CLEAR.toString())
+				|| mainCommand.equalsIgnoreCase(COMMANDS.CLEAR_SHORT.toString())) {
 			return COMMAND_TYPE.CLEAR;
 		}
-		else if (mainCommand.equals(COMMANDS.HELP.toString())
-				|| mainCommand.equals(COMMANDS.HELP_SHORT.toString())) {
+		else if (mainCommand.equalsIgnoreCase(COMMANDS.HELP.toString())
+				|| mainCommand.equalsIgnoreCase(COMMANDS.HELP_SHORT.toString())) {
 			return COMMAND_TYPE.HELP;
 		}
-		else if (mainCommand.equals(COMMANDS.EXIT.toString())
-				|| mainCommand.equals(COMMANDS.EXIT_SHORT.toString())) {
+		else if (mainCommand.equalsIgnoreCase(COMMANDS.EXIT.toString())
+				|| mainCommand.equalsIgnoreCase(COMMANDS.EXIT_SHORT.toString())) {
 			return COMMAND_TYPE.EXIT;
 		}
 		else {
@@ -132,7 +132,7 @@ public class ParseLogic extends Parser {
 		String option = commandList.remove(0);
 		LOGGER.log(Level.INFO, "Retrieve expected value of specified option: {0}", option);
 		for (OPTIONS opt : optionMap.keySet()) {
-			if (option.equals(opt.toString())) {
+			if (option.equalsIgnoreCase(opt.toString())) {
 				switch (optionMap.get(opt)) {
 				case STRING:
 					newOption = expectString(commandList, false);
