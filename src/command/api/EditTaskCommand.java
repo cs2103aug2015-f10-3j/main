@@ -6,6 +6,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import background.Reminder;
+import common.exception.InvalidCommandFormatException;
 import common.exception.NoSuchTaskException;
 import common.exception.UpdateTaskException;
 import common.util.DateTimeHelper;
@@ -41,9 +42,10 @@ public class EditTaskCommand extends Command {
 	 * @return		an ArrayList of Task objects that contains the modified Task object
 	 * @throws UpdateTaskException 
 	 * @throws NoSuchTaskException 
+	 * @throws InvalidCommandFormatException 
 	 */
 	@Override
-	public ArrayList<Task> execute() throws NoSuchTaskException, UpdateTaskException{
+	public ArrayList<Task> execute() throws NoSuchTaskException, UpdateTaskException, InvalidCommandFormatException{
 		retrieveOptions();
 		getTaskFromStorage(taskId);
 		determineOriginalTaskType();
@@ -110,8 +112,9 @@ public class EditTaskCommand extends Command {
 	 * user input from the edit command
 	 * 
 	 * @return		a String that indicates the appropriate Task type for the Task object to be modified
+	 * @throws InvalidCommandFormatException 
 	 */
-	private String determineEditedTaskType() {
+	private String determineEditedTaskType() throws InvalidCommandFormatException {
 		switch(originalTaskType) {
 		case TASK_TYPE_FLOATING:
 			if (newStart == null && newEnd == null) { // If no start/end date/time is specified, task.type is still floating
@@ -120,8 +123,9 @@ public class EditTaskCommand extends Command {
 				return TASK_TYPE_DEADLINE;
 			} else if (newStart != null && newEnd != null) { // If both new and end date/time is specified, task.type is now a timed task
 				return TASK_TYPE_TIMED;
-			} else {
-				return TASK_TYPE_INVALID;
+			} else if (newStart != null && newEnd == null){
+				LOGGER.log(Level.SEVERE, "Executing EditTaskCommand: User attempt to add only start date/time to Floating Task");
+				throw new InvalidCommandFormatException("You cannot add only a start Time/Date to a Floating Task!");
 			}
 
 		case TASK_TYPE_DEADLINE :
@@ -158,8 +162,9 @@ public class EditTaskCommand extends Command {
 	/**
 	 * Instantiates the task object to be modified to the appropriate Task type with
 	 * the appropriate attributes
+	 * @throws InvalidCommandFormatException 
 	 */
-	private void createEditedTask() {
+	private void createEditedTask() throws InvalidCommandFormatException {
 		switch(determineEditedTaskType()){
 		case TASK_TYPE_FLOATING : 
 			createNewFloatingTask();
