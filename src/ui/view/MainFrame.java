@@ -112,7 +112,7 @@ public class MainFrame {
 	 *  			JFrame frame
 	 */
 	
-	public static void removeDefaultButtons(Component com){
+	private static void removeDefaultButtons(Component com){
 		if(com instanceof JButton){
 			String name = ((JButton) com).getAccessibleContext().getAccessibleName();
 			if(name.equals("Maximize")|| name.equals("Iconify")||

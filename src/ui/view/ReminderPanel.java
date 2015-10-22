@@ -2,6 +2,7 @@ package ui.view;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -35,6 +36,7 @@ public class ReminderPanel {
 		this.taskList = taskList;
 		this.dialog = dialog;
 		dialog.setTitle(TITLE);
+		removeDefaultButtons(dialog);
 		preparePanelComponents();
 		processArrayList();
 	}
@@ -106,6 +108,30 @@ public class ReminderPanel {
 	public void appendTexts(final JTextArea textArea, String[] output) {
 		for(String s : output){
 			textArea.append( s + NEXT_LINE);
+		}
+	}
+	
+	/**
+	 * This method removes the default buttons of minimize, maximise and close
+	 * on the Dialog. 
+	 * 
+	 *  @param  Component 
+	 *  			JDialog reminderDialog
+	 */
+	
+	public static void removeDefaultButtons(Component com){
+		if(com instanceof JButton){
+			String name = ((JButton) com).getAccessibleContext().getAccessibleName();
+			if(name.equals("Maximize")|| name.equals("Iconify")||
+					name.equals("Close")){
+				com.getParent().remove(com);
+			}
+		}
+		if (com instanceof Container){
+			Component[] comps = ((Container)com).getComponents();
+			for(int x = 0, y = comps.length; x < y; x++){
+				removeDefaultButtons(comps[x]);
+			}
 		}
 	}
 	
