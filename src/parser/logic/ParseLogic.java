@@ -9,7 +9,6 @@ import java.util.logging.Level;
 import command.api.*;
 import command.data.Option;
 import common.exception.InvalidCommandFormatException;
-import common.util.DateTimeHelper;
 
 public class ParseLogic extends Parser {
 	
@@ -185,8 +184,13 @@ public class ParseLogic extends Parser {
 		LOGGER.log(Level.INFO, "Attempt to parse expected array of integers from user input");
 		assert(commandList != null);
 		Option commandOption = new Option();
-		if (commandList.isEmpty() && optional) {
-			return null;
+		if (commandList.isEmpty()) {
+			if (optional) {
+				return null;
+			} else {
+				LOGGER.log(Level.SEVERE, "expected input not found");
+				throw new InvalidCommandFormatException("Expected input not found!");
+			}
 		}
 		for (int i = 0; i < commandList.size(); i++) {
 			String expectedInt = commandList.get(i);
@@ -205,8 +209,13 @@ public class ParseLogic extends Parser {
 		Option commandOption = new Option();
 		StringBuilder stringOption = new StringBuilder();
 		LOGGER.log(Level.WARNING, "expectedString = commandList.get(0) may cause index out of bounds exception");
-		if (commandList.isEmpty() && optional) {
-			return null;
+		if (commandList.isEmpty()) {
+			if (optional) {
+				return null;
+			} else {
+				LOGGER.log(Level.SEVERE, "expected input not found");
+				throw new InvalidCommandFormatException("Expected input not found!");
+			}
 		}
 		String expectedString = commandList.get(0);
 		for (int i = 0; i < commandList.size(); i++) { 
@@ -224,8 +233,13 @@ public class ParseLogic extends Parser {
 		LOGGER.log(Level.INFO, "Attempt to parse single expected integer from user input");
 		assert(commandList != null);
 		Option commandOption = new Option();
-		if (commandList.isEmpty() && optional) {
-			return null;
+		if (commandList.isEmpty()) {
+			if (optional) {
+				return null;
+			} else {
+				LOGGER.log(Level.SEVERE, "expected input not found");
+				throw new InvalidCommandFormatException("Expected input not found!");
+			}
 		}
 		LOGGER.log(Level.WARNING, "expectedInt = commandList.get(0) may cause index out of bounds exception");
 		String expectedInt = commandList.get(0);
@@ -242,8 +256,13 @@ public class ParseLogic extends Parser {
 		assert(commandList != null);
 		Option commandOption = new Option();
 		LOGGER.log(Level.WARNING, "expectedInt = commandList.remove(0) may cause index out of bounds exception");
-		if (commandList.isEmpty() && optional) {
-			return null;
+		if (commandList.isEmpty()) {
+			if (optional) {
+				return null;
+			} else {
+				LOGGER.log(Level.SEVERE, "expected input not found");
+				throw new InvalidCommandFormatException("Expected input not found!");
+			}
 		}
 		for (int i = 0; i < commandList.size(); i++) {
 			String expectedString = commandList.get(i);
@@ -252,6 +271,37 @@ public class ParseLogic extends Parser {
 		return commandOption;
 	}
 	
+	private Option expectDate(List<String> commandList, boolean optional) throws Exception {
+		LOGGER.log(Level.INFO, "Attempt to parse expected string from user input");
+		assert(commandList != null);
+		Option commandOption = new Option();
+		StringBuilder stringOption = new StringBuilder();
+		LOGGER.log(Level.WARNING, "expectedString = commandList.get(0) may cause index out of bounds exception");
+		if (commandList.isEmpty()) {
+			if (optional) {
+				return null;
+			} else {
+				LOGGER.log(Level.SEVERE, "expected input not found");
+				throw new InvalidCommandFormatException("Expected input not found!");
+			}
+		}
+		String expectedString = commandList.get(0);
+		for (int i = 0; i < commandList.size(); i++) { 
+			LOGGER.fine("Expecting a list of Strings");
+			expectedString = commandList.get(i);
+			stringOption.append(expectedString);
+			stringOption.append(SPACE);
+		}
+		expectedString = stringOption.toString().trim();
+		LocalDateTime date = parseDate(expectedString);
+		if (date == null) {
+			return null;
+		}
+		commandOption.addValue(date);
+		return commandOption;
+	}
+	
+	/*
 	private Option expectDate(List<String> commandList, boolean optional) throws Exception {
 		LOGGER.log(Level.INFO, "Attempt to parse expected date time pair from user input");
 		assert(commandList != null);
@@ -297,6 +347,7 @@ public class ParseLogic extends Parser {
 	private boolean isTime(String time) {
 		return time.matches("(\\d{2}):(\\d{2})");
 	}
+	*/
 	
 	public boolean isInvalidTypeToAdd(COMMAND_TYPE commandType) {
 		switch (commandType) {

@@ -1,19 +1,26 @@
 package parser.logic;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.joestelmach.natty.DateGroup;
+
 class Parser implements ParserConstants {
 
 	protected static final Logger LOGGER = Logger.getLogger(ParseLogic.class.getName());
 	private static HashMap<String, String> shortHandMap = new HashMap<String, String>();
+	protected static com.joestelmach.natty.Parser dateParser = new com.joestelmach.natty.Parser();
 	
 	public Parser() {
+		parseDate("warmup");
 		setupCommandEnums();
 	}
 	
@@ -158,6 +165,17 @@ class Parser implements ParserConstants {
 		addOptions.put(OPTIONS.AND_SHORT, TYPE.DATE);
 		addOptions.put(OPTIONS.START_SHORT, TYPE.DATE);
 		addOptions.put(OPTIONS.END_SHORT, TYPE.DATE);
+	}
+	
+	protected LocalDateTime parseDate(String expectedDate) {
+		List<DateGroup> groups = dateParser.parse(expectedDate);
+		for(DateGroup group : groups) {
+			List<Date> dates = group.getDates();
+			if (!dates.isEmpty()) {
+				return LocalDateTime.ofInstant(dates.get(0).toInstant(), ZoneId.systemDefault());
+			}
+		}
+		return null;
 	}
 	
 	public List<String> breakDownCommand(String userCommand) {

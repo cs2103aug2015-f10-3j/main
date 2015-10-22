@@ -6,5 +6,9 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/External"/>
 	<classpathentry kind="lib" path="src/External Libraries/seaglasslookandfeel-0.2.jar"/>
 	<classpathentry kind="lib" path="src/External Libraries/jnativehook-2.0.2.jar"/>
+	<classpathentry kind="lib" path="src/External Libraries/natty-0.12.jar"/>
+	<classpathentry kind="lib" path="src/External Libraries/antlr-runtime-3.5.2.jar"/>
+	<classpathentry kind="lib" path="src/External Libraries/ical4j-1.0.2.jar"/>
+	<classpathentry kind="lib" path="src/External Libraries/slf4j-api-1.7.10.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
