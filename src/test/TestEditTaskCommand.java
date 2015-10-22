@@ -133,10 +133,10 @@ public class TestEditTaskCommand {
 		dummy_userCommand = "edit 1 end " + testTime;
 
 		// Verify that task to edit is still Floating if casting is successful
-		dummy_floatingTask = (FloatingTask) taskControllerInstance.getTask(0);
+		dummy_floatingTask = (FloatingTask) taskControllerInstance.getTask(1);
 
 		//Execute command
-		dummy_editTaskCommand = (EditTaskCommand) commandParserInstance.parse(dummy_userCommand);
+		dummy_editTaskCommand = (EditTaskCommand) commandParserInstance.parse(dummy_userCommand,initStateTaskId());
 		dummy_editTaskCommand.execute();
 
 		// Verify become Deadline
@@ -169,10 +169,10 @@ public class TestEditTaskCommand {
 		dummy_userCommand = "edit 1 end " + testDate;
 
 		// Verify that task to edit is still Floating if casting is successful
-		dummy_floatingTask = (FloatingTask)taskControllerInstance.getTask(0);
+		dummy_floatingTask = (FloatingTask)taskControllerInstance.getTask(1);
 
 		//Execute command
-		dummy_editTaskCommand = (EditTaskCommand) commandParserInstance.parse(dummy_userCommand);
+		dummy_editTaskCommand = (EditTaskCommand) commandParserInstance.parse(dummy_userCommand,initStateTaskId());
 		dummy_editTaskCommand.execute();
 
 		// Verify become Deadline
@@ -260,7 +260,7 @@ public class TestEditTaskCommand {
 
 		// Initialize dummy user command and description that will be used for testing
 		String testDescription = "Testing Deadline Description Change!";
-		dummy_userCommand = "edit 2 name " + testDescription;
+		dummy_userCommand = "edit 2 desc " + testDescription;
 		dummy_deadlineTask = (DeadlineTask) taskControllerInstance.getTask(2);
 
 		// Verify that original task description is not the one that will be used for testing

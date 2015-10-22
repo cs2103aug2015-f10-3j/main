@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 import background.Reminder;
 import common.exception.NoSuchTaskException;
 import common.exception.UpdateTaskException;
+import common.util.DateTimeHelper;
 import task.api.*;
 import task.entity.DeadlineTask;
 import task.entity.FloatingTask;
@@ -240,6 +241,8 @@ public class EditTaskCommand extends Command {
 		LocalDateTime newEditedTaskReminder = null;
 		if (newReminder != null) {
 			return newReminder;
+		} else if (originalTaskType.equals(TASK_TYPE_FLOATING)){
+			newEditedTaskReminder = DateTimeHelper.addMinutes(getEditedTaskEnd(), 5);
 		} else if (originalTaskType.equals(TASK_TYPE_DEADLINE)) {
 			DeadlineTask castedOriginalTask = (DeadlineTask) originalTask;
 			newEditedTaskReminder = castedOriginalTask.getReminder();
