@@ -81,7 +81,9 @@ public class UIController {
 			String[] taskDetails = selectedTask.toDetailsArray();
 			int detailsPointer = 0;
 			output[i+OFFSET_ONE] = String.format(FORMAT, i+1,taskDetails[++detailsPointer], 
-								   taskDetails[++detailsPointer], taskDetails[++detailsPointer], taskDetails[++detailsPointer],
+								   taskDetails[++detailsPointer].length() > 60 ? 
+								   taskDetails[detailsPointer].substring(0, 57) + "..." : taskDetails[detailsPointer]
+								   , taskDetails[++detailsPointer], taskDetails[++detailsPointer],
 								   taskDetails[++detailsPointer],taskDetails[++detailsPointer]);
 		}
 		return output;
