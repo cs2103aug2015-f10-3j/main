@@ -102,7 +102,7 @@ public class HelpManual {
 			return HELP_MSG;
 		} else if (command.equals(COMMANDS.EXIT.toString())) {
 			return EXIT_MSG;
-		} else if (command.equals(null)) {
+		} else if (command.equals(null)|| command.equals("") ) {
 			return OVERALL_MSG + NEXT_LINE + ADD_MSG + NEXT_LINE + EDIT_MSG + NEXT_LINE + VIEW_MSG + NEXT_LINE + 
 					DELETE_MSG + NEXT_LINE + COMPLETE_MSG + NEXT_LINE + SEARCH_MSG + NEXT_LINE + UNDO_MSG + NEXT_LINE 
 					+ REDO_MSG + NEXT_LINE + CLEAR_MSG + NEXT_LINE + HELP_MSG + NEXT_LINE + EXIT_MSG;

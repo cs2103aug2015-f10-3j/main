@@ -24,7 +24,6 @@ public class ReminderPanel {
 	private static final String TITLE = "PaddleTask Reminder";
 	private static final String CLOSE_MSG = "Close";
 	private static final String NEXT_LINE = "\n";
-	private static final Dimension buttonSize = new Dimension(100,50);
 	private JPanel reminderPanel = new JPanel();
 	private JTextArea textArea;
 	private JDialog dialog;
@@ -42,7 +41,7 @@ public class ReminderPanel {
 	
 	private void processArrayList(){
 		UIController uiController = UIController.getInstance(null);
-		String[] output = uiController.formatOutput(taskList);
+		String[] output = uiController.format(taskList);
 		appendTexts(textArea, output);
 	}
 
@@ -92,9 +91,7 @@ public class ReminderPanel {
 	
 	public JButton prepareButton(){
 		JButton button = new JButton();
-		//button.setPreferredSize(new Dimension(buttonIcon.getHeight(), buttonIcon.getWidth()));
 		button.setText(CLOSE_MSG);
-		//button.setPreferredSize(buttonSize);
 		button.setAlignmentX(Component.CENTER_ALIGNMENT);
 		button.addActionListener(new ActionListener() {
 			@Override
