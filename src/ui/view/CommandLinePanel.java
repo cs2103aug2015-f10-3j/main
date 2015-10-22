@@ -156,7 +156,6 @@ public class CommandLinePanel extends JPanel implements Observer,KeyListener {
 	private void addCommandToList(String input){
 		node = null;
 		commandList.insertLast(input);
-		System.out.println("insert into list");
 	}
 
 	/**
