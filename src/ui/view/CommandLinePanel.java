@@ -11,12 +11,15 @@ import javax.swing.*;
 import javax.swing.text.DefaultCaret;
 
 import background.Reminder;
+import command.api.ClearCommand;
+import common.data.DoublyLinkedList;
+import common.data.Node;
 import common.util.DateTimeHelper;
 import task.entity.Task;
 import ui.controller.UIController;
 
 @SuppressWarnings("serial")
-public class CommandLinePanel extends JPanel implements Observer {
+public class CommandLinePanel extends JPanel implements Observer,KeyListener {
 
 	/*** Variables ***/
 	private static final String STRING_EMPTY = "";
@@ -32,6 +35,9 @@ public class CommandLinePanel extends JPanel implements Observer {
 	private JTextArea textArea = null;
 	public static JDialog reminderDialog = null;
 	private JPanel panel = null;
+	private DoublyLinkedList commandList = null;
+	private Node node = null;
+	private String currentCommand = null;
 
 	//protected static boolean restrictSize = true;
 	//protected static boolean sizeIsRandom = false;
@@ -39,6 +45,7 @@ public class CommandLinePanel extends JPanel implements Observer {
 	/*** Constructors ***/
 	public CommandLinePanel(){
 		uiController = UIController.getInstance(this);
+		commandList = new DoublyLinkedList();
 	}
 
 	/*** Methods ***/
@@ -129,6 +136,7 @@ public class CommandLinePanel extends JPanel implements Observer {
 		inputField = new JTextField();
 		inputField.setMaximumSize(new Dimension(inputField.getMaximumSize().width ,inputField.getPreferredSize().height));
 		inputField.requestFocus();
+		inputField.addKeyListener(this);
 		inputField.addActionListener(new ActionListener() {
 
 			@Override
@@ -138,9 +146,17 @@ public class CommandLinePanel extends JPanel implements Observer {
 				textArea.append(NEXT_LINE);
 				appendTexts(textArea, input);
 				inputField.setText(STRING_EMPTY);
+				addCommandToList(input);
+				currentCommand = null;
 			}
 		});
 		return inputField;
+	}
+
+	private void addCommandToList(String input){
+		node = null;
+		commandList.insertLast(input);
+		System.out.println("insert into list");
 	}
 
 	/**
@@ -213,7 +229,7 @@ public class CommandLinePanel extends JPanel implements Observer {
 	@SuppressWarnings("unchecked")
 	@Override
 	public void update(Observable o, Object arg) {
-		if (arg == null) {
+		if (o instanceof ClearCommand) {
 			textArea.setText(null);
 		} else if(o instanceof Reminder){
 			createReminder((ArrayList<Task>)arg);
@@ -223,25 +239,87 @@ public class CommandLinePanel extends JPanel implements Observer {
 			textArea.append(NEXT_LINE);
 		}
 	}
-	
+
 	public void createReminder(ArrayList<Task> taskList){
 		System.out.println("Reminder alert");
-        if (reminderDialog == null) {
-            Window topWindow = SwingUtilities.getWindowAncestor(panel);
-            reminderDialog = new JDialog(topWindow, "Modal Dialog", ModalityType.APPLICATION_MODAL);
-            reminderDialog.getContentPane().add(new ReminderPanel(taskList, reminderDialog).getMainPanel());
-            reminderDialog.pack();
-            reminderDialog.setLocationRelativeTo(topWindow);
-            reminderDialog.setVisible(true);
-        } else {
-            reminderDialog.getContentPane().add(new ReminderPanel(taskList, reminderDialog).getMainPanel());
-            reminderDialog.pack();
-            reminderDialog.setVisible(true);
-        }
+		if (reminderDialog == null) {
+			Window topWindow = SwingUtilities.getWindowAncestor(panel);
+			reminderDialog = new JDialog(topWindow, "Modal Dialog", ModalityType.APPLICATION_MODAL);
+			reminderDialog.getContentPane().add(new ReminderPanel(taskList, reminderDialog).getMainPanel());
+			reminderDialog.pack();
+			reminderDialog.setLocationRelativeTo(topWindow);
+			reminderDialog.setVisible(true);
+		} else {
+			reminderDialog.getContentPane().add(new ReminderPanel(taskList, reminderDialog).getMainPanel());
+			reminderDialog.pack();
+			reminderDialog.setVisible(true);
+		}
 	}
-	
+
 	public static void setDialogNull(){
 		reminderDialog = null;
+	}
+
+	@Override
+	public void keyTyped(KeyEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void keyPressed(KeyEvent e) {
+		// TODO Auto-generated method stub
+		int keyCode = e.getKeyCode();
+		switch( keyCode ) { 
+		case KeyEvent.VK_UP:
+			// handle up 
+			if(node == null){
+				node = commandList.getLast();
+				if(currentCommand == null){
+					currentCommand = inputField.getText();
+				}
+				if(node!=null){
+					inputField.setText(node.getData());
+				}
+
+			} else{
+				if(node.getPrevious()!=null){
+					node = node.getPrevious();
+					if(currentCommand == null){
+						currentCommand = inputField.getText();
+						node = commandList.getLast();
+					}
+					inputField.setText(node.getData());
+				}
+			}
+			break;
+		case KeyEvent.VK_DOWN:
+			// handle down
+			if(node != null){
+				if(node.getNext()!=null){
+					node = node.getNext();
+					inputField.setText(node.getData());
+				} else{
+					if(currentCommand!=null){
+						inputField.setText(currentCommand);
+						currentCommand = null;
+					}
+				}
+			}
+			break;
+		case KeyEvent.VK_LEFT:
+			// handle left
+			break;
+		case KeyEvent.VK_RIGHT :
+			// handle right
+			break;
+		}
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e) {
+		// TODO Auto-generated method stub
+
 	}
 
 
