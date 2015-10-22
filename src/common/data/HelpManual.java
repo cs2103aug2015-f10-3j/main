@@ -1,6 +1,7 @@
 package common.data;
 
 public class HelpManual {
+	/*** Variables ***/
 	private static HelpManual manual = null;
 	private static final String OVERALL_MSG = "PADDLETASK HELP MANUAL\n";
 	private static final String ADD_MSG ="ADD COMMAND \n"
@@ -66,25 +67,11 @@ public class HelpManual {
 	private static final String ERROR_MSG = "No such command for Help found";
 	private static final String NEXT_LINE = "\n";
 	
+	/*** Constructor ***/
 	private HelpManual(){
 	}
 	
-	protected static enum COMMANDS {
-		ADD("add"), VIEW("view"), EDIT("edit"), DELETE("delete"), 
-		COMPLETE("complete"), SEARCH("search"), UNDO("undo"), REDO("redo"),
-		EXIT("exit"), CLEAR("clear"), HELP("help");
-
-		private final String commandText;
-		
-		private COMMANDS(final String commandText) {
-			this.commandText = commandText;
-		}
-
-		public String toString() {
-			return commandText;
-		}
-	}
-
+	/*** Methods ***/
 	public static HelpManual getInstance(){
 		if(manual == null){
 			manual = new HelpManual();
@@ -123,6 +110,22 @@ public class HelpManual {
 			return ERROR_MSG;
 		}
 
+	}
+	
+	protected static enum COMMANDS {
+		ADD("add"), VIEW("view"), EDIT("edit"), DELETE("delete"), 
+		COMPLETE("complete"), SEARCH("search"), UNDO("undo"), REDO("redo"),
+		EXIT("exit"), CLEAR("clear"), HELP("help");
+
+		private final String commandText;
+		
+		private COMMANDS(final String commandText) {
+			this.commandText = commandText;
+		}
+
+		public String toString() {
+			return commandText;
+		}
 	}
 
 	
