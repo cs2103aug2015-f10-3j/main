@@ -35,8 +35,8 @@
         <createdAt>07/09/2015 23:00</createdAt>
         <type>TIMED</type>
         <complete>false</complete>
-        <start>11/11/2015 00:00</start>
-        <end>21/09/2015 00:00</end>
+        <start>17/09/2015 13:00</start>
+        <end>17/09/2015 17:00</end>
         <reminder>17/09/2015 16:55</reminder>
     </item>
     <item>
@@ -118,21 +118,62 @@
     </item>
     <item>
         <taskId>13</taskId>
-        <description>abc</description>
-        <createdAt>22/10/2015 16:52</createdAt>
-        <type>FLOATING</type>
+        <description>supply this</description>
+        <createdAt>22/10/2015 15:01</createdAt>
+        <type>DEADLINE</type>
         <complete>false</complete>
         <start/>
-        <end/>
+        <end>23/10/2015 00:00</end>
+        <reminder>22/10/2015 15:03</reminder>
     </item>
     <item>
         <taskId>14</taskId>
-        <description>abc</description>
-        <createdAt>22/10/2015 16:52</createdAt>
-        <type>TIMED</type>
+        <description>test2</description>
+        <createdAt>22/10/2015 15:17</createdAt>
+        <type>DEADLINE</type>
         <complete>false</complete>
-        <start>12/12/2013 15:00</start>
-        <end>12/12/2013 00:00</end>
-        <reminder>11/12/2013 23:55</reminder>
+        <start/>
+        <end>23/10/2015 00:00</end>
+        <reminder>22/10/2015 15:18</reminder>
+    </item>
+    <item>
+        <taskId>15</taskId>
+        <description>test3</description>
+        <createdAt>22/10/2015 15:21</createdAt>
+        <type>DEADLINE</type>
+        <complete>false</complete>
+        <start/>
+        <end>23/10/2015 00:00</end>
+        <reminder>22/10/2015 15:22</reminder>
+    </item>
+    <item>
+        <taskId>16</taskId>
+        <description>test4</description>
+        <createdAt>22/10/2015 15:23</createdAt>
+        <type>DEADLINE</type>
+        <complete>false</complete>
+        <start/>
+        <end>22/10/2015 00:00</end>
+        <reminder>22/10/2015 15:23</reminder>
+    </item>
+    <item>
+        <taskId>17</taskId>
+        <description>test5</description>
+        <createdAt>22/10/2015 15:26</createdAt>
+        <type>DEADLINE</type>
+        <complete>false</complete>
+        <start/>
+        <end>22/10/2015 00:00</end>
+        <reminder>22/10/2015 15:27</reminder>
+    </item>
+    <item>
+        <taskId>18</taskId>
+        <description>hotdogbun</description>
+        <createdAt>22/10/2015 15:28<type>DEADLINE</type></createdAt>
+        
+        <complete>false</complete>
+        <start/>
+        <end>22/10/2015 00:00</end>
+        <reminder>22/10/2015 15:29</reminder>
     </item>
 </task>
