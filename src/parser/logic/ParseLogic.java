@@ -12,59 +12,9 @@ import command.data.Option;
 import common.exception.InvalidCommandFormatException;
 import common.util.DateTimeHelper;
 
-public class ParseLogic {
-	
-	private static final String SPACE_REGEX = "\\s+";
-	private static final String EMPTY_STRING = "";
-	private static final String SPACE = " ";
-	
-	private static final boolean OPTIONAL = true;
-	private static final boolean NOT_OPTIONAL = false;
+public class ParseLogic implements CommandConstants {
 	
 	private static final Logger LOGGER = Logger.getLogger(ParseLogic.class.getName());
-
-	public static enum COMMAND_TYPE {
-		ADD, VIEW, EDIT, DELETE, COMPLETE,
-		SEARCH, UNDO, REDO, 
-		INVALID, EXIT, CLEAR, HELP
-	}
-
-	protected static enum COMMANDS {
-		ADD("add"), VIEW("view"), EDIT("edit"), DELETE("delete"), 
-		COMPLETE("complete"), SEARCH("search"), UNDO("undo"), REDO("redo"),
-		EXIT("exit"), CLEAR("clear"), HELP("help");
-
-		private final String commandText;
-		
-		private COMMANDS(final String commandText) {
-			this.commandText = commandText;
-		}
-
-		@Override
-		public String toString() {
-			return commandText;
-		}
-	}
-
-	protected static enum OPTIONS {
-		ADD("add"), VIEW("view"), EDIT("edit"), DELETE("delete"), 
-		COMPLETE("complete"), SEARCH("search"), BY("by"), UNDO("undo"), 
-		REDO("redo"), REMIND("remind"), CLEAR("clear"), EXIT("exit"), BETWEEN("between"), AND("and"),
-		NAME("name"), START("start"), END("end"), ALL("all"),
-		FLOATING("floating"), DEADLINE("deadline"), TIMED("timed"),
-		TODAY("today"), TOMORROW("tomorrow"), WEEK("week"), MONTH("month"), HELP("help");
-
-		private final String optionText;
-		
-		private OPTIONS(final String commandText) {
-			this.optionText = commandText;
-		}
-
-		@Override
-		public String toString() {
-			return optionText;
-		}
-	}
 	
 	public ParseLogic() {
 		LOGGER.info("Initiating ParseLogic");
@@ -209,7 +159,7 @@ public class ParseLogic {
 			return expectDate(commandList, NOT_OPTIONAL);
 		} else if (option.equals(OPTIONS.AND.toString())) {
 			return expectDate(commandList, NOT_OPTIONAL);
-		} else if (option.equals(OPTIONS.NAME.toString())) {
+		} else if (option.equals(OPTIONS.DESC.toString())) {
 			return expectString(commandList, NOT_OPTIONAL);
 		} else if (option.equals(OPTIONS.START.toString())) {
 			return expectDate(commandList, NOT_OPTIONAL);
@@ -432,22 +382,30 @@ public class ParseLogic {
 	}
 	
 	public String replaceRunningIndex(String userCommand, int[] stateArray) throws Exception {
-		String[] commandIntegers = extractIntegers(userCommand);
-		for (int i = 0; i < commandIntegers.length; i++) {
-			int taskID = Integer.parseInt(commandIntegers[i]);
-			if (taskID <= 0) {
-				String message = String.format("Failed to parse user input: %1$s", userCommand);
-				LOGGER.log(Level.SEVERE, message, "Invalid ID provided");
-				throw new InvalidCommandFormatException("User input supplied was in an invalid format");
+		List<String> commandTokens = breakDownCommand(userCommand);
+		for (int i = 0; i < commandTokens.size(); i++) {
+			Integer taskID;
+			if ((taskID = tryParseInteger(commandTokens.get(i))) != null) {
+				if (taskID <= 0) {
+					String message = String.format("Failed to parse user input: %1$s", userCommand);
+					LOGGER.log(Level.SEVERE, message, "Invalid ID provided");
+					throw new InvalidCommandFormatException("User input supplied was in an invalid format");
+				}
+				String oldID = String.format("\\s+%1$d(\\s+|$)", taskID);
+				String newID = String.format(" %1$d ", stateArray[taskID - 1]);
+				userCommand = userCommand.replaceAll(oldID, newID);
 			}
-			String oldID = String.format("\\s+%1$d(\\s+|$)", taskID);
-			String newID = String.format(" %1$d ", stateArray[taskID - 1]);
-			userCommand = userCommand.replaceAll(oldID, newID);
 		}
 		return userCommand;
 	}
 	
-	private String[] extractIntegers(String s1) {
-		return s1.replaceAll("[^0-9]", " ").trim().split(" ");
+	private Integer tryParseInteger(String s1) {
+		Integer parsedInt;
+		try {
+			parsedInt = Integer.parseInt(s1);
+		} catch (NumberFormatException nfe) {
+			parsedInt = null;
+		}
+		return parsedInt;
 	}
 }
