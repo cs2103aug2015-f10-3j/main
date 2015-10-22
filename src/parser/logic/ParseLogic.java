@@ -3,6 +3,7 @@ package parser.logic;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -12,7 +13,7 @@ import command.data.Option;
 import common.exception.InvalidCommandFormatException;
 import common.util.DateTimeHelper;
 
-public class ParseLogic implements CommandConstants {
+public class ParseLogic extends ParserBackend {
 	
 	private static final Logger LOGGER = Logger.getLogger(ParseLogic.class.getName());
 	
@@ -110,17 +111,18 @@ public class ParseLogic implements CommandConstants {
 		}
 	}
 
-	public void addOptionsToCommand(Command command, List<String> commandList) throws Exception {
+	public void addOptionsToCommand(COMMAND_TYPE commandType, Command command, List<String> commandList) throws Exception {
 		LOGGER.info("Attempt to add list of options to Command specified");
 		assert(command != null && commandList != null);
+		EnumMap<OPTIONS, TYPE> optionMap = getOptionMap(commandType);
 		while (!commandList.isEmpty()) {
 			LOGGER.fine("Retrieve head of list to check if the word is a keyword");
 			LOGGER.warning("May cause index out of bounds");
 			String option = commandList.remove(0);
-			if (!isOption(option)) {
+			if (!isOption(optionMap, option)) {
 				throw new InvalidCommandFormatException("Keyword was expected but not found.");
 			}
-			Option commandOption = getOption(option, commandList);
+			Option commandOption = getOption(option, commandList, optionMap);
 			if (!command.addOption(option, commandOption)) {
 				LOGGER.severe("Unable to add option into command due to unknown reasons.");
 				throw new Error("Unknown error has occured.");
@@ -128,74 +130,81 @@ public class ParseLogic implements CommandConstants {
 		}
 	}
 	
-	private Option getOption(String option, List<String> commandList) throws Exception {
-		LOGGER.log(Level.INFO, "Retrieve expected value of specified option: {0}", option);
-		assert(option != null && option.length() > 0 && commandList != null);
-		if (option.equals(OPTIONS.ADD.toString())) {
-			return expectString(commandList, NOT_OPTIONAL);
-		} else if (option.equals(OPTIONS.VIEW.toString())) {
-			return null;
-		} else if (option.equals(OPTIONS.EDIT.toString())) {
-			return expectInteger(commandList, NOT_OPTIONAL);
-		} else if (option.equals(OPTIONS.DELETE.toString())) {
-			return expectIntegerArray(commandList, OPTIONAL);
-		} else if (option.equals(OPTIONS.COMPLETE.toString())) {
-			return expectIntegerArray(commandList, NOT_OPTIONAL);
-		} else if (option.equals(OPTIONS.SEARCH.toString())) {
-			return expectStringArray(commandList, NOT_OPTIONAL);
-		} else if (option.equals(OPTIONS.BY.toString())) {
-			return expectDate(commandList, NOT_OPTIONAL);
-		} else if (option.equals(OPTIONS.CLEAR.toString())) {
-			return null;
-		} else if (option.equals(OPTIONS.HELP.toString())) {
-			return expectString(commandList, OPTIONAL);
-		} else if (option.equals(OPTIONS.UNDO.toString())) {
-			return null;
-		} else if (option.equals(OPTIONS.REDO.toString())) {
-			return null;
-		} else if (option.equals(OPTIONS.EXIT.toString())) {
-			return null;
-		} else if (option.equals(OPTIONS.BETWEEN.toString())) {
-			return expectDate(commandList, NOT_OPTIONAL);
-		} else if (option.equals(OPTIONS.AND.toString())) {
-			return expectDate(commandList, NOT_OPTIONAL);
-		} else if (option.equals(OPTIONS.DESC.toString())) {
-			return expectString(commandList, NOT_OPTIONAL);
-		} else if (option.equals(OPTIONS.START.toString())) {
-			return expectDate(commandList, NOT_OPTIONAL);
-		} else if (option.equals(OPTIONS.END.toString())) {
-			return expectDate(commandList, NOT_OPTIONAL);
-		} else if (option.equals(OPTIONS.ALL.toString())) {
-			return null;
-		} else if (option.equals(OPTIONS.FLOATING.toString())) {
-			return null;
-		} else if (option.equals(OPTIONS.DEADLINE.toString())) {
-			return null;
-		} else if (option.equals(OPTIONS.TIMED.toString())) {
-			return null;
-		} else if (option.equals(OPTIONS.TODAY.toString())) {
-			return null;
-		} else if (option.equals(OPTIONS.TOMORROW.toString())) {
-			return null;
-		} else if (option.equals(OPTIONS.WEEK.toString())) {
-			return null;
-		} else if (option.equals(OPTIONS.MONTH.toString())) {
-			return null;
-		} else if (option.equals(OPTIONS.REMIND.toString())) {
-			return expectDate(commandList, NOT_OPTIONAL);
-		} else {
-			LOGGER.severe("option keyword is not within expectations");
-			throw new Error("corrupted variable: option");
+	private EnumMap<OPTIONS, TYPE> getOptionMap(COMMAND_TYPE commandType) {
+		switch (commandType) {
+			case ADD:
+				return addOptions;
+			case VIEW:
+				return viewOptions;
+			case EDIT:
+				return editOptions;
+			case DELETE:
+				return deleteOptions;
+			case COMPLETE:
+				return completeOptions;
+			case SEARCH:
+				return searchOptions;
+			case UNDO:
+				return undoOptions;
+			case REDO:
+				return redoOptions;
+			case CLEAR:
+				return clearOptions;
+			case HELP:
+				return helpOptions;
+			case EXIT:
+				return exitOptions;
+			case INVALID:
+				return null;
+			default:
+				LOGGER.severe("commandType is corrupted and not within expectations");
+				throw new Error("Corrupted commandType");
 		}
 	}
 	
-	private Option expectIntegerArray(List<String> commandList, boolean optional) throws Exception {
+	private Option getOption(String option, List<String> commandList, EnumMap<OPTIONS, TYPE> optionMap) throws Exception {
+		LOGGER.log(Level.INFO, "Retrieve expected value of specified option: {0}", option);
+		assert(option != null && option.length() > 0 && commandList != null);
+		for (OPTIONS opt : optionMap.keySet()) {
+			if (option.equals(opt.toString())) {
+				switch (optionMap.get(opt)) {
+				case STRING:
+					return expectString(commandList, optionMap, false);
+				case STRING_ARRAY:
+					return expectStringArray(commandList, optionMap, false);
+				case INTEGER:
+					return expectInteger(commandList, optionMap, false);
+				case INTEGER_ARRAY:
+					return expectIntegerArray(commandList, optionMap, false);
+				case DATE:
+					return expectDate(commandList, optionMap, false);
+				case STRING_OPT:
+					return expectString(commandList, optionMap, true);
+				case STRING_ARRAY_OPT:
+					return expectStringArray(commandList, optionMap, true);
+				case INTEGER_OPT:
+					return expectInteger(commandList, optionMap, true);
+				case INTEGER_ARRAY_OPT: 
+					return expectIntegerArray(commandList, optionMap, true);
+				case DATE_OPT:
+					return expectDate(commandList, optionMap, true);
+				case NONE:
+					return null;
+				}
+			}
+		}
+		// failed to get anything
+		LOGGER.severe("option keyword is not within expectations");
+		throw new Error("corrupted variable: option");
+	}
+	
+	private Option expectIntegerArray(List<String> commandList, EnumMap<OPTIONS, TYPE> optionMap, boolean optional) throws Exception {
 		LOGGER.log(Level.INFO, "Attempt to parse expected array of integers from user input");
 		assert(commandList != null);
 		Option commandOption = new Option();
 		LOGGER.log(Level.WARNING, "expectedInt = commandList.remove(0) may cause index out of bounds exception");
 		String expectedInt = commandList.remove(0);
-		if (isOption(expectedInt)) {
+		if (isOption(optionMap, expectedInt)) {
 			if (optional) {
 				commandList.add(0, expectedInt);
 				return null;
@@ -204,7 +213,7 @@ public class ParseLogic implements CommandConstants {
 			throw new InvalidCommandFormatException("Integers were expected but not found.");
 		}
 		commandOption.addValue(Integer.parseInt(expectedInt));
-		while (!commandList.isEmpty() && !isOption(commandList.get(0))) {
+		while (!commandList.isEmpty() && !isOption(optionMap, commandList.get(0))) {
 			LOGGER.fine("Continue expecting a list of integers");
 			LOGGER.warning("May cause NumberFormatException when string is not an integer");
 			commandOption.addValue(Integer.parseInt(commandList.remove(0)));
@@ -212,14 +221,14 @@ public class ParseLogic implements CommandConstants {
 		return commandOption;
 	}
 	
-	private Option expectString(List<String> commandList, boolean optional) throws Exception {
+	private Option expectString(List<String> commandList, EnumMap<OPTIONS, TYPE> optionMap, boolean optional) throws Exception {
 		LOGGER.log(Level.INFO, "Attempt to parse expected string from user input");
 		assert(commandList != null);
 		Option commandOption = new Option();
 		StringBuilder stringOption = new StringBuilder();
 		LOGGER.log(Level.WARNING, "expectedString = commandList.get(0) may cause index out of bounds exception");
 		String expectedString = commandList.get(0);
-		if (isOption(expectedString)) {
+		if (isOption(optionMap, expectedString)) {
 			if (optional) {
 				return null;
 			}
@@ -229,7 +238,7 @@ public class ParseLogic implements CommandConstants {
 		do {
 			LOGGER.fine("Continue expecting a list of Strings");
 			expectedString = commandList.get(0);
-			if  (isOption(expectedString)) {
+			if  (isOption(optionMap, expectedString)) {
 				break;
 			}
 			stringOption.append(expectedString);
@@ -241,13 +250,13 @@ public class ParseLogic implements CommandConstants {
 		return commandOption;
 	}
 	
-	private Option expectInteger(List<String> commandList, boolean optional) throws Exception {
+	private Option expectInteger(List<String> commandList, EnumMap<OPTIONS, TYPE> optionMap, boolean optional) throws Exception {
 		LOGGER.log(Level.INFO, "Attempt to parse single expected integer from user input");
 		assert(commandList != null);
 		Option commandOption = new Option();
 		LOGGER.log(Level.WARNING, "expectedInt = commandList.get(0) may cause index out of bounds exception");
 		String expectedInt = commandList.remove(0);
-		if (isOption(expectedInt)) {
+		if (isOption(optionMap, expectedInt)) {
 			if (optional) {
 				commandList.add(0, expectedInt);
 				return null;
@@ -260,13 +269,13 @@ public class ParseLogic implements CommandConstants {
 		return commandOption;
 	}
 	
-	private Option expectStringArray(List<String> commandList, boolean optional) throws Exception {
+	private Option expectStringArray(List<String> commandList, EnumMap<OPTIONS, TYPE> optionMap, boolean optional) throws Exception {
 		LOGGER.log(Level.INFO, "Attempt to parse expected array of Strings from user input");
 		assert(commandList != null);
 		Option commandOption = new Option();
 		LOGGER.log(Level.WARNING, "expectedInt = commandList.remove(0) may cause index out of bounds exception");
 		String expectedString = commandList.remove(0);
-		if (isOption(expectedString)) {
+		if (isOption(optionMap, expectedString)) {
 			if (optional) {
 				commandList.add(0, expectedString);
 				return null;
@@ -275,7 +284,7 @@ public class ParseLogic implements CommandConstants {
 			throw new InvalidCommandFormatException("Integers were expected but not found.");
 		}
 		commandOption.addValue(expectedString);
-		while (!commandList.isEmpty() && !isOption(commandList.get(0))) {
+		while (!commandList.isEmpty() && !isOption(optionMap, commandList.get(0))) {
 			LOGGER.fine("Continue expecting a list of integers");
 			LOGGER.warning("May cause NumberFormatException when string is not an integer");
 			commandOption.addValue(commandList.remove(0));
@@ -283,13 +292,13 @@ public class ParseLogic implements CommandConstants {
 		return commandOption;
 	}
 	
-	private Option expectDate(List<String> commandList, boolean optional) throws Exception {
+	private Option expectDate(List<String> commandList, EnumMap<OPTIONS, TYPE> optionMap, boolean optional) throws Exception {
 		LOGGER.log(Level.INFO, "Attempt to parse expected date time pair from user input");
 		assert(commandList != null);
 		Option commandOption = new Option();
 		LOGGER.log(Level.WARNING, "expectedDate = commandList.get(0) may cause index out of bounds exception");
 		String expectedDate = commandList.remove(0);
-		if (isOption(expectedDate)) {
+		if (isOption(optionMap, expectedDate)) {
 			if (optional) {
 				commandList.add(0, expectedDate);
 				return null;
@@ -301,7 +310,7 @@ public class ParseLogic implements CommandConstants {
 		if (!commandList.isEmpty()) {
 			expectedTime = commandList.remove(0);
 		}
-		if (isOption(expectedTime)) {
+		if (isOption(optionMap, expectedTime)) {
 			commandList.add(0, expectedTime);
 			expectedTime = EMPTY_STRING;
 		}
@@ -337,8 +346,8 @@ public class ParseLogic implements CommandConstants {
 		return time.matches("(\\d{2}):(\\d{2})");
 	}
 	
-	private boolean isOption(String option) {
-		for (OPTIONS value : OPTIONS.values()) {
+	private boolean isOption(EnumMap<OPTIONS, TYPE> optionMap, String option) {
+		for (OPTIONS value : optionMap.keySet()) {
 			if (value.toString().equalsIgnoreCase(option)) {
 				return true;
 			}

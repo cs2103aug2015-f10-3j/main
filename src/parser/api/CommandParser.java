@@ -64,15 +64,15 @@ public final class CommandParser {
 		if (newCommand == null) {
 			throw new InvalidCommandFormatException("Unable to create command with specified user input");
 		}
-		addOptions(newCommand, userCommand);
+		addOptions(commandType, newCommand, userCommand);
 		addCommandToList(newCommand, commandType);
 		return newCommand;
 	}
 
-	private void addOptions(Command newCommand, String userCommand) throws Exception {
+	private void addOptions(ParseLogic.COMMAND_TYPE commandType, Command newCommand, String userCommand) throws Exception {
 		assert(newCommand != null && userCommand != null && parserLogic != null);
 		List<String> commandList = parserLogic.breakDownCommand(userCommand);
-		parserLogic.addOptionsToCommand(newCommand, commandList);
+		parserLogic.addOptionsToCommand(commandType, newCommand, commandList);
 	}
 
 	private void addCommandToList(Command newCommand, ParseLogic.COMMAND_TYPE commandType) {

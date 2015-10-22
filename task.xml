@@ -35,8 +35,8 @@
         <createdAt>07/09/2015 23:00</createdAt>
         <type>TIMED</type>
         <complete>false</complete>
-        <start>17/09/2015 13:00</start>
-        <end>17/09/2015 17:00</end>
+        <start>11/11/2015 00:00</start>
+        <end>21/09/2015 00:00</end>
         <reminder>17/09/2015 16:55</reminder>
     </item>
     <item>
@@ -115,5 +115,24 @@
         <start/>
         <end>10/09/2015 12:30</end>
         <reminder>10/09/2015 12:25</reminder>
+    </item>
+    <item>
+        <taskId>13</taskId>
+        <description>abc</description>
+        <createdAt>22/10/2015 16:52</createdAt>
+        <type>FLOATING</type>
+        <complete>false</complete>
+        <start/>
+        <end/>
+    </item>
+    <item>
+        <taskId>14</taskId>
+        <description>abc</description>
+        <createdAt>22/10/2015 16:52</createdAt>
+        <type>TIMED</type>
+        <complete>false</complete>
+        <start>12/12/2013 15:00</start>
+        <end>12/12/2013 00:00</end>
+        <reminder>11/12/2013 23:55</reminder>
     </item>
 </task>
