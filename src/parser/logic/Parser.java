@@ -61,9 +61,9 @@ class Parser implements ParserConstants {
 	}
 
 	private void setupHelpOption() {
-		helpOptions.put(OPTIONS.HELP, TYPE.STRING);
+		helpOptions.put(OPTIONS.HELP, TYPE.STRING_OPT);
 
-		helpOptions.put(OPTIONS.HELP_SHORT, TYPE.STRING);
+		helpOptions.put(OPTIONS.HELP_SHORT, TYPE.STRING_OPT);
 	}
 
 	private void setupExitOption() {
