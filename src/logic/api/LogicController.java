@@ -3,6 +3,7 @@ package logic.api;
 import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import command.api.Command;
@@ -46,6 +47,7 @@ public class LogicController extends Observable {
 		Command cmd;
 		if (commandParser.isStatefulCommand(userInput)) {
 			if (deliveredTaskState.isEmpty()) {
+				LOGGER.log(Level.SEVERE, "LogicController:parseCommand(): Attempt to read state when there are no tasks");
 				throw new NoTaskStateException("Please perform a view to retrieve a list of task so that you can perform this command!");
 			} else {
 				cmd = commandParser.parse(userInput, getStateTaskId());
@@ -57,25 +59,25 @@ public class LogicController extends Observable {
 		return cmd;
 	}
 
-	private ArrayList<Task> executeCommand(Command cmd, String userInput) throws Exception {
-		cmd.addObserver(observer);
+	private ArrayList<Task> executeCommand(Command command, String userInput) throws Exception {
+		command.addObserver(observer);
 		ArrayList<Task> executionResult = new ArrayList<Task>();
 		if (commandParser.isSaveStateCommand(userInput)) {
-			executionResult = cmd.execute();
+			executionResult = command.execute();
 			deliveredTaskState = executionResult;
 		} else {
-			executionResult = cmd.execute();
+			executionResult = command.execute();
 		}
 		return executionResult;
 	}
 
 	private ArrayList<Task> handleCommand(String userInput) {
 		ArrayList<Task> executionResult;
-		Command cmd;
+		Command command;
 		
 		try {
-			cmd = parseCommand(userInput);
-			executionResult = executeCommand(cmd,userInput);
+			command = parseCommand(userInput);
+			executionResult = executeCommand(command,userInput);
 		}	catch (Exception e) {
 			setChanged();
 			notifyObservers(e.getMessage());

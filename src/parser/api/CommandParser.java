@@ -21,6 +21,7 @@ public final class CommandParser {
 
 	public Command parse(String userCommand, int[] stateArray) throws InvalidCommandFormatException {
 		assert(userCommand != null && stateArray != null);
+		checkUserCommand(userCommand);
 		try {
 			userCommand = parserLogic.replaceRunningIndex(userCommand,stateArray);
 			return parse(userCommand);
@@ -34,6 +35,7 @@ public final class CommandParser {
 	public Command parse(String userCommand) throws InvalidCommandFormatException {
 		assert(userCommand != null);
 		try {
+			checkUserCommand(userCommand);
 			userCommand = userCommand.trim();
 			if (userCommand.length() <= 0) {
 				LOGGER.severe("User input string is of 0 length");
@@ -46,13 +48,23 @@ public final class CommandParser {
 			throw new InvalidCommandFormatException("User input supplied was in an invalid format");
 		}
 	}
+	
+	private void checkUserCommand(String userCommand) throws InvalidCommandFormatException {
+		userCommand = userCommand.trim();
+		if (userCommand.length() <= 0) {
+			LOGGER.severe("User input string is of 0 length");
+			throw new InvalidCommandFormatException("User input is blank");
+		}
+	}
 
-	public boolean isStatefulCommand(String userCommand) {
+	public boolean isStatefulCommand(String userCommand) throws InvalidCommandFormatException {
+		checkUserCommand(userCommand);
 		ParseLogic.COMMAND_TYPE commandType = parserLogic.determineCommandType(userCommand);
 		return parserLogic.isStatefulCommand(commandType);
 	}
 
-	public boolean isSaveStateCommand(String userCommand) {
+	public boolean isSaveStateCommand(String userCommand) throws InvalidCommandFormatException {
+		checkUserCommand(userCommand);
 		ParseLogic.COMMAND_TYPE commandType = parserLogic.determineCommandType(userCommand);
 		return parserLogic.isSaveStateCommand(commandType);
 	}
