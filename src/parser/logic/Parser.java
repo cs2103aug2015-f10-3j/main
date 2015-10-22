@@ -3,6 +3,7 @@ package parser.logic;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -10,6 +11,7 @@ import java.util.logging.Logger;
 class Parser implements ParserConstants {
 
 	protected static final Logger LOGGER = Logger.getLogger(ParseLogic.class.getName());
+	private static HashMap<String, String> shortHandMap = new HashMap<String, String>();
 	
 	public Parser() {
 		setupCommandEnums();
@@ -26,6 +28,36 @@ class Parser implements ParserConstants {
 		setupRedoOption();
 		setupExitOption();
 		setupHelpOption();
+		setUpShortHandMapping();
+	}
+
+	private void setUpShortHandMapping() {
+		shortHandMap.put(OPTIONS.ADD_SHORT.toString(), OPTIONS.ADD.toString());
+		shortHandMap.put(OPTIONS.VIEW_SHORT.toString(), OPTIONS.VIEW.toString());
+		shortHandMap.put(OPTIONS.EDIT_SHORT.toString(), OPTIONS.EDIT.toString());
+		shortHandMap.put(OPTIONS.DELETE_SHORT.toString(), OPTIONS.DELETE.toString());
+		shortHandMap.put(OPTIONS.COMPLETE_SHORT.toString(), OPTIONS.COMPLETE.toString());
+		shortHandMap.put(OPTIONS.SEARCH_SHORT.toString(), OPTIONS.SEARCH.toString());
+		shortHandMap.put(OPTIONS.BY_SHORT.toString(), OPTIONS.BY.toString());
+		shortHandMap.put(OPTIONS.UNDO_SHORT.toString(), OPTIONS.UNDO.toString());
+		shortHandMap.put(OPTIONS.REDO_SHORT.toString(), OPTIONS.REDO.toString());
+		shortHandMap.put(OPTIONS.REMIND_SHORT.toString(), OPTIONS.REMIND.toString());
+		shortHandMap.put(OPTIONS.CLEAR_SHORT.toString(), OPTIONS.CLEAR.toString());
+		shortHandMap.put(OPTIONS.EXIT_SHORT.toString(), OPTIONS.EXIT.toString());
+		shortHandMap.put(OPTIONS.BETWEEN_SHORT.toString(), OPTIONS.BETWEEN.toString());
+		shortHandMap.put(OPTIONS.AND_SHORT.toString(), OPTIONS.AND.toString());
+		shortHandMap.put(OPTIONS.DESC_SHORT.toString(), OPTIONS.DESC.toString());
+		shortHandMap.put(OPTIONS.START_SHORT.toString(), OPTIONS.START.toString());
+		shortHandMap.put(OPTIONS.END_SHORT.toString(), OPTIONS.END.toString());
+		shortHandMap.put(OPTIONS.ALL_SHORT.toString(), OPTIONS.ALL.toString());
+		shortHandMap.put(OPTIONS.FLOATING_SHORT.toString(), OPTIONS.FLOATING.toString());
+		shortHandMap.put(OPTIONS.DEADLINE_SHORT.toString(), OPTIONS.DEADLINE.toString());
+		shortHandMap.put(OPTIONS.TIMED_SHORT.toString(), OPTIONS.TIMED.toString());
+		shortHandMap.put(OPTIONS.TODAY_SHORT.toString(), OPTIONS.TODAY.toString());
+		shortHandMap.put(OPTIONS.TOMORROW_SHORT.toString(), OPTIONS.TOMORROW.toString());
+		shortHandMap.put(OPTIONS.WEEK_SHORT.toString(), OPTIONS.WEEK.toString());
+		shortHandMap.put(OPTIONS.MONTH_SHORT.toString(), OPTIONS.MONTH.toString());
+		shortHandMap.put(OPTIONS.HELP_SHORT.toString(), OPTIONS.HELP.toString());
 	}
 
 	private void setupHelpOption() {
@@ -158,6 +190,14 @@ class Parser implements ParserConstants {
 			}
 		}
 		return false;
+	}
+	
+	protected String getFullOptionName(String option) {
+		if (shortHandMap.containsKey(option)) {
+			return shortHandMap.get(option);
+		} else {
+			return option;
+		}
 	}
 	
 	private boolean isTrivialOption(TYPE optionType) {

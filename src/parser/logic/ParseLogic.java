@@ -21,37 +21,48 @@ public class ParseLogic extends Parser {
 		LOGGER.log(Level.INFO, "Attempt to determine command type from user input: {0}", userCommand);
 		assert(userCommand != null);
 		String mainCommand = getMainCommand(userCommand).toLowerCase();
-		if (mainCommand.equals(COMMANDS.ADD.toString())) {
+		if (mainCommand.equals(COMMANDS.ADD.toString()) 
+			|| mainCommand.equals(COMMANDS.ADD_SHORT.toString())) {
 			return COMMAND_TYPE.ADD;
 		}
-		else if (mainCommand.equals(COMMANDS.VIEW.toString())) {
+		else if (mainCommand.equals(COMMANDS.VIEW.toString())
+				|| mainCommand.equals(COMMANDS.VIEW_SHORT.toString())) {
 			return COMMAND_TYPE.VIEW;
 		}
-		else if (mainCommand.equals(COMMANDS.EDIT.toString())) {
+		else if (mainCommand.equals(COMMANDS.EDIT.toString())
+				|| mainCommand.equals(COMMANDS.EDIT_SHORT.toString())) {
 			return COMMAND_TYPE.EDIT;
 		}
-		else if (mainCommand.equals(COMMANDS.DELETE.toString())) {
+		else if (mainCommand.equals(COMMANDS.DELETE.toString())
+				|| mainCommand.equals(COMMANDS.DELETE_SHORT.toString())) {
 			return COMMAND_TYPE.DELETE;
 		}
-		else if (mainCommand.equals(COMMANDS.COMPLETE.toString())) {
+		else if (mainCommand.equals(COMMANDS.COMPLETE.toString())
+				|| mainCommand.equals(COMMANDS.COMPLETE_SHORT.toString())) {
             return COMMAND_TYPE.COMPLETE;
         }
-		else if (mainCommand.equals(COMMANDS.SEARCH.toString())) {
+		else if (mainCommand.equals(COMMANDS.SEARCH.toString())
+				|| mainCommand.equals(COMMANDS.SEARCH_SHORT.toString())) {
 			return COMMAND_TYPE.SEARCH;
 		}
-		else if (mainCommand.equals(COMMANDS.UNDO.toString())) {
+		else if (mainCommand.equals(COMMANDS.UNDO.toString())
+				|| mainCommand.equals(COMMANDS.UNDO_SHORT.toString())) {
 			return COMMAND_TYPE.UNDO;
 		}
-		else if (mainCommand.equals(COMMANDS.REDO.toString())) {
+		else if (mainCommand.equals(COMMANDS.REDO.toString())
+				|| mainCommand.equals(COMMANDS.REDO_SHORT.toString())) {
 			return COMMAND_TYPE.REDO;
 		}
-		else if (mainCommand.equals(COMMANDS.CLEAR.toString())) {
+		else if (mainCommand.equals(COMMANDS.CLEAR.toString())
+				|| mainCommand.equals(COMMANDS.CLEAR_SHORT.toString())) {
 			return COMMAND_TYPE.CLEAR;
 		}
-		else if (mainCommand.equals(COMMANDS.HELP.toString())) {
+		else if (mainCommand.equals(COMMANDS.HELP.toString())
+				|| mainCommand.equals(COMMANDS.HELP_SHORT.toString())) {
 			return COMMAND_TYPE.HELP;
 		}
-		else if (mainCommand.equals(COMMANDS.EXIT.toString())) {
+		else if (mainCommand.equals(COMMANDS.EXIT.toString())
+				|| mainCommand.equals(COMMANDS.EXIT_SHORT.toString())) {
 			return COMMAND_TYPE.EXIT;
 		}
 		else {
@@ -105,7 +116,9 @@ public class ParseLogic extends Parser {
 				if (!isOptionalOrNoArgumentType(optionMap, option) && commandOption == null) {
 					continue;
 				}
-				if (!command.addOption(option, commandOption)) {
+				option = getFullOptionName(option);
+				boolean isAddSuccess = command.addOption(option, commandOption);
+				if (!isAddSuccess) {
 					LOGGER.severe("Unable to add option into command due to unknown reasons.");
 					throw new Error("Unknown error has occured.");
 				}
