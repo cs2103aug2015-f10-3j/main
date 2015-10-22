@@ -9,7 +9,6 @@ import java.util.logging.Level;
 import command.api.*;
 import command.data.Option;
 import common.exception.InvalidCommandFormatException;
-import common.util.DateTimeHelper;
 
 public class ParseLogic extends Parser {
 	
@@ -253,6 +252,32 @@ public class ParseLogic extends Parser {
 	}
 	
 	private Option expectDate(List<String> commandList, boolean optional) throws Exception {
+		LOGGER.log(Level.INFO, "Attempt to parse expected string from user input");
+		assert(commandList != null);
+		Option commandOption = new Option();
+		StringBuilder stringOption = new StringBuilder();
+		LOGGER.log(Level.WARNING, "expectedString = commandList.get(0) may cause index out of bounds exception");
+		if (commandList.isEmpty() && optional) {
+			return null;
+		}
+		String expectedString = commandList.get(0);
+		for (int i = 0; i < commandList.size(); i++) { 
+			LOGGER.fine("Expecting a list of Strings");
+			expectedString = commandList.get(i);
+			stringOption.append(expectedString);
+			stringOption.append(SPACE);
+		}
+		expectedString = stringOption.toString().trim();
+		LocalDateTime date = parseDate(expectedString);
+		if (date == null) {
+			return null;
+		}
+		commandOption.addValue(date);
+		return commandOption;
+	}
+	
+	/*
+	private Option expectDate(List<String> commandList, boolean optional) throws Exception {
 		LOGGER.log(Level.INFO, "Attempt to parse expected date time pair from user input");
 		assert(commandList != null);
 		Option commandOption = new Option();
@@ -297,6 +322,7 @@ public class ParseLogic extends Parser {
 	private boolean isTime(String time) {
 		return time.matches("(\\d{2}):(\\d{2})");
 	}
+	*/
 	
 	public boolean isInvalidTypeToAdd(COMMAND_TYPE commandType) {
 		switch (commandType) {

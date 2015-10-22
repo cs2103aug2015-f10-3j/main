@@ -2,11 +2,12 @@
 <task>
     <item>
         <taskId>1</taskId>
-        <description>hello</description>
+        <description>yellow</description>
         <createdAt>22/10/2015 23:47</createdAt>
-        <type>FLOATING</type>
+        <type>TIMED</type>
         <complete>false</complete>
-        <start/>
-        <end/>
+        <start>31/12/2015 01:24</start>
+        <end>12/12/2015 00:00</end>
+        <reminder>12/12/2015 00:05</reminder>
     </item>
 </task>
