@@ -11,6 +11,7 @@ import org.junit.Test;
 import org.w3c.dom.Document;
 
 import command.api.EditTaskCommand;
+import command.api.ViewTaskCommand;
 import storage.api.StorageController;
 import task.api.TaskController;
 import task.entity.DeadlineTask;
@@ -33,10 +34,12 @@ public class TestEditTaskCommand {
 
 	/*** Variables ***/
 	protected static ArrayList<Task> testTaskList;
+	protected static ArrayList<Task> testStateList;
 	protected static StorageController storageControllerInstance;
 	protected static TaskController taskControllerInstance;
 	protected static CommandParser commandParserInstance;
-
+	protected static int[] stateTaskId;
+	
 	protected static String dummy_userCommand;
 	protected static EditTaskCommand dummy_editTaskCommand;
 	protected static FloatingTask dummy_floatingTask;
@@ -53,9 +56,9 @@ public class TestEditTaskCommand {
 		commandParserInstance = new CommandParser();
 	}
 
-	public ArrayList<Task> repopulateTask() {
+	public ArrayList<Task> repopulateTask() throws Exception {
 		ArrayList<Task> testTaskList = new ArrayList<Task>();
-
+		commandParserInstance = new CommandParser();
 		// Populate sample arraylist
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 		Task task;
@@ -67,14 +70,30 @@ public class TestEditTaskCommand {
 		testTaskList.add(task);
 		Document doc = storageControllerInstance.parseTask(testTaskList);
 		storageControllerInstance.writeXml(doc);
+		initTaskState();
 		return testTaskList;
 	}
 
-	public void prepareDummyData() {
+	public void initTaskState() throws Exception{
+		String viewInputCommand = "view";
+		ViewTaskCommand viewCommand = (ViewTaskCommand) commandParserInstance.parse(viewInputCommand);
+		testStateList = viewCommand.execute();
+	}
+	
+	public int[] initStateTaskId() {
+		int numIds = testStateList.size();
+		stateTaskId = new int[numIds];
+		for (int i=0; i<numIds; i++) {
+			stateTaskId[i] = testStateList.get(i).getTaskId();
+		}
+		return stateTaskId;
+	}
+	
+	public void prepareDummyData() throws Exception {
 		testTaskList = repopulateTask();
 		Task.setTaskList(testTaskList);
 	}
-
+	
 	/*** Test Cases ***/
 
 	/*** FloatingTask related test cases 
@@ -82,12 +101,12 @@ public class TestEditTaskCommand {
 	 * @throws NoSuchTaskException ***/
 
 	@Test
-	public void editFloatingDescription() throws InvalidCommandFormatException, NoSuchTaskException, UpdateTaskException {
+	public void editFloatingDescription() throws Exception {
 		prepareDummyData();
 
 		// Initialize dummy user command and description that will be used for testing
 		String testDescription = "Testing Floating Description Change!";
-		dummy_userCommand = "edit 1 name " + testDescription;
+		dummy_userCommand = "edit 1 desc " + testDescription;
 		dummy_floatingTask = (FloatingTask) taskControllerInstance.getTask(1);
 
 		// Verify that original task description is not the one that will be used for testing
@@ -95,7 +114,7 @@ public class TestEditTaskCommand {
 				testDescription,dummy_floatingTask.getDescription());
 
 		// Execute edit command
-		dummy_editTaskCommand = (EditTaskCommand)commandParserInstance.parse(dummy_userCommand);
+		dummy_editTaskCommand = (EditTaskCommand)commandParserInstance.parse(dummy_userCommand,initStateTaskId());
 		dummy_editTaskCommand.execute();
 
 		// Verify if task description has been correctly set
@@ -105,7 +124,7 @@ public class TestEditTaskCommand {
 	}
 
 	@Test
-	public void addEndTimeToFloating() throws InvalidCommandFormatException, NoSuchTaskException, UpdateTaskException{
+	public void addEndTimeToFloating() throws Exception {
 		prepareDummyData();
 
 		// Build my End with default date and custom time
@@ -141,7 +160,7 @@ public class TestEditTaskCommand {
 	}	
 
 	@Test
-	public void addEndDateToFloating() throws InvalidCommandFormatException, NoSuchTaskException, UpdateTaskException {
+	public void addEndDateToFloating() throws Exception {
 		prepareDummyData();
 
 		// Build my End with custom date and default time
@@ -174,7 +193,7 @@ public class TestEditTaskCommand {
 	}
 
 	@Test
-	public void addEndDateAndTimeToFloating() throws InvalidCommandFormatException, NoSuchTaskException, UpdateTaskException {
+	public void addEndDateAndTimeToFloating() throws Exception {
 		prepareDummyData();
 
 		// Build my End with custom date and time
@@ -201,7 +220,7 @@ public class TestEditTaskCommand {
 	}
 
 	@Test
-	public void addStartAndEndToFloating() throws InvalidCommandFormatException, NoSuchTaskException, UpdateTaskException {
+	public void addStartAndEndToFloating() throws Exception {
 		prepareDummyData();
 
 		// Build my Start and End with custom date and time
@@ -236,7 +255,7 @@ public class TestEditTaskCommand {
 	 * @throws NoSuchTaskException ***/
 	
 	@Test
-	public void editDeadlineDescription() throws InvalidCommandFormatException, NoSuchTaskException, UpdateTaskException {
+	public void editDeadlineDescription() throws Exception {
 		prepareDummyData();
 
 		// Initialize dummy user command and description that will be used for testing
@@ -260,8 +279,6 @@ public class TestEditTaskCommand {
 
 	@Test
 	public void editDeadlineEndTime() {
-		prepareDummyData();
-		
 		
 	}
 
