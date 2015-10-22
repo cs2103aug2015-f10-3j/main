@@ -7,10 +7,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import parser.logic.ParserConstants.COMMAND_TYPE;
-import parser.logic.ParserConstants.OPTIONS;
-import parser.logic.ParserConstants.TYPE;
-
 class Parser implements ParserConstants {
 
 	protected static final Logger LOGGER = Logger.getLogger(ParseLogic.class.getName());
@@ -34,30 +30,44 @@ class Parser implements ParserConstants {
 
 	private void setupHelpOption() {
 		helpOptions.put(OPTIONS.HELP, TYPE.STRING);
+
+		helpOptions.put(OPTIONS.HELP_SHORT, TYPE.STRING);
 	}
 
 	private void setupExitOption() {
 		exitOptions.put(OPTIONS.EXIT, TYPE.NONE);
+
+		exitOptions.put(OPTIONS.EXIT_SHORT, TYPE.NONE);
 	}
 
 	private void setupRedoOption() {
 		redoOptions.put(OPTIONS.REDO, TYPE.NONE);
+
+		redoOptions.put(OPTIONS.REDO_SHORT, TYPE.NONE);
 	}
 
 	private void setupUndoOption() {
 		undoOptions.put(OPTIONS.UNDO, TYPE.NONE);
+
+		undoOptions.put(OPTIONS.UNDO_SHORT, TYPE.NONE);
 	}
 
 	private void setupSearchOption() {
 		searchOptions.put(OPTIONS.SEARCH, TYPE.STRING_ARRAY);
+
+		searchOptions.put(OPTIONS.SEARCH_SHORT, TYPE.STRING_ARRAY);
 	}
 
 	private void setupCompleteOption() {
 		completeOptions.put(OPTIONS.COMPLETE, TYPE.INTEGER_ARRAY);
+
+		completeOptions.put(OPTIONS.COMPLETE_SHORT, TYPE.INTEGER_ARRAY);
 	}
 
 	private void setupDeleteOption() {
 		deleteOptions.put(OPTIONS.DELETE, TYPE.INTEGER_ARRAY);
+
+		deleteOptions.put(OPTIONS.DELETE_SHORT, TYPE.INTEGER_ARRAY);
 	}
 
 	private void setupEditOption() {
@@ -69,6 +79,15 @@ class Parser implements ParserConstants {
 		editOptions.put(OPTIONS.AND, TYPE.DATE);
 		editOptions.put(OPTIONS.START, TYPE.DATE);
 		editOptions.put(OPTIONS.END, TYPE.DATE);
+		
+		editOptions.put(OPTIONS.EDIT_SHORT, TYPE.INTEGER);
+		editOptions.put(OPTIONS.DESC_SHORT, TYPE.STRING);
+		editOptions.put(OPTIONS.BY_SHORT, TYPE.DATE);
+		editOptions.put(OPTIONS.REMIND_SHORT, TYPE.DATE);
+		editOptions.put(OPTIONS.BETWEEN_SHORT, TYPE.DATE);
+		editOptions.put(OPTIONS.AND_SHORT, TYPE.DATE);
+		editOptions.put(OPTIONS.START_SHORT, TYPE.DATE);
+		editOptions.put(OPTIONS.END_SHORT, TYPE.DATE);
 	}
 
 	private void setupViewOption() {
@@ -80,6 +99,15 @@ class Parser implements ParserConstants {
 		viewOptions.put(OPTIONS.TOMORROW, TYPE.NONE);
 		viewOptions.put(OPTIONS.WEEK, TYPE.NONE);
 		viewOptions.put(OPTIONS.MONTH, TYPE.NONE);
+		
+		viewOptions.put(OPTIONS.VIEW_SHORT, TYPE.INTEGER_ARRAY_OPT);
+		viewOptions.put(OPTIONS.COMPLETE_SHORT, TYPE.NONE);
+		viewOptions.put(OPTIONS.ALL_SHORT, TYPE.NONE);
+		viewOptions.put(OPTIONS.FLOATING_SHORT, TYPE.NONE);
+		viewOptions.put(OPTIONS.TODAY_SHORT, TYPE.NONE);
+		viewOptions.put(OPTIONS.TOMORROW_SHORT, TYPE.NONE);
+		viewOptions.put(OPTIONS.WEEK_SHORT, TYPE.NONE);
+		viewOptions.put(OPTIONS.MONTH_SHORT, TYPE.NONE);
 	}
 
 	private void setupAddOption() {
@@ -90,6 +118,14 @@ class Parser implements ParserConstants {
 		addOptions.put(OPTIONS.AND, TYPE.DATE);
 		addOptions.put(OPTIONS.START, TYPE.DATE);
 		addOptions.put(OPTIONS.END, TYPE.DATE);
+
+		addOptions.put(OPTIONS.ADD_SHORT, TYPE.STRING);
+		addOptions.put(OPTIONS.BY_SHORT, TYPE.DATE);
+		addOptions.put(OPTIONS.REMIND_SHORT, TYPE.DATE);
+		addOptions.put(OPTIONS.BETWEEN_SHORT, TYPE.DATE);
+		addOptions.put(OPTIONS.AND_SHORT, TYPE.DATE);
+		addOptions.put(OPTIONS.START_SHORT, TYPE.DATE);
+		addOptions.put(OPTIONS.END_SHORT, TYPE.DATE);
 	}
 	
 	public List<String> breakDownCommand(String userCommand) {
