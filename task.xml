@@ -2,12 +2,12 @@
 <task>
     <item>
         <taskId>1</taskId>
-        <description>yellow</description>
-        <createdAt>22/10/2015 23:47</createdAt>
-        <type>TIMED</type>
-        <complete>false</complete>
-        <start>31/12/2015 01:24</start>
-        <end>12/12/2015 00:00</end>
-        <reminder>12/12/2015 00:05</reminder>
+        <description>abcadasdsakdsad jda s</description>
+        <createdAt>23/10/2015 01:33</createdAt>
+        <type>DEADLINE</type>
+        <complete>true</complete>
+        <start/>
+        <end>29/10/2015 01:33</end>
+        <reminder>29/10/2015 01:28</reminder>
     </item>
 </task>

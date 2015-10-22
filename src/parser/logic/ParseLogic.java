@@ -184,8 +184,13 @@ public class ParseLogic extends Parser {
 		LOGGER.log(Level.INFO, "Attempt to parse expected array of integers from user input");
 		assert(commandList != null);
 		Option commandOption = new Option();
-		if (commandList.isEmpty() && optional) {
-			return null;
+		if (commandList.isEmpty()) {
+			if (optional) {
+				return null;
+			} else {
+				LOGGER.log(Level.SEVERE, "expected input not found");
+				throw new InvalidCommandFormatException("Expected input not found!");
+			}
 		}
 		for (int i = 0; i < commandList.size(); i++) {
 			String expectedInt = commandList.get(i);
@@ -204,8 +209,13 @@ public class ParseLogic extends Parser {
 		Option commandOption = new Option();
 		StringBuilder stringOption = new StringBuilder();
 		LOGGER.log(Level.WARNING, "expectedString = commandList.get(0) may cause index out of bounds exception");
-		if (commandList.isEmpty() && optional) {
-			return null;
+		if (commandList.isEmpty()) {
+			if (optional) {
+				return null;
+			} else {
+				LOGGER.log(Level.SEVERE, "expected input not found");
+				throw new InvalidCommandFormatException("Expected input not found!");
+			}
 		}
 		String expectedString = commandList.get(0);
 		for (int i = 0; i < commandList.size(); i++) { 
@@ -223,8 +233,13 @@ public class ParseLogic extends Parser {
 		LOGGER.log(Level.INFO, "Attempt to parse single expected integer from user input");
 		assert(commandList != null);
 		Option commandOption = new Option();
-		if (commandList.isEmpty() && optional) {
-			return null;
+		if (commandList.isEmpty()) {
+			if (optional) {
+				return null;
+			} else {
+				LOGGER.log(Level.SEVERE, "expected input not found");
+				throw new InvalidCommandFormatException("Expected input not found!");
+			}
 		}
 		LOGGER.log(Level.WARNING, "expectedInt = commandList.get(0) may cause index out of bounds exception");
 		String expectedInt = commandList.get(0);
@@ -241,8 +256,13 @@ public class ParseLogic extends Parser {
 		assert(commandList != null);
 		Option commandOption = new Option();
 		LOGGER.log(Level.WARNING, "expectedInt = commandList.remove(0) may cause index out of bounds exception");
-		if (commandList.isEmpty() && optional) {
-			return null;
+		if (commandList.isEmpty()) {
+			if (optional) {
+				return null;
+			} else {
+				LOGGER.log(Level.SEVERE, "expected input not found");
+				throw new InvalidCommandFormatException("Expected input not found!");
+			}
 		}
 		for (int i = 0; i < commandList.size(); i++) {
 			String expectedString = commandList.get(i);
@@ -257,8 +277,13 @@ public class ParseLogic extends Parser {
 		Option commandOption = new Option();
 		StringBuilder stringOption = new StringBuilder();
 		LOGGER.log(Level.WARNING, "expectedString = commandList.get(0) may cause index out of bounds exception");
-		if (commandList.isEmpty() && optional) {
-			return null;
+		if (commandList.isEmpty()) {
+			if (optional) {
+				return null;
+			} else {
+				LOGGER.log(Level.SEVERE, "expected input not found");
+				throw new InvalidCommandFormatException("Expected input not found!");
+			}
 		}
 		String expectedString = commandList.get(0);
 		for (int i = 0; i < commandList.size(); i++) { 

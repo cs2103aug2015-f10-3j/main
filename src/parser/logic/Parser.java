@@ -20,6 +20,7 @@ class Parser implements ParserConstants {
 	protected static com.joestelmach.natty.Parser dateParser = new com.joestelmach.natty.Parser();
 	
 	public Parser() {
+		parseDate("warmup");
 		setupCommandEnums();
 	}
 	
