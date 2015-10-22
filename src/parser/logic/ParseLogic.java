@@ -1,12 +1,9 @@
 package parser.logic;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import command.api.*;
 import command.data.Option;
@@ -14,8 +11,6 @@ import common.exception.InvalidCommandFormatException;
 import common.util.DateTimeHelper;
 
 public class ParseLogic extends Parser {
-	
-	private static final Logger LOGGER = Logger.getLogger(ParseLogic.class.getName());
 	
 	public ParseLogic() {
 		LOGGER.info("Initiating ParseLogic");
@@ -61,20 +56,6 @@ public class ParseLogic extends Parser {
 		else {
 			return COMMAND_TYPE.INVALID;
 		}
-	}
-	
-	public List<String> breakDownCommand(String userCommand) {
-		LOGGER.info("Attempt to breakdown user input into chunks of words.");
-		assert(userCommand != null && userCommand.length() > 0);
-		List<String> commandLine = new ArrayList<String>();
-		commandLine.addAll(Arrays.asList(userCommand.split(SPACE_REGEX)));
-		return commandLine;
-	}
-	
-	private String getMainCommand(String userCommand) {
-		LOGGER.log(Level.INFO, "Get first word of user input: {0}", userCommand);
-		assert(userCommand != null && userCommand.length() > 0);
-		return userCommand.split(SPACE_REGEX)[0];
 	}
 		
 	public Command createCommand(COMMAND_TYPE commandType) {
@@ -344,15 +325,6 @@ public class ParseLogic extends Parser {
 	
 	private boolean isTime(String time) {
 		return time.matches("(\\d{2}):(\\d{2})");
-	}
-	
-	private boolean isOption(EnumMap<OPTIONS, TYPE> optionMap, String option) {
-		for (OPTIONS value : optionMap.keySet()) {
-			if (value.toString().equalsIgnoreCase(option)) {
-				return true;
-			}
-		}
-		return false;
 	}
 	
 	public boolean isInvalidTypeToAdd(COMMAND_TYPE commandType) {

@@ -1,7 +1,16 @@
 package parser.logic;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 class Parser implements ParserConstants {
 
+	protected static final Logger LOGGER = Logger.getLogger(ParseLogic.class.getName());
+	
 	public Parser() {
 		setupCommandEnums();
 	}
@@ -71,12 +80,34 @@ class Parser implements ParserConstants {
 
 	private void setupAddOption() {
 		addOptions.put(OPTIONS.ADD, TYPE.STRING);
-		addOptions.put(OPTIONS.DESC, TYPE.STRING);
 		addOptions.put(OPTIONS.BY, TYPE.DATE);
 		addOptions.put(OPTIONS.REMIND, TYPE.DATE);
 		addOptions.put(OPTIONS.BETWEEN, TYPE.DATE);
 		addOptions.put(OPTIONS.AND, TYPE.DATE);
 		addOptions.put(OPTIONS.START, TYPE.DATE);
 		addOptions.put(OPTIONS.END, TYPE.DATE);
+	}
+	
+	public List<String> breakDownCommand(String userCommand) {
+		LOGGER.info("Attempt to breakdown user input into chunks of words.");
+		assert(userCommand != null && userCommand.length() > 0);
+		List<String> commandLine = new ArrayList<String>();
+		commandLine.addAll(Arrays.asList(userCommand.split(SPACE_REGEX)));
+		return commandLine;
+	}
+	
+	protected String getMainCommand(String userCommand) {
+		LOGGER.log(Level.INFO, "Get first word of user input: {0}", userCommand);
+		assert(userCommand != null && userCommand.length() > 0);
+		return userCommand.split(SPACE_REGEX)[0];
+	}
+	
+	protected boolean isOption(EnumMap<OPTIONS, TYPE> optionMap, String option) {
+		for (OPTIONS value : optionMap.keySet()) {
+			if (value.toString().equalsIgnoreCase(option)) {
+				return true;
+			}
+		}
+		return false;
 	}
 }
