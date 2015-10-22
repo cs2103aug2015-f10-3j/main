@@ -20,7 +20,11 @@ public interface ParserConstants {
 	public static enum COMMANDS {
 		ADD("add"), VIEW("view"), EDIT("edit"), DELETE("delete"), 
 		COMPLETE("complete"), SEARCH("search"), UNDO("undo"), 
-		REDO("redo"), EXIT("exit"), CLEAR("clear"), HELP("help");
+		REDO("redo"), EXIT("exit"), CLEAR("clear"), HELP("help"),
+
+		ADD_SHORT("/a"), VIEW_SHORT("/v"), EDIT_SHORT("/e"), DELETE_SHORT("/d"), 
+		COMPLETE_SHORT("/c"), SEARCH_SHORT("/s"), _SHORT_SHORT("/u"), 
+		REDO_SHORT("/r"), EXIT_SHORT("/e"), CLEAR_SHORT("/c"), HELP_SHORT("/h");;
 
 		private final String commandText;
 		
@@ -41,7 +45,15 @@ public interface ParserConstants {
 		BETWEEN("between"), AND("and"), DESC("desc"), START("start"), 
 		END("end"), ALL("all"), FLOATING("floating"), DEADLINE("deadline"), 
 		TIMED("timed"), TODAY("today"), TOMORROW("tomorrow"), WEEK("week"), 
-		MONTH("month"), HELP("help");
+		MONTH("month"), HELP("help"),
+		
+		ADD_SHORT("/a"), VIEW_SHORT("/v"), EDIT_SHORT("/e"), DELETE_SHORT("/d"), 
+		COMPLETE_SHORT("/c"), SEARCH_SHORT("/s"), BY_SHORT("-b"), UNDO_SHORT("/u"), 
+		REDO_SHORT("/redo"), REMIND_SHORT("-r"), CLEAR_SHORT("/c"), EXIT_SHORT("/e"), 
+		BETWEEN_SHORT("-b"), AND_SHORT("-a"), DESC_SHORT("-d"), START_SHORT("-s"), 
+		END_SHORT("-e"), ALL_SHORT("-ta"), FLOATING_SHORT("-tf"), DEADLINE_SHORT("-td"), 
+		TIMED_SHORT("-tt"), TODAY_SHORT("-pt"), TOMORROW_SHORT("-ptm"), WEEK_SHORT("-pw"), 
+		MONTH_SHORT("-pm"), HELP_SHORT("/h");
 
 		private final String optionText;
 		

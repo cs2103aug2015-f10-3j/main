@@ -1,6 +1,7 @@
 package parser.logic;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.logging.Level;
@@ -96,82 +97,70 @@ public class ParseLogic extends Parser {
 		LOGGER.info("Attempt to add list of options to Command specified");
 		assert(command != null && commandList != null);
 		EnumMap<OPTIONS, TYPE> optionMap = getOptionMap(commandType);
-		while (!commandList.isEmpty()) {
-			LOGGER.fine("Retrieve head of list to check if the word is a keyword");
-			LOGGER.warning("May cause index out of bounds");
-			String option = commandList.remove(0);
-			if (!isOption(optionMap, option)) {
-				throw new InvalidCommandFormatException("Keyword was expected but not found.");
-			}
-			Option commandOption = getOption(option, commandList, optionMap);
-			if (!command.addOption(option, commandOption)) {
-				LOGGER.severe("Unable to add option into command due to unknown reasons.");
-				throw new Error("Unknown error has occured.");
+		for (int i = commandList.size() - 1; i > -1; i--) {
+			if (isOption(optionMap, commandList.get(i))) {
+				String option = commandList.get(i);
+				List<String> subList = commandList.subList(i, commandList.size());
+				Option commandOption = getOption(subList, optionMap);
+				if (!isOptionalOrNoArgumentType(optionMap, option) && commandOption == null) {
+					continue;
+				}
+				if (!command.addOption(option, commandOption)) {
+					LOGGER.severe("Unable to add option into command due to unknown reasons.");
+					throw new Error("Unknown error has occured.");
+				}
 			}
 		}
 	}
 	
-	private EnumMap<OPTIONS, TYPE> getOptionMap(COMMAND_TYPE commandType) {
-		switch (commandType) {
-			case ADD:
-				return addOptions;
-			case VIEW:
-				return viewOptions;
-			case EDIT:
-				return editOptions;
-			case DELETE:
-				return deleteOptions;
-			case COMPLETE:
-				return completeOptions;
-			case SEARCH:
-				return searchOptions;
-			case UNDO:
-				return undoOptions;
-			case REDO:
-				return redoOptions;
-			case CLEAR:
-				return clearOptions;
-			case HELP:
-				return helpOptions;
-			case EXIT:
-				return exitOptions;
-			case INVALID:
-				return null;
-			default:
-				LOGGER.severe("commandType is corrupted and not within expectations");
-				throw new Error("Corrupted commandType");
-		}
-	}
-	
-	private Option getOption(String option, List<String> commandList, EnumMap<OPTIONS, TYPE> optionMap) throws Exception {
+	private Option getOption(List<String> commandList, EnumMap<OPTIONS, TYPE> optionMap) throws Exception {
+		assert(optionMap != null && commandList != null);
+		Option newOption = null;
+		String option = commandList.remove(0);
 		LOGGER.log(Level.INFO, "Retrieve expected value of specified option: {0}", option);
-		assert(option != null && option.length() > 0 && commandList != null);
 		for (OPTIONS opt : optionMap.keySet()) {
 			if (option.equals(opt.toString())) {
 				switch (optionMap.get(opt)) {
 				case STRING:
-					return expectString(commandList, optionMap, false);
+					newOption = expectString(commandList, false);
+					break;
 				case STRING_ARRAY:
-					return expectStringArray(commandList, optionMap, false);
+					newOption = expectStringArray(commandList, false);
+					break;
 				case INTEGER:
-					return expectInteger(commandList, optionMap, false);
+					newOption = expectInteger(commandList, false);
+					break;
 				case INTEGER_ARRAY:
-					return expectIntegerArray(commandList, optionMap, false);
+					newOption = expectIntegerArray(commandList, false);
+					break;
 				case DATE:
-					return expectDate(commandList, optionMap, false);
+					newOption = expectDate(commandList, false);
+					break;
 				case STRING_OPT:
-					return expectString(commandList, optionMap, true);
+					newOption = expectString(commandList, true);
+					break;
 				case STRING_ARRAY_OPT:
-					return expectStringArray(commandList, optionMap, true);
+					newOption = expectStringArray(commandList, true);
+					break;
 				case INTEGER_OPT:
-					return expectInteger(commandList, optionMap, true);
+					newOption = expectInteger(commandList, true);
+					break;
 				case INTEGER_ARRAY_OPT: 
-					return expectIntegerArray(commandList, optionMap, true);
+					newOption = expectIntegerArray(commandList, true);
+					break;
 				case DATE_OPT:
-					return expectDate(commandList, optionMap, true);
+					newOption = expectDate(commandList, true);
+					break;
 				case NONE:
+					commandList.clear();
 					return null;
 				}
+				if (newOption != null) {
+					commandList.clear();
+				} else {
+					commandList.add(0, option);
+				}
+				return newOption;
 			}
 		}
 		// failed to get anything
@@ -179,127 +168,99 @@ public class ParseLogic extends Parser {
 		throw new Error("corrupted variable: option");
 	}
 	
-	private Option expectIntegerArray(List<String> commandList, EnumMap<OPTIONS, TYPE> optionMap, boolean optional) throws Exception {
+	private Option expectIntegerArray(List<String> commandList, boolean optional) throws Exception {
 		LOGGER.log(Level.INFO, "Attempt to parse expected array of integers from user input");
 		assert(commandList != null);
 		Option commandOption = new Option();
-		LOGGER.log(Level.WARNING, "expectedInt = commandList.remove(0) may cause index out of bounds exception");
-		String expectedInt = commandList.remove(0);
-		if (isOption(optionMap, expectedInt)) {
-			if (optional) {
-				commandList.add(0, expectedInt);
+		if (commandList.isEmpty() && optional) {
+			return null;
+		}
+		for (int i = 0; i < commandList.size(); i++) {
+			String expectedInt = commandList.get(i);
+			Integer parsedInt = tryParseInteger(expectedInt);
+			if (parsedInt == null || parsedInt < 0) {
 				return null;
 			}
-			LOGGER.severe("Expected unoptional integer input but integer was not found");
-			throw new InvalidCommandFormatException("Integers were expected but not found.");
-		}
-		commandOption.addValue(Integer.parseInt(expectedInt));
-		while (!commandList.isEmpty() && !isOption(optionMap, commandList.get(0))) {
-			LOGGER.fine("Continue expecting a list of integers");
-			LOGGER.warning("May cause NumberFormatException when string is not an integer");
-			commandOption.addValue(Integer.parseInt(commandList.remove(0)));
+			commandOption.addValue(parsedInt);
 		}
 		return commandOption;
 	}
 	
-	private Option expectString(List<String> commandList, EnumMap<OPTIONS, TYPE> optionMap, boolean optional) throws Exception {
+	private Option expectString(List<String> commandList, boolean optional) throws Exception {
 		LOGGER.log(Level.INFO, "Attempt to parse expected string from user input");
 		assert(commandList != null);
 		Option commandOption = new Option();
 		StringBuilder stringOption = new StringBuilder();
 		LOGGER.log(Level.WARNING, "expectedString = commandList.get(0) may cause index out of bounds exception");
-		String expectedString = commandList.get(0);
-		if (isOption(optionMap, expectedString)) {
-			if (optional) {
-				return null;
-			}
-			LOGGER.severe("Expected unoptional string input but the string was not found");
-			throw new InvalidCommandFormatException("A string was expected but not found.");
+		if (commandList.isEmpty() && optional) {
+			return null;
 		}
-		do {
-			LOGGER.fine("Continue expecting a list of Strings");
-			expectedString = commandList.get(0);
-			if  (isOption(optionMap, expectedString)) {
-				break;
-			}
+		String expectedString = commandList.get(0);
+		for (int i = 0; i < commandList.size(); i++) { 
+			LOGGER.fine("Expecting a list of Strings");
+			expectedString = commandList.get(i);
 			stringOption.append(expectedString);
 			stringOption.append(SPACE);
-			commandList.remove(0);
-		} while (!commandList.isEmpty());
+		}
 		expectedString = stringOption.toString().trim();
 		commandOption.addValue(expectedString);
 		return commandOption;
 	}
 	
-	private Option expectInteger(List<String> commandList, EnumMap<OPTIONS, TYPE> optionMap, boolean optional) throws Exception {
+	private Option expectInteger(List<String> commandList, boolean optional) throws Exception {
 		LOGGER.log(Level.INFO, "Attempt to parse single expected integer from user input");
 		assert(commandList != null);
 		Option commandOption = new Option();
-		LOGGER.log(Level.WARNING, "expectedInt = commandList.get(0) may cause index out of bounds exception");
-		String expectedInt = commandList.remove(0);
-		if (isOption(optionMap, expectedInt)) {
-			if (optional) {
-				commandList.add(0, expectedInt);
-				return null;
-			}
-			LOGGER.severe("Expected single unoptional integer input but the integer was not found");
-			throw new InvalidCommandFormatException("A string was expected but not found.");
+		if (commandList.isEmpty() && optional) {
+			return null;
 		}
-		LOGGER.warning("May cause NumberFormatException when string is not an integer");
-		commandOption.addValue(Integer.parseInt(expectedInt));
+		LOGGER.log(Level.WARNING, "expectedInt = commandList.get(0) may cause index out of bounds exception");
+		String expectedInt = commandList.get(0);
+		Integer parsedInt = tryParseInteger(expectedInt);
+		if (parsedInt == null || parsedInt < 0) {
+			return null;
+		}
+		commandOption.addValue(parsedInt);
 		return commandOption;
 	}
 	
-	private Option expectStringArray(List<String> commandList, EnumMap<OPTIONS, TYPE> optionMap, boolean optional) throws Exception {
+	private Option expectStringArray(List<String> commandList, boolean optional) throws Exception {
 		LOGGER.log(Level.INFO, "Attempt to parse expected array of Strings from user input");
 		assert(commandList != null);
 		Option commandOption = new Option();
 		LOGGER.log(Level.WARNING, "expectedInt = commandList.remove(0) may cause index out of bounds exception");
-		String expectedString = commandList.remove(0);
-		if (isOption(optionMap, expectedString)) {
-			if (optional) {
-				commandList.add(0, expectedString);
-				return null;
-			}
-			LOGGER.severe("Expected unoptional integer input but integer was not found");
-			throw new InvalidCommandFormatException("Integers were expected but not found.");
+		if (commandList.isEmpty() && optional) {
+			return null;
 		}
-		commandOption.addValue(expectedString);
-		while (!commandList.isEmpty() && !isOption(optionMap, commandList.get(0))) {
-			LOGGER.fine("Continue expecting a list of integers");
-			LOGGER.warning("May cause NumberFormatException when string is not an integer");
-			commandOption.addValue(commandList.remove(0));
+		for (int i = 0; i < commandList.size(); i++) {
+			String expectedString = commandList.get(i);
+			commandOption.addValue(expectedString);
 		}
 		return commandOption;
 	}
 	
-	private Option expectDate(List<String> commandList, EnumMap<OPTIONS, TYPE> optionMap, boolean optional) throws Exception {
+	private Option expectDate(List<String> commandList, boolean optional) throws Exception {
 		LOGGER.log(Level.INFO, "Attempt to parse expected date time pair from user input");
 		assert(commandList != null);
 		Option commandOption = new Option();
 		LOGGER.log(Level.WARNING, "expectedDate = commandList.get(0) may cause index out of bounds exception");
-		String expectedDate = commandList.remove(0);
-		if (isOption(optionMap, expectedDate)) {
-			if (optional) {
-				commandList.add(0, expectedDate);
-				return null;
-			}
-			LOGGER.severe("Expected single unoptional Date/Time input but the value was not found");
-			throw new InvalidCommandFormatException("A Date/Time String was expected but not found.");
+		if (commandList.isEmpty() && optional) {
+			return null;
 		}
+		String expectedDate = commandList.get(0);
 		String expectedTime = EMPTY_STRING;
-		if (!commandList.isEmpty()) {
-			expectedTime = commandList.remove(0);
+		if (commandList.size() > 2) {
+			expectedTime = commandList.get(1);
 		}
-		if (isOption(optionMap, expectedTime)) {
-			commandList.add(0, expectedTime);
-			expectedTime = EMPTY_STRING;
+		LocalDateTime date = convertToDate(expectedDate, expectedTime);
+		if (date == null) {
+			return null;
 		}
-		commandOption.addValue(convertToDate(expectedDate, expectedTime));
+		commandOption.addValue(date);
 		return commandOption;
 	}
 	
-	private LocalDateTime convertToDate(String date, String time) throws Exception {
+	private LocalDateTime convertToDate(String date, String time) {
 		if (!isDate(date)) {
 			String temp = date;
 			if (isDate(time)) {
@@ -313,9 +274,6 @@ public class ParseLogic extends Parser {
 			time = "00:00";
 		}
 		LocalDateTime dateTime = DateTimeHelper.parseStringToDateTime(date + " " + time);
-		if (dateTime == null) {
-			throw new Exception();
-		}
 		return dateTime;
 	}
 	
@@ -363,30 +321,36 @@ public class ParseLogic extends Parser {
 	}
 	
 	public String replaceRunningIndex(String userCommand, int[] stateArray) throws Exception {
-		List<String> commandTokens = breakDownCommand(userCommand);
+		COMMAND_TYPE commandType = determineCommandType(userCommand);
+		Integer taskID = -1;
+		List<String> commandTokens;
+		if (commandType == COMMAND_TYPE.EDIT) {
+			commandTokens = new ArrayList<String>();
+			commandTokens.add(userCommand.split(SPACE_REGEX)[1]);
+		} else {
+			commandTokens = breakDownCommand(userCommand);
+		}
 		for (int i = 0; i < commandTokens.size(); i++) {
-			Integer taskID;
 			if ((taskID = tryParseInteger(commandTokens.get(i))) != null) {
 				if (taskID <= 0) {
 					String message = String.format("Failed to parse user input: %1$s", userCommand);
 					LOGGER.log(Level.SEVERE, message, "Invalid ID provided");
-					throw new InvalidCommandFormatException("User input supplied was in an invalid format");
+					throw new InvalidCommandFormatException("Task with the following Task ID does not exist!");
 				}
 				String oldID = String.format("\\s+%1$d(\\s+|$)", taskID);
 				String newID = String.format(" %1$d ", stateArray[taskID - 1]);
-				userCommand = userCommand.replaceAll(oldID, newID);
+				userCommand = userCommand.replaceFirst(oldID, newID);
 			}
 		}
 		return userCommand;
 	}
 	
 	private Integer tryParseInteger(String s1) {
-		Integer parsedInt;
-		try {
-			parsedInt = Integer.parseInt(s1);
-		} catch (NumberFormatException nfe) {
-			parsedInt = null;
+		for (int i = 0; i < s1.length(); i++) {
+			if(!Character.isDigit(s1.charAt(i))) {
+				return null;
+			}
 		}
-		return parsedInt;
+		return Integer.parseInt(s1);
 	}
 }

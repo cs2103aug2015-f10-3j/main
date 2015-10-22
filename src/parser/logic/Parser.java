@@ -7,6 +7,10 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import parser.logic.ParserConstants.COMMAND_TYPE;
+import parser.logic.ParserConstants.OPTIONS;
+import parser.logic.ParserConstants.TYPE;
+
 class Parser implements ParserConstants {
 
 	protected static final Logger LOGGER = Logger.getLogger(ParseLogic.class.getName());
@@ -68,7 +72,7 @@ class Parser implements ParserConstants {
 	}
 
 	private void setupViewOption() {
-		viewOptions.put(OPTIONS.VIEW, TYPE.NONE);
+		viewOptions.put(OPTIONS.VIEW, TYPE.INTEGER_ARRAY_OPT);
 		viewOptions.put(OPTIONS.COMPLETE, TYPE.NONE);
 		viewOptions.put(OPTIONS.ALL, TYPE.NONE);
 		viewOptions.put(OPTIONS.FLOATING, TYPE.NONE);
@@ -109,5 +113,60 @@ class Parser implements ParserConstants {
 			}
 		}
 		return false;
+	}
+	
+	protected boolean isOptionalOrNoArgumentType(EnumMap<OPTIONS, TYPE> optionMap, String option) {
+		for (OPTIONS value : optionMap.keySet()) {
+			if (value.toString().equalsIgnoreCase(option)) {
+				return isTrivialOption(optionMap.get(value));
+			}
+		}
+		return false;
+	}
+	
+	private boolean isTrivialOption(TYPE optionType) {
+		switch (optionType) {
+			case NONE:
+			case STRING_OPT:
+			case INTEGER_OPT:
+			case STRING_ARRAY_OPT:
+			case INTEGER_ARRAY_OPT:
+			case DATE_OPT:
+				return true;
+			default:
+				return false;
+		}
+	}
+	
+	protected EnumMap<OPTIONS, TYPE> getOptionMap(COMMAND_TYPE commandType) {
+		switch (commandType) {
+			case ADD:
+				return addOptions;
+			case VIEW:
+				return viewOptions;
+			case EDIT:
+				return editOptions;
+			case DELETE:
+				return deleteOptions;
+			case COMPLETE:
+				return completeOptions;
+			case SEARCH:
+				return searchOptions;
+			case UNDO:
+				return undoOptions;
+			case REDO:
+				return redoOptions;
+			case CLEAR:
+				return clearOptions;
+			case HELP:
+				return helpOptions;
+			case EXIT:
+				return exitOptions;
+			case INVALID:
+				return null;
+			default:
+				LOGGER.severe("commandType is corrupted and not within expectations");
+				throw new Error("Corrupted commandType");
+		}
 	}
 }
