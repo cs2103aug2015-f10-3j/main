@@ -70,8 +70,8 @@ public class EditTaskCommand extends Command {
 	private void retrieveOptions() {
 		executionResult = new ArrayList<Task>();
 		taskId = getOption("edit").getIntegerValue();
-		if (hasOption("name")) {
-			newDescription = getOption("name").getStringValue();
+		if (hasOption("desc")) {
+			newDescription = getOption("desc").getStringValue();
 		}
 		if (hasOption("start")) {
 			newStart = getOption("start").getDateValue();
