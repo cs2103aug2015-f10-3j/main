@@ -9,6 +9,7 @@ public class HelpCommand extends Command{
 	private static final String KEYWORD_HELP = "help";
 	
 	private String commandType = "";
+	private String helpComments = "";
 	
 	@Override
 	public ArrayList<Task> execute() {
@@ -20,12 +21,15 @@ public class HelpCommand extends Command{
 		} else{
 			commandType = null;
 		}
-		String helpComments = manual.getHelp(commandType);
+		helpComments = manual.getHelp(commandType);
 		setChanged();
 		notifyObservers(helpComments);
 		return null;
 	}
 
+	public String getHelpComments(){
+		return helpComments;
+	}
 	@Override
 	public ArrayList<Task> undo() {
 		// TODO Auto-generated method stub
