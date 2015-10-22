@@ -10,16 +10,16 @@ import common.exception.InvalidCommandFormatException;
 import parser.api.CommandParser;
 import task.entity.Task;
 
-public class Executor extends Observable {
+public class LogicController extends Observable {
 	/*** Variable ***/
-	private static final Logger LOGGER = Logger.getLogger(Executor.class.getName());
-	private static Executor thisInstance;
+	private static final Logger LOGGER = Logger.getLogger(LogicController.class.getName());
+	private static LogicController thisInstance;
 	private static CommandParser commandParser;
 	private static Observer observer;
 	private static ArrayList<Task> deliveredTaskState;
 
 	/*** Constructor ***/
-	public Executor() {
+	public LogicController() {
 		LOGGER.info("Initialising Executor");
 		commandParser = new CommandParser();
 		deliveredTaskState = new ArrayList<Task>();
@@ -27,10 +27,10 @@ public class Executor extends Observable {
 
 	/*** Methods ***/
 
-	public static Executor getInstance(Observer mainObserver) {
+	public static LogicController getInstance(Observer mainObserver) {
 		if (thisInstance == null) {
 			observer = mainObserver;
-			thisInstance = new Executor();
+			thisInstance = new LogicController();
 		}
 		return thisInstance;
 	}
@@ -65,15 +65,18 @@ public class Executor extends Observable {
 	}
 
 	private ArrayList<Task> handleCommand(String userInput) {
+		ArrayList<Task> executionResult;
+		Command cmd;
+		
 		try {
-			Command cmd = parseCommand(userInput);
-			deliveredTaskState = executeCommand(cmd,userInput);
+			cmd = parseCommand(userInput);
+			executionResult = executeCommand(cmd,userInput);
 		}	catch (Exception e) {
 			setChanged();
 			notifyObservers(e.getMessage());
 			return null;
 		}
-		return deliveredTaskState;
+		return executionResult;
 	}
 	
 	private int[] getStateTaskId() {
