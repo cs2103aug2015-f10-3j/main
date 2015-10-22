@@ -142,6 +142,7 @@ public class MainFrame {
 		frame.setExtendedState(state);
 		frame.setVisible(true);
 		frame.toFront();
+		frame.repaint();
 		panel.setInputFocus();
 		isMinimized = false;
 	}

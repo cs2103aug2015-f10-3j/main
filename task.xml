@@ -5,7 +5,7 @@
         <description>Appointment with dentist</description>
         <createdAt>02/09/2015 16:34</createdAt>
         <type>TIMED</type>
-        <complete>false</complete>
+        <complete>true</complete>
         <start>10/09/2015 14:30</start>
         <end>10/09/2015 15:30</end>
         <reminder>10/09/2015 15:25</reminder>
@@ -24,7 +24,7 @@
         <description>Submit CS2106 Lab 1</description>
         <createdAt>06/09/2015 22:16</createdAt>
         <type>DEADLINE</type>
-        <complete>false</complete>
+        <complete>true</complete>
         <start/>
         <end>10/09/2015 23:59</end>
         <reminder>10/09/2015 23:54</reminder>
@@ -34,7 +34,7 @@
         <description>Go out gai gai</description>
         <createdAt>07/09/2015 23:00</createdAt>
         <type>TIMED</type>
-        <complete>true</complete>
+        <complete>false</complete>
         <start>17/09/2015 13:00</start>
         <end>17/09/2015 17:00</end>
         <reminder>17/09/2015 16:55</reminder>
@@ -44,7 +44,7 @@
         <description>Pay money for steamboat</description>
         <createdAt>08/09/2015 08:55</createdAt>
         <type>DEADLINE</type>
-        <complete>false</complete>
+        <complete>true</complete>
         <start/>
         <end>10/09/2015 23:59</end>
         <reminder>10/09/2015 23:54</reminder>
@@ -54,7 +54,7 @@
         <description>Walk the neighbor's dog</description>
         <createdAt>08/09/2015 10:20</createdAt>
         <type>TIMED</type>
-        <complete>true</complete>
+        <complete>false</complete>
         <start>13/09/2015 17:00</start>
         <end>13/09/2015 18:00</end>
         <reminder>13/09/2015 17:55</reminder>
@@ -83,7 +83,7 @@
         <description>test</description>
         <createdAt>20/10/2015 19:14</createdAt>
         <type>FLOATING</type>
-        <complete>false</complete>
+        <complete>true</complete>
         <start/>
         <end/>
     </item>
@@ -92,7 +92,7 @@
         <description>test1</description>
         <createdAt>20/10/2015 19:20</createdAt>
         <type>FLOATING</type>
-        <complete>false</complete>
+        <complete>true</complete>
         <start/>
         <end/>
     </item>
@@ -101,7 +101,7 @@
         <description>test2</description>
         <createdAt>20/10/2015 19:27</createdAt>
         <type>DEADLINE</type>
-        <complete>false</complete>
+        <complete>true</complete>
         <start/>
         <end>21/10/2015 00:00</end>
         <reminder>20/10/2015 19:28</reminder>
