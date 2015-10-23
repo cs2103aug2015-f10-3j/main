@@ -285,10 +285,14 @@ public class ParseLogic extends Parser {
 				throw new InvalidCommandFormatException("Expected input not found!");
 			}
 		}
-		String expectedString = commandList.get(0);
+		String expectedString = EMPTY_STRING;
 		for (int i = 0; i < commandList.size(); i++) { 
 			LOGGER.fine("Expecting a list of Strings");
 			expectedString = commandList.get(i);
+			if (isDate(expectedString)) {
+				String[] testedString = expectedString.split("/");
+				expectedString = String.format("%1$s/%2$s/%3$s", testedString[2], testedString[1], testedString[0]);
+			}
 			stringOption.append(expectedString);
 			stringOption.append(SPACE);
 		}
@@ -339,11 +343,12 @@ public class ParseLogic extends Parser {
 		LocalDateTime dateTime = DateTimeHelper.parseStringToDateTime(date + " " + time);
 		return dateTime;
 	}
+	*/
 	
 	private boolean isDate(String date) {
 		return date.matches("(\\d{2})/(\\d{2})/(\\d{4})");
 	}
-	
+	/*
 	private boolean isTime(String time) {
 		return time.matches("(\\d{2}):(\\d{2})");
 	}
