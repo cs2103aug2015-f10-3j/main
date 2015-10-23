@@ -94,12 +94,50 @@ public class TestEditTaskCommand {
 		Task.setTaskList(testTaskList);
 	}
 	
+	public Task getTestTask(Task.TASK_TYPE type) {
+		if (type.equals(Task.TASK_TYPE.FLOATING)) {
+			return dummy_floatingTask;
+		} else if (type.equals(Task.TASK_TYPE.DEADLINE)) {
+			return dummy_deadlineTask;
+		} else {
+			return dummy_timedTask;
+		}
+	}
 	/*** Test Cases ***/
 
 	/*** FloatingTask related test cases 
-	 * @throws UpdateTaskException 
-	 * @throws NoSuchTaskException ***/
+	 * @throws Exception ***/
 
+	@Test
+	public void testEditTaskCommand(Task.TASK_TYPE taskType, String testDescription, int taskId, String userCommand, String taskDescription, 
+									LocalDateTime start, LocalDateTime end, LocalDateTime reminder) throws Exception {
+		prepareDummyData();
+		
+		// Execute the test command
+		dummy_editTaskCommand = (EditTaskCommand)commandParserInstance.parse(userCommand, initStateTaskId());
+		dummy_editTaskCommand.execute();
+		
+		// Get the task of the modified task and retrieve the TASK_TYPE to check what kind of check should be done
+		dummy_genericTask = TaskController.getInstance().getTask(taskId);
+		Task.TASK_TYPE type = dummy_genericTask.getType();
+		switch (type) {
+		case FLOATING:
+			dummy_floatingTask = (FloatingTask) dummy_genericTask;
+			if (taskType != null) {
+				//assertEquals(testDescription)
+			}
+			if (taskDescription != null) {
+				assertEquals(testDescription, taskDescription, dummy_floatingTask.getDescription());
+			}
+			break;
+		case DEADLINE:
+			dummy_deadlineTask = (DeadlineTask) dummy_genericTask;
+		case TIMED:
+			dummy_timedTask = (TimedTask) dummy_genericTask;
+		}
+	}
+	
+	
 	@Test
 	public void editFloatingDescription() throws Exception {
 		prepareDummyData();
@@ -246,7 +284,7 @@ public class TestEditTaskCommand {
 		String editedEnd = DateTimeHelper.parseDateTimeToString(dummy_timedTask.getEnd());		
 		assertEquals("test addStartAndEndToFloating: verify edited task start",
 				testStart, editedStart);
-		assertEquals("test addStartAndEndToFloating: verify edited task start",
+		assertEquals("test addStartAndEndToFloating: verify edited task end",
 				testEnd, editedEnd);
 	}
 
