@@ -9,9 +9,13 @@ import java.util.Observer;
 
 import javax.swing.*;
 import javax.swing.text.DefaultCaret;
+import javax.swing.text.DefaultHighlighter;
+import javax.swing.text.Highlighter;
+import javax.swing.text.Highlighter.HighlightPainter;
 
 import background.Reminder;
 import command.api.ClearCommand;
+import command.api.ViewTaskCommand;
 import common.data.DoublyLinkedList;
 import common.data.Node;
 import common.util.DateTimeHelper;
@@ -28,6 +32,7 @@ public class CommandLinePanel extends JPanel implements Observer,KeyListener {
 	private static final String WELCOME_MSG_2 = "Today is %s.";
 	private static final String WELCOME_MSG_3 = "Your upcoming tasks for today:";
 	private static final String FIRST_COMMAND = "view all today";
+	private static final String VIEW = "view";
 	protected static int NUM_COMPONENTS = 3;
 	protected UIController uiController = null;
 	private static Font font = new Font("Courier",Font.PLAIN, 12);
@@ -142,17 +147,24 @@ public class CommandLinePanel extends JPanel implements Observer,KeyListener {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				String input = inputField.getText();
-				textArea.append(input);
-				textArea.append(NEXT_LINE);
-				appendTexts(textArea, input);
-				inputField.setText(STRING_EMPTY);
-				addCommandToList(input);
-				currentCommand = null;
+				processCommand(textArea, input);
 			}
 		});
 		return inputField;
 	}
-
+	
+	public void processCommand(final JTextArea textArea, String input) {
+		if(input.toLowerCase().contains(VIEW)){
+			textArea.setText(null);
+		}
+		textArea.append(input);
+		textArea.append(NEXT_LINE);
+		appendTexts(textArea, input);
+		inputField.setText(STRING_EMPTY);
+		addCommandToList(input);
+		currentCommand = null;
+	}
+	
 	private void addCommandToList(String input){
 		node = null;
 		commandList.insertLast(input);
@@ -167,7 +179,7 @@ public class CommandLinePanel extends JPanel implements Observer,KeyListener {
 	 *        input
 	 *        	  the user input 
 	 */
-	public void appendTexts(final JTextArea textArea, String input) {
+	public void appendTexts(JTextArea textArea, String input) {
 		String[] output = uiController.processUserInput(input);
 		if (textArea.getText().length() > 0) {
 			for(String s : output){
@@ -186,7 +198,7 @@ public class CommandLinePanel extends JPanel implements Observer,KeyListener {
 	 *        output
 	 *        	  a string array of outputs 
 	 */
-	public void appendTexts(final JTextArea textArea, String[] output) {
+	public void appendTexts(JTextArea textArea, String[] output) {
 		for(String s : output){
 			textArea.append( s + NEXT_LINE);
 		}
@@ -259,6 +271,14 @@ public class CommandLinePanel extends JPanel implements Observer,KeyListener {
 		reminderDialog = null;
 	}
 
+	/*public void highLightText(){
+		Highlighter highlighter = textArea.getHighlighter();
+		HighlightPainter painter = new DefaultHighlighter.DefaultHighlightPainter(Color.red);
+		int p0 = text.indexOf("world");
+		int p1 = p0 + "world".length();
+		highlighter.addHighlight(p0, p1, painter );
+	}
+	*/
 	@Override
 	public void keyTyped(KeyEvent e) {
 		// TODO Auto-generated method stub
