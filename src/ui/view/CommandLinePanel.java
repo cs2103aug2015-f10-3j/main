@@ -8,6 +8,7 @@ import java.util.Observable;
 import java.util.Observer;
 
 import javax.swing.*;
+import javax.swing.text.AbstractDocument;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultCaret;
 import javax.swing.text.Document;
@@ -255,6 +256,7 @@ public class CommandLinePanel extends JPanel implements Observer,KeyListener {
 		inputTextPane.setFont(font);
 		//inputTextPane.setLineWrap(true);
 		inputTextPane.setEditable(false);
+		((AbstractDocument) inputTextPane.getDocument()).setDocumentFilter(new CustomizedDocumentFilter(inputTextPane));
 
 		/*DefaultCaret caret = (DefaultCaret)inputTextPane.getCaret();
 		caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);*/
