@@ -1,8 +1,12 @@
 package storage.api;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
@@ -46,18 +50,70 @@ public class StorageController {
     
     /*** Methods ***/
     /**
-     * This method check if the XML file exist and create it if not
+     * This method retrieves a File object
+     * 
+     * @param  fileName the full file path
+     * @return          file object
+     */
+    protected File getFile(String fileName) {
+        File file = new File(fileName);
+        if (!file.exists()) {
+            return null;
+        }
+        return file;
+    }
+    
+    /**
+     * This method retrieves the bytes of a File
+     * 
+     * @param fileName  the full file path
+     * @return          byte array of the file content
+     */
+    protected byte[] getFileInBytes(String fileName) {
+        byte[] content = null;
+        try {
+            Path filePath = Paths.get(fileName);
+            content = Files.readAllBytes(filePath);
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return content;
+    }
+    
+    /**
+     * This method writes bytes to a File
+     * 
+     * @param fileName  the full file path
+     * @param content   the bytes to be written
+     * @param append    whether the content should be appended or overwritten
+     * @return          success status
+     */
+    protected boolean writeBytesToFile(String fileName, byte[] content, boolean append) {
+        try {
+            FileOutputStream fos = new FileOutputStream(fileName, append);
+            fos.write(content);
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+    
+    /**
+     * This method creates a new XML file 
      * 
      * @return       file containing Task objects
      */
-    protected File getFile() {
-        File file = new File(FILE_NAME);
-        if (!file.exists()) {
+    protected File getXmlFile(String fileName) {
+        File file = getFile(fileName);
+        if (file == null) {
             // Create file if it does not exist
             try {
+                file = new File(fileName);
                 file.createNewFile();
                 String xml = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"no\"?><task></task>";
-                FileWriter fw = new FileWriter(FILE_NAME);
+                FileWriter fw = new FileWriter(fileName);
                 fw.write(xml);
                 fw.close();
             } catch (IOException e) {
@@ -298,7 +354,7 @@ public class StorageController {
         try {
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-            doc = dBuilder.parse(getFile());
+            doc = dBuilder.parse(getXmlFile(FILE_NAME));
             
             // Ensures that the XML DOM view of a document is identical
             doc.getDocumentElement().normalize();
