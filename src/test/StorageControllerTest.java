@@ -69,10 +69,10 @@ public class StorageControllerTest {
     /*** Test Cases 
      * @throws Exception  ***/
     @Test
-    public void testGetFile() throws Exception {
-    	Method m = sdParser.getClass().getDeclaredMethod("getFile");
+    public void testGetXmlFile() throws Exception {
+    	Method m = sdParser.getClass().getDeclaredMethod("getXmlFile", String.class);
 		m.setAccessible(true);
-        File file = (File)m.invoke(sdParser);
+        File file = (File)m.invoke(sdParser, FILE_NAME);
         if (file.exists()) {
             assert true;
         } else {
@@ -81,9 +81,9 @@ public class StorageControllerTest {
         
         file = new File(FILE_NAME);
         file.delete();
-        m = sdParser.getClass().getDeclaredMethod("getFile");
+        m = sdParser.getClass().getDeclaredMethod("getXmlFile", String.class);
         m.setAccessible(true);
-        file = (File)m.invoke(sdParser);
+        file = (File)m.invoke(sdParser, FILE_NAME);
         if (file.exists()) {
             assert true;
         } else {
