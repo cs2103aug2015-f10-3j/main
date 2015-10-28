@@ -93,9 +93,6 @@ public class MainFrame {
 		removeDefaultButtons(frame);
 		panel = new MainPanel();
 		panel.populateContentPane(frame.getContentPane());
-		UIManager.put("InternalFrameTitlePane.closeButtonToolTip", "Close PaddleTask");
-		UIManager.put("InternalFrameTitlePane.minimizeButtonText", "Minimize");
-		UIManager.put("InternalFrameTitlePane.maximizeButtonText", "Maximize");
 		//Display the window.
 		Dimension size = frame.getToolkit().getScreenSize();
 		size.setSize(size.width / 2, size.height / 2);

@@ -6,8 +6,11 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.*;
+import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultCaret;
 import javax.swing.text.DefaultHighlighter;
 import javax.swing.text.Highlighter;
@@ -15,7 +18,6 @@ import javax.swing.text.Highlighter.HighlightPainter;
 
 import background.Reminder;
 import command.api.ClearCommand;
-import command.api.ViewTaskCommand;
 import common.data.DoublyLinkedList;
 import common.data.Node;
 import common.util.DateTimeHelper;
@@ -44,9 +46,6 @@ public class CommandLinePanel extends JPanel implements Observer,KeyListener {
 	private Node node = null;
 	private String currentCommand = null;
 
-	//protected static boolean restrictSize = true;
-	//protected static boolean sizeIsRandom = false;
-
 	/*** Constructors ***/
 	public CommandLinePanel(){
 		uiController = UIController.getInstance(this);
@@ -68,7 +67,7 @@ public class CommandLinePanel extends JPanel implements Observer,KeyListener {
 		panel.setBorder(BorderFactory.createLineBorder(Color.black));
 
 		textArea = prepareJTextArea();
-		JTextField inputField = prepareTextField(textArea);
+		JTextField inputField = prepareTextField();
 		JScrollPane areaScrollPane = prepareScrollPane(textArea);
 		Box box = prepareBoxComponent(inputField, areaScrollPane);
 
@@ -92,6 +91,7 @@ public class CommandLinePanel extends JPanel implements Observer,KeyListener {
 		outputs[counter++] = WELCOME_MSG_3;
 		appendTexts(textArea, outputs);
 		appendTexts(textArea, FIRST_COMMAND);
+		highLightWord("deadline");
 	}
 
 	/**
@@ -132,12 +132,9 @@ public class CommandLinePanel extends JPanel implements Observer,KeyListener {
 	 * This method prepares a textfield for the user to input data.
 	 * This will initiate UIController.java upon execution of a input by the user.
 	 * 
-	 * @param JTextArea
-	 *            the input field on the panel
-
 	 * @return JTextField 
 	 */
-	private JTextField prepareTextField(final JTextArea textArea) {
+	private JTextField prepareTextField() {
 		inputField = new JTextField();
 		inputField.setMaximumSize(new Dimension(inputField.getMaximumSize().width ,inputField.getPreferredSize().height));
 		inputField.requestFocus();
@@ -147,14 +144,23 @@ public class CommandLinePanel extends JPanel implements Observer,KeyListener {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				String input = inputField.getText();
-				processCommand(textArea, input);
+				processCommand(input);
 			}
 		});
 		return inputField;
 	}
-	
-	public void processCommand(final JTextArea textArea, String input) {
+
+	/**
+	 * This method process the user input and does the necessary 
+	 * appends to the text area.
+	 * 
+	 * @param String
+	 * 			input by user		
+	 */
+	public void processCommand(String input) {
+		boolean isView = false;
 		if(input.toLowerCase().contains(VIEW)){
+			isView = true;
 			textArea.setText(null);
 		}
 		textArea.append(input);
@@ -163,8 +169,9 @@ public class CommandLinePanel extends JPanel implements Observer,KeyListener {
 		inputField.setText(STRING_EMPTY);
 		addCommandToList(input);
 		currentCommand = null;
+		highLightWord("deadline");
 	}
-	
+
 	private void addCommandToList(String input){
 		node = null;
 		commandList.insertLast(input);
@@ -220,14 +227,6 @@ public class CommandLinePanel extends JPanel implements Observer,KeyListener {
 		return inputTextArea;
 	}
 
-	/*public void itemStateChanged(ItemEvent e) {
-		if (e.getStateChange() == ItemEvent.SELECTED) {
-			restrictSize = true;
-		} else {
-			restrictSize = false;
-		}
-	}*/
-
 	/**
 	 * This method will prepare the focus of the window onto inputField.
 	 * 
@@ -267,18 +266,45 @@ public class CommandLinePanel extends JPanel implements Observer,KeyListener {
 		}
 	}
 
-	public static void setDialogNull(){
-		reminderDialog = null;
-	}
-
-	/*public void highLightText(){
+	public void highLightWord(String keyword){
 		Highlighter highlighter = textArea.getHighlighter();
 		HighlightPainter painter = new DefaultHighlighter.DefaultHighlightPainter(Color.red);
-		int p0 = text.indexOf("world");
-		int p1 = p0 + "world".length();
-		highlighter.addHighlight(p0, p1, painter );
+		Pattern pattern = Pattern.compile("\\b"+keyword+"\\b");
+
+		Matcher matcher = pattern.matcher(textArea.getText());
+		while( matcher.find() )
+		{
+			int start = matcher.start();
+			int end = matcher.end();
+			try {
+				highlighter.addHighlight(start, end, painter);
+			} catch (BadLocationException e1) {
+
+				e1.printStackTrace();
+			}
+		}
 	}
-	*/
+	
+	/*public void highLightLine(String keyword){
+		Highlighter highlighter = textArea.getHighlighter();
+		HighlightPainter painter = new DefaultHighlighter.DefaultHighlightPainter(Color.red);
+		Pattern keywordPattern = Pattern.compile("\\b"+keyword+"\\b");
+		Matcher keywordMatcher = keywordPattern.matcher(textArea.getText());
+		while( keywordMatcher.find() )
+		{
+			int start = keywordMatcher.start();
+			while(textArea.set)
+			int end = keywordMatcher.end();
+			try {
+				highlighter.addHighlight(start, end, painter);
+			} catch (BadLocationException e1) {
+
+				e1.printStackTrace();
+			}
+		}
+		}
+	}*/
+
 	@Override
 	public void keyTyped(KeyEvent e) {
 		// TODO Auto-generated method stub
@@ -322,6 +348,7 @@ public class CommandLinePanel extends JPanel implements Observer,KeyListener {
 					if(currentCommand!=null){
 						inputField.setText(currentCommand);
 						currentCommand = null;
+						node = null;
 					}
 				}
 			}
@@ -341,5 +368,7 @@ public class CommandLinePanel extends JPanel implements Observer,KeyListener {
 
 	}
 
-
+	public static void setDialogNull(){
+		reminderDialog = null;
+	}
 }
