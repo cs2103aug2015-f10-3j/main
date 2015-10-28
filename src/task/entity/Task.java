@@ -11,6 +11,7 @@ public class Task {
 	private LocalDateTime createdAt;
 	private TASK_TYPE type;
     private boolean complete;
+    private int priority;
     private String[] details = {"-","-","-","-","-","-","-"};
 
     public enum TASK_TYPE {
@@ -50,14 +51,16 @@ public class Task {
 		this.description = description;
 		this.createdAt = LocalDateTime.now();
 		this.type = determineType(type);
+        this.priority = 3;
 		this.complete = false;
 	}
 
-    public Task(int taskId, String description, LocalDateTime createdAt, boolean complete, String type) {
+    public Task(int taskId, String description, LocalDateTime createdAt, boolean complete, int priority, String type) {
 	    this.taskId = taskId;
 	    this.description = description;
 	    this.createdAt = createdAt;
         this.complete = complete;
+        this.priority = priority;
 	    this.type = determineType(type);
 	}
 	
@@ -97,6 +100,12 @@ public class Task {
     }
     public void setComplete(boolean complete) {
         this.complete = complete;
+    }
+    public int getPriority() {
+        return priority;
+    }
+    public void setPriority(int priority) {
+        this.priority = priority;
     }
 
     /*** Method ***/

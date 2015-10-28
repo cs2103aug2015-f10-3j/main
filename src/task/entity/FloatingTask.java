@@ -15,7 +15,7 @@ public class FloatingTask extends Task {
 		super(description, TASK_TYPE);
 	}
 	
-    public FloatingTask(int taskId, String description, LocalDateTime createdAt, boolean complete) {
-        super(taskId, description, createdAt, complete, TASK_TYPE);
+    public FloatingTask(int taskId, String description, LocalDateTime createdAt, boolean complete, int priority) {
+        super(taskId, description, createdAt, complete, priority, TASK_TYPE);
     }
 }

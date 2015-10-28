@@ -23,8 +23,8 @@ public class TimedTask extends Task {
 		this.reminder = reminder;
 	}
 	
-	public TimedTask(int taskId, String description, LocalDateTime createdAt, LocalDateTime start, LocalDateTime end, LocalDateTime reminder, boolean complete) {
-        super(taskId, description, createdAt, complete, TASK_TYPE);
+	public TimedTask(int taskId, String description, LocalDateTime createdAt, LocalDateTime start, LocalDateTime end, LocalDateTime reminder, boolean complete, int priority) {
+        super(taskId, description, createdAt, complete, priority, TASK_TYPE);
         this.start = start;
         this.end = end;
         this.reminder = reminder;
