@@ -55,8 +55,13 @@ public class OutputProcessor {
 		ArrayList<Task> taskList = executor.processCommand(input);
 
 		if(taskList != null){
-			output = formatOutput(taskList);
-		}
+			if(taskList.size() == 1){
+				//output = formatOutput(taskList.get(0));
+			}
+			else{
+				output = formatOutput(taskList);
+			}
+		} 
 		return output;
 	}
 	
@@ -84,4 +89,37 @@ public class OutputProcessor {
 		}
 		return output;
 	}
+	
+	/**
+	 * This method formats the variable needed from each task to string
+	 * and store them into a string array.
+	 * 
+	 * @param ArrayList 
+	 *            Array list of task
+	 * @return String array
+	 */
+	/*
+	public String[] formatOutput(Task task){
+		ArrayList<String> output = new ArrayList<String>();
+		String line = "";
+		line += "Description : " + task.getDescription();
+		output.add(line);
+		line = "";
+		line +=
+		
+		output[0] = VIEW_HEADER;
+		for(int i = 0; i < taskList.size(); i++){
+			Task selectedTask = taskList.get(i);
+			String[] taskDetails = selectedTask.toDetailsArray();
+			int detailsPointer = 0;
+			output[i+OFFSET_ONE] = String.format(FORMAT, i+1,taskDetails[++detailsPointer], 
+								   taskDetails[++detailsPointer].length() > 60 ? 
+								   taskDetails[detailsPointer].substring(0, 57) + "..." : taskDetails[detailsPointer]
+								   , taskDetails[++detailsPointer], taskDetails[++detailsPointer],
+								   taskDetails[++detailsPointer],taskDetails[++detailsPointer]);
+		}
+		return output;
+	}*/
+	
+	
 }

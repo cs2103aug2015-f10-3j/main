@@ -86,7 +86,7 @@ public final class CustomizedDocumentFilter extends DocumentFilter {
 	private void updateTextStyles(){
 		// Clear existing styles
 		String text = textPane.getText().replaceAll("\r\n","\n");
-		styledDocument.setCharacterAttributes(0, text.length(), blackAttributeSet, true);
+		//styledDocument.setCharacterAttributes(0, text.length(), blackAttributeSet, true);
 
 		// Look for tokens and highlight them
 		Matcher matcher = pattern.matcher(text);
@@ -96,7 +96,7 @@ public final class CustomizedDocumentFilter extends DocumentFilter {
 			int end = matcher.end();
 			String beforeText = text.substring(0, start);
 			int startOfLine = beforeText.lastIndexOf("\n");
-			String afterText = text.substring(end, text.length());
+			String afterText = text.substring(++startOfLine, text.length());
 			int endOfLine = afterText.indexOf("\n");
 			System.out.println(text);
 			System.out.println("highlight length" + (endOfLine));
