@@ -165,6 +165,10 @@ public class StorageController {
                     String complete = eElement.getElementsByTagName("complete").item(0).getTextContent();
                     boolean complete_boolean = Boolean.valueOf(complete);
                     
+                    // complete
+                    String priority = eElement.getElementsByTagName("priority").item(0).getTextContent();
+                    int priority_int = Integer.valueOf(priority);
+                    
                     /*
                     System.out.println("taskId: " + taskId);
                     System.out.println("description: " + description);
@@ -183,7 +187,7 @@ public class StorageController {
                     LocalDateTime reminder_localdatetime;
                     switch (taskType) {
                         case FLOATING:
-                            task = new FloatingTask(taskId_int, description, createdAt_localdatetime, complete_boolean);
+                            task = new FloatingTask(taskId_int, description, createdAt_localdatetime, complete_boolean, priority_int);
                             break;
                         case TIMED:
                             // start
@@ -198,7 +202,7 @@ public class StorageController {
                             reminder = eElement.getElementsByTagName("reminder").item(0).getTextContent();
                             reminder_localdatetime = DateTimeHelper.parseStringToDateTime(reminder);
                             
-                            task = new TimedTask(taskId_int, description, createdAt_localdatetime, start_localdatetime, end_localdatetime, reminder_localdatetime, complete_boolean);
+                            task = new TimedTask(taskId_int, description, createdAt_localdatetime, start_localdatetime, end_localdatetime, reminder_localdatetime, complete_boolean, priority_int);
                             break;
                         case DEADLINE:
                             // end
@@ -209,7 +213,7 @@ public class StorageController {
                             reminder = eElement.getElementsByTagName("reminder").item(0).getTextContent();
                             reminder_localdatetime = DateTimeHelper.parseStringToDateTime(reminder);
                             
-                            task = new DeadlineTask(taskId_int, description, createdAt_localdatetime, end_localdatetime, reminder_localdatetime, complete_boolean);
+                            task = new DeadlineTask(taskId_int, description, createdAt_localdatetime, end_localdatetime, reminder_localdatetime, complete_boolean, priority_int);
                             break;
                         default:
                             break;
@@ -279,6 +283,12 @@ public class StorageController {
                 String complete_string = String.valueOf(task.isComplete());
                 complete.appendChild(doc.createTextNode(complete_string));
                 item.appendChild(complete);
+                
+                // taskId
+                Element priorityId = doc.createElement("priority");
+                priorityId.appendChild(doc.createTextNode(Integer.toString(task.getPriority())));
+                item.appendChild(priorityId);
+                
                 
                 Element start;
                 Element end;
