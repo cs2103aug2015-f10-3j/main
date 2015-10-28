@@ -54,14 +54,14 @@ public class Reminder extends Observable {
 								case TIMED:
 									reminder = ((TimedTask) task).getReminder();
 									duration = Duration.between(reminder, now);
-									if ((reminder.isAfter(now)) && (duration.getSeconds() < 61)) {
+									if ((reminder.isAfter(now)) && (Math.abs(duration.getSeconds()) < 61)) {
 										dueTaskList.add(task);
 									}
 									break;
 								case DEADLINE:
 									reminder = ((DeadlineTask) task).getReminder();
 									duration = Duration.between(reminder, now);
-									if ((reminder.isAfter(now)) && (duration.getSeconds() < 61)) {
+									if ((reminder.isAfter(now)) && (Math.abs(duration.getSeconds()) < 61)) {
 										dueTaskList.add(task);
 									}
 									break;

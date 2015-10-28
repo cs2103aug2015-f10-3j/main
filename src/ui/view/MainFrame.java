@@ -2,6 +2,7 @@ package ui.view;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -11,6 +12,7 @@ import org.jnativehook.GlobalScreen;
 import org.jnativehook.keyboard.NativeKeyEvent;
 import org.jnativehook.keyboard.NativeKeyListener;
 
+import background.Reminder;
 import common.util.LoggingHandler;
 
 /**
@@ -23,7 +25,7 @@ public class MainFrame {
 
 	/*** Variables ***/
 	private static final String TITLE = "PaddleTask";
-	private static final String LOOK_AND_FEEL = "com.seaglasslookandfeel.SeaGlassLookAndFeel";
+	private static final String SEA_GLASS_LOOK_AND_FEEL = "com.seaglasslookandfeel.SeaGlassLookAndFeel";
 	private static JFrame frame;
 	private static MainPanel panel;
 	private static boolean isMinimized = false;
@@ -61,7 +63,7 @@ public class MainFrame {
 		//Use SeaGlass Look and Feel to enhance display
 		try {
 			//UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
-			UIManager.setLookAndFeel(LOOK_AND_FEEL);
+			//UIManager.setLookAndFeel(SEA_GLASS_LOOK_AND_FEEL);
 		} catch (Exception e) { }
 		prepareFrame();
 		if (isSystemTrayReady()) {
@@ -91,9 +93,7 @@ public class MainFrame {
 		removeDefaultButtons(frame);
 		panel = new MainPanel();
 		panel.populateContentPane(frame.getContentPane());
-		UIManager.put("InternalFrameTitlePane.closeButtonToolTip", "Close PaddleTask");
-		UIManager.put("InternalFrameTitlePane.minimizeButtonText", "Minimize");
-		UIManager.put("InternalFrameTitlePane.maximizeButtonText", "Maximize");
+		
 		//Display the window.
 		Dimension size = frame.getToolkit().getScreenSize();
 		size.setSize(size.width / 2, size.height / 2);
@@ -112,7 +112,7 @@ public class MainFrame {
 	 *  			JFrame frame
 	 */
 	
-	public static void removeDefaultButtons(Component com){
+	private static void removeDefaultButtons(Component com){
 		if(com instanceof JButton){
 			String name = ((JButton) com).getAccessibleContext().getAccessibleName();
 			if(name.equals("Maximize")|| name.equals("Iconify")||
@@ -152,7 +152,8 @@ public class MainFrame {
 			return false;
 		}
 		SystemTray tray = SystemTray.getSystemTray();
-		Image image = Toolkit.getDefaultToolkit().getImage("src/images/bulb.gif");
+		URL resource = Reminder.class.getResource("/images/bulb.gif");
+		Image image = Toolkit.getDefaultToolkit().getImage(resource);
 		TrayIcon trayIcon = new TrayIcon(image, "PaddleTask");
 		trayIcon.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {

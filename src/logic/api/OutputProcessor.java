@@ -4,7 +4,10 @@ import java.util.ArrayList;
 import java.util.Observer;
 
 import background.Reminder;
+import common.util.DateTimeHelper;
+import task.entity.DeadlineTask;
 import task.entity.Task;
+import task.entity.TimedTask;
 
 public class OutputProcessor {
 	/*** Variables ***/
@@ -51,12 +54,17 @@ public class OutputProcessor {
 	 * @return String array
 	 */
 	public String[] processUserInput(String input){
-		String[] output = new String[0];
+		String[] output = null;
 		ArrayList<Task> taskList = executor.processCommand(input);
 
 		if(taskList != null){
-			output = formatOutput(taskList);
-		}
+			if(taskList.size() == 1){
+				output = formatOutput(taskList.get(0));
+			}
+			else{
+				output = formatOutput(taskList);
+			}
+		} 
 		return output;
 	}
 	
@@ -70,7 +78,6 @@ public class OutputProcessor {
 	 */
 	public String[] formatOutput(ArrayList<Task> taskList){
 		String[] output = new String[taskList.size() + OFFSET_ONE];
-
 		output[0] = VIEW_HEADER;
 		for(int i = 0; i < taskList.size(); i++){
 			Task selectedTask = taskList.get(i);
@@ -84,4 +91,46 @@ public class OutputProcessor {
 		}
 		return output;
 	}
+	
+	/**
+	 * This method formats the variable needed from each task to string
+	 * and store them into a string array.
+	 * 
+	 * @param ArrayList 
+	 *            Array list of task
+	 * @return String array
+	 */
+	public String[] formatOutput(Task task){
+		ArrayList<String> output = new ArrayList<String>();
+		String line = "";
+		line += "Description: " + task.getDescription();
+		output.add(line);
+		line = "Task Type: ";
+		line += task.getType().toString().toLowerCase();
+		output.add(line);
+		if(task instanceof TimedTask){
+			TimedTask t = (TimedTask)task;
+			line = "Start: " + DateTimeHelper.getDate(t.getStart()) + " " + DateTimeHelper.getTime(t.getStart());
+			output.add(line);
+			line = "Deadline: "  + DateTimeHelper.getDate(t.getEnd()) + " " + DateTimeHelper.getTime(t.getEnd());
+			output.add(line);
+			if(t.getReminder()!=null){
+				line = "Reminder: " + DateTimeHelper.getDate(t.getReminder()) + " " + DateTimeHelper.getTime(t.getReminder());
+				output.add(line);
+			}
+		} else if(task instanceof DeadlineTask){
+			DeadlineTask t = (DeadlineTask)task;
+			line = "Deadline: "  + DateTimeHelper.getDate(t.getEnd()) + " " + DateTimeHelper.getTime(t.getEnd());
+			output.add(line);
+			if(t.getReminder()!=null){
+				line = "Reminder: " + DateTimeHelper.getDate(t.getReminder()) + " " + DateTimeHelper.getTime(t.getReminder());
+				output.add(line);
+			}
+		} else {
+			
+		}
+		return output.toArray(new String[output.size()]);
+	}
+	
+	
 }

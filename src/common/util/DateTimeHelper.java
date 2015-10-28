@@ -2,12 +2,14 @@ package common.util;
 import java.time.DateTimeException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 
 public class DateTimeHelper {
 	private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 	private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+	private static final DateTimeFormatter AMERICAN_DATE_FORMATTER = DateTimeFormatter.ofPattern("MM/dd/yyyy");
 	private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
-
+	
 	public static LocalDateTime parseStringToDateTime(String inputString) {
 		try {
 			return LocalDateTime.parse(inputString,DATE_TIME_FORMATTER);

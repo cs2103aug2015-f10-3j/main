@@ -5,12 +5,13 @@ import java.util.Observer;
 
 import logic.api.OutputProcessor;
 import task.entity.Task;
+import ui.view.CommandLinePanel;
 
 public class UIController {
 
 	/*** Variables ***/
 	private static UIController instance = null;
-	private static Observer observer;
+	private static CommandLinePanel observer;
 	private static OutputProcessor outputProcessor = null;
 
 	/*** Constructor ***/
@@ -25,7 +26,7 @@ public class UIController {
 	 * 
 	 * @return String array
 	 */
-	public static UIController getInstance(Observer observer){
+	public static UIController getInstance(CommandLinePanel observer){
 		if(instance == null){
 			UIController.observer = observer;
 			instance = new UIController();
