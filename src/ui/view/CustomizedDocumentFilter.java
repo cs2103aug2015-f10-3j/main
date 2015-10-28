@@ -18,6 +18,7 @@ public final class CustomizedDocumentFilter extends DocumentFilter {
 	private StyledDocument styledDocument = null;
 	private final StyleContext styleContext = StyleContext.getDefaultStyleContext();
 	private final AttributeSet redAttributeSet = styleContext.addAttribute(styleContext.getEmptySet(), StyleConstants.Foreground, Color.RED);
+	private final AttributeSet orangeAttributeSet = styleContext.addAttribute(styleContext.getEmptySet(), StyleConstants.Foreground, Color.ORANGE);
 	private final AttributeSet blackAttributeSet = styleContext.addAttribute(styleContext.getEmptySet(), StyleConstants.Foreground, Color.BLACK);
 	private String[] keywords = {"deadline"};
 	private Pattern pattern = null;

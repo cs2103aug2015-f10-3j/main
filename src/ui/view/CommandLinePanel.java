@@ -33,7 +33,7 @@ public class CommandLinePanel extends JPanel implements Observer,KeyListener {
 	private static final String FIRST_COMMAND = "view all today";
 	protected static int NUM_COMPONENTS = 3;
 	protected UIController uiController = null;
-	private static Font font = new Font("Courier",Font.PLAIN, 12);
+	private static Font font = new Font("Consolas",Font.PLAIN, 12);
 	private JTextField inputField = null;
 	//private JTextArea textArea = null;
 	private JTextPane textPane = null;
