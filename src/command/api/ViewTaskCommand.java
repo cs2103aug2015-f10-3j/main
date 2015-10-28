@@ -60,6 +60,8 @@ public class ViewTaskCommand extends Command {
 		}catch(Exception e){
 			result = false;
 		}
+		setChanged();
+		notifyObservers(null);
 		
 		return taskList;
 	}

@@ -98,8 +98,6 @@ public final class CustomizedDocumentFilter extends DocumentFilter {
 			int startOfLine = beforeText.lastIndexOf("\n");
 			String afterText = text.substring(++startOfLine, text.length());
 			int endOfLine = afterText.indexOf("\n");
-			System.out.println(text);
-			System.out.println("highlight length" + (endOfLine));
 			styledDocument.setCharacterAttributes(startOfLine, endOfLine, redAttributeSet, false);
 		}
 	}

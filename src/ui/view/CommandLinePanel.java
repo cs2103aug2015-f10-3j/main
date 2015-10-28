@@ -15,6 +15,8 @@ import javax.swing.text.Document;
 
 import background.Reminder;
 import command.api.ClearCommand;
+import command.api.SearchTaskCommand;
+import command.api.ViewTaskCommand;
 import common.data.DoublyLinkedList;
 import common.data.Node;
 import common.util.DateTimeHelper;
@@ -92,8 +94,9 @@ public class CommandLinePanel extends JPanel implements Observer,KeyListener {
 		outputs[counter++] = WELCOME_MSG_1;
 		outputs[counter++] = String.format(WELCOME_MSG_2, today);
 		outputs[counter++] = WELCOME_MSG_3;
+		String[] output = uiController.processUserInput(FIRST_COMMAND);
 		append(outputs);
-		performCommand(FIRST_COMMAND);
+		append(output);
 	}
 
 	/**
@@ -114,13 +117,14 @@ public class CommandLinePanel extends JPanel implements Observer,KeyListener {
 	}
 
 	/**
-	 * This method prepares a scroll pane for the textarea to enable scrolling
+	 * This method prepares a scroll pane for the textPane to enable scrolling
 	 * for display.
 	 * 
-	 * @param JTextArea
-	 *            the input field on the panel
+	 * @param textPane
+	 * 				JTextPane of the panel
 
-	 * @return JScrollPane with textarea
+	 * @return areaScrollPane 
+	 * 				JScrollPane with textPane
 	 */
 	private JScrollPane prepareScrollPane(JTextPane textPane) {
 		final JScrollPane areaScrollPane = new JScrollPane(textPane);
@@ -148,10 +152,7 @@ public class CommandLinePanel extends JPanel implements Observer,KeyListener {
 	 * This method prepares a textfield for the user to input data.
 	 * This will initiate UIController.java upon execution of a input by the user.
 	 * 
-	 * @param JTextArea
-	 *            the input field on the panel
-
-	 * @return JTextField 
+	 * @return inputField - the JTextField created
 	 */
 	private JTextField prepareTextField() {
 		inputField = new JTextField();
@@ -163,10 +164,9 @@ public class CommandLinePanel extends JPanel implements Observer,KeyListener {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				String input = inputField.getText();
-				append(input);
+				addCommandToList(input);
 				performCommand(input);
 				inputField.setText(STRING_EMPTY);
-				addCommandToList(input);
 				currentCommand = null;
 			}
 		});
@@ -178,6 +178,12 @@ public class CommandLinePanel extends JPanel implements Observer,KeyListener {
 		commandList.insertLast(input);
 	}
 
+	/**
+	 * This method appends a string of text into the textPane to display to the user
+	 * 
+	 * @param s
+	 *        	String s to be appended to textPane
+	 */
 	public void append(String s) {
 		try {
 			Document doc = textPane.getDocument();
@@ -190,6 +196,13 @@ public class CommandLinePanel extends JPanel implements Observer,KeyListener {
 
 	}
 
+	/**
+	 * This method appends a string array of text into the textPane to display to the user
+	 * 
+	 * @param output
+	 * 			String[] to be appended to textPane
+	 *        	   
+	 */
 	public void append(String[] output){
 		try {
 			Document doc = textPane.getDocument();
@@ -208,7 +221,10 @@ public class CommandLinePanel extends JPanel implements Observer,KeyListener {
 
 	public void performCommand(String input){
 		String[] output = uiController.processUserInput(input);
-		append(output);
+		if(output!= null){
+			append(input);
+			append(output);
+		}
 	}
 
 	/**
@@ -263,14 +279,6 @@ public class CommandLinePanel extends JPanel implements Observer,KeyListener {
 		return inputTextPane;
 	}
 
-	/*public void itemStateChanged(ItemEvent e) {
-		if (e.getStateChange() == ItemEvent.SELECTED) {
-			restrictSize = true;
-		} else {
-			restrictSize = false;
-		}
-	}*/
-
 	/**
 	 * This method will prepare the focus of the window onto inputField.
 	 * 
@@ -283,12 +291,13 @@ public class CommandLinePanel extends JPanel implements Observer,KeyListener {
 	@SuppressWarnings("unchecked")
 	@Override
 	public void update(Observable o, Object arg) {
-		if (o instanceof ClearCommand) {
+		if (o instanceof ClearCommand || o instanceof ViewTaskCommand || o instanceof SearchTaskCommand) {
 			textPane.setText(null);
 		} else if(o instanceof Reminder){
 			createReminder((ArrayList<Task>)arg);
 		} else {
 			String msg = (String)arg;
+			append(commandList.getLast().getData());
 			append(msg);
 		}
 	}

@@ -29,6 +29,8 @@ public class SearchTaskCommand extends Command{
 	public ArrayList<Task> execute() throws Exception {
 		retrieveOptions();
 		prepareExecutionResult();
+		setChanged();
+		notifyObservers(null);
 		return executionResult;
 	}
 

@@ -21,7 +21,9 @@ public class HelpCommand extends Command{
 		} else{
 			commandType = null;
 		}
-		helpComments = manual.getHelp(commandType);
+		System.out.println("commandtype = " + commandType);
+		helpComments = manual.getHelp(commandType.trim());
+		System.out.println("help comments = " + helpComments);
 		setChanged();
 		notifyObservers(helpComments);
 		return null;
