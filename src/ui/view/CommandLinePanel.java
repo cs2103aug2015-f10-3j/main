@@ -182,10 +182,6 @@ public class CommandLinePanel extends JPanel implements Observer,KeyListener {
 			Document doc = textPane.getDocument();
 			textPane.setCaretPosition(doc.getLength());
 			doc.insertString(doc.getLength(), s + NEXT_LINE, null);
-			/*Rectangle r = textPane.modelToView(doc.getLength());
-			if (r != null) {
-				scrollRectToVisible(r);
-			}*/
 		} catch(BadLocationException exc) {
 			assert false;
 			exc.printStackTrace();
@@ -194,7 +190,6 @@ public class CommandLinePanel extends JPanel implements Observer,KeyListener {
 	}
 
 	public void append(String[] output){
-		//textPane.setEditable(true);
 		try {
 			Document doc = textPane.getDocument();
 			textPane.setCaretPosition(doc.getLength());
@@ -208,10 +203,6 @@ public class CommandLinePanel extends JPanel implements Observer,KeyListener {
 			assert false;
 			exc.printStackTrace();
 		}
-		box.repaint();
-		scrollPane.repaint();
-		panel.repaint();
-		//textPane.setEditable(false);
 	}
 
 	public void performCommand(String input){

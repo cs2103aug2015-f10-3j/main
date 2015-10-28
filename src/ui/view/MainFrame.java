@@ -25,7 +25,7 @@ public class MainFrame {
 
 	/*** Variables ***/
 	private static final String TITLE = "PaddleTask";
-	private static final String LOOK_AND_FEEL = "com.seaglasslookandfeel.SeaGlassLookAndFeel";
+	private static final String SEA_GLASS_LOOK_AND_FEEL = "com.seaglasslookandfeel.SeaGlassLookAndFeel";
 	private static JFrame frame;
 	private static MainPanel panel;
 	private static boolean isMinimized = false;
@@ -63,7 +63,7 @@ public class MainFrame {
 		//Use SeaGlass Look and Feel to enhance display
 		try {
 			//UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
-			UIManager.setLookAndFeel(LOOK_AND_FEEL);
+			//UIManager.setLookAndFeel(SEA_GLASS_LOOK_AND_FEEL);
 		} catch (Exception e) { }
 		prepareFrame();
 		if (isSystemTrayReady()) {
