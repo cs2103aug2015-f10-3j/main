@@ -110,13 +110,13 @@ public class ParseLogic extends Parser {
 			case HELP:
 				return new HelpCommand();
 			case SETDIRECTORY:
-				return null;
+				return new SetDirectoryCommand();
 			case MORE:
-				return null;
+				return new MoreCommand();
 			case TAG:
-				return null;
+				return new TagTaskCommand();
 			case UNTAG:
-				return null;
+				return new UntagTaskCommand();
 			case EXIT:
 				return new ExitCommand();
 			case INVALID:
@@ -156,8 +156,7 @@ public class ParseLogic extends Parser {
 		String option = commandList.remove(0);
 		LOGGER.log(Level.INFO, "Retrieve expected value of specified option: {0}", option);
 		for (OPTIONS opt : optionMap.keySet()) {
-			if (option.equalsIgnoreCase(opt.toString()) || 
-					(opt == OPTIONS.HASHTAG && option.startsWith(OPTIONS.HASHTAG.toString()))) {
+			if (option.equalsIgnoreCase(opt.toString())) {
 				switch (optionMap.get(opt)) {
 				case STRING:
 					newOption = expectString(commandList, false);
@@ -189,8 +188,6 @@ public class ParseLogic extends Parser {
 				case DATE_OPT:
 					newOption = expectDate(commandList, true);
 					break;
-				case HASHTAG_ARRAY:
-					newOption = expectHashtagArray(commandList, true);
 				case NONE:
 					commandList.clear();
 					return null;
@@ -235,7 +232,9 @@ public class ParseLogic extends Parser {
 		}
 		expectedString = stringOption.toString().trim();
 		List<LocalDateTime> dates = parseDates(expectedString);
-		commandOption.addValue(dates);
+		while (!dates.isEmpty()) {
+			commandOption.addValue(dates.remove(0));
+		}
 		return commandOption;
 	}
 
@@ -330,6 +329,11 @@ public class ParseLogic extends Parser {
 		return commandOption;
 	}
 	
+	public void addTags(Command command, List<String> commandTokens) throws Exception {
+		Option hashtags = expectHashtagArray(commandTokens, true);
+		command.addOption(OPTIONS.HASHTAG.toString(), hashtags);
+	}
+	
 	private Option expectHashtagArray(List<String> commandList, boolean optional) throws Exception {
 		LOGGER.log(Level.INFO, "Attempt to parse expected array of Strings from user input");
 		assert(commandList != null);
@@ -348,6 +352,10 @@ public class ParseLogic extends Parser {
 			if (expectedString.startsWith(OPTIONS.HASHTAG.toString())) {
 				commandOption.addValue(expectedString);
 			}
+		}
+		if (commandOption.getValuesCount() == 0) {
+			LOGGER.log(Level.SEVERE, "expected input not found");
+			throw new InvalidCommandFormatException("Expected input not found!");
 		}
 		return commandOption;
 	}
@@ -409,6 +417,9 @@ public class ParseLogic extends Parser {
 			case EDIT:
 			case DELETE:
 			case COMPLETE:
+			case MORE:
+			case TAG:
+			case UNTAG:
 				return true;
 			default:
 				return false;
