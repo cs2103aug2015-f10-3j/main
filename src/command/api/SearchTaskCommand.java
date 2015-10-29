@@ -1,5 +1,6 @@
 package command.api;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.PriorityQueue;
 import java.util.logging.Level;
@@ -18,11 +19,13 @@ public class SearchTaskCommand extends Command{
 	private static final Logger LOGGER = Logger.getLogger(SearchTaskCommand.class.getName());
 	private TaskController taskController = TaskController.getInstance();
 	private ArrayList<String> searchSequences;
+	private ArrayList<LocalDateTime> searchDates;
 	private ArrayList<Task> executionResult;
 
 	public SearchTaskCommand() {
 		executionResult = new ArrayList<Task>();
 		searchSequences = new ArrayList<String>();
+		searchDates = new ArrayList<LocalDateTime>();
 	}
 
 	@Override
