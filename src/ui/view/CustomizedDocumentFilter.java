@@ -21,15 +21,13 @@ public final class CustomizedDocumentFilter extends DocumentFilter {
 	private static final AttributeSet redAttributeSet = styleContext.addAttribute(styleContext.getEmptySet(), StyleConstants.Foreground, Color.RED);
 	private static final AttributeSet orangeAttributeSet = styleContext.addAttribute(styleContext.getEmptySet(), StyleConstants.Foreground, Color.ORANGE);
 	private static final AttributeSet blackAttributeSet = styleContext.addAttribute(styleContext.getEmptySet(), StyleConstants.Foreground, Color.BLACK);
-	private String[] keywords = {"deadline"};
-	private Pattern pattern = null;
+	private static final String REGEX_TAG = "#\\w{1,}";
 	// Use a regular expression to find the words you are looking for
 
 
 	public CustomizedDocumentFilter(JTextPane textPane){
 		this.textPane = textPane;
 		styledDocument = textPane.getStyledDocument();
-		pattern = buildPattern();
 	}
 
 	@Override
@@ -67,7 +65,7 @@ public final class CustomizedDocumentFilter extends DocumentFilter {
 	 * @return a reference to this pattern
 	 * 				
 	 */
-	private Pattern buildPattern(){
+	private Pattern buildPattern(String[] keywords){
 		StringBuilder sb = new StringBuilder();
 		
 		for (String token : keywords) {
@@ -97,10 +95,27 @@ public final class CustomizedDocumentFilter extends DocumentFilter {
 		attributes.addAttribute(StyleConstants.CharacterConstants.Bold, Boolean.TRUE);
 		return attributes;
 	}
+	
 	private void updateTextStyles(){
+		changeFontForTags();
 	}
 	
+	private void changeFontForTags(){
+		AttributeSet blueAttributeSet = styleContext.addAttribute(styleContext.getEmptySet(), StyleConstants.Foreground, Color.BLUE);
+		blueAttributeSet = styleContext.addAttribute(blueAttributeSet, StyleConstants.CharacterConstants.Bold, Boolean.TRUE);
+		Pattern pattern = Pattern.compile(REGEX_TAG);
+		String text = textPane.getText().replaceAll("\r\n","\n");
+		Matcher matcher = pattern.matcher(text);
+		while (matcher.find()) {
+			// Change the color of recognized tokens
+			int start = matcher.start();
+			int end = matcher.end();
+			styledDocument.setCharacterAttributes(start, end - start, blueAttributeSet, false);
+		}
+	}
 	private void changeFontOfLineByKeywords(){
+		String[] keywords = {"deadline"};
+		Pattern pattern = buildPattern(keywords);
 		// Clear existing styles
 		String text = textPane.getText().replaceAll("\r\n","\n");
 		//styledDocument.setCharacterAttributes(0, text.length(), blackAttributeSet, true);

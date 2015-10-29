@@ -96,22 +96,27 @@ public class OutputProcessor {
 			}else if(selectedTask.getPriority() == 1){
 				priorityIndicator = PRIORITY_INDICATOR + PRIORITY_INDICATOR;
 			}
-			output[rowNumber++] = priorityIndicator + String.format(FORMAT, i,taskDetails[++detailsPointer], 
-					taskDetails[++detailsPointer].length() > 50 ? 
-							taskDetails[detailsPointer].substring(0, 47) + "..." : taskDetails[detailsPointer]
-									, taskDetails[++detailsPointer], taskDetails[++detailsPointer],
-									taskDetails[++detailsPointer],taskDetails[++detailsPointer]);
+			output[rowNumber++] = priorityIndicator + String.format(FORMAT, i+OFFSET_ONE,taskDetails[++detailsPointer], 
+								  taskDetails[++detailsPointer].length() > 50 ? 
+								  taskDetails[detailsPointer].substring(0, 47) + "..." : taskDetails[detailsPointer]
+								  , taskDetails[++detailsPointer], taskDetails[++detailsPointer],
+								  taskDetails[++detailsPointer],taskDetails[++detailsPointer]);
 			ArrayList<String> tags = selectedTask.getTags();
 			if(tags!=null){
 				if(tags.size()>0){
 					String tag = "";
-					for(int j = 0; j < tags.size(); j++){
-						tag+=String.format(TAGS_FORMAT, tags.get(j));
-						if(j == 3){
-							break;
+					if(!tags.get(0).equals("")){
+						for(int j = 0; j < tags.size(); j++){
+							String s = tags.get(j);
+							if(s!=null || !s.equals("")){
+								tag+=String.format(TAGS_FORMAT, tags.get(j));
+							}
+							if(j == 3){
+								break;
+							}
 						}
+						output[rowNumber++] = String.format(TAGS_PADDING, tag);
 					}
-					output[rowNumber++] = String.format(TAGS_PADDING, tag);
 				}
 			}
 		}
