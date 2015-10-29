@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 
 import background.Reminder;
 import common.exception.InvalidCommandFormatException;
+import common.exception.InvalidPriorityException;
 import common.exception.NoSuchTaskException;
 import common.exception.UpdateTaskException;
 import common.util.DateTimeHelper;
@@ -44,9 +45,10 @@ public class EditTaskCommand extends Command {
 	 * @throws UpdateTaskException 
 	 * @throws NoSuchTaskException 
 	 * @throws InvalidCommandFormatException 
+	 * @throws InvalidPriorityException 
 	 */
 	@Override
-	public ArrayList<Task> execute() throws NoSuchTaskException, UpdateTaskException, InvalidCommandFormatException{
+	public ArrayList<Task> execute() throws NoSuchTaskException, UpdateTaskException, InvalidCommandFormatException, InvalidPriorityException{
 		retrieveOptions();
 		getTaskFromStorage(taskId);
 		determineOriginalTaskType();
@@ -169,8 +171,9 @@ public class EditTaskCommand extends Command {
 	 * Instantiates the task object to be modified to the appropriate Task type with
 	 * the appropriate attributes
 	 * @throws InvalidCommandFormatException 
+	 * @throws InvalidPriorityException 
 	 */
-	private void createEditedTask() throws InvalidCommandFormatException {
+	private void createEditedTask() throws InvalidCommandFormatException, InvalidPriorityException {
 		switch(determineEditedTaskType()){
 		case TASK_TYPE_FLOATING : 
 			createNewFloatingTask();
@@ -187,7 +190,7 @@ public class EditTaskCommand extends Command {
 		}
 	}
 	
-	private void createNewFloatingTask() {
+	private void createNewFloatingTask() throws InvalidPriorityException {
 		editedTask = new FloatingTask(
 				originalTask.getTaskId(),
 				getEditedTaskDescription(),
@@ -197,7 +200,7 @@ public class EditTaskCommand extends Command {
 				originalTask.getTags());
 	}
 	
-	private void createNewDeadlineTask() {
+	private void createNewDeadlineTask() throws InvalidPriorityException {
 		editedTask = new DeadlineTask(
 				originalTask.getTaskId(),
 				getEditedTaskDescription(),
@@ -209,7 +212,7 @@ public class EditTaskCommand extends Command {
 				originalTask.getTags());
 	}
 
-	private void createNewTimedTask() {
+	private void createNewTimedTask() throws InvalidPriorityException {
 		editedTask = new TimedTask(
 				originalTask.getTaskId(),
 				getEditedTaskDescription(),
@@ -270,12 +273,13 @@ public class EditTaskCommand extends Command {
 		return newEditedTaskReminder;
 	}
 	
-	private int getEditedTaskPriority() {
-		int editedTaskPriority;
-		if (newPriority != -1) {
-			return newPriority;
-		} else {
+	private int getEditedTaskPriority() throws InvalidPriorityException {
+		if (newPriority == -1 ) {
 			return originalTask.getPriority();
+		} else if (newPriority < 1 || newPriority > 3){
+			throw new InvalidPriorityException("The priority specified is invalid!");
+		} else {
+			return newPriority;
 		}
 	}
 	
