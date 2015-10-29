@@ -75,8 +75,16 @@ public class TagTaskCommand extends Command {
 	
 	private void updateOriginalTags() {
 		modifiedTags = getExistingTags();
-		for (String tag : tagsToAdd) {
-			modifiedTags.add(tag);
+		for (String tagToAdd: tagsToAdd) {
+			boolean hasTag = false;
+			for (String existingTag: originalTags) {
+				if (tagToAdd.equalsIgnoreCase(existingTag)) {
+					hasTag = true;
+				}
+				if (!hasTag) {
+					modifiedTags.add(tagToAdd);
+				}
+			}
 		}
 	}
 	
