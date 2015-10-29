@@ -39,14 +39,14 @@ public class AddTaskCommand extends Command {
 		if (hasOption(KEYWORD_BY)) {
 			LocalDateTime deadLineDate = getOption(KEYWORD_BY).getDateValue();
 			LocalDateTime reminderDate = getReminderDate(deadLineDate);
-			userTask = new DeadlineTask(description, deadLineDate, reminderDate, priority);
+			userTask = new DeadlineTask(description, deadLineDate, reminderDate);
 		} else if (hasOption(KEYWORD_BETWEEN) && hasOption(KEYWORD_AND)) {
 			LocalDateTime startDate = getOption(KEYWORD_BETWEEN).getDateValue();
 			LocalDateTime deadLineDate = getOption(KEYWORD_AND).getDateValue();
 			LocalDateTime reminderDate = getReminderDate(deadLineDate);
-			userTask = new TimedTask(description, startDate, deadLineDate, reminderDate, priority);
+			userTask = new TimedTask(description, startDate, deadLineDate, reminderDate);
 		} else {
-			userTask = new FloatingTask(description, priority);
+			userTask = new FloatingTask(description);
 		}
 		return userTask;
 	}
