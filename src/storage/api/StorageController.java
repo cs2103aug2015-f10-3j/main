@@ -37,12 +37,12 @@ import task.entity.Task.TASK_TYPE;
 public class StorageController {
     /*** Variables ***/
     protected static final String CONFIG_FILE = ".config";
-    protected static final String DEFAULT_FILE_NAME = "task.xml";
+    protected static String DEFAULT_FILE_NAME = "task.xml";
     private static StorageController thisInstance;
     
     /*** Constructor ***/
     private StorageController() {
-        
+        setFileName();
     }
     
     public static StorageController getInstance() {
@@ -54,14 +54,12 @@ public class StorageController {
     
     /*** Methods ***/
     /**
-     * This method check if Config file exist,
-     * create it with the default file path if it is not
+     * This method get the file location from the config file
+     * returning the default file path if it does not exit
      * 
-     * @param  fileName the full file path
-     * @return          file objectzc
+     * @return          file name
      */
-    protected String getFileName() {
-        String taskFileName = null;
+    protected boolean setFileName() {
         File file = new File(CONFIG_FILE);
         if (!file.exists()) {
          // Create file if it does not exist
@@ -70,17 +68,37 @@ public class StorageController {
                 FileWriter fw = new FileWriter(CONFIG_FILE);
                 fw.write(DEFAULT_FILE_NAME);
                 fw.close();
-                taskFileName = DEFAULT_FILE_NAME;
             } catch (IOException e) {
                 e.printStackTrace();
-                return null;
+                return false;
             }
         } else {
             // Read the file name from file
             byte[] content = getFileInBytes(CONFIG_FILE);
-            taskFileName = new String(content, StandardCharsets.UTF_8);
+            DEFAULT_FILE_NAME = new String(content, StandardCharsets.UTF_8);
         }
-        return taskFileName;
+        return true;
+    }
+    
+    /**
+     * This method set the new path of the xml file
+     * It will copy the existing xml file to the new location
+     * 
+     * @param new_path  the new path of the xml file
+     * @return          success status
+     */
+    protected boolean setDirectory(String new_path) {
+        boolean success;
+        byte[] content = getFileInBytes(DEFAULT_FILE_NAME);
+        success = writeBytesToFile(CONFIG_FILE, new_path.getBytes(), false);
+        if (success) {
+            success = writeBytesToFile(DEFAULT_FILE_NAME, content, true);
+        } else {
+            return success;
+        }
+        
+        DEFAULT_FILE_NAME = new_path;
+        return success;
     }
     
     /**
@@ -109,7 +127,6 @@ public class StorageController {
             Path filePath = Paths.get(fileName);
             content = Files.readAllBytes(filePath);
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         return content;
@@ -117,6 +134,7 @@ public class StorageController {
     
     /**
      * This method writes bytes to a File
+     * creating the file if it does not exist
      * 
      * @param fileName  the full file path
      * @param content   the bytes to be written
@@ -124,9 +142,21 @@ public class StorageController {
      * @return          success status
      */
     protected boolean writeBytesToFile(String fileName, byte[] content, boolean append) {
+        File file = new File(fileName);
+        if (!file.exists()) {
+         // Create file if it does not exist
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+                return false;
+            }
+        }
+        
         try {
             FileOutputStream fos = new FileOutputStream(fileName, append);
             fos.write(content);
+            fos.close();
         } catch (IOException ioe) {
             ioe.printStackTrace();
             return false;
@@ -406,7 +436,7 @@ public class StorageController {
         try {
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-            doc = dBuilder.parse(getXmlFile(getFileName()));
+            doc = dBuilder.parse(getXmlFile(DEFAULT_FILE_NAME));
             
             // Ensures that the XML DOM view of a document is identical
             doc.getDocumentElement().normalize();
@@ -439,7 +469,7 @@ public class StorageController {
 
             DOMSource source = new DOMSource(doc);
             
-            FileWriter fos = new FileWriter(getFileName());
+            FileWriter fos = new FileWriter(DEFAULT_FILE_NAME);
             StreamResult result = new StreamResult(fos);
             aTransformer.transform(source, result);
 
