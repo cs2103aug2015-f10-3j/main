@@ -9,6 +9,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DocumentFilter;
+import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
 import javax.swing.text.StyledDocument;
@@ -91,6 +92,11 @@ public final class CustomizedDocumentFilter extends DocumentFilter {
 		return redAttributeSet;
 	}
 
+	public static SimpleAttributeSet setBold(){
+		SimpleAttributeSet attributes = new SimpleAttributeSet(); 
+		attributes.addAttribute(StyleConstants.CharacterConstants.Bold, Boolean.TRUE);
+		return attributes;
+	}
 	private void updateTextStyles(){
 	}
 	
