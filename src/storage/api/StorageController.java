@@ -1,8 +1,12 @@
 package storage.api;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
@@ -46,18 +50,70 @@ public class StorageController {
     
     /*** Methods ***/
     /**
-     * This method check if the XML file exist and create it if not
+     * This method retrieves a File object
+     * 
+     * @param  fileName the full file path
+     * @return          file object
+     */
+    protected File getFile(String fileName) {
+        File file = new File(fileName);
+        if (!file.exists()) {
+            return null;
+        }
+        return file;
+    }
+    
+    /**
+     * This method retrieves the bytes of a File
+     * 
+     * @param fileName  the full file path
+     * @return          byte array of the file content
+     */
+    protected byte[] getFileInBytes(String fileName) {
+        byte[] content = null;
+        try {
+            Path filePath = Paths.get(fileName);
+            content = Files.readAllBytes(filePath);
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return content;
+    }
+    
+    /**
+     * This method writes bytes to a File
+     * 
+     * @param fileName  the full file path
+     * @param content   the bytes to be written
+     * @param append    whether the content should be appended or overwritten
+     * @return          success status
+     */
+    protected boolean writeBytesToFile(String fileName, byte[] content, boolean append) {
+        try {
+            FileOutputStream fos = new FileOutputStream(fileName, append);
+            fos.write(content);
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+    
+    /**
+     * This method creates a new XML file 
      * 
      * @return       file containing Task objects
      */
-    protected File getFile() {
-        File file = new File(FILE_NAME);
-        if (!file.exists()) {
+    protected File getXmlFile(String fileName) {
+        File file = getFile(fileName);
+        if (file == null) {
             // Create file if it does not exist
             try {
+                file = new File(fileName);
                 file.createNewFile();
                 String xml = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"no\"?><task></task>";
-                FileWriter fw = new FileWriter(FILE_NAME);
+                FileWriter fw = new FileWriter(fileName);
                 fw.write(xml);
                 fw.close();
             } catch (IOException e) {
@@ -109,6 +165,14 @@ public class StorageController {
                     String complete = eElement.getElementsByTagName("complete").item(0).getTextContent();
                     boolean complete_boolean = Boolean.valueOf(complete);
                     
+                    // priority
+                    String priority = eElement.getElementsByTagName("priority").item(0).getTextContent();
+                    int priority_int = Integer.valueOf(priority);
+                    
+                    // tags
+                    String tag = eElement.getElementsByTagName("tag").item(0).getTextContent();
+                    ArrayList<String> tag_array = getTagsInArrayList(tag);
+                    
                     /*
                     System.out.println("taskId: " + taskId);
                     System.out.println("description: " + description);
@@ -127,7 +191,7 @@ public class StorageController {
                     LocalDateTime reminder_localdatetime;
                     switch (taskType) {
                         case FLOATING:
-                            task = new FloatingTask(taskId_int, description, createdAt_localdatetime, complete_boolean);
+                            task = new FloatingTask(taskId_int, description, createdAt_localdatetime, complete_boolean, priority_int, tag_array);
                             break;
                         case TIMED:
                             // start
@@ -142,7 +206,7 @@ public class StorageController {
                             reminder = eElement.getElementsByTagName("reminder").item(0).getTextContent();
                             reminder_localdatetime = DateTimeHelper.parseStringToDateTime(reminder);
                             
-                            task = new TimedTask(taskId_int, description, createdAt_localdatetime, start_localdatetime, end_localdatetime, reminder_localdatetime, complete_boolean);
+                            task = new TimedTask(taskId_int, description, createdAt_localdatetime, start_localdatetime, end_localdatetime, reminder_localdatetime, complete_boolean, priority_int, tag_array);
                             break;
                         case DEADLINE:
                             // end
@@ -153,7 +217,7 @@ public class StorageController {
                             reminder = eElement.getElementsByTagName("reminder").item(0).getTextContent();
                             reminder_localdatetime = DateTimeHelper.parseStringToDateTime(reminder);
                             
-                            task = new DeadlineTask(taskId_int, description, createdAt_localdatetime, end_localdatetime, reminder_localdatetime, complete_boolean);
+                            task = new DeadlineTask(taskId_int, description, createdAt_localdatetime, end_localdatetime, reminder_localdatetime, complete_boolean, priority_int, tag_array);
                             break;
                         default:
                             break;
@@ -223,6 +287,16 @@ public class StorageController {
                 String complete_string = String.valueOf(task.isComplete());
                 complete.appendChild(doc.createTextNode(complete_string));
                 item.appendChild(complete);
+                
+                // priority
+                Element priority = doc.createElement("priority");
+                priority.appendChild(doc.createTextNode(Integer.toString(task.getPriority())));
+                item.appendChild(priority);
+                
+                // tag
+                Element tag = doc.createElement("tag");
+                tag.appendChild(doc.createTextNode(getTagsInString(task.getTags())));
+                item.appendChild(tag);
                 
                 Element start;
                 Element end;
@@ -298,7 +372,7 @@ public class StorageController {
         try {
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-            doc = dBuilder.parse(getFile());
+            doc = dBuilder.parse(getXmlFile(FILE_NAME));
             
             // Ensures that the XML DOM view of a document is identical
             doc.getDocumentElement().normalize();
@@ -348,5 +422,35 @@ public class StorageController {
         }   
         
         return true;
+    }
+    
+    /**
+     * This method converts an arraylist of tags into string
+     * 
+     * @param  tags  an arraylist of tags
+     * @return      a string representation
+     */
+    public String getTagsInString(ArrayList<String> tags) { 
+        String tags_string = "";
+        for (String tag : tags) {
+            tags_string += tag + " ";
+        }
+        return tags_string.trim();
+    }
+    
+    /**
+     * This method converts a string of tags delimited by space,
+     * into an arraylist
+     * 
+     * @param  tags  a string of tags
+     * @return       an arraylist representation
+     */
+    public ArrayList<String> getTagsInArrayList(String tags) { 
+         ArrayList<String> tags_array = new ArrayList<String>();
+         String[] splittedTags = tags.split(" ");
+         for (String tag : splittedTags) {
+             tags_array.add(tag);
+         }
+         return tags_array;
     }
 }
