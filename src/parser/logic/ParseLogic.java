@@ -232,7 +232,9 @@ public class ParseLogic extends Parser {
 		}
 		expectedString = stringOption.toString().trim();
 		List<LocalDateTime> dates = parseDates(expectedString);
-		commandOption.addValue(dates);
+		while (!dates.isEmpty()) {
+			commandOption.addValue(dates.remove(0));
+		}
 		return commandOption;
 	}
 
