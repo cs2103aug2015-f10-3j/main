@@ -208,6 +208,18 @@ class Parser implements ParserConstants {
 		return null;
 	}
 	
+	protected List<LocalDateTime> parseDates(String commandString) {
+		List<DateGroup> groups = dateParser.parse(commandString);
+		List<LocalDateTime> parsedDates = new ArrayList<LocalDateTime>();
+		for(DateGroup group : groups) {
+			List<Date> dates = group.getDates();
+			while (!dates.isEmpty()) {
+				parsedDates.add(LocalDateTime.ofInstant(dates.remove(0).toInstant(), ZoneId.systemDefault()));
+			}
+		}
+		return parsedDates;
+	}
+	
 	public List<String> breakDownCommand(String userCommand) {
 		LOGGER.info("Attempt to breakdown user input into chunks of words.");
 		assert(userCommand != null && userCommand.length() > 0);

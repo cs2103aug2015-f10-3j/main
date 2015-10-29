@@ -127,6 +127,7 @@ public class ParseLogic extends Parser {
 					LOGGER.severe("Unable to add option into command due to unknown reasons.");
 					throw new Error("Unknown error has occured.");
 				}
+				subList.clear();
 			}
 		}
 	}
@@ -173,11 +174,6 @@ public class ParseLogic extends Parser {
 					commandList.clear();
 					return null;
 				}
-				if (newOption != null) {
-					commandList.clear();
-				} else {
-					commandList.add(0, option);
-				}
 				return newOption;
 			}
 		}
@@ -186,6 +182,42 @@ public class ParseLogic extends Parser {
 		throw new Error("corrupted variable: option");
 	}
 	
+	public void addPossibleDates(Command command, List<String> commandTokens) throws Exception {
+		Option dateOption = scanForDates(commandTokens, true);
+		command.addOption("searchDates", dateOption);
+	}
+	
+	private Option scanForDates(List<String> commandList, boolean optional) throws Exception {
+		LOGGER.log(Level.INFO, "Attempt to parse expected string from user input");
+		assert(commandList != null);
+		Option commandOption = new Option();
+		StringBuilder stringOption = new StringBuilder();
+		LOGGER.log(Level.WARNING, "expectedString = commandList.get(0) may cause index out of bounds exception");
+		if (commandList.isEmpty()) {
+			if (optional) {
+				return null;
+			} else {
+				LOGGER.log(Level.SEVERE, "expected input not found");
+				throw new InvalidCommandFormatException("Expected input not found!");
+			}
+		}
+		String expectedString = EMPTY_STRING;
+		for (int i = 0; i < commandList.size(); i++) { 
+			LOGGER.fine("Expecting a list of Strings");
+			expectedString = commandList.get(i);
+			if (isDate(expectedString)) {
+				String[] testedString = expectedString.split("/");
+				expectedString = String.format("%1$s/%2$s/%3$s", testedString[2], testedString[1], testedString[0]);
+			}
+			stringOption.append(expectedString);
+			stringOption.append(SPACE);
+		}
+		expectedString = stringOption.toString().trim();
+		List<LocalDateTime> dates = parseDates(expectedString);
+		commandOption.addValue(dates);
+		return commandOption;
+	}
+
 	private Option expectIntegerArray(List<String> commandList, boolean optional) throws Exception {
 		LOGGER.log(Level.INFO, "Attempt to parse expected array of integers from user input");
 		assert(commandList != null);

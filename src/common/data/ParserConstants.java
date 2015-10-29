@@ -38,7 +38,7 @@ public interface ParserConstants {
 		BETWEEN("between"), AND("and"), DESC("desc"), START("start"), 
 		END("end"), ALL("all"), FLOATING("floating"), DEADLINE("deadline"), 
 		TIMED("timed"), TODAY("today"), TOMORROW("tomorrow"), WEEK("week"), 
-		MONTH("month"), HELP("help"), SETDIRECTORY("setdirectory"),
+		MONTH("month"), HELP("help"), SETDIRECTORY("setdirectory"), MORE("more"),
 		
 		ADD_SHORT("/a"), VIEW_SHORT("/v"), EDIT_SHORT("/e"), DELETE_SHORT("/d"), 
 		COMPLETE_SHORT("/c"), SEARCH_SHORT("/s"), BY_SHORT("-b"), UNDO_SHORT("/u"), 
@@ -46,7 +46,7 @@ public interface ParserConstants {
 		BETWEEN_SHORT("-bt"), AND_SHORT("-a"), DESC_SHORT("-d"), START_SHORT("-s"), 
 		END_SHORT("-e"), ALL_SHORT("-ta"), FLOATING_SHORT("-tf"), DEADLINE_SHORT("-td"), 
 		TIMED_SHORT("-tt"), TODAY_SHORT("-pt"), TOMORROW_SHORT("-ptm"), WEEK_SHORT("-pw"), 
-		MONTH_SHORT("-pm"), HELP_SHORT("/h"), SETDIRECTORY_SHORT("/sd");
+		MONTH_SHORT("-pm"), HELP_SHORT("/h"), SETDIRECTORY_SHORT("/sd"), MORE_SHORT("/m");
 
 		private final String optionText;
 		
@@ -62,6 +62,7 @@ public interface ParserConstants {
 	
 	public static enum TYPE {
 		STRING, STRING_ARRAY, INTEGER, INTEGER_ARRAY, DATE,
-		STRING_OPT, STRING_ARRAY_OPT, INTEGER_OPT, INTEGER_ARRAY_OPT, DATE_OPT, NONE;
+		STRING_OPT, STRING_ARRAY_OPT, INTEGER_OPT, INTEGER_ARRAY_OPT,
+		DATE_OPT, NONE;
 	}
 }

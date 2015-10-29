@@ -5,6 +5,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import command.api.Command;
+import common.data.ParserConstants.COMMAND_TYPE;
 import common.exception.InvalidCommandFormatException;
 import parser.logic.ParseLogic;
 
@@ -84,6 +85,9 @@ public final class CommandParser {
 	private void addOptions(ParseLogic.COMMAND_TYPE commandType, Command newCommand, String userCommand) throws Exception {
 		assert(newCommand != null && userCommand != null && parserLogic != null);
 		List<String> commandList = parserLogic.breakDownCommand(userCommand);
+		if (commandType == COMMAND_TYPE.SEARCH) {
+			parserLogic.addPossibleDates(newCommand, commandList);
+		}
 		parserLogic.addOptionsToCommand(commandType, newCommand, commandList);
 	}
 
