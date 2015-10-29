@@ -28,7 +28,8 @@ public class EditTaskCommand extends Command {
 	private TaskController taskController = TaskController.getInstance();
 	
 	private ArrayList<Task> executionResult;
-	private int taskId;
+	private int taskId; 
+	private int newPriority;
 	private Task originalTask, editedTask;
 	private String originalTaskType, newDescription = null;
 	private LocalDateTime newStart, newEnd, newReminder = null;
@@ -72,6 +73,7 @@ public class EditTaskCommand extends Command {
 	 */
 	private void retrieveOptions() {
 		executionResult = new ArrayList<Task>();
+		newPriority = -1;
 		taskId = getOption("edit").getIntegerValue();
 		if (hasOption("desc")) {
 			newDescription = getOption("desc").getStringValue();
@@ -85,6 +87,10 @@ public class EditTaskCommand extends Command {
 		if (hasOption("remind")) {
 			newReminder = getOption("remind").getDateValue();
 		}
+		if (hasOption("priority")) {
+			newPriority = getOption("priority").getIntegerValue();
+		}
+		
 	}
 	
 	private void prepareUndoTask() {
@@ -186,7 +192,8 @@ public class EditTaskCommand extends Command {
 				originalTask.getTaskId(),
 				getEditedTaskDescription(),
 				originalTask.getCreatedAt(),
-				originalTask.isComplete());
+				originalTask.isComplete(),
+				getEditedTaskPriority());
 	}
 	
 	private void createNewDeadlineTask() {
@@ -196,7 +203,8 @@ public class EditTaskCommand extends Command {
 				originalTask.getCreatedAt(),
 				getEditedTaskEnd(),
 				getEditedTaskReminder(),
-				originalTask.isComplete());
+				originalTask.isComplete(),
+				getEditedTaskPriority());
 	}
 
 	private void createNewTimedTask() {
@@ -207,7 +215,8 @@ public class EditTaskCommand extends Command {
 				getEditedTaskStart(),
 				getEditedTaskEnd(),
 				getEditedTaskReminder(),
-				originalTask.isComplete());
+				originalTask.isComplete(),
+				getEditedTaskPriority());
 	}
 
 	/*** Setter and Getter Methods ***/
@@ -223,8 +232,8 @@ public class EditTaskCommand extends Command {
 		if (newStart != null) {
 			return newStart;
 		} else {
-			TimedTask castedOriginalTask = (TimedTask) originalTask;
-			return castedOriginalTask.getStart();
+			// Retrieve Original Task casted to a TimedTask as only this Task type has Start date/time
+			return getTimedTaskCastedOriginalTask().getStart();
 		}
 	}
 
@@ -233,11 +242,11 @@ public class EditTaskCommand extends Command {
 		if (newEnd != null) {
 			return newEnd;
 		} else if (originalTaskType.equals(TASK_TYPE_DEADLINE)) {
-			DeadlineTask castedOriginalTask = (DeadlineTask) originalTask;
-			newEditedTaskEnd = castedOriginalTask.getEnd();
+			// Get DeadlineTask casted original Task and retrieve the End date/time
+			newEditedTaskEnd = getDeadlineTaskCastedOriginalTask().getEnd();
 		} else if (originalTaskType.equals(TASK_TYPE_TIMED)) {
-			TimedTask castedOriginalTask = (TimedTask) originalTask;
-			newEditedTaskEnd = castedOriginalTask.getEnd();
+			// Get TimedTask casted original Task and retrieve the End date/time
+			newEditedTaskEnd = getTimedTaskCastedOriginalTask().getEnd();
 		}
 		return newEditedTaskEnd;
 	}
@@ -249,13 +258,32 @@ public class EditTaskCommand extends Command {
 		} else if (originalTaskType.equals(TASK_TYPE_FLOATING)){
 			newEditedTaskReminder = DateTimeHelper.addMinutes(getEditedTaskEnd(), 5);
 		} else if (originalTaskType.equals(TASK_TYPE_DEADLINE)) {
-			DeadlineTask castedOriginalTask = (DeadlineTask) originalTask;
-			newEditedTaskReminder = castedOriginalTask.getReminder();
+			// Get DeadlineTask casted original Task and retrieve the reminder LocalDateTime object
+			newEditedTaskReminder = getDeadlineTaskCastedOriginalTask().getReminder();
 		} else if (originalTaskType.equals(TASK_TYPE_TIMED)) {
-			TimedTask castedOriginalTask = (TimedTask) originalTask;
-			newEditedTaskReminder = castedOriginalTask.getReminder();
+			// Get TimedTask casted original Task and retrieve the reminder LocalDateTime object
+			newEditedTaskReminder = getTimedTaskCastedOriginalTask().getReminder();
 		}
 		return newEditedTaskReminder;
+	}
+	
+	private int getEditedTaskPriority() {
+		int editedTaskPriority;
+		if (newPriority != -1) {
+			return newPriority;
+		} else {
+			return originalTask.getPriority();
+		}
+	}
+	
+	private DeadlineTask getDeadlineTaskCastedOriginalTask() {
+		DeadlineTask castedOriginalTask = (DeadlineTask) originalTask;
+		return castedOriginalTask;
+	}
+	
+	private TimedTask getTimedTaskCastedOriginalTask() {
+		TimedTask castedOriginalTask = (TimedTask) originalTask;
+		return castedOriginalTask;
 	}
 	
 	private void getTaskFromStorage(int taskId) throws NoSuchTaskException {
@@ -266,7 +294,7 @@ public class EditTaskCommand extends Command {
 		}
 		LOGGER.info("EditTaskCommand: Retrieved Task with taskId: " + taskId + "\n");
 	}
-
+	
 	/**
 	 * This method calls the storageAPI to store the updated task object
 	 * 
