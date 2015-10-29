@@ -92,18 +92,21 @@ public class StorageController {
         // Get existing content
         byte[] content = getFileInBytes(DEFAULT_FILE_NAME);
         
-        // Write new path to CONFIG
-        success = writeBytesToFile(CONFIG_FILE, new_path.getBytes(), false);
-        
         // Copy data to new path
-        DEFAULT_FILE_NAME = new_path;
+        success = writeBytesToFile(new_path, content, false);
         if (success) {
-            success = writeBytesToFile(DEFAULT_FILE_NAME, content, true);
+            // Write new path to CONFIG
+            success = writeBytesToFile(CONFIG_FILE, new_path.getBytes(), false);
+            if (success) {
+                DEFAULT_FILE_NAME = new_path;
+                Task.setTaskList(readTask());
+                return success;
+            } else {
+                return success;
+            }
         } else {
             return success;
         }
-        
-        return success;
     }
     
     /**
