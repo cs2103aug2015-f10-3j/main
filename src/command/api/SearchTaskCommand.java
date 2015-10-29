@@ -81,7 +81,7 @@ public class SearchTaskCommand extends Command{
 			if (hasSearchDates && isTaskWithDate(task)) {
 				for (String taskDate: getTaskDates(task)) {
 					for (LocalDateTime searchDate: searchDates) {
-						if (DateTimeHelper.parseDateTimeToString(searchDate).equals(taskDate)) {
+						if (DateTimeHelper.getDate(searchDate).equals(taskDate)) {
 							matchDegree++;
 						}
 					}
@@ -108,11 +108,11 @@ public class SearchTaskCommand extends Command{
 	private ArrayList<String> getTaskDates(Task task) {
 		ArrayList<String> taskDates = new ArrayList<String>();
 		if (task.getType().equals(TASK_TYPE.DEADLINE)) {
-			String endDate = DateTimeHelper.parseDateTimeToString(castToDeadlineTask(task).getEnd());
+			String endDate = DateTimeHelper.getDate(castToDeadlineTask(task).getEnd());
 			taskDates.add(endDate);
 		} else if (task.getType().equals(TASK_TYPE.TIMED)) {
-			String startDate = DateTimeHelper.parseDateTimeToString(castToTimedTask(task).getStart());
-			String endDate = DateTimeHelper.parseDateTimeToString(castToTimedTask(task).getEnd());
+			String startDate = DateTimeHelper.getDate(castToTimedTask(task).getStart());
+			String endDate = DateTimeHelper.getDate(castToTimedTask(task).getEnd());
 			taskDates.add(startDate);
 			taskDates.add(endDate);
 		}
