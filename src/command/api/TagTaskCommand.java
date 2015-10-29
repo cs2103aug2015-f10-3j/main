@@ -13,6 +13,7 @@ public class TagTaskCommand extends Command {
 
 	/*** Variables ***/
 	private static final Logger LOGGER = Logger.getLogger(EditTaskCommand.class.getName());
+	private ArrayList<String> tagsToAdd;
 	private ArrayList<String> modifiedTags;
 	private ArrayList<String> originalTags;
 	private ArrayList<Task> executionResult;
@@ -22,6 +23,7 @@ public class TagTaskCommand extends Command {
 	public TagTaskCommand() {
 		modifiedTags = new ArrayList<String>();
 		originalTags = new ArrayList<String>();
+		tagsToAdd = new ArrayList<String>();
 		executionResult = new ArrayList<Task>();
 	}
 	
@@ -41,11 +43,11 @@ public class TagTaskCommand extends Command {
 	}
 	
 	private void retrieveOptions() {
-		taskId = getOption("tagId").getIntegerValue();
-		if (hasOption("tag")) {
-			int numTags = getOption("tag").getValuesCount();
+		taskId = getOption("tag").getIntegerValue();
+		if (hasOption("#")) {
+			int numTags = getOption("#").getValuesCount();
 			for (int i=0; i<numTags; i++) {
-				modifiedTags.add((getOption("tag").getStringValue(i)));
+				tagsToAdd.add((getOption("tag").getStringValue(i)));
 			}
 		}
 	}
@@ -72,7 +74,7 @@ public class TagTaskCommand extends Command {
 	
 	private void updateOriginalTags() {
 		modifiedTags = getExistingTags();
-		for (String tag : modifiedTags) {
+		for (String tag : tagsToAdd) {
 			modifiedTags.add(tag);
 		}
 	}
