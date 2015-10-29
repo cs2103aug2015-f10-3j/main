@@ -81,9 +81,9 @@ public class TagTaskCommand extends Command {
 				if (tagToAdd.equalsIgnoreCase(existingTag)) {
 					hasTag = true;
 				}
-				if (!hasTag) {
-					modifiedTags.add(tagToAdd);
-				}
+			}
+			if (!hasTag) {
+				modifiedTags.add(tagToAdd);
 			}
 		}
 	}
