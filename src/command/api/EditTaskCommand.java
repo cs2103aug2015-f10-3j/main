@@ -193,7 +193,8 @@ public class EditTaskCommand extends Command {
 				getEditedTaskDescription(),
 				originalTask.getCreatedAt(),
 				originalTask.isComplete(),
-				getEditedTaskPriority());
+				getEditedTaskPriority(),
+				originalTask.getTags());
 	}
 	
 	private void createNewDeadlineTask() {
@@ -204,7 +205,8 @@ public class EditTaskCommand extends Command {
 				getEditedTaskEnd(),
 				getEditedTaskReminder(),
 				originalTask.isComplete(),
-				getEditedTaskPriority());
+				getEditedTaskPriority(),
+				originalTask.getTags());
 	}
 
 	private void createNewTimedTask() {
@@ -216,7 +218,8 @@ public class EditTaskCommand extends Command {
 				getEditedTaskEnd(),
 				getEditedTaskReminder(),
 				originalTask.isComplete(),
-				getEditedTaskPriority());
+				getEditedTaskPriority(),
+				originalTask.getTags());
 	}
 
 	/*** Setter and Getter Methods ***/
