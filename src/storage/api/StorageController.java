@@ -36,7 +36,7 @@ import task.entity.Task.TASK_TYPE;
 
 public class StorageController {
     /*** Variables ***/
-    protected static final String CONFIG_FILE = ".config";
+    public static final String CONFIG_FILE = ".config";
     protected static String DEFAULT_FILE_NAME = "task.xml";
     private static StorageController thisInstance;
     
@@ -87,7 +87,7 @@ public class StorageController {
      * @param new_path  the new path of the xml file
      * @return          success status
      */
-    protected boolean setDirectory(String new_path) {
+    public boolean setDirectory(String new_path) {
         boolean success;
         byte[] content = getFileInBytes(DEFAULT_FILE_NAME);
         success = writeBytesToFile(CONFIG_FILE, new_path.getBytes(), false);
@@ -121,7 +121,7 @@ public class StorageController {
      * @param fileName  the full file path
      * @return          byte array of the file content
      */
-    protected byte[] getFileInBytes(String fileName) {
+    public byte[] getFileInBytes(String fileName) {
         byte[] content = null;
         try {
             Path filePath = Paths.get(fileName);
@@ -141,7 +141,7 @@ public class StorageController {
      * @param append    whether the content should be appended or overwritten
      * @return          success status
      */
-    protected boolean writeBytesToFile(String fileName, byte[] content, boolean append) {
+    public boolean writeBytesToFile(String fileName, byte[] content, boolean append) {
         File file = new File(fileName);
         if (!file.exists()) {
          // Create file if it does not exist
