@@ -19,11 +19,9 @@ public final class CustomizedDocumentFilter extends DocumentFilter {
 	private StyledDocument styledDocument = null;
 	private final static StyleContext styleContext = StyleContext.getDefaultStyleContext();
 	private static final AttributeSet redAttributeSet = styleContext.addAttribute(styleContext.getEmptySet(), StyleConstants.Foreground, Color.RED);
-	private static final AttributeSet orangeAttributeSet = styleContext.addAttribute(styleContext.getEmptySet(), StyleConstants.Foreground, Color.ORANGE);
+	//private static final AttributeSet orangeAttributeSet = styleContext.addAttribute(styleContext.getEmptySet(), StyleConstants.Foreground, Color.ORANGE);
 	private static final AttributeSet blackAttributeSet = styleContext.addAttribute(styleContext.getEmptySet(), StyleConstants.Foreground, Color.BLACK);
 	private static final String REGEX_TAG = "#\\w{1,}";
-	// Use a regular expression to find the words you are looking for
-
 
 	public CustomizedDocumentFilter(JTextPane textPane){
 		this.textPane = textPane;
@@ -76,17 +74,19 @@ public final class CustomizedDocumentFilter extends DocumentFilter {
 		if (sb.length() > 0) {
 			sb.deleteCharAt(sb.length() - 1); // Remove the trailing "|"
 		}
-
 		Pattern p = Pattern.compile(sb.toString());
-
 		return p;
 	}
 	
 	public static AttributeSet changeToOrange(){
+		AttributeSet orangeAttributeSet = styleContext.addAttribute(styleContext.getEmptySet(), StyleConstants.Foreground, Color.ORANGE);
+		orangeAttributeSet = styleContext.addAttribute(orangeAttributeSet, StyleConstants.CharacterConstants.Bold, Boolean.TRUE);
 		return orangeAttributeSet;
 	}
 	
 	public static AttributeSet changeToRed(){
+		AttributeSet redAttributeSet = styleContext.addAttribute(styleContext.getEmptySet(), StyleConstants.Foreground, Color.RED);
+		redAttributeSet = styleContext.addAttribute(redAttributeSet, StyleConstants.CharacterConstants.Bold, Boolean.TRUE);
 		return redAttributeSet;
 	}
 
