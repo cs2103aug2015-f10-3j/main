@@ -47,25 +47,25 @@ public class TaskControllerTest {
         // Populate sample arraylist
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         Task task;
-        task = new DeadlineTask(1, "CS2103 CE2", LocalDateTime.parse("2015-09-01 12:30", formatter), LocalDateTime.parse("2015-09-10 12:30", formatter), LocalDateTime.parse("2015-09-10 12:25", formatter), true);
+        task = new DeadlineTask(1, "CS2103 CE2", LocalDateTime.parse("2015-09-01 12:30", formatter), LocalDateTime.parse("2015-09-10 12:30", formatter), LocalDateTime.parse("2015-09-10 12:25", formatter), true, 1, new ArrayList<String>());
         testTaskList.add(task);
-        task = new TimedTask(2, "Appointment with dentist", LocalDateTime.parse("2015-09-02 16:34", formatter), LocalDateTime.parse("2015-09-10 14:30", formatter), LocalDateTime.parse("2015-09-10 15:30", formatter), LocalDateTime.parse("2015-09-10 15:25", formatter), false);
+        task = new TimedTask(2, "Appointment with dentist", LocalDateTime.parse("2015-09-02 16:34", formatter), LocalDateTime.parse("2015-09-10 14:30", formatter), LocalDateTime.parse("2015-09-10 15:30", formatter), LocalDateTime.parse("2015-09-10 15:25", formatter), false, 2, new ArrayList<String>());
         testTaskList.add(task);
-        task = new FloatingTask(3, "Buy chicken", LocalDateTime.parse("2015-09-05 13:03", formatter), true);
+        task = new FloatingTask(3, "Buy chicken", LocalDateTime.parse("2015-09-05 13:03", formatter), true, 3, new ArrayList<String>());
         testTaskList.add(task);
-        task = new DeadlineTask(4, "Submit CS2106 Lab 1", LocalDateTime.parse("2015-09-06 22:16", formatter), LocalDateTime.parse("2015-09-10 23:59", formatter), LocalDateTime.parse("2015-09-10 23:54", formatter), false);
+        task = new DeadlineTask(4, "Submit CS2106 Lab 1", LocalDateTime.parse("2015-09-06 22:16", formatter), LocalDateTime.parse("2015-09-10 23:59", formatter), LocalDateTime.parse("2015-09-10 23:54", formatter), false, 3, new ArrayList<String>());
         testTaskList.add(task);
-        task = new TimedTask(5, "Go out gai gai", LocalDateTime.parse("2015-09-07 23:00", formatter), LocalDateTime.parse("2015-09-17 13:00", formatter), LocalDateTime.parse("2015-09-17 17:00", formatter), LocalDateTime.parse("2015-09-17 16:55", formatter), true);
+        task = new TimedTask(5, "Go out gai gai", LocalDateTime.parse("2015-09-07 23:00", formatter), LocalDateTime.parse("2015-09-17 13:00", formatter), LocalDateTime.parse("2015-09-17 17:00", formatter), LocalDateTime.parse("2015-09-17 16:55", formatter), true, 2, new ArrayList<String>());
         testTaskList.add(task);
-        task = new FloatingTask(6, "Eat more chicken", LocalDateTime.parse("2015-09-07 23:01", formatter), false);
+        task = new FloatingTask(6, "Eat more chicken", LocalDateTime.parse("2015-09-07 23:01", formatter), false, 1, new ArrayList<String>());
         testTaskList.add(task);
-        task = new DeadlineTask(7, "Pay money for steamboat", LocalDateTime.parse("2015-09-08 08:55", formatter), LocalDateTime.parse("2015-09-10 23:59", formatter), LocalDateTime.parse("2015-09-10 23:54", formatter), false);
+        task = new DeadlineTask(7, "Pay money for steamboat", LocalDateTime.parse("2015-09-08 08:55", formatter), LocalDateTime.parse("2015-09-10 23:59", formatter), LocalDateTime.parse("2015-09-10 23:54", formatter), false, 2, new ArrayList<String>());
         testTaskList.add(task);
-        task = new TimedTask(8, "Walk the neighbor's dog", LocalDateTime.parse("2015-09-08 10:20", formatter), LocalDateTime.parse("2015-09-13 17:00", formatter), LocalDateTime.parse("2015-09-13 18:00", formatter), LocalDateTime.parse("2015-09-13 17:55", formatter), true);
+        task = new TimedTask(8, "Walk the neighbor's dog", LocalDateTime.parse("2015-09-08 10:20", formatter), LocalDateTime.parse("2015-09-13 17:00", formatter), LocalDateTime.parse("2015-09-13 18:00", formatter), LocalDateTime.parse("2015-09-13 17:55", formatter), true, 1, new ArrayList<String>());
         testTaskList.add(task);
-        task = new FloatingTask(9, "Stock up locker", LocalDateTime.parse("2015-09-10 11:45", formatter), true);
+        task = new FloatingTask(9, "Stock up locker", LocalDateTime.parse("2015-09-10 11:45", formatter), true, 3, new ArrayList<String>());
         testTaskList.add(task);
-        task = new DeadlineTask(10, "Sign up for chicken eating competition", LocalDateTime.parse("2015-09-14 21:10", formatter), LocalDateTime.parse("2015-09-20 23:59", formatter), LocalDateTime.parse("2015-09-20 23:54", formatter), false);
+        task = new DeadlineTask(10, "Sign up for chicken eating competition", LocalDateTime.parse("2015-09-14 21:10", formatter), LocalDateTime.parse("2015-09-20 23:59", formatter), LocalDateTime.parse("2015-09-20 23:54", formatter), false, 3, new ArrayList<String>());
         testTaskList.add(task);
         
         Document doc = sController.parseTask(testTaskList);
