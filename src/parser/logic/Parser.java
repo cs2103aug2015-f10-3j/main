@@ -126,14 +126,12 @@ class Parser implements ParserConstants {
 	private void setupUntagOption() {
 		untagOptions.put(OPTIONS.UNTAG, TYPE.INTEGER);
 		untagOptions.put(OPTIONS.UNTAG_SHORT, TYPE.INTEGER);
-		untagOptions.put(OPTIONS.HASHTAG, TYPE.HASHTAG_ARRAY);
 		optionsMap.put(COMMAND_TYPE.UNTAG, untagOptions);
 	}
 
 	private void setupTagOption() {
 		tagOptions.put(OPTIONS.TAG, TYPE.INTEGER);
 		tagOptions.put(OPTIONS.TAG_SHORT, TYPE.INTEGER);
-		tagOptions.put(OPTIONS.HASHTAG, TYPE.HASHTAG_ARRAY);
 		optionsMap.put(COMMAND_TYPE.TAG, tagOptions);
 	}
 

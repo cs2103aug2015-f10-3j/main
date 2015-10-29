@@ -35,13 +35,8 @@ public final class CommandParser {
 
 	public Command parse(String userCommand) throws InvalidCommandFormatException {
 		assert(userCommand != null);
+		checkUserCommand(userCommand);
 		try {
-			checkUserCommand(userCommand);
-			userCommand = userCommand.trim();
-			if (userCommand.length() <= 0) {
-				LOGGER.severe("User input string is of 0 length");
-				throw new InvalidCommandFormatException("User input is blank");
-			}
 			return createCommand(userCommand);
 		} catch (Throwable e) {
 			String message = String.format("Failed to parse user input: %1$s", userCommand);
@@ -87,6 +82,8 @@ public final class CommandParser {
 		List<String> commandList = parserLogic.breakDownCommand(userCommand);
 		if (commandType == COMMAND_TYPE.SEARCH) {
 			parserLogic.addPossibleDates(newCommand, commandList);
+		} else if (commandType == COMMAND_TYPE.TAG || commandType == COMMAND_TYPE.UNTAG) {
+			parserLogic.addTags(newCommand, commandList);
 		}
 		parserLogic.addOptionsToCommand(commandType, newCommand, commandList);
 	}
