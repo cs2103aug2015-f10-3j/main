@@ -211,17 +211,19 @@ public class CommandLinePanel extends JPanel implements Observer,KeyListener {
 			textPane.setCaretPosition(doc.getLength());
 			String outputString = "";
 			for(String s : output ){
-				outputString = s + NEXT_LINE;
-				AttributeSet color = null;
-				if(outputString.charAt(0)==PRIORITY_INDICATOR){
-					color = CustomizedDocumentFilter.changeToOrange();
-					outputString = outputString.substring(1);
+				if(s != null){
+					outputString = s + NEXT_LINE;
+					AttributeSet color = null;
+					if(outputString.charAt(0)==PRIORITY_INDICATOR){
+						color = CustomizedDocumentFilter.changeToOrange();
+						outputString = outputString.substring(1);
+					}
+					if(outputString.charAt(0)==PRIORITY_INDICATOR){
+						color = CustomizedDocumentFilter.changeToRed();
+						outputString = outputString.substring(1);
+					}
+					doc.insertString(doc.getLength(), outputString, color);
 				}
-				if(outputString.charAt(0)==PRIORITY_INDICATOR){
-					color = CustomizedDocumentFilter.changeToRed();
-					outputString = outputString.substring(1);
-				}
-				doc.insertString(doc.getLength(), outputString, color);
 			}
 			doc.insertString(doc.getLength(), NEXT_LINE, null);
 		} catch(BadLocationException exc) {
@@ -275,7 +277,7 @@ public class CommandLinePanel extends JPanel implements Observer,KeyListener {
 		} else {
 			String msg = (String)arg;
 			append(commandList.getLast().getData());
-			append(msg + NEXT_LINE);
+			append(msg +NEXT_LINE);
 		}
 	}
 
