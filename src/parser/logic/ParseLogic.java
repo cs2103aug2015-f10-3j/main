@@ -116,7 +116,7 @@ public class ParseLogic extends Parser {
 			case TAG:
 				return new TagTaskCommand();
 			case UNTAG:
-				return UntagTaskCommand;
+				return new UntagTaskCommand();
 			case EXIT:
 				return new ExitCommand();
 			case INVALID:
