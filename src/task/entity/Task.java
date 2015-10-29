@@ -3,7 +3,7 @@ package task.entity;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
-public class Task implements Comparable<Task>{
+public class Task {
 	/*** Variables ***/
 	private static ArrayList<Task> taskList;
 	private int taskId;
@@ -143,13 +143,4 @@ public class Task implements Comparable<Task>{
     	details[++counter] = description;
     	return details;
     }
-
-	@Override
-	public int compareTo(Task o) {
-		if (this.priority != o.priority) {
-			return this.priority - o.priority;
-		} else {
-			return this.taskId - o.taskId;
-		}
-	}
 }

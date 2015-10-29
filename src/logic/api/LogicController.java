@@ -8,10 +8,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import command.api.Command;
-import common.exception.InvalidCommandFormatException;
 import common.exception.NoTaskStateException;
 import parser.api.CommandParser;
 import task.entity.Task;
+import task.entity.TaskComparator;
 
 public class LogicController extends Observable {
 	/*** Variable ***/
@@ -20,12 +20,14 @@ public class LogicController extends Observable {
 	private static CommandParser commandParser;
 	private static Observer observer;
 	private static ArrayList<Task> deliveredTaskState;
+	private static TaskComparator comparator;
 
 	/*** Constructor ***/
 	public LogicController() {
 		LOGGER.info("Initialising Executor");
 		commandParser = new CommandParser();
 		deliveredTaskState = new ArrayList<Task>();
+		comparator = new TaskComparator();
 	}
 
 	/*** Methods ***/
@@ -65,7 +67,7 @@ public class LogicController extends Observable {
 		ArrayList<Task> executionResult = new ArrayList<Task>();
 		if (commandParser.isSaveStateCommand(userInput)) {
 			executionResult = command.execute();
-			Collections.sort(executionResult);
+			Collections.sort(executionResult,comparator);
 			deliveredTaskState = executionResult;
 		} else {
 			executionResult = command.execute();
