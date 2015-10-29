@@ -12,6 +12,7 @@ public class Task {
 	private TASK_TYPE type;
     private boolean complete;
     private int priority;
+    private ArrayList<String> tags;
     private String[] details = {"-","-","-","-","-","-","-"};
 
     public enum TASK_TYPE {
@@ -53,14 +54,16 @@ public class Task {
 		this.type = determineType(type);
         this.priority = 3;
 		this.complete = false;
+		this.tags = new ArrayList<String>();
 	}
 
-    public Task(int taskId, String description, LocalDateTime createdAt, boolean complete, int priority, String type) {
+    public Task(int taskId, String description, LocalDateTime createdAt, boolean complete, int priority, ArrayList<String> tags, String type) {
 	    this.taskId = taskId;
 	    this.description = description;
 	    this.createdAt = createdAt;
         this.complete = complete;
         this.priority = priority;
+        this.tags = tags;
 	    this.type = determineType(type);
 	}
 	
@@ -106,6 +109,12 @@ public class Task {
     }
     public void setPriority(int priority) {
         this.priority = priority;
+    }
+    public ArrayList<String> getTags() {
+        return tags;
+    }
+    public void setTags(ArrayList<String> tags) {
+        this.tags = tags;
     }
 
     /*** Method ***/

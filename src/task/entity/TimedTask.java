@@ -1,6 +1,7 @@
 package task.entity;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 
 import common.util.DateTimeHelper;
 
@@ -23,8 +24,8 @@ public class TimedTask extends Task {
 		this.reminder = reminder;
 	}
 	
-	public TimedTask(int taskId, String description, LocalDateTime createdAt, LocalDateTime start, LocalDateTime end, LocalDateTime reminder, boolean complete, int priority) {
-        super(taskId, description, createdAt, complete, priority, TASK_TYPE);
+	public TimedTask(int taskId, String description, LocalDateTime createdAt, LocalDateTime start, LocalDateTime end, LocalDateTime reminder, boolean complete, int priority, ArrayList<String> tags) {
+        super(taskId, description, createdAt, complete, priority, tags,  TASK_TYPE);
         this.start = start;
         this.end = end;
         this.reminder = reminder;

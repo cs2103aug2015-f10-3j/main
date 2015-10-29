@@ -1,6 +1,7 @@
 package task.entity;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 
 public class FloatingTask extends Task {
 	/*** Variables ***/
@@ -15,7 +16,7 @@ public class FloatingTask extends Task {
 		super(description, TASK_TYPE);
 	}
 	
-    public FloatingTask(int taskId, String description, LocalDateTime createdAt, boolean complete, int priority) {
-        super(taskId, description, createdAt, complete, priority, TASK_TYPE);
+    public FloatingTask(int taskId, String description, LocalDateTime createdAt, boolean complete, int priority, ArrayList<String> tags) {
+        super(taskId, description, createdAt, complete, priority, tags, TASK_TYPE);
     }
 }
