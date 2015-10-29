@@ -16,11 +16,17 @@ public class DeadlineTask extends Task {
 		super();
 	}
 	
-	public DeadlineTask(String description, LocalDateTime end, LocalDateTime reminder) {
-		super(description, TASK_TYPE);
+	public DeadlineTask(String description, LocalDateTime end, LocalDateTime reminder, int priority) {
+		super(description, priority, TASK_TYPE);
 		this.end = end;
 		this.reminder = reminder;
 	}
+	
+	public DeadlineTask(int taskId, String description, LocalDateTime createdAt, LocalDateTime end, LocalDateTime reminder, boolean complete, int priority) {
+        super(taskId, description, createdAt, complete, priority, new ArrayList<String>(), TASK_TYPE);
+        this.end = end;
+        this.reminder = reminder;
+    }
 	
 	public DeadlineTask(int taskId, String description, LocalDateTime createdAt, LocalDateTime end, LocalDateTime reminder, boolean complete, int priority, ArrayList<String> tags) {
         super(taskId, description, createdAt, complete, priority, tags, TASK_TYPE);

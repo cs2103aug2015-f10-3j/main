@@ -48,11 +48,11 @@ public class Task {
 		}
 	}
 	
-	public Task(String description, String type) {
+	public Task(String description, int priority, String type) {
 		this.description = description;
 		this.createdAt = LocalDateTime.now();
 		this.type = determineType(type);
-        this.priority = 3;
+        this.priority = priority;
 		this.complete = false;
 		this.tags = new ArrayList<String>();
 	}
