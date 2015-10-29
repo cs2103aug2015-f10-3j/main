@@ -15,12 +15,16 @@ public class OutputProcessor {
 	private static LogicController executor;
 	private static Observer observer;
 	private static Reminder reminder;
-	
+
 	//private static final String ERROR_BAD_COMMAND = "Command fail to execute";
 	//private static final String FORMAT = "| %1$-5s | %2$-10s | %3$-60s | %4$-11s | %5$-5s | %6$-11s | %7$-5s |";
-	private static final String FORMAT = " %1$-5s  %2$-10s  %3$-60s  %4$-11s  %5$-8s  %6$-11s  %7$-5s ";
+	private static final String FORMAT = " %1$-5s  %2$-10s  %3$-50s  %4$-11s  %5$-8s  %6$-11s  %7$-5s ";
+	private static final String TAGS_FORMAT = "#%s ";
+	private static final String TAGS_PADDING = "%15s";
 	private static final String VIEW_HEADER = String.format(FORMAT, "ID", "Type", "Description", "Start Date","","Deadline", "");
+	private static final String PRIORITY_INDICATOR = "*";
 	private static final int OFFSET_ONE = 1;
+	private static final String NEXT_LINE = "\n";
 
 	/*** Constructor ***/
 	private OutputProcessor(){
@@ -29,7 +33,7 @@ public class OutputProcessor {
 		reminder = Reminder.getInstance(observer);
 		reminder.addObserver(observer);
 	}
-	
+
 	/*** Methods ***/
 	/**
 	 * This method returns an instance of the OutputProcessor. 
@@ -42,10 +46,10 @@ public class OutputProcessor {
 			OutputProcessor.observer = observer;
 			instance = new OutputProcessor();
 		}
-		
+
 		return instance;
 	}
-	
+
 	/**
 	 * This method returns an array of output from LogicController class.
 	 * 
@@ -67,31 +71,58 @@ public class OutputProcessor {
 		} 
 		return output;
 	}
-	
+
 	/**
 	 * This method formats the variable needed from each task to string
 	 * and store them into a string array.
+	 * Max characters to be displayed for description is 50.
+	 * Anything more will be substring(0,47). 
 	 * 
 	 * @param ArrayList 
 	 *            Array list of task
 	 * @return String array
 	 */
 	public String[] formatOutput(ArrayList<Task> taskList){
-		String[] output = new String[taskList.size() + OFFSET_ONE];
-		output[0] = VIEW_HEADER;
-		for(int i = 0; i < taskList.size(); i++){
+		String[] output = new String[(taskList.size() * 2) + OFFSET_ONE];
+		int rowNumber = 0;
+		output[rowNumber++] = VIEW_HEADER;
+		for(int i = 0; i < taskList.size();i++){
 			Task selectedTask = taskList.get(i);
 			String[] taskDetails = selectedTask.toDetailsArray();
 			int detailsPointer = 0;
-			output[i+OFFSET_ONE] = String.format(FORMAT, i+1,taskDetails[++detailsPointer], 
-								   taskDetails[++detailsPointer].length() > 60 ? 
-								   taskDetails[detailsPointer].substring(0, 57) + "..." : taskDetails[detailsPointer]
-								   , taskDetails[++detailsPointer], taskDetails[++detailsPointer],
-								   taskDetails[++detailsPointer],taskDetails[++detailsPointer]);
+			String priorityIndicator = "";
+			if(selectedTask.getPriority() == 2){
+				priorityIndicator = PRIORITY_INDICATOR;
+			}else if(selectedTask.getPriority() == 1){
+				priorityIndicator = PRIORITY_INDICATOR + PRIORITY_INDICATOR;
+			}
+			output[rowNumber++] = priorityIndicator + String.format(FORMAT, i+OFFSET_ONE,taskDetails[++detailsPointer], 
+								  taskDetails[++detailsPointer].length() > 50 ? 
+								  taskDetails[detailsPointer].substring(0, 47) + "..." : taskDetails[detailsPointer]
+								  , taskDetails[++detailsPointer], taskDetails[++detailsPointer],
+								  taskDetails[++detailsPointer],taskDetails[++detailsPointer]);
+			ArrayList<String> tags = selectedTask.getTags();
+			if(tags!=null){
+				if(tags.size()>0){
+					String tag = "";
+					if(!tags.get(0).equals("")){
+						for(int j = 0; j < tags.size(); j++){
+							String s = tags.get(j);
+							if(s!=null || !s.equals("")){
+								tag+=String.format(TAGS_FORMAT, tags.get(j));
+							}
+							if(j == 3){
+								break;
+							}
+						}
+						output[rowNumber++] = String.format(TAGS_PADDING, tag);
+					}
+				}
+			}
 		}
 		return output;
 	}
-	
+
 	/**
 	 * This method formats the variable needed from each task to string
 	 * and store them into a string array.
@@ -102,11 +133,11 @@ public class OutputProcessor {
 	 */
 	public String[] formatOutput(Task task){
 		ArrayList<String> output = new ArrayList<String>();
-		String line = "";
-		line += "Description: " + task.getDescription();
+		String line =  "Description: " + task.getDescription();
 		output.add(line);
-		line = "Task Type: ";
-		line += task.getType().toString().toLowerCase();
+		line = "Task Type: " + task.getType().toString().toLowerCase();
+		output.add(line);
+		line = "Priority: " + task.getPriority();
 		output.add(line);
 		if(task instanceof TimedTask){
 			TimedTask t = (TimedTask)task;
@@ -127,10 +158,20 @@ public class OutputProcessor {
 				output.add(line);
 			}
 		} else {
-			
 		}
+		ArrayList<String> tags = task.getTags();
+		if(tags!= null){
+			if(tags.size()>0){
+				line = "Tags: ";
+				for(String s : tags){
+					line += String.format(TAGS_FORMAT, s);
+				}
+				output.add(line);
+			}
+		}
+		output.add(NEXT_LINE);
 		return output.toArray(new String[output.size()]);
 	}
-	
-	
+
+
 }

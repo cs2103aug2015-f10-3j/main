@@ -9,6 +9,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DocumentFilter;
+import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
 import javax.swing.text.StyledDocument;
@@ -16,19 +17,17 @@ import javax.swing.text.StyledDocument;
 public final class CustomizedDocumentFilter extends DocumentFilter {
 	private JTextPane textPane = null;
 	private StyledDocument styledDocument = null;
-	private final StyleContext styleContext = StyleContext.getDefaultStyleContext();
-	private final AttributeSet redAttributeSet = styleContext.addAttribute(styleContext.getEmptySet(), StyleConstants.Foreground, Color.RED);
-	private final AttributeSet orangeAttributeSet = styleContext.addAttribute(styleContext.getEmptySet(), StyleConstants.Foreground, Color.ORANGE);
-	private final AttributeSet blackAttributeSet = styleContext.addAttribute(styleContext.getEmptySet(), StyleConstants.Foreground, Color.BLACK);
-	private String[] keywords = {"deadline"};
-	private Pattern pattern = null;
+	private final static StyleContext styleContext = StyleContext.getDefaultStyleContext();
+	private static final AttributeSet redAttributeSet = styleContext.addAttribute(styleContext.getEmptySet(), StyleConstants.Foreground, Color.RED);
+	private static final AttributeSet orangeAttributeSet = styleContext.addAttribute(styleContext.getEmptySet(), StyleConstants.Foreground, Color.ORANGE);
+	private static final AttributeSet blackAttributeSet = styleContext.addAttribute(styleContext.getEmptySet(), StyleConstants.Foreground, Color.BLACK);
+	private static final String REGEX_TAG = "#\\w{1,}";
 	// Use a regular expression to find the words you are looking for
 
 
 	public CustomizedDocumentFilter(JTextPane textPane){
 		this.textPane = textPane;
 		styledDocument = textPane.getStyledDocument();
-		pattern = buildPattern();
 	}
 
 	@Override
@@ -63,9 +62,10 @@ public final class CustomizedDocumentFilter extends DocumentFilter {
 
 	/**
 	 * Build the regular expression that looks for the whole word of each word that you wish to find.  The "\\b" is the beginning or end of a word boundary.  The "|" is a regex "or" operator.
-	 * @return
+	 * @return a reference to this pattern
+	 * 				
 	 */
-	private Pattern buildPattern(){
+	private Pattern buildPattern(String[] keywords){
 		StringBuilder sb = new StringBuilder();
 		
 		for (String token : keywords) {
@@ -81,9 +81,41 @@ public final class CustomizedDocumentFilter extends DocumentFilter {
 
 		return p;
 	}
+	
+	public static AttributeSet changeToOrange(){
+		return orangeAttributeSet;
+	}
+	
+	public static AttributeSet changeToRed(){
+		return redAttributeSet;
+	}
 
-
+	public static SimpleAttributeSet setBold(){
+		SimpleAttributeSet attributes = new SimpleAttributeSet(); 
+		attributes.addAttribute(StyleConstants.CharacterConstants.Bold, Boolean.TRUE);
+		return attributes;
+	}
+	
 	private void updateTextStyles(){
+		changeFontForTags();
+	}
+	
+	private void changeFontForTags(){
+		AttributeSet blueAttributeSet = styleContext.addAttribute(styleContext.getEmptySet(), StyleConstants.Foreground, Color.BLUE);
+		blueAttributeSet = styleContext.addAttribute(blueAttributeSet, StyleConstants.CharacterConstants.Bold, Boolean.TRUE);
+		Pattern pattern = Pattern.compile(REGEX_TAG);
+		String text = textPane.getText().replaceAll("\r\n","\n");
+		Matcher matcher = pattern.matcher(text);
+		while (matcher.find()) {
+			// Change the color of recognized tokens
+			int start = matcher.start();
+			int end = matcher.end();
+			styledDocument.setCharacterAttributes(start, end - start, blueAttributeSet, false);
+		}
+	}
+	private void changeFontOfLineByKeywords(){
+		String[] keywords = {"deadline"};
+		Pattern pattern = buildPattern(keywords);
 		// Clear existing styles
 		String text = textPane.getText().replaceAll("\r\n","\n");
 		//styledDocument.setCharacterAttributes(0, text.length(), blackAttributeSet, true);

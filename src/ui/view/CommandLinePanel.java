@@ -9,6 +9,7 @@ import java.util.Observer;
 
 import javax.swing.*;
 import javax.swing.text.AbstractDocument;
+import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultCaret;
 import javax.swing.text.Document;
@@ -33,9 +34,10 @@ public class CommandLinePanel extends JPanel implements Observer,KeyListener {
 	private static final String WELCOME_MSG_2 = "Today is %s.";
 	private static final String WELCOME_MSG_3 = "Your upcoming tasks for today:";
 	private static final String FIRST_COMMAND = "view all today";
+	private static final char PRIORITY_INDICATOR = '*';
 	protected static int NUM_COMPONENTS = 3;
 	protected UIController uiController = null;
-	private static Font font = new Font("Consolas",Font.PLAIN, 12);
+	private static Font font = new Font("Consolas",Font.PLAIN, 14);
 	private JTextField inputField = null;
 	//private JTextArea textArea = null;
 	private JTextPane textPane = null;
@@ -207,12 +209,23 @@ public class CommandLinePanel extends JPanel implements Observer,KeyListener {
 		try {
 			Document doc = textPane.getDocument();
 			textPane.setCaretPosition(doc.getLength());
-			String finalOutput = "";
+			String outputString = "";
 			for(String s : output ){
-				finalOutput += s + NEXT_LINE;
+				if(s != null){
+					outputString = s + NEXT_LINE;
+					AttributeSet color = null;
+					if(outputString.charAt(0)==PRIORITY_INDICATOR){
+						color = CustomizedDocumentFilter.changeToOrange();
+						outputString = outputString.substring(1);
+					}
+					if(outputString.charAt(0)==PRIORITY_INDICATOR){
+						color = CustomizedDocumentFilter.changeToRed();
+						outputString = outputString.substring(1);
+					}
+					doc.insertString(doc.getLength(), outputString, color);
+				}
 			}
-			finalOutput += NEXT_LINE;
-			doc.insertString(doc.getLength(), finalOutput, null);
+			doc.insertString(doc.getLength(), NEXT_LINE, null);
 		} catch(BadLocationException exc) {
 			assert false;
 			exc.printStackTrace();
@@ -224,40 +237,6 @@ public class CommandLinePanel extends JPanel implements Observer,KeyListener {
 		if(output!= null){
 			append(input);
 			append(output);
-		}
-	}
-
-	/**
-	 * This method appends text into the textArea to display to the user
-	 * with a input from the user.
-	 * 
-	 * @param JTextArea
-	 *            the input field on the panel
-	 *        input
-	 *        	  the user input 
-	 */
-	public void appendTexts(final JTextArea textArea, String input) {
-		String[] output = uiController.processUserInput(input);
-		if (textArea.getText().length() > 0) {
-			for(String s : output){
-				textArea.append( s + NEXT_LINE);
-			}
-			textArea.append(NEXT_LINE);
-		}
-	}
-
-	/**
-	 * This method appends text into the textArea to display to the user
-	 * with an array of output
-	 * 
-	 * @param JTextArea
-	 *            the input field on the panel
-	 *        output
-	 *        	  a string array of outputs 
-	 */
-	public void appendTexts(final JTextArea textArea, String[] output) {
-		for(String s : output){
-			textArea.append( s + NEXT_LINE);
 		}
 	}
 
@@ -298,7 +277,7 @@ public class CommandLinePanel extends JPanel implements Observer,KeyListener {
 		} else {
 			String msg = (String)arg;
 			append(commandList.getLast().getData());
-			append(msg);
+			append(msg +NEXT_LINE);
 		}
 	}
 
