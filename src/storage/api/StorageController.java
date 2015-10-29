@@ -165,9 +165,13 @@ public class StorageController {
                     String complete = eElement.getElementsByTagName("complete").item(0).getTextContent();
                     boolean complete_boolean = Boolean.valueOf(complete);
                     
-                    // complete
+                    // priority
                     String priority = eElement.getElementsByTagName("priority").item(0).getTextContent();
                     int priority_int = Integer.valueOf(priority);
+                    
+                    // tags
+                    String tag = eElement.getElementsByTagName("tag").item(0).getTextContent();
+                    ArrayList<String> tag_array = getTagsInArrayList(tag);
                     
                     /*
                     System.out.println("taskId: " + taskId);
@@ -187,7 +191,7 @@ public class StorageController {
                     LocalDateTime reminder_localdatetime;
                     switch (taskType) {
                         case FLOATING:
-                            task = new FloatingTask(taskId_int, description, createdAt_localdatetime, complete_boolean, priority_int);
+                            task = new FloatingTask(taskId_int, description, createdAt_localdatetime, complete_boolean, priority_int, tag_array);
                             break;
                         case TIMED:
                             // start
@@ -202,7 +206,7 @@ public class StorageController {
                             reminder = eElement.getElementsByTagName("reminder").item(0).getTextContent();
                             reminder_localdatetime = DateTimeHelper.parseStringToDateTime(reminder);
                             
-                            task = new TimedTask(taskId_int, description, createdAt_localdatetime, start_localdatetime, end_localdatetime, reminder_localdatetime, complete_boolean, priority_int);
+                            task = new TimedTask(taskId_int, description, createdAt_localdatetime, start_localdatetime, end_localdatetime, reminder_localdatetime, complete_boolean, priority_int, tag_array);
                             break;
                         case DEADLINE:
                             // end
@@ -213,7 +217,7 @@ public class StorageController {
                             reminder = eElement.getElementsByTagName("reminder").item(0).getTextContent();
                             reminder_localdatetime = DateTimeHelper.parseStringToDateTime(reminder);
                             
-                            task = new DeadlineTask(taskId_int, description, createdAt_localdatetime, end_localdatetime, reminder_localdatetime, complete_boolean, priority_int);
+                            task = new DeadlineTask(taskId_int, description, createdAt_localdatetime, end_localdatetime, reminder_localdatetime, complete_boolean, priority_int, tag_array);
                             break;
                         default:
                             break;
@@ -284,11 +288,15 @@ public class StorageController {
                 complete.appendChild(doc.createTextNode(complete_string));
                 item.appendChild(complete);
                 
-                // taskId
-                Element priorityId = doc.createElement("priority");
-                priorityId.appendChild(doc.createTextNode(Integer.toString(task.getPriority())));
-                item.appendChild(priorityId);
+                // priority
+                Element priority = doc.createElement("priority");
+                priority.appendChild(doc.createTextNode(Integer.toString(task.getPriority())));
+                item.appendChild(priority);
                 
+                // tag
+                Element tag = doc.createElement("tag");
+                tag.appendChild(doc.createTextNode(getTagsInString(task.getTags())));
+                item.appendChild(tag);
                 
                 Element start;
                 Element end;
@@ -414,5 +422,35 @@ public class StorageController {
         }   
         
         return true;
+    }
+    
+    /**
+     * This method converts an arraylist of tags into string
+     * 
+     * @param  tags  an arraylist of tags
+     * @return      a string representation
+     */
+    public String getTagsInString(ArrayList<String> tags) { 
+        String tags_string = "";
+        for (String tag : tags) {
+            tags_string += tag + " ";
+        }
+        return tags_string.trim();
+    }
+    
+    /**
+     * This method converts a string of tags delimited by space,
+     * into an arraylist
+     * 
+     * @param  tags  a string of tags
+     * @return       an arraylist representation
+     */
+    public ArrayList<String> getTagsInArrayList(String tags) { 
+         ArrayList<String> tags_array = new ArrayList<String>();
+         String[] splittedTags = tags.split(" ");
+         for (String tag : splittedTags) {
+             tags_array.add(tag);
+         }
+         return tags_array;
     }
 }
