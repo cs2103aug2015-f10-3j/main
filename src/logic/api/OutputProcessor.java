@@ -19,8 +19,8 @@ public class OutputProcessor {
 	//private static final String ERROR_BAD_COMMAND = "Command fail to execute";
 	//private static final String FORMAT = "| %1$-5s | %2$-10s | %3$-60s | %4$-11s | %5$-5s | %6$-11s | %7$-5s |";
 	private static final String FORMAT = "%1$-5s  %2$-10s  %3$-50s  %4$-11s  %5$-8s  %6$-11s  %7$-5s ";
-	private static final String TAGS_FORMAT = "#%s ";
-	private static final String TAGS_PADDING = "%15s";
+	private static final String TAGS_FORMAT = "%s ";
+	private static final String TAGS_PADDING = "\t\t %s";
 	private static final String PRIORITY_INDICATOR = "*";
 	private static final char BOLD_INDICATOR = '@';
 	private static final String VIEW_HEADER = BOLD_INDICATOR + String.format(FORMAT, "ID", "Type", "Description", "Start Date","","Deadline", "");
@@ -164,7 +164,7 @@ public class OutputProcessor {
 		if(tags!= null){
 			if(tags.size()>0){
 				line = "Tags: ";
-				if(!tags.get(0).equals("")){
+				if(!tags.get(0).equals("") || tags.size()>1){
 					for(String s : tags){
 						line += String.format(TAGS_FORMAT, s);
 					}
