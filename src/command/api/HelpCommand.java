@@ -7,19 +7,22 @@ import task.entity.Task;
 
 public class HelpCommand extends Command{
 	private static final String KEYWORD_HELP = "help";
-	
+
 	private String commandType = "";
 	private String helpComments = "";
-	
+
 	@Override
 	public ArrayList<Task> execute() {
 		// TODO Auto-generated method stub
 		HelpManual manual = HelpManual.getInstance();
 		if(hasOption(KEYWORD_HELP)){
-			commandType = getOption(KEYWORD_HELP).getStringValue();
-			
+			if(getOption(KEYWORD_HELP)==null){
+				commandType = "";
+			} else{
+				commandType = getOption(KEYWORD_HELP).getStringValue();
+			}
 		} else{
-			commandType = null;
+			assert false;
 		}
 		System.out.println("commandtype = " + commandType);
 		helpComments = manual.getHelp(commandType.trim());

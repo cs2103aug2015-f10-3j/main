@@ -19,6 +19,8 @@ public class OutputProcessor {
 	//private static final String ERROR_BAD_COMMAND = "Command fail to execute";
 	//private static final String FORMAT = "| %1$-5s | %2$-10s | %3$-60s | %4$-11s | %5$-5s | %6$-11s | %7$-5s |";
 	private static final String FORMAT = " %1$-5s  %2$-10s  %3$-50s  %4$-11s  %5$-8s  %6$-11s  %7$-5s ";
+	private static final String TAGS_FORMAT = "#%s ";
+	private static final String TAGS_PADDING = "%15s";
 	private static final String VIEW_HEADER = String.format(FORMAT, "ID", "Type", "Description", "Start Date","","Deadline", "");
 	private static final String PRIORITY_INDICATOR = "*";
 	private static final int OFFSET_ONE = 1;
@@ -82,8 +84,9 @@ public class OutputProcessor {
 	 */
 	public String[] formatOutput(ArrayList<Task> taskList){
 		String[] output = new String[(taskList.size() * 2) + OFFSET_ONE];
-		output[0] = VIEW_HEADER;
-		for(int i = 0; i < taskList.size(); i++){
+		int rowNumber = 0;
+		output[rowNumber++] = VIEW_HEADER;
+		for(int i = 0; i < taskList.size();i++){
 			Task selectedTask = taskList.get(i);
 			String[] taskDetails = selectedTask.toDetailsArray();
 			int detailsPointer = 0;
@@ -93,11 +96,24 @@ public class OutputProcessor {
 			}else if(selectedTask.getPriority() == 1){
 				priorityIndicator = PRIORITY_INDICATOR + PRIORITY_INDICATOR;
 			}
-			output[i+OFFSET_ONE] = priorityIndicator + String.format(FORMAT, i+1,taskDetails[++detailsPointer], 
+			output[rowNumber++] = priorityIndicator + String.format(FORMAT, i,taskDetails[++detailsPointer], 
 					taskDetails[++detailsPointer].length() > 50 ? 
 							taskDetails[detailsPointer].substring(0, 47) + "..." : taskDetails[detailsPointer]
 									, taskDetails[++detailsPointer], taskDetails[++detailsPointer],
 									taskDetails[++detailsPointer],taskDetails[++detailsPointer]);
+			ArrayList<String> tags = selectedTask.getTags();
+			if(tags!=null){
+				if(tags.size()>0){
+					String tag = "";
+					for(int j = 0; j < tags.size(); j++){
+						tag+=String.format(TAGS_FORMAT, tags.get(j));
+						if(j == 3){
+							break;
+						}
+					}
+					output[rowNumber++] = String.format(TAGS_PADDING, tag);
+				}
+			}
 		}
 		return output;
 	}
@@ -141,10 +157,11 @@ public class OutputProcessor {
 		ArrayList<String> tags = task.getTags();
 		if(tags!= null){
 			if(tags.size()>0){
-				line = "Tags:";
+				line = "Tags: ";
 				for(String s : tags){
-					line += " #"+s;
+					line += String.format(TAGS_FORMAT, s);
 				}
+				output.add(line);
 			}
 		}
 		output.add(NEXT_LINE);
