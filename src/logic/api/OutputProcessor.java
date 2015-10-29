@@ -20,7 +20,9 @@ public class OutputProcessor {
 	//private static final String FORMAT = "| %1$-5s | %2$-10s | %3$-60s | %4$-11s | %5$-5s | %6$-11s | %7$-5s |";
 	private static final String FORMAT = " %1$-5s  %2$-10s  %3$-50s  %4$-11s  %5$-8s  %6$-11s  %7$-5s ";
 	private static final String VIEW_HEADER = String.format(FORMAT, "ID", "Type", "Description", "Start Date","","Deadline", "");
+	private static final String PRIORITY_INDICATOR = "*";
 	private static final int OFFSET_ONE = 1;
+	private static final String NEXT_LINE = "\n";
 
 	/*** Constructor ***/
 	private OutputProcessor(){
@@ -85,7 +87,13 @@ public class OutputProcessor {
 			Task selectedTask = taskList.get(i);
 			String[] taskDetails = selectedTask.toDetailsArray();
 			int detailsPointer = 0;
-			output[i+OFFSET_ONE] = String.format(FORMAT, i+1,taskDetails[++detailsPointer], 
+			String priorityIndicator = "";
+			if(selectedTask.getPriority() == 2){
+				priorityIndicator = PRIORITY_INDICATOR;
+			}else if(selectedTask.getPriority() == 1){
+				priorityIndicator = PRIORITY_INDICATOR + PRIORITY_INDICATOR;
+			}
+			output[i+OFFSET_ONE] = priorityIndicator + String.format(FORMAT, i+1,taskDetails[++detailsPointer], 
 								   taskDetails[++detailsPointer].length() > 50 ? 
 								   taskDetails[detailsPointer].substring(0, 47) + "..." : taskDetails[detailsPointer]
 								   , taskDetails[++detailsPointer], taskDetails[++detailsPointer],
@@ -131,6 +139,7 @@ public class OutputProcessor {
 		} else {
 			
 		}
+		output.add(NEXT_LINE);
 		return output.toArray(new String[output.size()]);
 	}
 	

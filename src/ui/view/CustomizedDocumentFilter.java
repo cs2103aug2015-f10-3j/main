@@ -16,10 +16,10 @@ import javax.swing.text.StyledDocument;
 public final class CustomizedDocumentFilter extends DocumentFilter {
 	private JTextPane textPane = null;
 	private StyledDocument styledDocument = null;
-	private final StyleContext styleContext = StyleContext.getDefaultStyleContext();
-	private final AttributeSet redAttributeSet = styleContext.addAttribute(styleContext.getEmptySet(), StyleConstants.Foreground, Color.RED);
-	private final AttributeSet orangeAttributeSet = styleContext.addAttribute(styleContext.getEmptySet(), StyleConstants.Foreground, Color.ORANGE);
-	private final AttributeSet blackAttributeSet = styleContext.addAttribute(styleContext.getEmptySet(), StyleConstants.Foreground, Color.BLACK);
+	private final static StyleContext styleContext = StyleContext.getDefaultStyleContext();
+	private static final AttributeSet redAttributeSet = styleContext.addAttribute(styleContext.getEmptySet(), StyleConstants.Foreground, Color.RED);
+	private static final AttributeSet orangeAttributeSet = styleContext.addAttribute(styleContext.getEmptySet(), StyleConstants.Foreground, Color.ORANGE);
+	private static final AttributeSet blackAttributeSet = styleContext.addAttribute(styleContext.getEmptySet(), StyleConstants.Foreground, Color.BLACK);
 	private String[] keywords = {"deadline"};
 	private Pattern pattern = null;
 	// Use a regular expression to find the words you are looking for
@@ -63,7 +63,8 @@ public final class CustomizedDocumentFilter extends DocumentFilter {
 
 	/**
 	 * Build the regular expression that looks for the whole word of each word that you wish to find.  The "\\b" is the beginning or end of a word boundary.  The "|" is a regex "or" operator.
-	 * @return
+	 * @return a reference to this pattern
+	 * 				
 	 */
 	private Pattern buildPattern(){
 		StringBuilder sb = new StringBuilder();
@@ -81,9 +82,19 @@ public final class CustomizedDocumentFilter extends DocumentFilter {
 
 		return p;
 	}
-
+	
+	public static AttributeSet changeToOrange(){
+		return orangeAttributeSet;
+	}
+	
+	public static AttributeSet changeToRed(){
+		return redAttributeSet;
+	}
 
 	private void updateTextStyles(){
+	}
+	
+	private void changeFontOfLineByKeywords(){
 		// Clear existing styles
 		String text = textPane.getText().replaceAll("\r\n","\n");
 		//styledDocument.setCharacterAttributes(0, text.length(), blackAttributeSet, true);
