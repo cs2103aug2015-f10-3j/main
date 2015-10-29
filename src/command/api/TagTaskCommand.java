@@ -48,7 +48,7 @@ public class TagTaskCommand extends Command {
 		if (hasOption("#")) {
 			int numTags = getOption("#").getValuesCount();
 			for (int i=0; i<numTags; i++) {
-				tagsToAdd.add((getOption("tag").getStringValue(i)));
+				tagsToAdd.add((getOption("#").getStringValue(i)));
 			}
 		}
 	}
