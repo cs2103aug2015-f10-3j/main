@@ -36,6 +36,7 @@ class Parser implements ParserConstants {
 	public static final EnumMap<OPTIONS, TYPE> exitOptions = new EnumMap<OPTIONS, TYPE>(OPTIONS.class);
 	public static final EnumMap<OPTIONS, TYPE> clearOptions = new EnumMap<OPTIONS, TYPE>(OPTIONS.class);
 	public static final EnumMap<OPTIONS, TYPE> helpOptions = new EnumMap<OPTIONS, TYPE>(OPTIONS.class);
+	public static final EnumMap<OPTIONS, TYPE> setDirectoryOptions = new EnumMap<OPTIONS, TYPE>(OPTIONS.class);
 
 	protected static final Logger LOGGER = Logger.getLogger(ParseLogic.class.getName());
 	private static HashMap<String, String> shortHandMap = new HashMap<String, String>();
@@ -57,7 +58,14 @@ class Parser implements ParserConstants {
 		setupRedoOption();
 		setupExitOption();
 		setupHelpOption();
+		setupSetDirectoryOption();
 		setUpShortHandMapping();
+	}
+
+	private void setupSetDirectoryOption() {
+		setDirectoryOptions.put(OPTIONS.SETDIRECTORY, TYPE.STRING);
+
+		setDirectoryOptions.put(OPTIONS.SETDIRECTORY_SHORT, TYPE.STRING);
 	}
 
 	private void setUpShortHandMapping() {

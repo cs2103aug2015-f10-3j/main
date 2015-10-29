@@ -60,6 +60,10 @@ public class ParseLogic extends Parser {
 				|| mainCommand.equalsIgnoreCase(COMMANDS.HELP_SHORT.toString())) {
 			return COMMAND_TYPE.HELP;
 		}
+		else if (mainCommand.equalsIgnoreCase(COMMANDS.SETDIRECTORY.toString())
+				|| mainCommand.equalsIgnoreCase(COMMANDS.SETDIRECTORY_SHORT.toString())) {
+			return COMMAND_TYPE.SETDIRECTORY;
+		}
 		else if (mainCommand.equalsIgnoreCase(COMMANDS.EXIT.toString())
 				|| mainCommand.equalsIgnoreCase(COMMANDS.EXIT_SHORT.toString())) {
 			return COMMAND_TYPE.EXIT;
@@ -93,6 +97,8 @@ public class ParseLogic extends Parser {
 				return new ClearCommand();
 			case HELP:
 				return new HelpCommand();
+			case SETDIRECTORY:
+				return null;
 			case EXIT:
 				return new ExitCommand();
 			case INVALID:
@@ -305,54 +311,9 @@ public class ParseLogic extends Parser {
 		return commandOption;
 	}
 	
-	/*
-	private Option expectDate(List<String> commandList, boolean optional) throws Exception {
-		LOGGER.log(Level.INFO, "Attempt to parse expected date time pair from user input");
-		assert(commandList != null);
-		Option commandOption = new Option();
-		LOGGER.log(Level.WARNING, "expectedDate = commandList.get(0) may cause index out of bounds exception");
-		if (commandList.isEmpty() && optional) {
-			return null;
-		}
-		String expectedDate = commandList.get(0);
-		String expectedTime = EMPTY_STRING;
-		if (commandList.size() > 2) {
-			expectedTime = commandList.get(1);
-		}
-		LocalDateTime date = convertToDate(expectedDate, expectedTime);
-		if (date == null) {
-			return null;
-		}
-		commandOption.addValue(date);
-		return commandOption;
-	}
-	
-	private LocalDateTime convertToDate(String date, String time) {
-		if (!isDate(date)) {
-			String temp = date;
-			if (isDate(time)) {
-				date = time;
-				time = temp;
-			} else {
-				time = temp;
-				date = DateTimeHelper.getDate(DateTimeHelper.now());
-			}
-		} else if (!isTime(time)) {
-			time = "00:00";
-		}
-		LocalDateTime dateTime = DateTimeHelper.parseStringToDateTime(date + " " + time);
-		return dateTime;
-	}
-	*/
-	
 	private boolean isDate(String date) {
 		return date.matches("(\\d{2})/(\\d{2})/(\\d{4})");
 	}
-	/*
-	private boolean isTime(String time) {
-		return time.matches("(\\d{2}):(\\d{2})");
-	}
-	*/
 	
 	public boolean isInvalidTypeToAdd(COMMAND_TYPE commandType) {
 		switch (commandType) {
