@@ -89,7 +89,7 @@ public class TaskControllerTest {
         }
         Task.setTaskList(new ArrayList<Task>());
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-        Task task = new DeadlineTask("My first task", LocalDateTime.parse("2015-09-20 12:00", formatter), LocalDateTime.parse("2015-09-20 11:55", formatter));
+        Task task = new DeadlineTask("My first task", LocalDateTime.parse("2015-09-20 12:00", formatter), LocalDateTime.parse("2015-09-20 11:55", formatter), 1);
         boolean result = tController.addTask(task);
         assertEquals(true, result);
         assertEquals(1, Task.getTaskList().size());
@@ -100,19 +100,19 @@ public class TaskControllerTest {
         
         // Add DeadlineTask
         formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-        task = new DeadlineTask("Stock up rainbow icecream", LocalDateTime.parse("2015-09-20 12:00", formatter), LocalDateTime.parse("2015-09-20 11:55", formatter));
+        task = new DeadlineTask("Stock up rainbow icecream", LocalDateTime.parse("2015-09-20 12:00", formatter), LocalDateTime.parse("2015-09-20 11:55", formatter), 2);
         result = tController.addTask(task);
         assertEquals(true, result);
         assertEquals(11, Task.getTaskList().size());
         
         // Add TimedTask
-        task = new TimedTask("Eat lunch with senpai", LocalDateTime.parse("2015-10-01 12:00", formatter), LocalDateTime.parse("2015-10-01 14:00", formatter), LocalDateTime.parse("2015-10-01 13:55", formatter));
+        task = new TimedTask("Eat lunch with senpai", LocalDateTime.parse("2015-10-01 12:00", formatter), LocalDateTime.parse("2015-10-01 14:00", formatter), LocalDateTime.parse("2015-10-01 13:55", formatter), 3);
         result = tController.addTask(task);
         assertEquals(true, result);
         assertEquals(12, Task.getTaskList().size());
         
         // Add TimedTask
-        task = new FloatingTask("Rainbows and clouds :3");
+        task = new FloatingTask("Rainbows and clouds :3", 1);
         result = tController.addTask(task);
         assertEquals(true, result);
         assertEquals(13, Task.getTaskList().size());
