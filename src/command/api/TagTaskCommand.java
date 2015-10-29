@@ -30,6 +30,7 @@ public class TagTaskCommand extends Command {
 	@Override
 	public ArrayList<Task> execute() throws Exception {
 		retrieveOptions();
+		getTaskFromStorage(taskId);
 		processTags();
 		prepareExecutionResult();
 		return executionResult;
