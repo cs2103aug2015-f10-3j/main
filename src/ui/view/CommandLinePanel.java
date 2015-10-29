@@ -35,6 +35,7 @@ public class CommandLinePanel extends JPanel implements Observer,KeyListener {
 	private static final String WELCOME_MSG_3 = "Your upcoming tasks for today:";
 	private static final String FIRST_COMMAND = "view all today";
 	private static final char PRIORITY_INDICATOR = '*';
+	private static final char BOLD_INDICATOR = '@';
 	protected static int NUM_COMPONENTS = 3;
 	protected UIController uiController = null;
 	private static Font font = new Font("Consolas",Font.PLAIN, 14);
@@ -214,6 +215,10 @@ public class CommandLinePanel extends JPanel implements Observer,KeyListener {
 				if(s != null){
 					outputString = s + NEXT_LINE;
 					AttributeSet color = null;
+					if(outputString.charAt(0)==BOLD_INDICATOR){
+						color = CustomizedDocumentFilter.setBold();
+						outputString = outputString.substring(1);
+					}
 					if(outputString.charAt(0)==PRIORITY_INDICATOR){
 						color = CustomizedDocumentFilter.changeToOrange();
 						outputString = outputString.substring(1);
