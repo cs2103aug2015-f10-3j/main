@@ -5,17 +5,19 @@ public interface ParserConstants {
 	public static enum COMMAND_TYPE {
 		ADD, VIEW, EDIT, DELETE, 
 		COMPLETE, SEARCH, UNDO, REDO, 
-		INVALID, EXIT, CLEAR, HELP
+		INVALID, EXIT, CLEAR, HELP, SETDIRECTORY
 	}
 
 	public static enum COMMANDS {
 		ADD("add"), VIEW("view"), EDIT("edit"), DELETE("delete"), 
 		COMPLETE("complete"), SEARCH("search"), UNDO("undo"), 
 		REDO("redo"), EXIT("exit"), CLEAR("clear"), HELP("help"),
+		SETDIRECTORY("setdirectory"),
 
 		ADD_SHORT("/a"), VIEW_SHORT("/v"), EDIT_SHORT("/e"), DELETE_SHORT("/d"), 
 		COMPLETE_SHORT("/c"), SEARCH_SHORT("/s"), UNDO_SHORT("/u"), 
-		REDO_SHORT("/r"), EXIT_SHORT("/ex"), CLEAR_SHORT("/cl"), HELP_SHORT("/h");;
+		REDO_SHORT("/r"), EXIT_SHORT("/ex"), CLEAR_SHORT("/cl"), HELP_SHORT("/h"),
+		SETDIRECTORY_SHORT("/sd");
 
 		private final String commandText;
 		
@@ -36,7 +38,7 @@ public interface ParserConstants {
 		BETWEEN("between"), AND("and"), DESC("desc"), START("start"), 
 		END("end"), ALL("all"), FLOATING("floating"), DEADLINE("deadline"), 
 		TIMED("timed"), TODAY("today"), TOMORROW("tomorrow"), WEEK("week"), 
-		MONTH("month"), HELP("help"),
+		MONTH("month"), HELP("help"), SETDIRECTORY("setdirectory"),
 		
 		ADD_SHORT("/a"), VIEW_SHORT("/v"), EDIT_SHORT("/e"), DELETE_SHORT("/d"), 
 		COMPLETE_SHORT("/c"), SEARCH_SHORT("/s"), BY_SHORT("-b"), UNDO_SHORT("/u"), 
@@ -44,7 +46,7 @@ public interface ParserConstants {
 		BETWEEN_SHORT("-bt"), AND_SHORT("-a"), DESC_SHORT("-d"), START_SHORT("-s"), 
 		END_SHORT("-e"), ALL_SHORT("-ta"), FLOATING_SHORT("-tf"), DEADLINE_SHORT("-td"), 
 		TIMED_SHORT("-tt"), TODAY_SHORT("-pt"), TOMORROW_SHORT("-ptm"), WEEK_SHORT("-pw"), 
-		MONTH_SHORT("-pm"), HELP_SHORT("/h");
+		MONTH_SHORT("-pm"), HELP_SHORT("/h"), SETDIRECTORY_SHORT("/sd");
 
 		private final String optionText;
 		
