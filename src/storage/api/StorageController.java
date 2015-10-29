@@ -89,15 +89,20 @@ public class StorageController {
      */
     public boolean setDirectory(String new_path) {
         boolean success;
+        // Get existing content
         byte[] content = getFileInBytes(DEFAULT_FILE_NAME);
+        
+        // Write new path to CONFIG
         success = writeBytesToFile(CONFIG_FILE, new_path.getBytes(), false);
+        
+        // Copy data to new path
+        DEFAULT_FILE_NAME = new_path;
         if (success) {
             success = writeBytesToFile(DEFAULT_FILE_NAME, content, true);
         } else {
             return success;
         }
         
-        DEFAULT_FILE_NAME = new_path;
         return success;
     }
     
