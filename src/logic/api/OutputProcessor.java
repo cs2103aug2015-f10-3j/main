@@ -163,10 +163,12 @@ public class OutputProcessor {
 		if(tags!= null){
 			if(tags.size()>0){
 				line = "Tags: ";
-				for(String s : tags){
-					line += String.format(TAGS_FORMAT, s);
+				if(!tags.get(0).equals("")){
+					for(String s : tags){
+						line += String.format(TAGS_FORMAT, s);
+					}
+					output.add(line);
 				}
-				output.add(line);
 			}
 		}
 		output.add(NEXT_LINE);

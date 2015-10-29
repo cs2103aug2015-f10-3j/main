@@ -13,7 +13,7 @@ public class MoreCommand extends Command{
 	public ArrayList<Task> execute() throws Exception {
 		// TODO Auto-generated method stub
 		ArrayList<Task> taskList = new ArrayList<Task>();
-		int taskId = getOption("edit").getIntegerValue();
+		int taskId = getOption("more").getIntegerValue();
 		taskController = TaskController.getInstance();
 		Task t = taskController.getTask(taskId);
 		taskList.add(t);
