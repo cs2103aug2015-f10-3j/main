@@ -25,21 +25,26 @@ class Parser implements ParserConstants {
 	public static final boolean OPTIONAL = true;
 	public static final boolean NOT_OPTIONAL = false;
 	
-	public static final EnumMap<OPTIONS, TYPE> addOptions = new EnumMap<OPTIONS, TYPE>(OPTIONS.class);
-	public static final EnumMap<OPTIONS, TYPE> viewOptions = new EnumMap<OPTIONS, TYPE>(OPTIONS.class);
-	public static final EnumMap<OPTIONS, TYPE> editOptions = new EnumMap<OPTIONS, TYPE>(OPTIONS.class);
-	public static final EnumMap<OPTIONS, TYPE> deleteOptions = new EnumMap<OPTIONS, TYPE>(OPTIONS.class);
-	public static final EnumMap<OPTIONS, TYPE> completeOptions = new EnumMap<OPTIONS, TYPE>(OPTIONS.class);
-	public static final EnumMap<OPTIONS, TYPE> searchOptions = new EnumMap<OPTIONS, TYPE>(OPTIONS.class);
-	public static final EnumMap<OPTIONS, TYPE> undoOptions = new EnumMap<OPTIONS, TYPE>(OPTIONS.class);
-	public static final EnumMap<OPTIONS, TYPE> redoOptions = new EnumMap<OPTIONS, TYPE>(OPTIONS.class);
-	public static final EnumMap<OPTIONS, TYPE> exitOptions = new EnumMap<OPTIONS, TYPE>(OPTIONS.class);
-	public static final EnumMap<OPTIONS, TYPE> clearOptions = new EnumMap<OPTIONS, TYPE>(OPTIONS.class);
-	public static final EnumMap<OPTIONS, TYPE> helpOptions = new EnumMap<OPTIONS, TYPE>(OPTIONS.class);
-	public static final EnumMap<OPTIONS, TYPE> setDirectoryOptions = new EnumMap<OPTIONS, TYPE>(OPTIONS.class);
-
+	private static final EnumMap<OPTIONS, TYPE> addOptions = new EnumMap<OPTIONS, TYPE>(OPTIONS.class);
+	private static final EnumMap<OPTIONS, TYPE> viewOptions = new EnumMap<OPTIONS, TYPE>(OPTIONS.class);
+	private static final EnumMap<OPTIONS, TYPE> editOptions = new EnumMap<OPTIONS, TYPE>(OPTIONS.class);
+	private static final EnumMap<OPTIONS, TYPE> deleteOptions = new EnumMap<OPTIONS, TYPE>(OPTIONS.class);
+	private static final EnumMap<OPTIONS, TYPE> completeOptions = new EnumMap<OPTIONS, TYPE>(OPTIONS.class);
+	private static final EnumMap<OPTIONS, TYPE> searchOptions = new EnumMap<OPTIONS, TYPE>(OPTIONS.class);
+	private static final EnumMap<OPTIONS, TYPE> helpOptions = new EnumMap<OPTIONS, TYPE>(OPTIONS.class);
+	private static final EnumMap<OPTIONS, TYPE> setDirectoryOptions = new EnumMap<OPTIONS, TYPE>(OPTIONS.class);
+	private static final EnumMap<OPTIONS, TYPE> moreOptions = new EnumMap<OPTIONS, TYPE>(OPTIONS.class);
+	private static final EnumMap<OPTIONS, TYPE> tagOptions = new EnumMap<OPTIONS, TYPE>(OPTIONS.class);
+	private static final EnumMap<OPTIONS, TYPE> untagOptions = new EnumMap<OPTIONS, TYPE>(OPTIONS.class);
+	private static final EnumMap<OPTIONS, TYPE> clearOptions = new EnumMap<OPTIONS, TYPE>(OPTIONS.class);
+	private static final EnumMap<OPTIONS, TYPE> exitOptions = new EnumMap<OPTIONS, TYPE>(OPTIONS.class);
+	private static final EnumMap<OPTIONS, TYPE> redoOptions = new EnumMap<OPTIONS, TYPE>(OPTIONS.class);
+	private static final EnumMap<OPTIONS, TYPE> undoOptions = new EnumMap<OPTIONS, TYPE>(OPTIONS.class);
+	
+	
 	protected static final Logger LOGGER = Logger.getLogger(ParseLogic.class.getName());
 	private static HashMap<String, String> shortHandMap = new HashMap<String, String>();
+	private static HashMap<COMMAND_TYPE, EnumMap<OPTIONS, TYPE>> optionsMap = new HashMap<COMMAND_TYPE, EnumMap<OPTIONS, TYPE>>();
 	protected static com.joestelmach.natty.Parser dateParser = new com.joestelmach.natty.Parser();
 	
 	public Parser() {
@@ -54,18 +59,13 @@ class Parser implements ParserConstants {
 		setupDeleteOption();
 		setupCompleteOption();
 		setupSearchOption();
-		setupUndoOption();
-		setupRedoOption();
-		setupExitOption();
 		setupHelpOption();
 		setupSetDirectoryOption();
+		setupTagOption();
+		setupUntagOption();
+		setupMoreOption();
+		setupTrivialOptions();
 		setUpShortHandMapping();
-	}
-
-	private void setupSetDirectoryOption() {
-		setDirectoryOptions.put(OPTIONS.SETDIRECTORY, TYPE.STRING);
-
-		setDirectoryOptions.put(OPTIONS.SETDIRECTORY_SHORT, TYPE.STRING);
 	}
 
 	private void setUpShortHandMapping() {
@@ -95,48 +95,76 @@ class Parser implements ParserConstants {
 		shortHandMap.put(OPTIONS.WEEK_SHORT.toString(), OPTIONS.WEEK.toString());
 		shortHandMap.put(OPTIONS.MONTH_SHORT.toString(), OPTIONS.MONTH.toString());
 		shortHandMap.put(OPTIONS.HELP_SHORT.toString(), OPTIONS.HELP.toString());
+		shortHandMap.put(OPTIONS.SETDIRECTORY_SHORT.toString(), OPTIONS.SETDIRECTORY.toString());
+		shortHandMap.put(OPTIONS.MORE_SHORT.toString(), OPTIONS.MORE.toString());
+		shortHandMap.put(OPTIONS.TAG_SHORT.toString(), OPTIONS.TAG.toString());
+		shortHandMap.put(OPTIONS.UNTAG_SHORT.toString(), OPTIONS.UNTAG.toString());
+		shortHandMap.put(OPTIONS.PRIORITY_SHORT.toString(), OPTIONS.PRIORITY.toString());
+	}
+	
+	private void setupTrivialOptions() {
+		clearOptions.put(OPTIONS.CLEAR, TYPE.NONE);
+		clearOptions.put(OPTIONS.CLEAR_SHORT, TYPE.NONE);
+		optionsMap.put(COMMAND_TYPE.CLEAR, clearOptions);
+		exitOptions.put(OPTIONS.EXIT, TYPE.NONE);
+		exitOptions.put(OPTIONS.EXIT_SHORT, TYPE.NONE);
+		optionsMap.put(COMMAND_TYPE.EXIT, exitOptions);
+		redoOptions.put(OPTIONS.REDO, TYPE.NONE);
+		redoOptions.put(OPTIONS.REDO_SHORT, TYPE.NONE);
+		optionsMap.put(COMMAND_TYPE.REDO, redoOptions);
+		undoOptions.put(OPTIONS.UNDO, TYPE.NONE);
+		undoOptions.put(OPTIONS.UNDO_SHORT, TYPE.NONE);
+		optionsMap.put(COMMAND_TYPE.UNDO, undoOptions);
+	}
+
+	private void setupMoreOption() {
+		moreOptions.put(OPTIONS.MORE, TYPE.INTEGER);
+		moreOptions.put(OPTIONS.MORE_SHORT, TYPE.INTEGER);
+		optionsMap.put(COMMAND_TYPE.MORE, moreOptions);
+	}
+
+	private void setupUntagOption() {
+		untagOptions.put(OPTIONS.UNTAG, TYPE.INTEGER);
+		untagOptions.put(OPTIONS.UNTAG_SHORT, TYPE.INTEGER);
+		untagOptions.put(OPTIONS.HASHTAG, TYPE.HASHTAG_ARRAY);
+		optionsMap.put(COMMAND_TYPE.UNTAG, untagOptions);
+	}
+
+	private void setupTagOption() {
+		tagOptions.put(OPTIONS.TAG, TYPE.INTEGER);
+		tagOptions.put(OPTIONS.TAG_SHORT, TYPE.INTEGER);
+		tagOptions.put(OPTIONS.HASHTAG, TYPE.HASHTAG_ARRAY);
+		optionsMap.put(COMMAND_TYPE.TAG, tagOptions);
+	}
+
+	private void setupSetDirectoryOption() {
+		setDirectoryOptions.put(OPTIONS.SETDIRECTORY, TYPE.STRING);
+		setDirectoryOptions.put(OPTIONS.SETDIRECTORY_SHORT, TYPE.STRING);
+		optionsMap.put(COMMAND_TYPE.SETDIRECTORY, setDirectoryOptions);
 	}
 
 	private void setupHelpOption() {
 		helpOptions.put(OPTIONS.HELP, TYPE.STRING_OPT);
-
 		helpOptions.put(OPTIONS.HELP_SHORT, TYPE.STRING_OPT);
-	}
-
-	private void setupExitOption() {
-		exitOptions.put(OPTIONS.EXIT, TYPE.NONE);
-
-		exitOptions.put(OPTIONS.EXIT_SHORT, TYPE.NONE);
-	}
-
-	private void setupRedoOption() {
-		redoOptions.put(OPTIONS.REDO, TYPE.NONE);
-
-		redoOptions.put(OPTIONS.REDO_SHORT, TYPE.NONE);
-	}
-
-	private void setupUndoOption() {
-		undoOptions.put(OPTIONS.UNDO, TYPE.NONE);
-
-		undoOptions.put(OPTIONS.UNDO_SHORT, TYPE.NONE);
+		optionsMap.put(COMMAND_TYPE.HELP, helpOptions);
 	}
 
 	private void setupSearchOption() {
 		searchOptions.put(OPTIONS.SEARCH, TYPE.STRING_ARRAY);
-
 		searchOptions.put(OPTIONS.SEARCH_SHORT, TYPE.STRING_ARRAY);
+		optionsMap.put(COMMAND_TYPE.SEARCH, searchOptions);
 	}
 
 	private void setupCompleteOption() {
 		completeOptions.put(OPTIONS.COMPLETE, TYPE.INTEGER_ARRAY);
-
 		completeOptions.put(OPTIONS.COMPLETE_SHORT, TYPE.INTEGER_ARRAY);
+		optionsMap.put(COMMAND_TYPE.COMPLETE, completeOptions);
 	}
 
 	private void setupDeleteOption() {
 		deleteOptions.put(OPTIONS.DELETE, TYPE.INTEGER_ARRAY);
-
 		deleteOptions.put(OPTIONS.DELETE_SHORT, TYPE.INTEGER_ARRAY);
+		optionsMap.put(COMMAND_TYPE.DELETE, deleteOptions);
 	}
 
 	private void setupEditOption() {
@@ -148,6 +176,7 @@ class Parser implements ParserConstants {
 		editOptions.put(OPTIONS.AND, TYPE.DATE);
 		editOptions.put(OPTIONS.START, TYPE.DATE);
 		editOptions.put(OPTIONS.END, TYPE.DATE);
+		editOptions.put(OPTIONS.PRIORITY, TYPE.INTEGER);
 		
 		editOptions.put(OPTIONS.EDIT_SHORT, TYPE.INTEGER);
 		editOptions.put(OPTIONS.DESC_SHORT, TYPE.STRING);
@@ -157,6 +186,8 @@ class Parser implements ParserConstants {
 		editOptions.put(OPTIONS.AND_SHORT, TYPE.DATE);
 		editOptions.put(OPTIONS.START_SHORT, TYPE.DATE);
 		editOptions.put(OPTIONS.END_SHORT, TYPE.DATE);
+		editOptions.put(OPTIONS.PRIORITY_SHORT, TYPE.INTEGER);
+		optionsMap.put(COMMAND_TYPE.EDIT, editOptions);
 	}
 
 	private void setupViewOption() {
@@ -177,6 +208,7 @@ class Parser implements ParserConstants {
 		viewOptions.put(OPTIONS.TOMORROW_SHORT, TYPE.NONE);
 		viewOptions.put(OPTIONS.WEEK_SHORT, TYPE.NONE);
 		viewOptions.put(OPTIONS.MONTH_SHORT, TYPE.NONE);
+		optionsMap.put(COMMAND_TYPE.VIEW, viewOptions);
 	}
 
 	private void setupAddOption() {
@@ -187,6 +219,7 @@ class Parser implements ParserConstants {
 		addOptions.put(OPTIONS.AND, TYPE.DATE);
 		addOptions.put(OPTIONS.START, TYPE.DATE);
 		addOptions.put(OPTIONS.END, TYPE.DATE);
+		addOptions.put(OPTIONS.PRIORITY, TYPE.INTEGER);
 
 		addOptions.put(OPTIONS.ADD_SHORT, TYPE.STRING);
 		addOptions.put(OPTIONS.BY_SHORT, TYPE.DATE);
@@ -195,6 +228,8 @@ class Parser implements ParserConstants {
 		addOptions.put(OPTIONS.AND_SHORT, TYPE.DATE);
 		addOptions.put(OPTIONS.START_SHORT, TYPE.DATE);
 		addOptions.put(OPTIONS.END_SHORT, TYPE.DATE);
+		addOptions.put(OPTIONS.PRIORITY_SHORT, TYPE.INTEGER);
+		optionsMap.put(COMMAND_TYPE.ADD, addOptions);
 	}
 	
 	protected LocalDateTime parseDate(String expectedDate) {
@@ -275,34 +310,10 @@ class Parser implements ParserConstants {
 	}
 	
 	protected EnumMap<OPTIONS, TYPE> getOptionMap(COMMAND_TYPE commandType) {
-		switch (commandType) {
-			case ADD:
-				return addOptions;
-			case VIEW:
-				return viewOptions;
-			case EDIT:
-				return editOptions;
-			case DELETE:
-				return deleteOptions;
-			case COMPLETE:
-				return completeOptions;
-			case SEARCH:
-				return searchOptions;
-			case UNDO:
-				return undoOptions;
-			case REDO:
-				return redoOptions;
-			case CLEAR:
-				return clearOptions;
-			case HELP:
-				return helpOptions;
-			case EXIT:
-				return exitOptions;
-			case INVALID:
-				return null;
-			default:
-				LOGGER.severe("commandType is corrupted and not within expectations");
-				throw new Error("Corrupted commandType");
+		if (!optionsMap.containsKey(commandType)) {
+			LOGGER.severe("commandType is corrupted and not within expectations");
+			throw new Error("Corrupted commandType");
 		}
+		return optionsMap.get(commandType);
 	}
 }

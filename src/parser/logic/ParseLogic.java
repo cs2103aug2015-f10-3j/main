@@ -64,6 +64,18 @@ public class ParseLogic extends Parser {
 				|| mainCommand.equalsIgnoreCase(COMMANDS.SETDIRECTORY_SHORT.toString())) {
 			return COMMAND_TYPE.SETDIRECTORY;
 		}
+		else if (mainCommand.equalsIgnoreCase(COMMANDS.TAG.toString())
+				|| mainCommand.equalsIgnoreCase(COMMANDS.TAG_SHORT.toString())) {
+			return COMMAND_TYPE.TAG;
+		}
+		else if (mainCommand.equalsIgnoreCase(COMMANDS.UNTAG.toString())
+				|| mainCommand.equalsIgnoreCase(COMMANDS.UNTAG_SHORT.toString())) {
+			return COMMAND_TYPE.UNTAG;
+		}
+		else if (mainCommand.equalsIgnoreCase(COMMANDS.MORE.toString())
+				|| mainCommand.equalsIgnoreCase(COMMANDS.MORE_SHORT.toString())) {
+			return COMMAND_TYPE.MORE;
+		}
 		else if (mainCommand.equalsIgnoreCase(COMMANDS.EXIT.toString())
 				|| mainCommand.equalsIgnoreCase(COMMANDS.EXIT_SHORT.toString())) {
 			return COMMAND_TYPE.EXIT;
@@ -98,6 +110,12 @@ public class ParseLogic extends Parser {
 			case HELP:
 				return new HelpCommand();
 			case SETDIRECTORY:
+				return null;
+			case MORE:
+				return null;
+			case TAG:
+				return null;
+			case UNTAG:
 				return null;
 			case EXIT:
 				return new ExitCommand();
@@ -138,7 +156,8 @@ public class ParseLogic extends Parser {
 		String option = commandList.remove(0);
 		LOGGER.log(Level.INFO, "Retrieve expected value of specified option: {0}", option);
 		for (OPTIONS opt : optionMap.keySet()) {
-			if (option.equalsIgnoreCase(opt.toString())) {
+			if (option.equalsIgnoreCase(opt.toString()) || 
+					(opt == OPTIONS.HASHTAG && option.startsWith(OPTIONS.HASHTAG.toString()))) {
 				switch (optionMap.get(opt)) {
 				case STRING:
 					newOption = expectString(commandList, false);
@@ -170,6 +189,8 @@ public class ParseLogic extends Parser {
 				case DATE_OPT:
 					newOption = expectDate(commandList, true);
 					break;
+				case HASHTAG_ARRAY:
+					newOption = expectHashtagArray(commandList, true);
 				case NONE:
 					commandList.clear();
 					return null;
@@ -305,6 +326,28 @@ public class ParseLogic extends Parser {
 		for (int i = 0; i < commandList.size(); i++) {
 			String expectedString = commandList.get(i);
 			commandOption.addValue(expectedString);
+		}
+		return commandOption;
+	}
+	
+	private Option expectHashtagArray(List<String> commandList, boolean optional) throws Exception {
+		LOGGER.log(Level.INFO, "Attempt to parse expected array of Strings from user input");
+		assert(commandList != null);
+		Option commandOption = new Option();
+		LOGGER.log(Level.WARNING, "expectedInt = commandList.remove(0) may cause index out of bounds exception");
+		if (commandList.isEmpty()) {
+			if (optional) {
+				return null;
+			} else {
+				LOGGER.log(Level.SEVERE, "expected input not found");
+				throw new InvalidCommandFormatException("Expected input not found!");
+			}
+		}
+		for (int i = 0; i < commandList.size(); i++) {
+			String expectedString = commandList.get(i);
+			if (expectedString.startsWith(OPTIONS.HASHTAG.toString())) {
+				commandOption.addValue(expectedString);
+			}
 		}
 		return commandOption;
 	}
