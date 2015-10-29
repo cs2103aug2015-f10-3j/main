@@ -17,6 +17,7 @@ public class AddTaskCommand extends Command {
 	private static final String KEYWORD_BETWEEN = "between";
 	private static final String KEYWORD_AND = "and";
 	private static final String KEYWORD_REMIND = "remind";
+	private static final String KEYWORD_PRIORITY = "priority";
 	ArrayList<Task> taskList = new ArrayList<Task>();
 	private Task userTask = null;
 
@@ -34,17 +35,18 @@ public class AddTaskCommand extends Command {
 	private Task createTask() {
 		assert(hasOption(KEYWORD_ADD));
 		String description = getOption(KEYWORD_ADD).getStringValue();
+		Integer priority = getPriority();
 		if (hasOption(KEYWORD_BY)) {
 			LocalDateTime deadLineDate = getOption(KEYWORD_BY).getDateValue();
 			LocalDateTime reminderDate = getReminderDate(deadLineDate);
-			userTask = new DeadlineTask(description, deadLineDate, reminderDate);
+			userTask = new DeadlineTask(description, deadLineDate, reminderDate, priority);
 		} else if (hasOption(KEYWORD_BETWEEN) && hasOption(KEYWORD_AND)) {
 			LocalDateTime startDate = getOption(KEYWORD_BETWEEN).getDateValue();
 			LocalDateTime deadLineDate = getOption(KEYWORD_AND).getDateValue();
 			LocalDateTime reminderDate = getReminderDate(deadLineDate);
-			userTask = new TimedTask(description, startDate, deadLineDate, reminderDate);
+			userTask = new TimedTask(description, startDate, deadLineDate, reminderDate, priority);
 		} else {
-			userTask = new FloatingTask(description);
+			userTask = new FloatingTask(description, priority);
 		}
 		return userTask;
 	}
@@ -54,6 +56,14 @@ public class AddTaskCommand extends Command {
 			return getOption(KEYWORD_REMIND).getDateValue();
 		} else {
 			return DateTimeHelper.addMinutes(deadLineDate, -5);
+		}
+	}
+
+	private Integer getPriority() {
+		if (hasOption(KEYWORD_PRIORITY)) {
+			return getOption(KEYWORD_PRIORITY).getIntegerValue();
+		} else {
+			return 3;
 		}
 	}
 
