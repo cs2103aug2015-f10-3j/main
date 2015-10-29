@@ -8,9 +8,9 @@ import java.lang.reflect.Field;
 import org.junit.Before;
 import org.junit.Test;
 
+import common.data.ParserConstants.COMMAND_TYPE;
 import parser.api.CommandParser;
 import parser.logic.ParseLogic;
-import parser.logic.ParserConstants.COMMAND_TYPE;
 import task.api.TaskController;
 
 public class TestCommandParser {
