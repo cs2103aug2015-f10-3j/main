@@ -17,15 +17,22 @@ public class TimedTask extends Task {
 		super();
 	}
 	
-	public TimedTask(String description, LocalDateTime start, LocalDateTime end, LocalDateTime reminder) {
-		super(description, TASK_TYPE);
+	public TimedTask(String description, LocalDateTime start, LocalDateTime end, LocalDateTime reminder, int priority) {
+		super(description, priority, TASK_TYPE);
 		this.start = start;
 		this.end = end;
 		this.reminder = reminder;
 	}
 	
+	public TimedTask(int taskId, String description, LocalDateTime createdAt, LocalDateTime start, LocalDateTime end, LocalDateTime reminder, boolean complete, int priority) {
+        super(taskId, description, createdAt, complete, priority, new ArrayList<String>(), TASK_TYPE);
+        this.start = start;
+        this.end = end;
+        this.reminder = reminder;
+    }
+	
 	public TimedTask(int taskId, String description, LocalDateTime createdAt, LocalDateTime start, LocalDateTime end, LocalDateTime reminder, boolean complete, int priority, ArrayList<String> tags) {
-        super(taskId, description, createdAt, complete, priority, tags,  TASK_TYPE);
+        super(taskId, description, createdAt, complete, priority, tags, TASK_TYPE);
         this.start = start;
         this.end = end;
         this.reminder = reminder;
