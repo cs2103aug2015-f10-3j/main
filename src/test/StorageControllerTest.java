@@ -69,6 +69,31 @@ public class StorageControllerTest {
     /*** Test Cases 
      * @throws Exception  ***/
     @Test
+    public void testSetDirectory() throws Exception {
+        
+        Method m = sdParser.getClass().getDeclaredMethod("setDirectory", String.class);
+        m.setAccessible(true);
+        boolean success = (boolean)m.invoke(sdParser, "C:\\Users\\Juliana\\Desktop\\paddletasktest.xml");
+        if (success) {
+            assert true;
+        } else {
+            assert false;
+        }
+        
+        m = sdParser.getClass().getDeclaredMethod("setDirectory", String.class);
+        m.setAccessible(true);
+        success = (boolean)m.invoke(sdParser, "task.xml");
+        if (success) {
+            assert true;
+        } else {
+            assert false;
+        }
+        
+        File file = new File("C:\\paddletasktest.xml");
+        file.delete();
+    }
+    
+    @Test
     public void testGetXmlFile() throws Exception {
     	Method m = sdParser.getClass().getDeclaredMethod("getXmlFile", String.class);
 		m.setAccessible(true);
