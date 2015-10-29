@@ -1,6 +1,7 @@
 package logic.api;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.logging.Level;
@@ -64,6 +65,7 @@ public class LogicController extends Observable {
 		ArrayList<Task> executionResult = new ArrayList<Task>();
 		if (commandParser.isSaveStateCommand(userInput)) {
 			executionResult = command.execute();
+			Collections.sort(executionResult);
 			deliveredTaskState = executionResult;
 		} else {
 			executionResult = command.execute();
