@@ -18,7 +18,7 @@ public class OutputProcessor {
 	
 	//private static final String ERROR_BAD_COMMAND = "Command fail to execute";
 	//private static final String FORMAT = "| %1$-5s | %2$-10s | %3$-60s | %4$-11s | %5$-5s | %6$-11s | %7$-5s |";
-	private static final String FORMAT = " %1$-5s  %2$-10s  %3$-60s  %4$-11s  %5$-8s  %6$-11s  %7$-5s ";
+	private static final String FORMAT = " %1$-5s  %2$-10s  %3$-50s  %4$-11s  %5$-8s  %6$-11s  %7$-5s ";
 	private static final String VIEW_HEADER = String.format(FORMAT, "ID", "Type", "Description", "Start Date","","Deadline", "");
 	private static final int OFFSET_ONE = 1;
 
@@ -71,6 +71,8 @@ public class OutputProcessor {
 	/**
 	 * This method formats the variable needed from each task to string
 	 * and store them into a string array.
+	 * Max characters to be displayed for description is 50.
+	 * Anything more will be substring(0,47). 
 	 * 
 	 * @param ArrayList 
 	 *            Array list of task
@@ -84,8 +86,8 @@ public class OutputProcessor {
 			String[] taskDetails = selectedTask.toDetailsArray();
 			int detailsPointer = 0;
 			output[i+OFFSET_ONE] = String.format(FORMAT, i+1,taskDetails[++detailsPointer], 
-								   taskDetails[++detailsPointer].length() > 60 ? 
-								   taskDetails[detailsPointer].substring(0, 57) + "..." : taskDetails[detailsPointer]
+								   taskDetails[++detailsPointer].length() > 50 ? 
+								   taskDetails[detailsPointer].substring(0, 47) + "..." : taskDetails[detailsPointer]
 								   , taskDetails[++detailsPointer], taskDetails[++detailsPointer],
 								   taskDetails[++detailsPointer],taskDetails[++detailsPointer]);
 		}
