@@ -8,6 +8,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import command.api.Command;
+import command.api.SearchTaskCommand;
 import common.exception.NoTaskStateException;
 import parser.api.CommandParser;
 import task.entity.Task;
@@ -67,7 +68,9 @@ public class LogicController extends Observable {
 		ArrayList<Task> executionResult = new ArrayList<Task>();
 		if (commandParser.isSaveStateCommand(userInput)) {
 			executionResult = command.execute();
-			Collections.sort(executionResult,comparator);
+			if (!isSearch(command)) {
+				Collections.sort(executionResult,comparator);
+			}
 			deliveredTaskState = executionResult;
 		} else {
 			executionResult = command.execute();
@@ -97,5 +100,13 @@ public class LogicController extends Observable {
 			stateIndexes[i] = deliveredTaskState.get(i).getTaskId();
 		}
 		return stateIndexes;
+	}
+	
+	private boolean isSearch(Command cmd) {
+		if (cmd instanceof SearchTaskCommand) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 }

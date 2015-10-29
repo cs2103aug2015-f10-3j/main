@@ -11,8 +11,12 @@ public class TaskComparator implements Comparator<Task> {
 	public int compare(Task o1, Task o2) {
 		if (o1.getPriority() != o2.getPriority()) {
 			return o1.getPriority() - o2.getPriority();
-		} else if (o1.getType()!= TASK_TYPE.FLOATING && o2.getType() != TASK_TYPE.FLOATING) {
+		} else if (!o1.getType().equals(TASK_TYPE.FLOATING) && !o2.getType().equals(TASK_TYPE.FLOATING)) {
 			return getTaskEnd(o1).compareTo(getTaskEnd(o2));
+		} else if (!o1.getType().equals(TASK_TYPE.FLOATING) && o2.getType().equals(TASK_TYPE.FLOATING)) {
+			return -1;
+		} else if (o1.getType().equals(TASK_TYPE.FLOATING) && !o2.getType().equals(TASK_TYPE.FLOATING)) {
+			return 1;
 		} else {
 			return o1.getTaskId() - o2.getTaskId();
 		}
