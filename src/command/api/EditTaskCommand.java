@@ -289,7 +289,7 @@ public class EditTaskCommand extends Command {
 	private void getTaskFromStorage(int taskId) throws NoSuchTaskException {
 		originalTask = taskController.getTask(taskId);
 		if (originalTask == null) {
-			LOGGER.log(Level.SEVERE, "Executing EditTaskCommand: Retrieve Task with taskId -> {0} failed", taskId);
+			LOGGER.log(Level.SEVERE, "Executing EditTaskCommand getTaskFromStorage(): Retrieve Task with taskId -> {0} failed", taskId);
 			throw new NoSuchTaskException("Task with the following Task ID does not exist!");
 		}
 		LOGGER.info("EditTaskCommand: Retrieved Task with taskId: " + taskId + "\n");
@@ -301,9 +301,13 @@ public class EditTaskCommand extends Command {
 	 * @param task the Task object that is updated
 	 * @return returns <code>True</code> if the operation is a success,
 	 * 		   returns <code>False</code> otherwise
+	 * @throws UpdateTaskException 
 	 */
-	private boolean storeTaskToStorage(Task task)  {
+	private void storeTaskToStorage(Task task) throws UpdateTaskException  {
 		LOGGER.info("EditTaskCommand: Storing updated task to Storage\n");
-		return taskController.updateTask(task);
+		if (!taskController.updateTask(task)) {
+			LOGGER.log(Level.SEVERE, "Executing EditTaskCommand storeTaskToStorage(): Storing Task with taskId -> {0} failed", taskId);
+			throw new UpdateTaskException("Failed to store updated Task to Storage");
+		}
 	}
 }
