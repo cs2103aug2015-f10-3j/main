@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -35,11 +36,14 @@ import task.entity.Task.TASK_TYPE;
 
 public class StorageController {
     /*** Variables ***/
-    protected static final String FILE_NAME = "task.xml";
+    protected static final String CONFIG_FILE = ".config";
+    protected static final String DEFAULT_FILE_NAME = "task.xml";
     private static StorageController thisInstance;
     
     /*** Constructor ***/
-    private StorageController() {}
+    private StorageController() {
+        
+    }
     
     public static StorageController getInstance() {
     	if (thisInstance == null) {
@@ -49,6 +53,36 @@ public class StorageController {
     }
     
     /*** Methods ***/
+    /**
+     * This method check if Config file exist,
+     * create it with the default file path if it is not
+     * 
+     * @param  fileName the full file path
+     * @return          file objectzc
+     */
+    protected String getFileName() {
+        String taskFileName = null;
+        File file = new File(CONFIG_FILE);
+        if (!file.exists()) {
+         // Create file if it does not exist
+            try {
+                file.createNewFile();
+                FileWriter fw = new FileWriter(CONFIG_FILE);
+                fw.write(DEFAULT_FILE_NAME);
+                fw.close();
+                taskFileName = DEFAULT_FILE_NAME;
+            } catch (IOException e) {
+                e.printStackTrace();
+                return null;
+            }
+        } else {
+            // Read the file name from file
+            byte[] content = getFileInBytes(CONFIG_FILE);
+            taskFileName = new String(content, StandardCharsets.UTF_8);
+        }
+        return taskFileName;
+    }
+    
     /**
      * This method retrieves a File object
      * 
@@ -372,7 +406,7 @@ public class StorageController {
         try {
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-            doc = dBuilder.parse(getXmlFile(FILE_NAME));
+            doc = dBuilder.parse(getXmlFile(getFileName()));
             
             // Ensures that the XML DOM view of a document is identical
             doc.getDocumentElement().normalize();
@@ -405,7 +439,7 @@ public class StorageController {
 
             DOMSource source = new DOMSource(doc);
             
-            FileWriter fos = new FileWriter(FILE_NAME);
+            FileWriter fos = new FileWriter(getFileName());
             StreamResult result = new StreamResult(fos);
             aTransformer.transform(source, result);
 
