@@ -62,11 +62,11 @@ public class TestEditTaskCommand {
 		// Populate sample arraylist
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 		Task task;
-		task = new FloatingTask(1, "Dabian", DateTimeHelper.now(), false);
+		task = new FloatingTask(1, "Dabian", DateTimeHelper.now(), false, 3);
 		testTaskList.add(task);
-		task = new DeadlineTask(2, "CS2103 CE2", DateTimeHelper.now(), LocalDateTime.parse("2015-01-02 23:59", formatter), DateTimeHelper.now(),false);
+		task = new DeadlineTask(2, "CS2103 CE2", DateTimeHelper.now(), LocalDateTime.parse("2015-01-02 23:59", formatter), DateTimeHelper.now(),false, 3);
 		testTaskList.add(task);
-		task = new TimedTask(3, "Appointment with dentist", DateTimeHelper.now(), LocalDateTime.parse("2015-01-03 23:59", formatter), LocalDateTime.parse("2015-09-10 15:30", formatter), DateTimeHelper.now(), false);
+		task = new TimedTask(3, "Appointment with dentist", DateTimeHelper.now(), LocalDateTime.parse("2015-01-03 23:59", formatter), LocalDateTime.parse("2015-09-10 15:30", formatter), DateTimeHelper.now(), false, 3);
 		testTaskList.add(task);
 		Document doc = storageControllerInstance.parseTask(testTaskList);
 		storageControllerInstance.writeXml(doc);
