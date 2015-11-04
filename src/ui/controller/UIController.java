@@ -11,7 +11,7 @@ public class UIController {
 
 	/*** Variables ***/
 	private static UIController instance = null;
-	private static CommandLinePanel observer;
+	private static Observer observer;
 	private static OutputProcessor outputProcessor = null;
 
 	/*** Constructor ***/
@@ -26,7 +26,7 @@ public class UIController {
 	 * 
 	 * @return String array
 	 */
-	public static UIController getInstance(CommandLinePanel observer){
+	public static UIController getInstance(Observer observer){
 		if(instance == null){
 			UIController.observer = observer;
 			instance = new UIController();
@@ -56,6 +56,10 @@ public class UIController {
 	public String[] format(ArrayList<Task> taskList){
 		String[] output = outputProcessor.formatOutput(taskList);
 		return output;
+	}
+	
+	public static void setObserver(Observer new_Observer){
+		observer = new_Observer;
 	}
 
 }

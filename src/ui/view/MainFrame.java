@@ -3,6 +3,10 @@ package ui.view;
 import java.awt.*;
 import java.awt.event.*;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Observable;
+import java.util.Observer;
+import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -13,7 +17,12 @@ import org.jnativehook.keyboard.NativeKeyEvent;
 import org.jnativehook.keyboard.NativeKeyListener;
 
 import background.Reminder;
+import command.api.ClearCommand;
+import command.api.SearchTaskCommand;
+import command.api.ViewTaskCommand;
 import common.util.LoggingHandler;
+import task.entity.Task;
+import ui.controller.UIController;
 
 /**
  * Create the GUI and show it.  For thread safety,
@@ -21,7 +30,7 @@ import common.util.LoggingHandler;
  * event-dispatching thread.
  */
 
-public class MainFrame {
+public class MainFrame implements Observer{
 
 	/*** Variables ***/
 	private static final String TITLE = "PaddleTask";
@@ -29,7 +38,14 @@ public class MainFrame {
 	private static JFrame frame;
 	private static CommandLinePanel panel;
 	private static boolean isMinimized = false;
+	private static Scanner sc = new Scanner(System.in);
+	private static final String GUI_COMMAND = "startx";
+	private static UIController uiController;
 
+	public MainFrame(){
+		uiController = UIController.getInstance(this);
+	}
+	
 	/*** Methods ***/
 	/**
 	 * This method is the main method of the program.
@@ -39,6 +55,37 @@ public class MainFrame {
 	public static void main(String[] args) {
 		//Schedule a job for the event-dispatching thread:
 		//creating and showing this application's GUI.
+		MainFrame mainFrame = new MainFrame();
+		mainFrame.initiate();
+	}
+
+	public void initiate() {
+		while(sc.hasNext()){
+			String command = sc.nextLine();
+			if(command.equals(GUI_COMMAND)){
+				initiateGUI();
+			} else{
+				String[] output = uiController.processUserInput(command);
+				if(output!= null){
+					outputToCmd(output);
+				}
+			}
+			
+		}
+	}
+	
+	public void outputToCmd(String[] output){
+		for(String s : output){
+			System.out.println(s);
+		}
+	}
+	
+	/**
+	 * This method is to schedule a job for the event-dispatching thread, followed
+	 * by creating and showing this application's GUI.
+	 * 
+	 */
+	public static void initiateGUI() {
 		javax.swing.SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				createAndShowGUI();
@@ -55,7 +102,6 @@ public class MainFrame {
 
 	/**
 	 * This method prepare the UI for display and decorations.
-	 * 
 	 * 
 	 */
 	private static void createAndShowGUI() {
@@ -198,5 +244,19 @@ public class MainFrame {
 				}
 			}
 		});
+	}
+
+	@Override
+	public void update(Observable o, Object arg) {
+		// TODO Auto-generated method stub
+		if (o instanceof ClearCommand || o instanceof ViewTaskCommand || o instanceof SearchTaskCommand) {
+			System.out.print("\033[H\033[2J");
+		} else if(o instanceof Reminder){
+			String[] output = uiController.format((ArrayList<Task>)arg);
+			outputToCmd(output);
+		} else {
+			String msg = (String)arg;
+			System.out.println(msg);
+		}
 	}
 }

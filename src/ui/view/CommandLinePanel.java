@@ -56,6 +56,7 @@ public class CommandLinePanel extends JPanel implements Observer,KeyListener {
 	/*** Constructors ***/
 	public CommandLinePanel(){
 		uiController = UIController.getInstance(this);
+		UIController.setObserver(this);
 		commandList = new DoublyLinkedList();
 	}
 
