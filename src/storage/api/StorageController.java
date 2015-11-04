@@ -231,7 +231,7 @@ public class StorageController {
                     
                     // type
                     String type_string = eElement.getElementsByTagName("type").item(0).getTextContent();
-                    TASK_TYPE taskType = Task.determineType(type_string);
+                    TASK_TYPE taskType = Task.determineTaskType(type_string);
                     
                     // complete
                     String complete = eElement.getElementsByTagName("complete").item(0).getTextContent();

@@ -10,28 +10,36 @@ public class DeadlineTask extends Task {
 	private static final String TASK_TYPE = "deadline";
 	private LocalDateTime end;
 	private LocalDateTime reminder;
+    private boolean isRecurring;
+    private RECUR_TYPE recurPeriod;
 	
 	/*** Constructors ***/
 	public DeadlineTask() {
 		super();
 	}
 	
-	public DeadlineTask(String description, LocalDateTime end, LocalDateTime reminder, int priority) {
+	public DeadlineTask(String description, LocalDateTime end, LocalDateTime reminder, int priority, boolean isRecurring, RECUR_TYPE recurPeriod) {
 		super(description, priority, TASK_TYPE);
 		this.end = end;
 		this.reminder = reminder;
+        this.isRecurring = isRecurring;
+        this.recurPeriod = recurPeriod;
 	}
 	
-	public DeadlineTask(int taskId, String description, LocalDateTime createdAt, LocalDateTime end, LocalDateTime reminder, boolean complete, int priority) {
+	public DeadlineTask(int taskId, String description, LocalDateTime createdAt, LocalDateTime end, LocalDateTime reminder, boolean complete, int priority, boolean isRecurring, RECUR_TYPE recurPeriod) {
         super(taskId, description, createdAt, complete, priority, new ArrayList<String>(), TASK_TYPE);
         this.end = end;
         this.reminder = reminder;
+        this.isRecurring = isRecurring;
+        this.recurPeriod = recurPeriod;
     }
 	
-	public DeadlineTask(int taskId, String description, LocalDateTime createdAt, LocalDateTime end, LocalDateTime reminder, boolean complete, int priority, ArrayList<String> tags) {
+	public DeadlineTask(int taskId, String description, LocalDateTime createdAt, LocalDateTime end, LocalDateTime reminder, boolean complete, int priority, ArrayList<String> tags, boolean isRecurring, RECUR_TYPE recurPeriod) {
         super(taskId, description, createdAt, complete, priority, tags, TASK_TYPE);
         this.end = end;
         this.reminder = reminder;
+        this.isRecurring = isRecurring;
+        this.recurPeriod = recurPeriod;
     }
 	
 	/*** Assessors ***/
@@ -46,6 +54,18 @@ public class DeadlineTask extends Task {
     }
     public void setReminder(LocalDateTime reminder) {
         this.reminder = reminder;
+    }
+    public boolean isRecurring() {
+        return isRecurring;
+    }
+    public void setRecurring(boolean isRecurring) {
+        this.isRecurring = isRecurring;
+    }
+    public RECUR_TYPE getRecurPeriod() {
+        return recurPeriod;
+    }
+    public void setRecurPeriod(RECUR_TYPE recurPeriod) {
+        this.recurPeriod = recurPeriod;
     }
 	
 	/*** Methods ***/

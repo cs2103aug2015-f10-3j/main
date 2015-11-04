@@ -110,7 +110,7 @@ public class ViewTaskCommand extends Command {
 				}
 			}
 		} else{
-			TASK_TYPE taskType = Task.determineType(type);
+			TASK_TYPE taskType = Task.determineTaskType(type);
 			allTask = taskController.getTask(taskType);
 			for(Task t : allTask){
 				if(!t.isComplete()){
