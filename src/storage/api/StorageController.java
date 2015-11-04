@@ -31,6 +31,7 @@ import common.util.DateTimeHelper;
 import task.entity.DeadlineTask;
 import task.entity.FloatingTask;
 import task.entity.Task;
+import task.entity.Task.RECUR_TYPE;
 import task.entity.TimedTask;
 import task.entity.Task.TASK_TYPE;
 
@@ -229,9 +230,9 @@ public class StorageController {
                     String createdAt = eElement.getElementsByTagName("createdAt").item(0).getTextContent();
                     LocalDateTime createdAt_localdatetime = DateTimeHelper.parseStringToDateTime(createdAt);
                     
-                    // type
-                    String type_string = eElement.getElementsByTagName("type").item(0).getTextContent();
-                    TASK_TYPE taskType = Task.determineTaskType(type_string);
+                    // task type
+                    String task_type_string = eElement.getElementsByTagName("tasktype").item(0).getTextContent();
+                    TASK_TYPE taskType = Task.determineTaskType(task_type_string);
                     
                     // complete
                     String complete = eElement.getElementsByTagName("complete").item(0).getTextContent();
@@ -261,6 +262,10 @@ public class StorageController {
                     LocalDateTime end_localdatetime;
                     String reminder;
                     LocalDateTime reminder_localdatetime;
+                    String recurring;
+                    boolean recurring_boolean;
+                    String recur_type_string;
+                    RECUR_TYPE recurType;
                     switch (taskType) {
                         case FLOATING:
                             task = new FloatingTask(taskId_int, description, createdAt_localdatetime, complete_boolean, priority_int, tag_array);
@@ -278,7 +283,15 @@ public class StorageController {
                             reminder = eElement.getElementsByTagName("reminder").item(0).getTextContent();
                             reminder_localdatetime = DateTimeHelper.parseStringToDateTime(reminder);
                             
-                            task = new TimedTask(taskId_int, description, createdAt_localdatetime, start_localdatetime, end_localdatetime, reminder_localdatetime, complete_boolean, priority_int, tag_array);
+                            // recurring
+                            recurring = eElement.getElementsByTagName("recurring").item(0).getTextContent();
+                            recurring_boolean = Boolean.valueOf(recurring);
+                            
+                            // recur type
+                            recur_type_string = eElement.getElementsByTagName("recurtype").item(0).getTextContent();
+                            recurType = Task.determineRecurType(recur_type_string);
+                            
+                            task = new TimedTask(taskId_int, description, createdAt_localdatetime, start_localdatetime, end_localdatetime, reminder_localdatetime, complete_boolean, priority_int, tag_array, recurring_boolean, recurType);
                             break;
                         case DEADLINE:
                             // end
@@ -289,7 +302,15 @@ public class StorageController {
                             reminder = eElement.getElementsByTagName("reminder").item(0).getTextContent();
                             reminder_localdatetime = DateTimeHelper.parseStringToDateTime(reminder);
                             
-                            task = new DeadlineTask(taskId_int, description, createdAt_localdatetime, end_localdatetime, reminder_localdatetime, complete_boolean, priority_int, tag_array);
+                            // recurring
+                            recurring = eElement.getElementsByTagName("recurring").item(0).getTextContent();
+                            recurring_boolean = Boolean.valueOf(recurring);
+                            
+                            // recur type
+                            recur_type_string = eElement.getElementsByTagName("recurtype").item(0).getTextContent();
+                            recurType = Task.determineRecurType(recur_type_string);
+                            
+                            task = new DeadlineTask(taskId_int, description, createdAt_localdatetime, end_localdatetime, reminder_localdatetime, complete_boolean, priority_int, tag_array, recurring_boolean, recurType);
                             break;
                         default:
                             break;
@@ -350,9 +371,9 @@ public class StorageController {
                 item.appendChild(createdAt);
                 
                 // type
-                Element type = doc.createElement("type");
-                type.appendChild(doc.createTextNode(task.getType().toString()));
-                item.appendChild(type);
+                Element taskType = doc.createElement("tasktype");
+                taskType.appendChild(doc.createTextNode(task.getType().toString()));
+                item.appendChild(taskType);
                 
                 // complete
                 Element complete = doc.createElement("complete");
@@ -373,6 +394,9 @@ public class StorageController {
                 Element start;
                 Element end;
                 Element reminder;
+                Element recurring;
+                String recurring_string;
+                Element recurType;
                 switch (task.getType()) {
                     case FLOATING:
                         // start
@@ -404,6 +428,17 @@ public class StorageController {
                         reminder.appendChild(doc.createTextNode(formattedDateTime));
                         item.appendChild(reminder);
                         
+                        // recurring
+                        recurring = doc.createElement("recurring");
+                        recurring_string = String.valueOf(((TimedTask) task).isRecurring());
+                        recurring.appendChild(doc.createTextNode(recurring_string));
+                        item.appendChild(complete);
+                        
+                        // type
+                        recurType = doc.createElement("recurtype");
+                        recurType.appendChild(doc.createTextNode(((TimedTask) task).getRecurPeriod().toString()));
+                        item.appendChild(recurType);
+                        
                         break;
                     case DEADLINE:
                         // start
@@ -422,6 +457,17 @@ public class StorageController {
                         formattedDateTime = DateTimeHelper.parseDateTimeToString(((DeadlineTask) task).getReminder());
                         reminder.appendChild(doc.createTextNode(formattedDateTime));
                         item.appendChild(reminder);
+                        
+                        // recurring
+                        recurring = doc.createElement("recurring");
+                        recurring_string = String.valueOf(((DeadlineTask) task).isRecurring());
+                        recurring.appendChild(doc.createTextNode(recurring_string));
+                        item.appendChild(complete);
+                        
+                        // type
+                        recurType = doc.createElement("recurtype");
+                        recurType.appendChild(doc.createTextNode(((DeadlineTask) task).getRecurPeriod().toString()));
+                        item.appendChild(recurType);
                         
                         break;
                     default:
