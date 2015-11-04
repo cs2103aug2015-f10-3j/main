@@ -11,7 +11,7 @@ public class TimedTask extends Task {
 	private LocalDateTime start;
 	private LocalDateTime end;
 	private LocalDateTime reminder;
-    private boolean isRecurring;
+    private boolean recurring;
     private RECUR_TYPE recurPeriod;
 	
 	/*** Constructors ***/
@@ -24,7 +24,7 @@ public class TimedTask extends Task {
 		this.start = start;
 		this.end = end;
 		this.reminder = reminder;
-        this.isRecurring = isRecurring;
+        this.recurring = isRecurring;
         this.recurPeriod = recurPeriod;
 	}
 	
@@ -33,7 +33,7 @@ public class TimedTask extends Task {
         this.start = start;
         this.end = end;
         this.reminder = reminder;
-        this.isRecurring = isRecurring;
+        this.recurring = isRecurring;
         this.recurPeriod = recurPeriod;
     }
 	
@@ -42,7 +42,7 @@ public class TimedTask extends Task {
         this.start = start;
         this.end = end;
         this.reminder = reminder;
-        this.isRecurring = isRecurring;
+        this.recurring = isRecurring;
         this.recurPeriod = recurPeriod;
     }
 	
@@ -66,10 +66,10 @@ public class TimedTask extends Task {
         this.reminder = reminder;
     }
     public boolean isRecurring() {
-        return isRecurring;
+        return recurring;
     }
-    public void setRecurring(boolean isRecurring) {
-        this.isRecurring = isRecurring;
+    public void setRecurring(boolean recurring) {
+        this.recurring = recurring;
     }
     public RECUR_TYPE getRecurPeriod() {
         return recurPeriod;

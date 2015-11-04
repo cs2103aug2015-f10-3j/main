@@ -10,7 +10,7 @@ public class DeadlineTask extends Task {
 	private static final String TASK_TYPE = "deadline";
 	private LocalDateTime end;
 	private LocalDateTime reminder;
-    private boolean isRecurring;
+    private boolean recurring;
     private RECUR_TYPE recurPeriod;
 	
 	/*** Constructors ***/
@@ -22,7 +22,7 @@ public class DeadlineTask extends Task {
 		super(description, priority, TASK_TYPE);
 		this.end = end;
 		this.reminder = reminder;
-        this.isRecurring = isRecurring;
+        this.recurring = isRecurring;
         this.recurPeriod = recurPeriod;
 	}
 	
@@ -30,7 +30,7 @@ public class DeadlineTask extends Task {
         super(taskId, description, createdAt, complete, priority, new ArrayList<String>(), TASK_TYPE);
         this.end = end;
         this.reminder = reminder;
-        this.isRecurring = isRecurring;
+        this.recurring = isRecurring;
         this.recurPeriod = recurPeriod;
     }
 	
@@ -38,7 +38,7 @@ public class DeadlineTask extends Task {
         super(taskId, description, createdAt, complete, priority, tags, TASK_TYPE);
         this.end = end;
         this.reminder = reminder;
-        this.isRecurring = isRecurring;
+        this.recurring = isRecurring;
         this.recurPeriod = recurPeriod;
     }
 	
@@ -56,10 +56,10 @@ public class DeadlineTask extends Task {
         this.reminder = reminder;
     }
     public boolean isRecurring() {
-        return isRecurring;
+        return recurring;
     }
     public void setRecurring(boolean isRecurring) {
-        this.isRecurring = isRecurring;
+        this.recurring = isRecurring;
     }
     public RECUR_TYPE getRecurPeriod() {
         return recurPeriod;
