@@ -58,8 +58,8 @@ public class DeadlineTask extends Task {
     public boolean isRecurring() {
         return recurring;
     }
-    public void setRecurring(boolean isRecurring) {
-        this.recurring = isRecurring;
+    public void setRecurring(boolean recurring) {
+        this.recurring = recurring;
     }
     public RECUR_TYPE getRecurPeriod() {
         return recurPeriod;
