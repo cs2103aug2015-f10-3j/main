@@ -65,6 +65,12 @@ public class Task {
             public String toString() {
                 return "YEAR";
             }
+        },
+        NULL {
+            @Override
+            public String toString() {
+                return "NULL";
+            }
         };
     };
 	
@@ -175,6 +181,8 @@ public class Task {
                 return RECUR_TYPE.MONTH;
             } else if (typeString.equalsIgnoreCase("year")) {
                 return RECUR_TYPE.YEAR;
+            } else if (typeString.equalsIgnoreCase("null")) {
+                return RECUR_TYPE.NULL;
             }
         }
 
