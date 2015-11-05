@@ -15,7 +15,7 @@ import com.joestelmach.natty.DateGroup;
 
 import common.data.ParserConstants;
 
-class Parser implements ParserConstants {
+class ParserBackend implements ParserConstants {
 
 	
 	public static final String SPACE_REGEX = "\\s+";
@@ -47,7 +47,7 @@ class Parser implements ParserConstants {
 	private static HashMap<COMMAND_TYPE, EnumMap<OPTIONS, TYPE>> optionsMap = new HashMap<COMMAND_TYPE, EnumMap<OPTIONS, TYPE>>();
 	protected static com.joestelmach.natty.Parser dateParser = new com.joestelmach.natty.Parser();
 	
-	public Parser() {
+	public ParserBackend() {
 		parseDate("warmup");
 		setupCommandEnums();
 	}

@@ -10,7 +10,7 @@ import command.api.*;
 import command.data.Option;
 import common.exception.InvalidCommandFormatException;
 
-public class ParseLogic extends Parser {
+public class ParseLogic extends ParserBackend {
 	
 	public ParseLogic() {
 		LOGGER.info("Initiating ParseLogic");
