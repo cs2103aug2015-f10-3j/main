@@ -1,7 +1,4 @@
-/*
- * Author : Tan Qiu Hao, Joel
- * Date	  : 3/10/2015
- */
+//@@A0125473H
 package main.paddletask.command.api;
 
 import java.util.ArrayList;

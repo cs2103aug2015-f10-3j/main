@@ -1,3 +1,4 @@
+//@@A0125473H
 package main.paddletask.common.util;
 
 import java.io.IOException;

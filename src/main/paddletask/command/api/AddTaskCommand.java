@@ -1,90 +1,146 @@
+//@@A0125473H
 package main.paddletask.command.api;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
+import main.paddletask.common.data.ParserConstants;
+import main.paddletask.common.exception.TaskAddFailedException;
 import main.paddletask.common.util.DateTimeHelper;
 import main.paddletask.task.api.*;
 import main.paddletask.task.entity.*;
-import main.paddletask.task.entity.FloatingTask;
-import main.paddletask.task.entity.Task;
-import main.paddletask.task.entity.TimedTask;
 import main.paddletask.task.entity.Task.RECUR_TYPE;
 
-public class AddTaskCommand extends Command {
+public class AddTaskCommand extends Command implements ParserConstants {
 	
-	private static final String KEYWORD_ADD = "add";
-	private static final String KEYWORD_BY = "by";
-	private static final String KEYWORD_BETWEEN = "between";
-	private static final String KEYWORD_AND = "and";
-	private static final String KEYWORD_REMIND = "remind";
-	private static final String KEYWORD_PRIORITY = "priority";
-    private static final String KEYWORD_EVERY = "every";
-	ArrayList<Task> taskList = new ArrayList<Task>();
-	private Task userTask = null;
+	private ArrayList<Task> _taskList = new ArrayList<Task>();
+	private TaskController _taskController = TaskController.getInstance();
+	private Task _userTask = null;
 
+	private static final int DEFAULT_PRIORITY = 3;
+	private static final int FIVE_MINUTES_BEFORE = -5;
+	
 	@Override
-	public ArrayList<Task> execute() {
-		assert(taskList != null);
-		taskList.clear();
-		userTask = createTask();
-		TaskController taskController = TaskController.getInstance();
-		taskController.addTask(userTask);
-		taskList.add(userTask);
-		return taskList;
+	public ArrayList<Task> execute() throws TaskAddFailedException {
+		try {
+			assert(_taskList != null);
+			clearResult();
+			_userTask = createNewTask();
+			storeNewTask();
+			appendToResult();
+			return _taskList;
+		} catch (Exception e) {
+			throw new TaskAddFailedException("Adding of task was unsuccessful");
+		}
+	}
+
+	private void clearResult() {
+		_taskList.clear();
 	}
 	
-	private Task createTask() {
-		assert(hasOption(KEYWORD_ADD));
-		String description = getOption(KEYWORD_ADD).getStringValue();
-		Integer priority = getPriority();
-		if (hasOption(KEYWORD_BY)) {
-			LocalDateTime deadLineDate = getOption(KEYWORD_BY).getDateValue();
-			LocalDateTime reminderDate = getReminderDate(deadLineDate);
-			boolean recurring = false;
-			RECUR_TYPE recurType = RECUR_TYPE.NULL;
-			if (hasOption(KEYWORD_EVERY)) {
-			    recurring = true;
-			    recurType = Task.determineRecurType(getOption(KEYWORD_EVERY).getStringValue());
-			}
-			userTask = new DeadlineTask(description, deadLineDate, reminderDate, priority, recurring, recurType);
-		} else if (hasOption(KEYWORD_BETWEEN) && hasOption(KEYWORD_AND)) {
-			LocalDateTime startDate = getOption(KEYWORD_BETWEEN).getDateValue();
-			LocalDateTime deadLineDate = getOption(KEYWORD_AND).getDateValue();
-			LocalDateTime reminderDate = getReminderDate(deadLineDate);
-			boolean recurring = false;
-            RECUR_TYPE recurType = RECUR_TYPE.NULL;
-            if (hasOption(KEYWORD_EVERY)) {
-                recurring = true;
-                recurType = Task.determineRecurType(getOption(KEYWORD_EVERY).getStringValue());
-            }
-			userTask = new TimedTask(description, startDate, deadLineDate, reminderDate, priority, recurring, recurType);
-		} else {
-			userTask = new FloatingTask(description, priority);
-		}
+	private Task createNewTask() {
+		assert(hasOption(OPTIONS.ADD.toString()));
+		Task userTask = createTaskByType();
 		return userTask;
 	}
-
-	private LocalDateTime getReminderDate(LocalDateTime deadLineDate) {
-		if (hasOption(KEYWORD_REMIND)) {
-			return getOption(KEYWORD_REMIND).getDateValue();
+	
+	private Task createTaskByType() {
+		if (hasOption(OPTIONS.BY.toString())) {
+			return createDeadlineTask();
+		} else if (hasOption(OPTIONS.BETWEEN.toString()) && hasOption(OPTIONS.AND.toString())) {
+			return createTimedTask();
 		} else {
-			return DateTimeHelper.addMinutes(deadLineDate, -5);
+			return createFloatingTask();
+		}
+	}
+	
+	private Task createDeadlineTask() {
+		String description = getTaskDescription();
+		Integer priority = getTaskPriority();
+		LocalDateTime deadline = getTaskDeadline();
+		LocalDateTime reminder = calculateTaskReminderDate(deadline);
+		boolean recurring = isTaskRecurring();
+		RECUR_TYPE recurType = getTaskRecurranceType(recurring);
+		return new DeadlineTask(description, deadline, reminder, priority, recurring, recurType);
+		
+	}
+	
+	private Task createTimedTask() {
+		String description = getTaskDescription();
+		Integer priority = getTaskPriority();
+		LocalDateTime startDate = getTaskStartDate();
+		LocalDateTime deadline = getTaskDeadline();
+		LocalDateTime reminder = calculateTaskReminderDate(deadline);
+		boolean recurring = isTaskRecurring();
+		RECUR_TYPE recurType = getTaskRecurranceType(recurring);
+		return new TimedTask(description, startDate, deadline, reminder, priority, recurring, recurType);
+	}
+
+	private Task createFloatingTask() {
+		String description = getTaskDescription();
+		Integer priority = getTaskPriority();
+		return new FloatingTask(description, priority);
+	}
+
+	private String getTaskDescription() {
+		return getOption(OPTIONS.ADD.toString()).getStringValue();
+	}
+
+	private Integer getTaskPriority() {
+		if (hasOption(OPTIONS.PRIORITY.toString())) {
+			return getOption(OPTIONS.PRIORITY.toString()).getIntegerValue();
+		} else {
+			return DEFAULT_PRIORITY;
+		}
+	}
+	
+	private LocalDateTime getTaskStartDate() {
+		return getOption(OPTIONS.BETWEEN.toString()).getDateValue();
+	}
+
+	private LocalDateTime getTaskDeadline() {
+		return getOption(OPTIONS.BY.toString()).getDateValue();
+	}
+
+	private LocalDateTime calculateTaskReminderDate(LocalDateTime deadline) {
+		if (hasOption(OPTIONS.REMIND.toString())) {
+			return getOption(OPTIONS.REMIND.toString()).getDateValue();
+		} else {
+			return DateTimeHelper.addMinutes(deadline, FIVE_MINUTES_BEFORE);
 		}
 	}
 
-	private Integer getPriority() {
-		if (hasOption(KEYWORD_PRIORITY)) {
-			return getOption(KEYWORD_PRIORITY).getIntegerValue();
-		} else {
-			return 3;
+	private boolean isTaskRecurring() {
+		return hasOption(OPTIONS.EVERY.toString());
+	}
+
+	private RECUR_TYPE getTaskRecurranceType(boolean recurring) {
+		if (recurring) {
+			String recurranceType = getOption(OPTIONS.EVERY.toString()).getStringValue();
+			return Task.determineRecurType(recurranceType);
 		}
+		return Task.RECUR_TYPE.NULL;
+	}
+	
+	private void appendToResult() {
+		_taskList.add(_userTask);
+	}
+
+	private void storeNewTask() {
+		_taskController.addTask(_userTask);
 	}
 
 	@Override
 	public ArrayList<Task> undo() {
-		assert(userTask != null);
-		TaskController.getInstance().deleteTask(userTask.getTaskId());
-		return taskList;
+		assert(_userTask != null);
+		deleteTask();
+		clearResult();
+		appendToResult();
+		return _taskList;
+	}
+
+	private void deleteTask() {
+		int taskID = _userTask.getTaskId();
+		_taskController.deleteTask(taskID);
 	}
 }
