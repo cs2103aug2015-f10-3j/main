@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.Observable;
 
 import main.paddletask.command.data.Option;
-import main.paddletask.common.exception.TaskAddFailedException;
 import main.paddletask.task.entity.Task;
 
 public abstract class Command extends Observable {
