@@ -16,6 +16,7 @@ public class RedoCommand extends Command {
 			throw new InvalidRedoException("Unable to undo further");
 		}
 		Command previousCommand = getPreviousCommand(undoCommandList);
+		//add previously undone command back into the list of done commands
 		addTo(getCommandList(), previousCommand);
 		return previousCommand.execute();
 	}
