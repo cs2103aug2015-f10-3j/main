@@ -10,6 +10,7 @@ import task.api.TaskController;
 import task.entity.DeadlineTask;
 import task.entity.FloatingTask;
 import task.entity.Task;
+import task.entity.Task.RECUR_TYPE;
 import task.entity.TimedTask;
 
 import common.exception.InvalidCommandFormatException;
@@ -41,10 +42,13 @@ public class EditTaskCommand extends Command {
     private static final int PRIORITY_MIN_LEVEL = 1;
     private static final int PRIORITY_MAX_LEVEL = 3;
     private static final int PRIORITY_NONE = -1;
+    
     private ArrayList<Task> _executionResult;
     private int _taskId;
     private int _newPriority;
-    private boolean _isValidTaskType;
+    private boolean _isValidEditCommand;
+    private boolean _newRecurStatus;
+    private RECUR_TYPE _newRecurType;
     private Task _originalTask;
     private Task _editedTask;
     private String _originalTaskType;
@@ -60,7 +64,8 @@ public class EditTaskCommand extends Command {
         _newEnd = null;
         _newReminder = null;
         _newPriority = -1;
-        _isValidTaskType = false;
+        _newRecurStatus = false;
+        _isValidEditCommand = true;
         _executionResult = new ArrayList<Task>();
     }
 
@@ -104,7 +109,7 @@ public class EditTaskCommand extends Command {
      * @throws UpdateTaskException
      */
     private void prepareExecutionResult() throws UpdateTaskException {
-        if (_isValidTaskType) {
+        if (_isValidEditCommand) {
             _executionResult.clear();
             _executionResult.add(_editedTask);
             storeTaskToStorage(_editedTask);
@@ -124,6 +129,7 @@ public class EditTaskCommand extends Command {
         setNewEnd();
         setNewReminder();
         setNewPriority();
+        setNewRecurStatus();
     }
 
     private void prepareUndoTask() {
@@ -166,6 +172,13 @@ public class EditTaskCommand extends Command {
         }
     }
 
+    private void setNewRecurStatus() {
+        if (hasOption("every")) {
+            _newRecurStatus = true;
+            _newRecurType = Task.determineRecurType(getOption("every").getStringValue());
+        }
+    }
+    
     private void determineOriginalTaskType() {
         switch (_originalTask.getType()) {
         case FLOATING :
@@ -179,6 +192,7 @@ public class EditTaskCommand extends Command {
             break;
         default :
             _originalTaskType = TASK_TYPE_INVALID;
+            _isValidEditCommand = false;
         }
     }
 
@@ -198,7 +212,7 @@ public class EditTaskCommand extends Command {
             case TASK_TYPE_TIMED :
                 createNewTimedTask();
                 break;    
-            default :
+            case TASK_TYPE_INVALID :
                 throw new Exception(ERROR_MSG_GENERIC);
         }
     }
@@ -249,18 +263,16 @@ public class EditTaskCommand extends Command {
                 _originalTask.getTags());
     }
 
-    private void createNewDeadlineTask() throws InvalidPriorityException {
+    private void createNewDeadlineTask() throws Exception {
         _editedTask = new DeadlineTask(_originalTask.getTaskId(), getEditedTaskDescription(),
                 _originalTask.getCreatedAt(), getEditedTaskEnd(), getEditedTaskReminder(), _originalTask.isComplete(),
-                getEditedTaskPriority(), _originalTask.getTags(),getDeadlineTaskCastedOriginalTask().isRecurring(),
-                getDeadlineTaskCastedOriginalTask().getRecurPeriod());
+                getEditedTaskPriority(), _originalTask.getTags(),getEditedTaskRecurStatus(), getEditedTaskRecurType());
     }
 
-    private void createNewTimedTask() throws InvalidPriorityException {
+    private void createNewTimedTask() throws Exception {
         _editedTask = new TimedTask(_originalTask.getTaskId(), getEditedTaskDescription(), _originalTask.getCreatedAt(),
                 getEditedTaskStart(), getEditedTaskEnd(), getEditedTaskReminder(), _originalTask.isComplete(),
-                getEditedTaskPriority(), _originalTask.getTags(),getTimedTaskCastedOriginalTask().isRecurring(),
-                getTimedTaskCastedOriginalTask().getRecurPeriod());
+                getEditedTaskPriority(), _originalTask.getTags(),getEditedTaskRecurStatus(), getEditedTaskRecurType());
     }
 
     /*** Setter and Getter Methods ***/
@@ -296,11 +308,11 @@ public class EditTaskCommand extends Command {
                 _newReminder = DateTimeHelper.addMinutes(_newEnd, -5);
             }
             return _newEnd;
-        } else if (_originalTaskType.equals(TASK_TYPE_DEADLINE)) {
+        } else if (isOriginalTaskDeadline()) {
             // Otherwise, if this Task is a DeadlineTask, get DeadlineTask casted original 
             // Task and retrieve the End date/time
             newEditedTaskEnd = getDeadlineTaskCastedOriginalTask().getEnd();
-        } else if (_originalTaskType.equals(TASK_TYPE_TIMED)) {
+        } else if (isOriginalTaskTimed()) {
             // Otherwise, if this Task is a TimedTask, get TimedTask casted original 
             // Task and retrieve the End date/time
             newEditedTaskEnd = getTimedTaskCastedOriginalTask().getEnd();
@@ -314,15 +326,15 @@ public class EditTaskCommand extends Command {
         // If user specified a new Reminder LocalDateTime, use this
         if (_newReminder != null) {
             return _newReminder;
-        } else if (_originalTaskType.equals(TASK_TYPE_FLOATING)) {
+        } else if (isOriginalTaskFloating()) {
             // Otherwise, if this Task is a Floating Task, set a new Reminder that will
             // be 5 minutes before the End date/time
             newEditedTaskReminder = DateTimeHelper.addMinutes(getEditedTaskEnd(), -5);
-        } else if (_originalTaskType.equals(TASK_TYPE_DEADLINE)) {
+        } else if (isOriginalTaskDeadline()) {
             // Otherwise, if this Task is a DeadlineTask, get the DeadlineTask casted
             // original Task and retrieve its original Reminder
             newEditedTaskReminder = getDeadlineTaskCastedOriginalTask().getReminder();
-        } else if (_originalTaskType.equals(TASK_TYPE_TIMED)) {
+        } else if (isOriginalTaskTimed()) {
             // Otherwise, if this Task is a TimedTask, get the TimedTask casted
             // original Task and retrieve its original Reminder
             newEditedTaskReminder = getTimedTaskCastedOriginalTask().getReminder();
@@ -342,6 +354,39 @@ public class EditTaskCommand extends Command {
         }
     }
 
+    private boolean getEditedTaskRecurStatus() throws Exception {
+        boolean newEditedRecurStatus;
+        if (_newRecurStatus != false) {
+            return true;
+        } else if (isOriginalTaskFloating()) {
+            newEditedRecurStatus = false;
+        } else if (isOriginalTaskDeadline()) {
+            newEditedRecurStatus = getDeadlineTaskCastedOriginalTask().isRecurring();
+        } else if (isOriginalTaskTimed()) {
+            newEditedRecurStatus = getTimedTaskCastedOriginalTask().isRecurring();
+        } else {
+            throw new Exception(ERROR_MSG_GENERIC);
+        }
+        return newEditedRecurStatus;
+    }
+    
+    private RECUR_TYPE getEditedTaskRecurType() throws Exception {
+        RECUR_TYPE newEditedRecurType;
+        if (_newRecurStatus != false) {
+            return _newRecurType;
+        } else if (isOriginalTaskFloating()) {
+            return newEditedRecurType = RECUR_TYPE.NULL;
+        } else if (isOriginalTaskDeadline()) {
+            newEditedRecurType = getDeadlineTaskCastedOriginalTask().getRecurPeriod();
+        } else if (isOriginalTaskTimed()) {
+            newEditedRecurType = getTimedTaskCastedOriginalTask().getRecurPeriod();
+        } else {
+            // Error has occur
+            throw new Exception(ERROR_MSG_GENERIC);
+        }
+        return newEditedRecurType;
+    }
+    
     private DeadlineTask getDeadlineTaskCastedOriginalTask() {
         DeadlineTask castedOriginalTask = (DeadlineTask) _originalTask;
         
@@ -369,6 +414,17 @@ public class EditTaskCommand extends Command {
         }
     }
 
+    private boolean isOriginalTaskFloating() {
+        return _originalTaskType.equals(TASK_TYPE_FLOATING);
+    }
+    
+    private boolean isOriginalTaskDeadline() {
+        return _originalTaskType.equals(TASK_TYPE_DEADLINE);
+    }
+    
+    private boolean isOriginalTaskTimed() {
+        return _originalTaskType.equals(TASK_TYPE_TIMED);
+    }
     /**
      * This method calls the storageAPI to store this Task object
      * 
