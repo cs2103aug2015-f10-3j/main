@@ -1,5 +1,6 @@
 package parser.api;
 
+import java.util.Deque;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -79,7 +80,7 @@ public final class CommandParser {
 
 	private void addOptions(ParseLogic.COMMAND_TYPE commandType, Command newCommand, String userCommand) throws Exception {
 		assert(newCommand != null && userCommand != null && parserLogic != null);
-		List<String> commandList = parserLogic.breakDownCommand(userCommand);
+		Deque<String> commandList = parserLogic.breakDownCommand(userCommand);
 		if (commandType == COMMAND_TYPE.SEARCH) {
 			parserLogic.addPossibleDates(newCommand, commandList);
 		} else if (commandType == COMMAND_TYPE.TAG || commandType == COMMAND_TYPE.UNTAG) {

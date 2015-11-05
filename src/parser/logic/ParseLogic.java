@@ -1,7 +1,9 @@
 package parser.logic;
 
 import java.time.LocalDateTime;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.logging.Level;
@@ -127,7 +129,7 @@ public class ParseLogic extends ParserBackend {
 		}
 	}
 
-	public void addOptionsToCommand(COMMAND_TYPE commandType, Command command, List<String> commandList) throws Exception {
+	public void addOptionsToCommand(COMMAND_TYPE commandType, Command command, Deque<String> commandList) throws Exception {
 		LOGGER.info("Attempt to add list of options to Command specified");
 		assert(command != null && commandList != null);
 		EnumMap<OPTIONS, TYPE> optionMap = getOptionMap(commandType);
@@ -200,12 +202,12 @@ public class ParseLogic extends ParserBackend {
 		throw new Error("corrupted variable: option");
 	}
 	
-	public void addPossibleDates(Command command, List<String> commandTokens) throws Exception {
-		Option dateOption = scanForDates(commandTokens, true);
+	public void addPossibleDates(Command command, Deque<String> commandList) throws Exception {
+		Option dateOption = scanForDates(commandList, true);
 		command.addOption("searchDates", dateOption);
 	}
 	
-	private Option scanForDates(List<String> commandList, boolean optional) throws Exception {
+	private Option scanForDates(Deque<String> commandList, boolean optional) throws Exception {
 		LOGGER.log(Level.INFO, "Attempt to parse expected string from user input");
 		assert(commandList != null);
 		Option commandOption = new Option();
@@ -220,9 +222,9 @@ public class ParseLogic extends ParserBackend {
 			}
 		}
 		String expectedString = EMPTY_STRING;
-		for (int i = 0; i < commandList.size(); i++) { 
+		for (String s : commandList) { 
 			LOGGER.fine("Expecting a list of Strings");
-			expectedString = commandList.get(i);
+			expectedString = s;
 			if (isDate(expectedString)) {
 				String[] testedString = expectedString.split("/");
 				expectedString = String.format("%1$s/%2$s/%3$s", testedString[2], testedString[1], testedString[0]);
@@ -329,12 +331,12 @@ public class ParseLogic extends ParserBackend {
 		return commandOption;
 	}
 	
-	public void addTags(Command command, List<String> commandTokens) throws Exception {
-		Option hashtags = expectHashtagArray(commandTokens, true);
+	public void addTags(Command command, Deque<String> commandList) throws Exception {
+		Option hashtags = expectHashtagArray(commandList, true);
 		command.addOption(OPTIONS.HASHTAG.toString(), hashtags);
 	}
 	
-	private Option expectHashtagArray(List<String> commandList, boolean optional) throws Exception {
+	private Option expectHashtagArray(Deque<String> commandList, boolean optional) throws Exception {
 		LOGGER.log(Level.INFO, "Attempt to parse expected array of Strings from user input");
 		assert(commandList != null);
 		Option commandOption = new Option();
@@ -347,8 +349,8 @@ public class ParseLogic extends ParserBackend {
 				throw new InvalidCommandFormatException("Expected input not found!");
 			}
 		}
-		for (int i = 0; i < commandList.size(); i++) {
-			String expectedString = commandList.get(i);
+		for (String s : commandList) {
+			String expectedString = s;
 			if (expectedString.startsWith(OPTIONS.HASHTAG.toString())) {
 				commandOption.addValue(expectedString);
 			}
@@ -439,15 +441,15 @@ public class ParseLogic extends ParserBackend {
 	public String replaceRunningIndex(String userCommand, int[] stateArray) throws Exception {
 		COMMAND_TYPE commandType = determineCommandType(userCommand);
 		Integer taskID = -1;
-		List<String> commandTokens;
+		Deque<String> commandTokens;
 		if (commandType == COMMAND_TYPE.EDIT) {
-			commandTokens = new ArrayList<String>();
-			commandTokens.add(userCommand.split(SPACE_REGEX)[1]);
+			commandTokens = new ArrayDeque<String>();
+			commandTokens.add(userCommand.split(SPACE)[1]);
 		} else {
 			commandTokens = breakDownCommand(userCommand);
 		}
-		for (int i = 0; i < commandTokens.size(); i++) {
-			if ((taskID = tryParseInteger(commandTokens.get(i))) != null) {
+		for (String s : commandTokens) {
+			if ((taskID = tryParseInteger(s)) != null) {
 				if (taskID <= 0) {
 					String message = String.format("Failed to parse user input: %1$s", userCommand);
 					LOGGER.log(Level.SEVERE, message, "Invalid ID provided");
