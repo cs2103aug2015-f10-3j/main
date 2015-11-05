@@ -6,6 +6,7 @@ import java.util.Arrays;
 
 import org.w3c.dom.Document;
 
+import common.util.DateTimeHelper;
 import storage.api.StorageController;
 import task.entity.DeadlineTask;
 import task.entity.Task;
@@ -291,22 +292,22 @@ public class TaskController {
                         switch (((DeadlineTask) task).getRecurPeriod()) {
                             case DAY:
                                 while (newEndDate.isBefore(LocalDateTime.now())) {
-                                    newEndDate = newEndDate.plusDays(1);
+                                    newEndDate = DateTimeHelper.addDays(newEndDate, 1);
                                 }
                                 break;
                             case WEEK:
                                 while (newEndDate.isBefore(LocalDateTime.now())) {
-                                    newEndDate = newEndDate.plusWeeks(1);
+                                    newEndDate = DateTimeHelper.addWeeks(newEndDate, 1);
                                 }
                                 break;
                             case MONTH:
                                 while (newEndDate.isBefore(LocalDateTime.now())) {
-                                    newEndDate = newEndDate.plusMonths(1);
+                                    newEndDate = DateTimeHelper.addMonths(newEndDate, 1);
                                 }
                                 break;
                             case YEAR:
                                 while (newEndDate.isBefore(LocalDateTime.now())) {
-                                    newEndDate = newEndDate.plusYears(1);
+                                    newEndDate = DateTimeHelper.addYears(newEndDate, 1);
                                 }
                                 break;
                             default:
@@ -323,28 +324,28 @@ public class TaskController {
                             (((TimedTask) task).isRecurring() == true)) {
                         LocalDateTime newEndDate = ((TimedTask) task).getEnd();
                         switch (((TimedTask) task).getRecurPeriod()) {
-                            case DAY:
-                                while (newEndDate.isBefore(LocalDateTime.now())) {
-                                    newEndDate = newEndDate.plusDays(1);
-                                }
-                                break;
-                            case WEEK:
-                                while (newEndDate.isBefore(LocalDateTime.now())) {
-                                    newEndDate = newEndDate.plusWeeks(1);
-                                }
-                                break;
-                            case MONTH:
-                                while (newEndDate.isBefore(LocalDateTime.now())) {
-                                    newEndDate = newEndDate.plusMonths(1);
-                                }
-                                break;
-                            case YEAR:
-                                while (newEndDate.isBefore(LocalDateTime.now())) {
-                                    newEndDate = newEndDate.plusYears(1);
-                                }
-                                break;
-                            default:
-                                break;
+                        case DAY:
+                            while (newEndDate.isBefore(LocalDateTime.now())) {
+                                newEndDate = DateTimeHelper.addDays(newEndDate, 1);
+                            }
+                            break;
+                        case WEEK:
+                            while (newEndDate.isBefore(LocalDateTime.now())) {
+                                newEndDate = DateTimeHelper.addWeeks(newEndDate, 1);
+                            }
+                            break;
+                        case MONTH:
+                            while (newEndDate.isBefore(LocalDateTime.now())) {
+                                newEndDate = DateTimeHelper.addMonths(newEndDate, 1);
+                            }
+                            break;
+                        case YEAR:
+                            while (newEndDate.isBefore(LocalDateTime.now())) {
+                                newEndDate = DateTimeHelper.addYears(newEndDate, 1);
+                            }
+                            break;
+                        default:
+                            break;
                         }
                         ((TimedTask) task).setEnd(newEndDate);
                         ((TimedTask) task).setReminder(newEndDate.minusMinutes(5));
