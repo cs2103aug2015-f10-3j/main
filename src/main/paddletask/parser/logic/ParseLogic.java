@@ -1,3 +1,4 @@
+//@@A0125473H
 package main.paddletask.parser.logic;
 
 import java.time.LocalDateTime;
@@ -483,7 +484,7 @@ public class ParseLogic extends ParserBackend {
 				userCommand = userCommand.replaceFirst(oldID, newID);
 			}
 		}
-		return userCommand;
+		return userCommand.trim();
 	}
 	
 	private Integer tryParseInteger(String s1) {
