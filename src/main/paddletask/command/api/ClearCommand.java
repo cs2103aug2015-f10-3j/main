@@ -6,7 +6,8 @@ import java.util.ArrayList;
 import main.paddletask.task.entity.Task;
 
 public class ClearCommand extends Command {
-	
+
+	/*** Methods ***/
 	@Override
 	public ArrayList<Task> execute() {
 		clearScreen();
