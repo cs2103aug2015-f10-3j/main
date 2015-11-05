@@ -8,8 +8,10 @@ import main.paddletask.storage.api.StorageController;
 import main.paddletask.task.entity.Task;
 
 public class SetDirectoryCommand extends Command {
-    
+
     /*** Variables ***/
+    private static final String NEW_PATH_ERROR = "Error in setting new path: ";
+    private static final String NEW_PATH_SET = "New path set: ";
     private static final String KEYWORD_SET_DIRECTORY = "setdirectory";
     private static String _oldPath = "";
     
@@ -38,9 +40,9 @@ public class SetDirectoryCommand extends Command {
         // Set new path
         boolean success = storageController.setDirectory(newPath);
         if (success) {
-            comments = "New path set: " + newPath;
+            comments = NEW_PATH_SET + newPath;
         } else {
-            comments = "Error in setting new path: " + newPath;
+            comments = NEW_PATH_ERROR + newPath;
         }
         setChanged();
         notifyObservers(comments);
@@ -60,9 +62,9 @@ public class SetDirectoryCommand extends Command {
         // Set new path
         boolean success = storageController.setDirectory(_oldPath);
         if (success) {
-            comments = "New path set: " + _oldPath;
+            comments = NEW_PATH_SET + _oldPath;
         } else {
-            comments = "Error in setting new path: " + _oldPath;
+            comments = NEW_PATH_ERROR + _oldPath;
         }
         setChanged();
         notifyObservers(comments);
