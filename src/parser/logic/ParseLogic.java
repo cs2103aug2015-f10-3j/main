@@ -1,9 +1,7 @@
 package parser.logic;
 
 import java.time.LocalDateTime;
-import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Deque;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.logging.Level;
@@ -129,7 +127,7 @@ public class ParseLogic extends ParserBackend {
 		}
 	}
 
-	public void addOptionsToCommand(COMMAND_TYPE commandType, Command command, Deque<String> commandList) throws Exception {
+	public void addOptionsToCommand(COMMAND_TYPE commandType, Command command, List<String> commandList) throws Exception {
 		LOGGER.info("Attempt to add list of options to Command specified");
 		assert(command != null && commandList != null);
 		EnumMap<OPTIONS, TYPE> optionMap = getOptionMap(commandType);
@@ -202,12 +200,12 @@ public class ParseLogic extends ParserBackend {
 		throw new Error("corrupted variable: option");
 	}
 	
-	public void addPossibleDates(Command command, Deque<String> commandList) throws Exception {
+	public void addPossibleDates(Command command, List<String> commandList) throws Exception {
 		Option dateOption = scanForDates(commandList, true);
 		command.addOption("searchDates", dateOption);
 	}
 	
-	private Option scanForDates(Deque<String> commandList, boolean optional) throws Exception {
+	private Option scanForDates(List<String> commandList, boolean optional) throws Exception {
 		LOGGER.log(Level.INFO, "Attempt to parse expected string from user input");
 		assert(commandList != null);
 		Option commandOption = new Option();
@@ -331,12 +329,12 @@ public class ParseLogic extends ParserBackend {
 		return commandOption;
 	}
 	
-	public void addTags(Command command, Deque<String> commandList) throws Exception {
+	public void addTags(Command command, List<String> commandList) throws Exception {
 		Option hashtags = expectHashtagArray(commandList, true);
 		command.addOption(OPTIONS.HASHTAG.toString(), hashtags);
 	}
 	
-	private Option expectHashtagArray(Deque<String> commandList, boolean optional) throws Exception {
+	private Option expectHashtagArray(List<String> commandList, boolean optional) throws Exception {
 		LOGGER.log(Level.INFO, "Attempt to parse expected array of Strings from user input");
 		assert(commandList != null);
 		Option commandOption = new Option();
@@ -441,9 +439,9 @@ public class ParseLogic extends ParserBackend {
 	public String replaceRunningIndex(String userCommand, int[] stateArray) throws Exception {
 		COMMAND_TYPE commandType = determineCommandType(userCommand);
 		Integer taskID = -1;
-		Deque<String> commandTokens;
+		List<String> commandTokens;
 		if (commandType == COMMAND_TYPE.EDIT) {
-			commandTokens = new ArrayDeque<String>();
+			commandTokens = new ArrayList<String>();
 			commandTokens.add(userCommand.split(SPACE)[1]);
 		} else {
 			commandTokens = breakDownCommand(userCommand);

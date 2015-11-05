@@ -2,10 +2,8 @@ package parser.logic;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Deque;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
@@ -254,7 +252,7 @@ class ParserBackend implements ParserConstants {
 		return parsedDates;
 	}
 	
-	public Deque<String> breakDownCommand(String userCommand) {
+	public List<String> breakDownCommand(String userCommand) {
 		LOGGER.info("Attempt to breakdown user input into chunks of words.");
 		assert(userCommand != null && userCommand.length() > 0);
 		return preprocessUserCommand(userCommand);
@@ -314,8 +312,8 @@ class ParserBackend implements ParserConstants {
 		return optionsMap.get(commandType);
 	}
 	
-	private Deque<String> preprocessUserCommand(String userCommand) {
-		Deque<String> processedCommand = new ArrayDeque<String>();
+	private List<String> preprocessUserCommand(String userCommand) {
+		List<String> processedCommand = new ArrayList<String>();
 		int head = 0;
 		for (int i = 0; !isEOL(userCommand, i); i++) {
 			if (isEOL(userCommand, i + 1)) {
@@ -330,7 +328,7 @@ class ParserBackend implements ParserConstants {
 				}
 				if (!isEOL(userCommand, j)) {
 					i = j + 1;
-					addTo(processedCommand, userCommand, head, i);
+					addTo(processedCommand, userCommand, head + 1, j);
 					head = i + 1;
 				}
 			}
@@ -354,7 +352,7 @@ class ParserBackend implements ParserConstants {
 		return s.substring(i, j);
 	}
 	
-	private void addTo(Deque<String> command, String s, int i, int j) {
-		command.push(substring(s, i, j));
+	private void addTo(List<String> command, String s, int i, int j) {
+		command.add(substring(s, i, j));
 	}
 }
