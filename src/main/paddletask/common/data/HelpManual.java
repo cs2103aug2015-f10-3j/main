@@ -1,6 +1,8 @@
+//@@author A0125528E
 package main.paddletask.common.data;
 
 public class HelpManual {
+	
 	/*** Variables ***/
 	private static HelpManual manual = null;
 	private static final String OVERALL_MSG = "PADDLETASK HELP MANUAL\n";
@@ -72,6 +74,14 @@ public class HelpManual {
 	}
 	
 	/*** Methods ***/
+	/**
+	 * This method retrieves or create a HelpManual object
+	 * and returns it.
+	 * 
+	 * @return manual
+	 *            the singleton object of manual
+	 * 
+	 */
 	public static HelpManual getInstance(){
 		if(manual == null){
 			manual = new HelpManual();
@@ -79,6 +89,17 @@ public class HelpManual {
 		return manual;
 	}
 	
+	/**
+	 * This method uses the given command
+	 * and match it according to everything
+	 * in this manual. It will return
+	 * the string statement for the help section
+	 * of the selected section.
+	 * 
+	 * @return string
+	 *            help section for the section
+	 * 
+	 */
 	public String getHelp(String command) {
 		if (command.equals(COMMANDS.ADD.toString())) {
 			return ADD_MSG;
@@ -112,6 +133,7 @@ public class HelpManual {
 
 	}
 	
+	//@@author A0125473H-reused
 	protected static enum COMMANDS {
 		ADD("add"), VIEW("view"), EDIT("edit"), DELETE("delete"), 
 		COMPLETE("complete"), SEARCH("search"), UNDO("undo"), REDO("redo"),
