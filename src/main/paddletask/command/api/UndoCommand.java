@@ -11,12 +11,26 @@ public class UndoCommand extends Command {
 	@Override
 	public ArrayList<Task> execute() throws Exception {
 		ArrayList<Command> commandList = getCommandList();
-		if (commandList.size() < 1) {
+		assert(commandList != null);
+		if (isUndoable(commandList)) {
 			throw new InvalidUndoException("Unable to undo further");
 		}
-		Command previousCommand = commandList.remove(commandList.size() - 1);
-		getUndoCommandList().add(previousCommand);
+		Command previousCommand = getPreviousCommand(commandList);
+		//add previously done command into the list of undone commands
+		addTo(getUndoCommandList(), previousCommand);
 		return previousCommand.undo();
+	}
+
+	private void addTo(ArrayList<Command> commandList, Command command) {
+		getCommandList().add(command);
+	}
+
+	private boolean isUndoable(ArrayList<Command> commandList) {
+		return commandList.size() < 1;
+	}
+
+	private Command getPreviousCommand(ArrayList<Command> commandList) {
+		return commandList.remove(commandList.size() - 1);
 	}
 
 	@Override
