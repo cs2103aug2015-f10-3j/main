@@ -37,8 +37,41 @@ public class Task {
             public String toString() {
                 return "ALL";
             }
-        };;
+        };
 
+    };
+    
+    public enum RECUR_TYPE {
+        DAY {
+            @Override
+            public String toString() {
+                return "DAY";
+            }
+        },
+        WEEK {
+            @Override
+            public String toString() {
+                return "WEEK";
+            }
+        }, 
+        MONTH {
+            @Override
+            public String toString() {
+                return "MONTH";
+            }
+        },
+        YEAR {
+            @Override
+            public String toString() {
+                return "YEAR";
+            }
+        },
+        NULL {
+            @Override
+            public String toString() {
+                return "NULL";
+            }
+        };
     };
 	
 	/*** Constructors ***/
@@ -51,7 +84,7 @@ public class Task {
 	public Task(String description, int priority, String type) {
 		this.description = description;
 		this.createdAt = LocalDateTime.now();
-		this.type = determineType(type);
+		this.type = determineTaskType(type);
         this.priority = priority;
 		this.complete = false;
 		this.tags = new ArrayList<String>();
@@ -64,7 +97,7 @@ public class Task {
         this.complete = complete;
         this.priority = priority;
         this.tags = tags;
-	    this.type = determineType(type);
+	    this.type = determineTaskType(type);
 	}
 	
 	/*** Assessors ***/
@@ -118,7 +151,7 @@ public class Task {
     }
 
     /*** Method ***/
-    public static TASK_TYPE determineType(String typeString) {
+    public static TASK_TYPE determineTaskType(String typeString) {
         TASK_TYPE type = null;
 
         if (typeString != null) {
@@ -130,6 +163,26 @@ public class Task {
                 return TASK_TYPE.DEADLINE;
             } else if (typeString.equalsIgnoreCase("all")) {
             	return TASK_TYPE.ANY;
+            }
+        }
+
+        return type;
+    }
+    
+    public static RECUR_TYPE determineRecurType(String typeString) {
+        RECUR_TYPE type = null;
+
+        if (typeString != null) {
+            if (typeString.equalsIgnoreCase("day")) {
+                return RECUR_TYPE.DAY;
+            } else if (typeString.equalsIgnoreCase("week")) {
+                return RECUR_TYPE.WEEK;
+            } else if (typeString.equalsIgnoreCase("month")) {
+                return RECUR_TYPE.MONTH;
+            } else if (typeString.equalsIgnoreCase("year")) {
+                return RECUR_TYPE.YEAR;
+            } else if (typeString.equalsIgnoreCase("null")) {
+                return RECUR_TYPE.NULL;
             }
         }
 

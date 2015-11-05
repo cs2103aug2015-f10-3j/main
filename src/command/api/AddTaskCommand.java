@@ -9,6 +9,7 @@ import task.entity.DeadlineTask;
 import task.entity.FloatingTask;
 import task.entity.Task;
 import task.entity.TimedTask;
+import task.entity.Task.RECUR_TYPE;
 
 public class AddTaskCommand extends Command {
 	
@@ -18,6 +19,7 @@ public class AddTaskCommand extends Command {
 	private static final String KEYWORD_AND = "and";
 	private static final String KEYWORD_REMIND = "remind";
 	private static final String KEYWORD_PRIORITY = "priority";
+    private static final String KEYWORD_EVERY = "every";
 	ArrayList<Task> taskList = new ArrayList<Task>();
 	private Task userTask = null;
 
@@ -39,12 +41,24 @@ public class AddTaskCommand extends Command {
 		if (hasOption(KEYWORD_BY)) {
 			LocalDateTime deadLineDate = getOption(KEYWORD_BY).getDateValue();
 			LocalDateTime reminderDate = getReminderDate(deadLineDate);
-			userTask = new DeadlineTask(description, deadLineDate, reminderDate, priority);
+			boolean recurring = false;
+			RECUR_TYPE recurType = RECUR_TYPE.NULL;
+			if (hasOption(KEYWORD_EVERY)) {
+			    recurring = true;
+			    recurType = Task.determineRecurType(getOption(KEYWORD_EVERY).getStringValue());
+			}
+			userTask = new DeadlineTask(description, deadLineDate, reminderDate, priority, recurring, recurType);
 		} else if (hasOption(KEYWORD_BETWEEN) && hasOption(KEYWORD_AND)) {
 			LocalDateTime startDate = getOption(KEYWORD_BETWEEN).getDateValue();
 			LocalDateTime deadLineDate = getOption(KEYWORD_AND).getDateValue();
 			LocalDateTime reminderDate = getReminderDate(deadLineDate);
-			userTask = new TimedTask(description, startDate, deadLineDate, reminderDate, priority);
+			boolean recurring = false;
+            RECUR_TYPE recurType = RECUR_TYPE.NULL;
+            if (hasOption(KEYWORD_EVERY)) {
+                recurring = true;
+                recurType = Task.determineRecurType(getOption(KEYWORD_EVERY).getStringValue());
+            }
+			userTask = new TimedTask(description, startDate, deadLineDate, reminderDate, priority, recurring, recurType);
 		} else {
 			userTask = new FloatingTask(description, priority);
 		}
