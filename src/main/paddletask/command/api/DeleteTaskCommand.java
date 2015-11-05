@@ -12,7 +12,6 @@ import main.paddletask.task.entity.TimedTask;
 public class DeleteTaskCommand extends Command {
 
     /*** Variables ***/
-    private static final int NEGATIVE_ONE = -1;
     private static final String KEYWORD_DELETE = "delete";
     private static final String KEYWORD_BETWEEN = "between";
     private static final String KEYWORD_AND = "and";
@@ -48,15 +47,15 @@ public class DeleteTaskCommand extends Command {
      *         objects
      */
     private ArrayList<Task> deleteByTaskId() {
-        ArrayList<Task> taskList = new ArrayList<Task>();
+        ArrayList<Task> tasks = new ArrayList<Task>();
         boolean deleteTaskResult = false;
-        int numOfValues = NEGATIVE_ONE;
+        int numOfValues = -1;
         
         numOfValues = getOption(KEYWORD_DELETE).getValuesCount();
         
         for (int i = 0; i < numOfValues; i++) {
             // Get params
-            int taskId = NEGATIVE_ONE;
+            int taskId = -1;
             taskId = getOption(KEYWORD_DELETE).getIntegerValue(i);
             
             // Check if task exist
@@ -66,14 +65,14 @@ public class DeleteTaskCommand extends Command {
             if (task != null) {
                 deleteTaskResult = taskController.deleteTask(taskId);
                 if (deleteTaskResult == true) {
-                    taskList.add(task);
+                    tasks.add(task);
                 } else {
                     break;
                 }
             }
         }
         
-        return taskList;
+        return tasks;
     }
     
     /**
@@ -83,7 +82,7 @@ public class DeleteTaskCommand extends Command {
      *         objects
      */
     private ArrayList<Task> deleteByPeriod() {
-        ArrayList<Task> taskList = new ArrayList<Task>();
+        ArrayList<Task> tasks = new ArrayList<Task>();
         boolean deleteTaskResult = false;
         
         // Get period
@@ -98,13 +97,13 @@ public class DeleteTaskCommand extends Command {
             Task task = filteredtaskList.get(i);
             deleteTaskResult = taskController.deleteTask(task.getTaskId());
             if (deleteTaskResult == true) {
-                taskList.add(task);
+                tasks.add(task);
             } else {
                 break;
             }
         }
         
-        return taskList;
+        return tasks;
     }
 
     /**
@@ -115,23 +114,23 @@ public class DeleteTaskCommand extends Command {
      * @return        an ArrayList of Task objects that is within the period
      */
     private ArrayList<Task> getTaskByPeriod(LocalDateTime start, LocalDateTime end) {
-        ArrayList<Task> allTask = taskController.getTask();
-        ArrayList<Task> filteredTask = new ArrayList<Task>();
+        ArrayList<Task> allTasks = taskController.getTask();
+        ArrayList<Task> filteredTasks = new ArrayList<Task>();
         
-        for (Task task : allTask) {
+        for (Task task : allTasks) {
             switch (task.getType()) {
                 case FLOATING:
                     break;
                 case TIMED:
                     if ((((TimedTask) task).getStart().compareTo(start) >= 0) &&
                             (((TimedTask) task).getEnd().compareTo(end) <= 0)) {
-                        filteredTask.add(task);
+                        filteredTasks.add(task);
                     }
                     break;
                 case DEADLINE:
                     if ((((DeadlineTask) task).getEnd().compareTo(start) >= 0) && 
                             (((DeadlineTask) task).getEnd().compareTo(end) <= 0)) {
-                        filteredTask.add(task);
+                        filteredTasks.add(task);
                     }
                     break;
                 default:
@@ -139,7 +138,7 @@ public class DeleteTaskCommand extends Command {
             }
         }
         
-        return filteredTask;
+        return filteredTasks;
     }
 
     /**
