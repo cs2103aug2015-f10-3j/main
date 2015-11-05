@@ -10,7 +10,7 @@ import command.api.*;
 import command.data.Option;
 import common.exception.InvalidCommandFormatException;
 
-public class ParseLogic extends Parser {
+public class ParseLogic extends ParserBackend {
 	
 	public ParseLogic() {
 		LOGGER.info("Initiating ParseLogic");
@@ -173,6 +173,9 @@ public class ParseLogic extends Parser {
 				case DATE:
 					newOption = expectDate(commandList, false);
 					break;
+				case DAY:
+					newOption = expectDay(commandList, false);
+					break;
 				case STRING_OPT:
 					newOption = expectString(commandList, true);
 					break;
@@ -200,8 +203,8 @@ public class ParseLogic extends Parser {
 		throw new Error("corrupted variable: option");
 	}
 	
-	public void addPossibleDates(Command command, List<String> commandTokens) throws Exception {
-		Option dateOption = scanForDates(commandTokens, true);
+	public void addPossibleDates(Command command, List<String> commandList) throws Exception {
+		Option dateOption = scanForDates(commandList, true);
 		command.addOption("searchDates", dateOption);
 	}
 	
@@ -220,9 +223,9 @@ public class ParseLogic extends Parser {
 			}
 		}
 		String expectedString = EMPTY_STRING;
-		for (int i = 0; i < commandList.size(); i++) { 
+		for (String s : commandList) { 
 			LOGGER.fine("Expecting a list of Strings");
-			expectedString = commandList.get(i);
+			expectedString = s;
 			if (isDate(expectedString)) {
 				String[] testedString = expectedString.split("/");
 				expectedString = String.format("%1$s/%2$s/%3$s", testedString[2], testedString[1], testedString[0]);
@@ -234,6 +237,28 @@ public class ParseLogic extends Parser {
 		List<LocalDateTime> dates = parseDates(expectedString);
 		while (!dates.isEmpty()) {
 			commandOption.addValue(dates.remove(0));
+		}
+		return commandOption;
+	}
+
+	private Option expectDay(List<String> commandList, boolean optional) throws Exception {
+		LOGGER.log(Level.INFO, "Attempt to parse expected array of integers from user input");
+		assert(commandList != null);
+		Option commandOption = new Option();
+		if (commandList.isEmpty()) {
+			if (optional) {
+				return null;
+			} else {
+				LOGGER.log(Level.SEVERE, "expected input not found");
+				throw new InvalidCommandFormatException("Expected input not found!");
+			}
+		}
+		for (int i = 0; i < commandList.size(); i++) {
+			String expectedDay = commandList.get(i);
+			if (!isDay(expectedDay)) {
+				return null;
+			}
+			commandOption.addValue(expectedDay);
 		}
 		return commandOption;
 	}
@@ -329,8 +354,8 @@ public class ParseLogic extends Parser {
 		return commandOption;
 	}
 	
-	public void addTags(Command command, List<String> commandTokens) throws Exception {
-		Option hashtags = expectHashtagArray(commandTokens, true);
+	public void addTags(Command command, List<String> commandList) throws Exception {
+		Option hashtags = expectHashtagArray(commandList, true);
 		command.addOption(OPTIONS.HASHTAG.toString(), hashtags);
 	}
 	
@@ -347,8 +372,8 @@ public class ParseLogic extends Parser {
 				throw new InvalidCommandFormatException("Expected input not found!");
 			}
 		}
-		for (int i = 0; i < commandList.size(); i++) {
-			String expectedString = commandList.get(i);
+		for (String s : commandList) {
+			String expectedString = s;
 			if (expectedString.startsWith(OPTIONS.HASHTAG.toString())) {
 				commandOption.addValue(expectedString);
 			}
@@ -442,12 +467,12 @@ public class ParseLogic extends Parser {
 		List<String> commandTokens;
 		if (commandType == COMMAND_TYPE.EDIT) {
 			commandTokens = new ArrayList<String>();
-			commandTokens.add(userCommand.split(SPACE_REGEX)[1]);
+			commandTokens.add(userCommand.split(SPACE)[1]);
 		} else {
 			commandTokens = breakDownCommand(userCommand);
 		}
-		for (int i = 0; i < commandTokens.size(); i++) {
-			if ((taskID = tryParseInteger(commandTokens.get(i))) != null) {
+		for (String s : commandTokens) {
+			if ((taskID = tryParseInteger(s)) != null) {
 				if (taskID <= 0) {
 					String message = String.format("Failed to parse user input: %1$s", userCommand);
 					LOGGER.log(Level.SEVERE, message, "Invalid ID provided");

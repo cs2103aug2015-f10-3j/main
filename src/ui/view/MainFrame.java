@@ -115,11 +115,11 @@ public class MainFrame implements Observer{
 	 */
 	public static void initiateGUI() {
 		ui_Mode = true;
+		LoggingHandler handler = new LoggingHandler();
+		handler.setupLoggingHandler();
 		javax.swing.SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				createAndShowGUI();
-				LoggingHandler handler = new LoggingHandler();
-				handler.setupLoggingHandler();
 				try {
 					implementNativeKeyHook();
 				} catch (Throwable e) {

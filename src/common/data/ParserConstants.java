@@ -41,7 +41,7 @@ public interface ParserConstants {
 		END("end"), ALL("all"), FLOATING("floating"), DEADLINE("deadline"), 
 		TIMED("timed"), TODAY("today"), TOMORROW("tomorrow"), WEEK("week"), 
 		MONTH("month"), HELP("help"), SETDIRECTORY("setdirectory"), MORE("more"),
-		TAG("tag"), UNTAG("untag"), PRIORITY("priority"),
+		TAG("tag"), UNTAG("untag"), PRIORITY("priority"), EVERY("every"),
 		
 		ADD_SHORT("/a"), VIEW_SHORT("/v"), EDIT_SHORT("/e"), DELETE_SHORT("/d"), 
 		COMPLETE_SHORT("/c"), SEARCH_SHORT("/s"), BY_SHORT("-b"), UNDO_SHORT("/u"), 
@@ -50,7 +50,7 @@ public interface ParserConstants {
 		END_SHORT("-e"), ALL_SHORT("-ta"), FLOATING_SHORT("-tf"), DEADLINE_SHORT("-td"), 
 		TIMED_SHORT("-tt"), TODAY_SHORT("-pt"), TOMORROW_SHORT("-ptm"), WEEK_SHORT("-pw"), 
 		MONTH_SHORT("-pm"), HELP_SHORT("/h"), SETDIRECTORY_SHORT("/sd"), MORE_SHORT("/m"),
-		TAG_SHORT("/t"), UNTAG_SHORT("/ut"), PRIORITY_SHORT("-p"), HASHTAG("#");
+		TAG_SHORT("/t"), UNTAG_SHORT("/ut"), PRIORITY_SHORT("-p"), HASHTAG("#"), EVERY_SHORT("-e");
 
 		private final String optionText;
 		
@@ -64,9 +64,25 @@ public interface ParserConstants {
 		}
 	}
 	
+
+	public static enum DAY {
+		DAY("day"), MONTH("month"), WEEK("week"), YEAR("year");
+
+		private final String commandText;
+		
+		private DAY(final String commandText) {
+			this.commandText = commandText;
+		}
+
+		@Override
+		public String toString() {
+			return commandText;
+		}
+	}
+	
 	public static enum TYPE {
 		STRING, STRING_ARRAY, INTEGER, INTEGER_ARRAY, DATE,
 		STRING_OPT, STRING_ARRAY_OPT, INTEGER_OPT, INTEGER_ARRAY_OPT,
-		DATE_OPT, NONE;
+		DATE_OPT, DAY, NONE;
 	}
 }

@@ -9,104 +9,139 @@ import java.util.logging.Logger;
 
 import command.api.Command;
 import command.api.SearchTaskCommand;
+
 import common.exception.NoTaskStateException;
+
 import parser.api.CommandParser;
+
 import task.entity.Task;
 import task.entity.TaskComparator;
 
 public class LogicController extends Observable {
-	/*** Variable ***/
-	private static final Logger LOGGER = Logger.getLogger(LogicController.class.getName());
-	private static LogicController thisInstance;
-	private static CommandParser commandParser;
-	private static Observer observer;
-	private static ArrayList<Task> deliveredTaskState;
-	private static TaskComparator comparator;
 
-	/*** Constructor ***/
-	public LogicController() {
-		LOGGER.info("Initialising Executor");
-		commandParser = new CommandParser();
-		deliveredTaskState = new ArrayList<Task>();
-		comparator = new TaskComparator();
-	}
+    /*** Variable ***/
+    private static final Logger LOGGER = Logger.getLogger(LogicController.class.getName());
+    
+    private static final String LOG_MSG_INFO_INIT_LOGIC_CONTROLLER = "Intialising LogicController";
+    private static final String LOG_MSG_SEVERE_NO_TASK_STATE = "LogicController:parseCommand(): Attempt to read state when there are no tasks";
+    
+    private static final String ERROR_MSG_NO_TASK_STATE = "Please perform a view to retrieve a list of task so that you can perform this command!";
+    
+    private static LogicController _thisInstance;
+    private static CommandParser _parserInstance;
+    private static TaskComparator _taskComparatorInstance;
+    private static ArrayList<Task> _deliveredTaskState;
+    private static Observer _observer;
 
-	/*** Methods ***/
+    /*** Constructor ***/
+    public LogicController() {
+        LOGGER.info(LOG_MSG_INFO_INIT_LOGIC_CONTROLLER);
+        _parserInstance = new CommandParser();
+        _deliveredTaskState = new ArrayList<Task>();
+        _taskComparatorInstance = new TaskComparator();
+    }
 
-	public static LogicController getInstance(Observer mainObserver) {
-		if (thisInstance == null) {
-			observer = mainObserver;
-			thisInstance = new LogicController();
-		}
-		return thisInstance;
-	}
+    /*** Methods ***/
 
-	public ArrayList<Task> processCommand(String userInput) {
-		return handleCommand(userInput);
-	}
+    /**
+     * Retrieves a Singleton instance of a LogicController
+     * 
+     * @param mainObserver
+     *          The observer view passed from the caller
+     * @return an instance of LogicController
+     */
+    public static LogicController getInstance(Observer mainObserver) {
+        if (_thisInstance == null) {
+            _observer = mainObserver;
+            _thisInstance = new LogicController();
+        }
+        
+        return _thisInstance;
+    }
+    
+    // API for UI component to access LogicController
+    public ArrayList<Task> processCommand(String userInput) {
+        return handleCommand(userInput);
+    }
 
-	private Command parseCommand(String userInput) throws Exception {
-		// Userinput should not be null after UI sends it to Executor
-		assert (userInput != null);
-		Command cmd;
-		if (commandParser.isStatefulCommand(userInput)) {
-			if (deliveredTaskState.isEmpty()) {
-				LOGGER.log(Level.SEVERE, "LogicController:parseCommand(): Attempt to read state when there are no tasks");
-				throw new NoTaskStateException("Please perform a view to retrieve a list of task so that you can perform this command!");
-			} else {
-				cmd = commandParser.parse(userInput, getStateTaskId());
-			}
-		}  else { 
-			cmd = commandParser.parse(userInput);
-		}
-		
-		return cmd;
-	}
+    private Command parseCommand(String userInput) throws Exception {
+        assert(userInput != null);
+        Command command;
+        // If userinput is a command that requires the state such as "edit <running index>"
+        // or "delete <running index>", send both the user input and the state to the Parser
+        if (_parserInstance.isStatefulCommand(userInput)) {
+            if (_deliveredTaskState.isEmpty()) {
+                LOGGER.log(Level.SEVERE, LOG_MSG_SEVERE_NO_TASK_STATE);
+                throw new NoTaskStateException(ERROR_MSG_NO_TASK_STATE);
+            } else {
+                command = _parserInstance.parse(userInput, getStateTaskId());
+            }
+        } else {
+            // Otherwise, send only the user input to the Parser
+            command = _parserInstance.parse(userInput);
+        }
 
-	private ArrayList<Task> executeCommand(Command command, String userInput) throws Exception {
-		command.addObserver(observer);
-		ArrayList<Task> executionResult = new ArrayList<Task>();
-		if (commandParser.isSaveStateCommand(userInput)) {
-			executionResult = command.execute();
-			if (!isSearch(command)) {
-				Collections.sort(executionResult,comparator);
-			}
-			deliveredTaskState = executionResult;
-		} else {
-			executionResult = command.execute();
-		}
-		return executionResult;
-	}
+        return command;
+    }
 
-	private ArrayList<Task> handleCommand(String userInput) {
-		ArrayList<Task> executionResult;
-		Command command;
-		
-		try {
-			command = parseCommand(userInput);
-			executionResult = executeCommand(command,userInput);
-		}	catch (Exception e) {
-			setChanged();
-			notifyObservers(e.getMessage());
-			return null;
-		}
-		return executionResult;
-	}
-	
-	private int[] getStateTaskId() {
-		int numId = deliveredTaskState.size();
-		int[] stateIndexes = new int[numId];
-		for (int i=0; i<numId; i++) {
-			stateIndexes[i] = deliveredTaskState.get(i).getTaskId();
-		}
-		return stateIndexes;
-	}
-	
-	private boolean isSearch(Command cmd) {
-		if (cmd instanceof SearchTaskCommand) {
-			return true;
-		} else {
-			return false;
-		}
-	}
+    private ArrayList<Task> executeCommand(Command command, String userInput) throws Exception {
+        command.addObserver(_observer);
+        ArrayList<Task> executionResult = new ArrayList<Task>();
+        
+        // If userinput is a Command that will update the state such as "view all"
+        // or "search <sequence>", execute the Command and update the state with the result
+        if (_parserInstance.isSaveStateCommand(userInput)) {
+            executionResult = command.execute();
+            // If the Command is a "Search", sort the results based on degree of match
+            // details specified in TaskComparator implementation
+            if (!isSearch(command)) {
+                Collections.sort(executionResult, _taskComparatorInstance);
+            }
+            _deliveredTaskState = executionResult;
+        } else {
+            // Otherwise, execute all other Command without updating the state
+            // with the result
+            executionResult = command.execute();
+        }
+        
+        return executionResult;
+    }
+
+    private ArrayList<Task> handleCommand(String userInput) {
+        ArrayList<Task> executionResult;
+        Command command;
+        // Attempt to parse and execute the Command specified by user input
+        try {
+            command = parseCommand(userInput);
+            executionResult = executeCommand(command, userInput);
+        } catch (Exception e) {
+            // If an Exception is encounted during the Command parsing or
+            // Command execution, update the observer with the Error messages
+            setChanged();
+            notifyObservers(e.getMessage());
+            return null;
+        }
+        
+        return executionResult;
+    }
+
+    // Pull out the task ID of all Task in the state so that it can be 
+    // passed to the Parser for stateful command parsing
+    private int[] getStateTaskId() {
+        int numId = _deliveredTaskState.size();
+        int[] stateIndexes = new int[numId];
+        for (int i = 0; i < numId; i++) {
+            stateIndexes[i] = _deliveredTaskState.get(i).getTaskId();
+        }
+        
+        return stateIndexes;
+    }
+
+    private boolean isSearch(Command command) {
+        if (command instanceof SearchTaskCommand) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

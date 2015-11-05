@@ -1,320 +1,386 @@
 package command.api;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import background.Reminder;
-import common.exception.InvalidCommandFormatException;
-import common.exception.InvalidPriorityException;
-import common.exception.NoSuchTaskException;
-import common.exception.UpdateTaskException;
-import common.util.DateTimeHelper;
-import task.api.*;
+import java.time.LocalDateTime;
+
+import task.api.TaskController;
 import task.entity.DeadlineTask;
 import task.entity.FloatingTask;
 import task.entity.Task;
 import task.entity.TimedTask;
 
+import common.exception.InvalidCommandFormatException;
+import common.exception.InvalidPriorityException;
+import common.exception.NoSuchTaskException;
+import common.exception.UpdateTaskException;
+import common.util.DateTimeHelper;
+
 public class EditTaskCommand extends Command {
 
-	/*** Variables ***/
-	private static final Logger LOGGER = Logger.getLogger(EditTaskCommand.class.getName());
-	private static final String TASK_TYPE_DEADLINE = "deadline";
-	private static final String TASK_TYPE_TIMED = "timed";
-	private static final String TASK_TYPE_FLOATING = "floating";
-	private static final String TASK_TYPE_INVALID = "invalid";
-	
-	private TaskController taskController = TaskController.getInstance();
-	
-	private ArrayList<Task> executionResult;
-	private int taskId; 
-	private int newPriority;
-	private Task originalTask, editedTask;
-	private String originalTaskType, newDescription = null;
-	private LocalDateTime newStart, newEnd, newReminder = null;
-	private boolean validity = true;
+    /*** Variables ***/
+    private static final Logger LOGGER = Logger.getLogger(EditTaskCommand.class.getName());
+    private static final String TASK_TYPE_DEADLINE = "deadline";
+    private static final String TASK_TYPE_TIMED = "timed";
+    private static final String TASK_TYPE_FLOATING = "floating";
+    private static final String TASK_TYPE_INVALID = "invalid";
+    
+    private static final String ERROR_MSG_GENERIC = "Error has occurred due to unexpected behavior";
+    private static final String ERROR_MSG_ADD_START_TO_FLOAT = "You cannot add only a start Time/Date to a Floating Task!";
+    private static final String ERROR_MSG_NO_SUCH_TASK = "Task with the following Task ID does not exist!";
+    private static final String ERROR_MSG_UPDATE_TASK_FAIL = "Failed to store updated Task to Storage";
+    private static final String ERROR_MSG_INVALID_PRIORITY = "The priority specified is invalid!";
+    
+    private static final String LOG_MSG_INFO_STORE_TASK = "EditTaskCommand: Storing updated task to Storage\n";
+    private static final String LOG_MSG_SEVERE_GET_TASK_FAIL = "Executing EditTaskCommand getTaskFromStorage(): Retrieve Task with taskId -> %1s failed";
+    private static final String LOG_MSG_SEVERE_STORE_TASK_FAIL = "Executing EditTaskCommand storeTaskToStorage(): Storing Task with taskId -> %1s failed";
+    private static final String LOG_MSG_SEVERE_ADD_START_TO_FLOAT = "Executing EditTaskCommand: User attempt to add only start date/time to Floating Task";
+    
+    private static final int PRIORITY_MIN_LEVEL = 1;
+    private static final int PRIORITY_MAX_LEVEL = 3;
+    private static final int PRIORITY_NONE = -1;
+    private ArrayList<Task> _executionResult;
+    private int _taskId;
+    private int _newPriority;
+    private boolean _isValidTaskType;
+    private Task _originalTask;
+    private Task _editedTask;
+    private String _originalTaskType;
+    private String _newDescription;
+    private LocalDateTime _newStart;
+    private LocalDateTime _newEnd;
+    private LocalDateTime _newReminder;
 
-	/*** Methods ***/
-	/**
-	 * This method modifies a Task based on user input for the edit command
-	 * 
-	 * @param 
-	 * @return		an ArrayList of Task objects that contains the modified Task object
-	 * @throws UpdateTaskException 
-	 * @throws NoSuchTaskException 
-	 * @throws InvalidCommandFormatException 
-	 * @throws InvalidPriorityException 
-	 */
-	@Override
-	public ArrayList<Task> execute() throws NoSuchTaskException, UpdateTaskException, InvalidCommandFormatException, InvalidPriorityException{
-		retrieveOptions();
-		getTaskFromStorage(taskId);
-		determineOriginalTaskType();
-		createEditedTask();
-		prepareExecutionResult();
-		return executionResult;
-	}
-	
-	/**
-	 * This method reverse the previous execute() of the previous EditTaskCommand
-	 *  
-	 * @return		an ArrayList of Task objects that contains the modified Task object
-	 * @throws UpdateTaskException 
-	 */
-	public ArrayList<Task> undo() throws UpdateTaskException {
-		prepareUndoTask();
-		prepareExecutionResult();
-		return executionResult;
-	}
-	
-	/**
-	 * This method retrieves the parsed parameters stored in the Option object in
-	 * this EditTaskCommand
-	 */
-	private void retrieveOptions() {
-		executionResult = new ArrayList<Task>();
-		newPriority = -1;
-		taskId = getOption("edit").getIntegerValue();
-		if (hasOption("desc")) {
-			newDescription = getOption("desc").getStringValue();
-		}
-		if (hasOption("start")) {
-			newStart = getOption("start").getDateValue();
-		}
-		if (hasOption("end")) {
-			newEnd = getOption("end").getDateValue();
-		}
-		if (hasOption("remind")) {
-			newReminder = getOption("remind").getDateValue();
-		}
-		if (hasOption("priority")) {
-			newPriority = getOption("priority").getIntegerValue();
-		}
-		
-	}
-	
-	private void prepareUndoTask() {
-		Task temp = editedTask;
-		editedTask = originalTask;
-		originalTask = temp;
-	}
-	
-	/**
-	 * Prepare execution result
-	 * @throws UpdateTaskException 
-	 */
-	private void prepareExecutionResult() throws UpdateTaskException {
-		if (validity) {
-			executionResult.clear();
-			executionResult.add(editedTask);
-			storeTaskToStorage(editedTask);
-		} else {
-			executionResult = null;
-		}
-	}
-	
-	/**
-	 * Determines the resulting Task type of the Task object to be modified based on
-	 * user input from the edit command
-	 * 
-	 * @return		a String that indicates the appropriate Task type for the Task object to be modified
-	 * @throws InvalidCommandFormatException 
-	 */
-	private String determineEditedTaskType() throws InvalidCommandFormatException {
-		switch(originalTaskType) {
-		case TASK_TYPE_FLOATING:
-			if (newStart == null && newEnd == null) { // If no start/end date/time is specified, task.type is still floating
-				return TASK_TYPE_FLOATING;
-			} else if (newStart == null) { // If only an end date/time is specified, task.type is now a deadline task
-				return TASK_TYPE_DEADLINE;
-			} else if (newStart != null && newEnd != null) { // If both new and end date/time is specified, task.type is now a timed task
-				return TASK_TYPE_TIMED;
-			} else if (newStart != null && newEnd == null){
-				LOGGER.log(Level.SEVERE, "Executing EditTaskCommand: User attempt to add only start date/time to Floating Task");
-				throw new InvalidCommandFormatException("You cannot add only a start Time/Date to a Floating Task!");
-			}
+    public EditTaskCommand() {
+        _originalTaskType = null;
+        _newDescription = null;
+        _newStart = null;
+        _newEnd = null;
+        _newReminder = null;
+        _newPriority = -1;
+        _isValidTaskType = false;
+        _executionResult = new ArrayList<Task>();
+    }
 
-		case TASK_TYPE_DEADLINE :
-			if (newStart == null) {
-				return TASK_TYPE_DEADLINE;
-			} else {
-				return TASK_TYPE_TIMED;
-			}
+    /*** Methods ***/
+    /**
+     * This method modifies a Task based on user input for the edit command
+     * 
+     * @return an ArrayList of Task objects that contains the modified Task
+     *         object
+     * @throws Exception 
+     */
+    @Override
+    public ArrayList<Task> execute() throws Exception {
+        retrieveOptions();
+        getTaskFromStorage(_taskId);
+        determineOriginalTaskType();
+        createEditedTask();
+        prepareExecutionResult();
+        
+        return _executionResult;
+    }
 
-		case TASK_TYPE_TIMED :
-			return TASK_TYPE_TIMED;
+    /**
+     * This method reverse the previous execute() of the previous
+     * EditTaskCommand
+     * 
+     * @return an ArrayList of Task objects that contains the modified Task
+     *         object
+     * @throws UpdateTaskException
+     */
+    public ArrayList<Task> undo() throws UpdateTaskException {
+        prepareUndoTask();
+        prepareExecutionResult();
+        
+        return _executionResult;
+    }
 
-		default :
-			return TASK_TYPE_INVALID;
-		}
-	}
+    /**
+     * This method modifies a Task based on user input for the edit command
+     * 
+     * @throws UpdateTaskException
+     */
+    private void prepareExecutionResult() throws UpdateTaskException {
+        if (_isValidTaskType) {
+            _executionResult.clear();
+            _executionResult.add(_editedTask);
+            storeTaskToStorage(_editedTask);
+        } else {
+            _executionResult = null;
+        }
+    }
+    
+    /**
+     * This method retrieves the parsed parameters stored in the Option object
+     * in this EditTaskCommand
+     */
+    private void retrieveOptions() {
+        setTaskIdOption();
+        setNewDescriptionOption();
+        setNewStartOption();
+        setNewEnd();
+        setNewReminder();
+        setNewPriority();
+    }
 
-	private void determineOriginalTaskType() {
-		switch (originalTask.getType()) {
-		case FLOATING:
-			originalTaskType = TASK_TYPE_FLOATING;
-			break;
-		case DEADLINE:
-			originalTaskType = TASK_TYPE_DEADLINE;
-			break;
-		case TIMED:
-			originalTaskType = TASK_TYPE_TIMED;
-			break;
-		default:
-			originalTaskType = TASK_TYPE_INVALID;
-		}
-	}
-	
-	/**
-	 * Instantiates the task object to be modified to the appropriate Task type with
-	 * the appropriate attributes
-	 * @throws InvalidCommandFormatException 
-	 * @throws InvalidPriorityException 
-	 */
-	private void createEditedTask() throws InvalidCommandFormatException, InvalidPriorityException {
-		switch(determineEditedTaskType()){
-		case TASK_TYPE_FLOATING : 
-			createNewFloatingTask();
-			break;
-		case TASK_TYPE_DEADLINE :
-			createNewDeadlineTask();
-			break;
-		case TASK_TYPE_TIMED :
-			createNewTimedTask();
-			break;
-		case TASK_TYPE_INVALID :
-			validity = false;
-			break;
-		}
-	}
-	
-	private void createNewFloatingTask() throws InvalidPriorityException {
-		editedTask = new FloatingTask(
-				originalTask.getTaskId(),
-				getEditedTaskDescription(),
-				originalTask.getCreatedAt(),
-				originalTask.isComplete(),
-				getEditedTaskPriority(),
-				originalTask.getTags());
-	}
-	
-	private void createNewDeadlineTask() throws InvalidPriorityException {
-		editedTask = new DeadlineTask(
-				originalTask.getTaskId(),
-				getEditedTaskDescription(),
-				originalTask.getCreatedAt(),
-				getEditedTaskEnd(),
-				getEditedTaskReminder(),
-				originalTask.isComplete(),
-				getEditedTaskPriority(),
-				originalTask.getTags());
-	}
+    private void prepareUndoTask() {
+        Task temp = _editedTask;
+        _editedTask = _originalTask;
+        _originalTask = temp;
+    }
+    
+    private void setTaskIdOption() {
+        _taskId = getOption("edit").getIntegerValue();
+    }
 
-	private void createNewTimedTask() throws InvalidPriorityException {
-		editedTask = new TimedTask(
-				originalTask.getTaskId(),
-				getEditedTaskDescription(),
-				originalTask.getCreatedAt(),
-				getEditedTaskStart(),
-				getEditedTaskEnd(),
-				getEditedTaskReminder(),
-				originalTask.isComplete(),
-				getEditedTaskPriority(),
-				originalTask.getTags());
-	}
+    private void setNewPriority() {
+        if (hasOption("priority")) {
+            _newPriority = getOption("priority").getIntegerValue();
+        }
+    }
 
-	/*** Setter and Getter Methods ***/
-	private String getEditedTaskDescription() {
-		if (newDescription != null) {
-			return newDescription;
-		} else {
-			return originalTask.getDescription();
-		}
-	}
-	
-	private LocalDateTime getEditedTaskStart() {
-		if (newStart != null) {
-			return newStart;
-		} else {
-			// Retrieve Original Task casted to a TimedTask as only this Task type has Start date/time
-			return getTimedTaskCastedOriginalTask().getStart();
-		}
-	}
+    private void setNewReminder() {
+        if (hasOption("remind")) {
+            _newReminder = getOption("remind").getDateValue();
+        }
+    }
 
-	private LocalDateTime getEditedTaskEnd(){
-		LocalDateTime newEditedTaskEnd = null;
-		if (newEnd != null) {
-			return newEnd;
-		} else if (originalTaskType.equals(TASK_TYPE_DEADLINE)) {
-			// Get DeadlineTask casted original Task and retrieve the End date/time
-			newEditedTaskEnd = getDeadlineTaskCastedOriginalTask().getEnd();
-		} else if (originalTaskType.equals(TASK_TYPE_TIMED)) {
-			// Get TimedTask casted original Task and retrieve the End date/time
-			newEditedTaskEnd = getTimedTaskCastedOriginalTask().getEnd();
-		}
-		return newEditedTaskEnd;
-	}
+    private void setNewEnd() {
+        if (hasOption("end")) {
+            _newEnd = getOption("end").getDateValue();
+        }
+    }
 
-	private LocalDateTime getEditedTaskReminder() {
-		LocalDateTime newEditedTaskReminder = null;
-		if (newReminder != null) {
-			return newReminder;
-		} else if (originalTaskType.equals(TASK_TYPE_FLOATING)){
-			newEditedTaskReminder = DateTimeHelper.addMinutes(getEditedTaskEnd(), 5);
-		} else if (originalTaskType.equals(TASK_TYPE_DEADLINE)) {
-			// Get DeadlineTask casted original Task and retrieve the reminder LocalDateTime object
-			newEditedTaskReminder = getDeadlineTaskCastedOriginalTask().getReminder();
-		} else if (originalTaskType.equals(TASK_TYPE_TIMED)) {
-			// Get TimedTask casted original Task and retrieve the reminder LocalDateTime object
-			newEditedTaskReminder = getTimedTaskCastedOriginalTask().getReminder();
-		}
-		return newEditedTaskReminder;
-	}
-	
-	private int getEditedTaskPriority() throws InvalidPriorityException {
-		if (newPriority == -1 ) {
-			return originalTask.getPriority();
-		} else if (newPriority < 1 || newPriority > 3){
-			throw new InvalidPriorityException("The priority specified is invalid!");
-		} else {
-			return newPriority;
-		}
-	}
-	
-	private DeadlineTask getDeadlineTaskCastedOriginalTask() {
-		DeadlineTask castedOriginalTask = (DeadlineTask) originalTask;
-		return castedOriginalTask;
-	}
-	
-	private TimedTask getTimedTaskCastedOriginalTask() {
-		TimedTask castedOriginalTask = (TimedTask) originalTask;
-		return castedOriginalTask;
-	}
-	
-	private void getTaskFromStorage(int taskId) throws NoSuchTaskException {
-		originalTask = taskController.getTask(taskId);
-		if (originalTask == null) {
-			LOGGER.log(Level.SEVERE, "Executing EditTaskCommand getTaskFromStorage(): Retrieve Task with taskId -> {0} failed", taskId);
-			throw new NoSuchTaskException("Task with the following Task ID does not exist!");
-		}
-		LOGGER.info("EditTaskCommand: Retrieved Task with taskId: " + taskId + "\n");
-	}
-	
-	/**
-	 * This method calls the storageAPI to store the updated task object
-	 * 
-	 * @param task the Task object that is updated
-	 * @return returns <code>True</code> if the operation is a success,
-	 * 		   returns <code>False</code> otherwise
-	 * @throws UpdateTaskException 
-	 */
-	private void storeTaskToStorage(Task task) throws UpdateTaskException  {
-		LOGGER.info("EditTaskCommand: Storing updated task to Storage\n");
-		if (!taskController.updateTask(task)) {
-			LOGGER.log(Level.SEVERE, "Executing EditTaskCommand storeTaskToStorage(): Storing Task with taskId -> {0} failed", taskId);
-			throw new UpdateTaskException("Failed to store updated Task to Storage");
-		}
-	}
+    private void setNewStartOption() {
+        if (hasOption("start")) {
+            _newStart = getOption("start").getDateValue();
+        }
+    }
+
+    private void setNewDescriptionOption() {
+        if (hasOption("desc")) {
+            _newDescription = getOption("desc").getStringValue();
+        }
+    }
+
+    private void determineOriginalTaskType() {
+        switch (_originalTask.getType()) {
+        case FLOATING :
+            _originalTaskType = TASK_TYPE_FLOATING;
+            break;
+        case DEADLINE :
+            _originalTaskType = TASK_TYPE_DEADLINE;
+            break;
+        case TIMED :
+            _originalTaskType = TASK_TYPE_TIMED;
+            break;
+        default :
+            _originalTaskType = TASK_TYPE_INVALID;
+        }
+    }
+
+    /**
+     * Instantiates the task object to be modified to the appropriate Task type
+     * with the appropriate attributes
+     * @throws Exception 
+     */
+    private void createEditedTask() throws Exception {
+        switch (determineEditedTaskType()) {
+            case TASK_TYPE_FLOATING :
+                createNewFloatingTask();
+                break;
+            case TASK_TYPE_DEADLINE :
+                createNewDeadlineTask();
+                break;
+            case TASK_TYPE_TIMED :
+                createNewTimedTask();
+                break;    
+            default :
+                throw new Exception(ERROR_MSG_GENERIC);
+        }
+    }
+
+    /**
+     * Determines the resulting Task type of the Task object to be modified
+     * based on user input from the edit command
+     * 
+     * @return a String that indicates the appropriate Task type for the Task
+     *         object to be modified
+     * @throws Exception 
+     */
+    private String determineEditedTaskType() throws Exception {
+        switch (_originalTaskType) {
+            case TASK_TYPE_FLOATING :
+                // If no start/end date/time is specified, task.type is still Floating
+                if (_newStart == null && _newEnd == null) {
+                    return TASK_TYPE_FLOATING;
+                 // If only an end date/time is specified, task.type is now a Deadline task
+                } else if (_newStart == null) { 
+                    return TASK_TYPE_DEADLINE;
+                 // If both new and end date/time is specified, task.type is now a Timed task
+                } else if (_newStart != null && _newEnd != null) {
+                    return TASK_TYPE_TIMED;
+                } else if (_newStart != null && _newEnd == null) {
+                    LOGGER.log(Level.SEVERE, LOG_MSG_SEVERE_ADD_START_TO_FLOAT);
+                    throw new InvalidCommandFormatException(ERROR_MSG_ADD_START_TO_FLOAT);
+                }
+    
+            case TASK_TYPE_DEADLINE :
+                if (_newStart == null) {
+                    return TASK_TYPE_DEADLINE;
+                } else {
+                    return TASK_TYPE_TIMED;
+                }
+    
+            case TASK_TYPE_TIMED :
+                return TASK_TYPE_TIMED;
+    
+            default :
+                throw new Exception(ERROR_MSG_GENERIC);
+        }
+    }
+    
+    private void createNewFloatingTask() throws InvalidPriorityException {
+        _editedTask = new FloatingTask(_originalTask.getTaskId(), getEditedTaskDescription(),
+                _originalTask.getCreatedAt(), _originalTask.isComplete(), getEditedTaskPriority(),
+                _originalTask.getTags());
+    }
+
+    private void createNewDeadlineTask() throws InvalidPriorityException {
+        _editedTask = new DeadlineTask(_originalTask.getTaskId(), getEditedTaskDescription(),
+                _originalTask.getCreatedAt(), getEditedTaskEnd(), getEditedTaskReminder(), _originalTask.isComplete(),
+                getEditedTaskPriority(), _originalTask.getTags(),getDeadlineTaskCastedOriginalTask().isRecurring(),
+                getDeadlineTaskCastedOriginalTask().getRecurPeriod());
+    }
+
+    private void createNewTimedTask() throws InvalidPriorityException {
+        _editedTask = new TimedTask(_originalTask.getTaskId(), getEditedTaskDescription(), _originalTask.getCreatedAt(),
+                getEditedTaskStart(), getEditedTaskEnd(), getEditedTaskReminder(), _originalTask.isComplete(),
+                getEditedTaskPriority(), _originalTask.getTags(),getTimedTaskCastedOriginalTask().isRecurring(),
+                getTimedTaskCastedOriginalTask().getRecurPeriod());
+    }
+
+    /*** Setter and Getter Methods ***/
+    
+    private String getEditedTaskDescription() {
+        // If user specified a new description, use this
+        if (_newDescription != null) {
+            return _newDescription;
+        } else {
+            // Otherwise, use the original description
+            return _originalTask.getDescription();
+        }
+    }
+
+    private LocalDateTime getEditedTaskStart() {
+        // If user specified a new Start date/time, use this
+        if (_newStart != null) {
+            return _newStart;
+        } else {
+            // Otherwise, retrieve original Task casted to a TimedTask as only this Task
+            // type has Start date/time
+            return getTimedTaskCastedOriginalTask().getStart();
+        }
+    }
+
+    private LocalDateTime getEditedTaskEnd() {
+        LocalDateTime newEditedTaskEnd = null;
+        // If user specified a new End date/time, use this
+        if (_newEnd != null) {
+            // If user did not specify a new Reminder, change it to a time that is 
+            // 5 minutes before the new specified End/date time
+            if (_newReminder == null) {
+                _newReminder = DateTimeHelper.addMinutes(_newEnd, -5);
+            }
+            return _newEnd;
+        } else if (_originalTaskType.equals(TASK_TYPE_DEADLINE)) {
+            // Otherwise, if this Task is a DeadlineTask, get DeadlineTask casted original 
+            // Task and retrieve the End date/time
+            newEditedTaskEnd = getDeadlineTaskCastedOriginalTask().getEnd();
+        } else if (_originalTaskType.equals(TASK_TYPE_TIMED)) {
+            // Otherwise, if this Task is a TimedTask, get TimedTask casted original 
+            // Task and retrieve the End date/time
+            newEditedTaskEnd = getTimedTaskCastedOriginalTask().getEnd();
+        }
+        
+        return newEditedTaskEnd;
+    }
+
+    private LocalDateTime getEditedTaskReminder() {
+        LocalDateTime newEditedTaskReminder = null;
+        // If user specified a new Reminder LocalDateTime, use this
+        if (_newReminder != null) {
+            return _newReminder;
+        } else if (_originalTaskType.equals(TASK_TYPE_FLOATING)) {
+            // Otherwise, if this Task is a Floating Task, set a new Reminder that will
+            // be 5 minutes before the End date/time
+            newEditedTaskReminder = DateTimeHelper.addMinutes(getEditedTaskEnd(), -5);
+        } else if (_originalTaskType.equals(TASK_TYPE_DEADLINE)) {
+            // Otherwise, if this Task is a DeadlineTask, get the DeadlineTask casted
+            // original Task and retrieve its original Reminder
+            newEditedTaskReminder = getDeadlineTaskCastedOriginalTask().getReminder();
+        } else if (_originalTaskType.equals(TASK_TYPE_TIMED)) {
+            // Otherwise, if this Task is a TimedTask, get the TimedTask casted
+            // original Task and retrieve its original Reminder
+            newEditedTaskReminder = getTimedTaskCastedOriginalTask().getReminder();
+        }
+        
+        return newEditedTaskReminder;
+    }
+
+    private int getEditedTaskPriority() throws InvalidPriorityException {
+        if (_newPriority == PRIORITY_NONE) {
+            return _originalTask.getPriority();
+        } else if (_newPriority < PRIORITY_MIN_LEVEL || _newPriority > PRIORITY_MAX_LEVEL) {
+            // If new user specified priority is beyond the valid range [1..3], throw Error
+            throw new InvalidPriorityException(ERROR_MSG_INVALID_PRIORITY);
+        } else {
+            return _newPriority;
+        }
+    }
+
+    private DeadlineTask getDeadlineTaskCastedOriginalTask() {
+        DeadlineTask castedOriginalTask = (DeadlineTask) _originalTask;
+        
+        return castedOriginalTask;
+    }
+
+    private TimedTask getTimedTaskCastedOriginalTask() {
+        TimedTask castedOriginalTask = (TimedTask) _originalTask;
+        
+        return castedOriginalTask;
+    }
+
+    /**
+     * This method calls the storageAPI to retrieve the Task object with this taskId
+     * 
+     * @param taskId
+     *            the id of the Task object to retrieve
+     * @throws NoSuchTaskException
+     */
+    private void getTaskFromStorage(int taskId) throws NoSuchTaskException {
+        _originalTask = TaskController.getInstance().getTask(taskId);
+        if (_originalTask == null) {
+            LOGGER.log(Level.SEVERE,String.format(LOG_MSG_SEVERE_GET_TASK_FAIL, taskId));
+            throw new NoSuchTaskException(ERROR_MSG_NO_SUCH_TASK);
+        }
+    }
+
+    /**
+     * This method calls the storageAPI to store this Task object
+     * 
+     * @param task
+     *            the Task object that is updated
+     * @throws UpdateTaskException
+     */
+    private void storeTaskToStorage(Task task) throws UpdateTaskException {
+        LOGGER.info(LOG_MSG_INFO_STORE_TASK);
+        if (!TaskController.getInstance().updateTask(task)) {
+            LOGGER.log(Level.SEVERE, String.format(LOG_MSG_SEVERE_STORE_TASK_FAIL, _taskId));
+            throw new UpdateTaskException(ERROR_MSG_UPDATE_TASK_FAIL);
+        }
+    }
 }

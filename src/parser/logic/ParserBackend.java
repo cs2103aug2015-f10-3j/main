@@ -3,7 +3,6 @@ package parser.logic;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -15,12 +14,12 @@ import com.joestelmach.natty.DateGroup;
 
 import common.data.ParserConstants;
 
-class Parser implements ParserConstants {
+class ParserBackend implements ParserConstants {
 
-	
-	public static final String SPACE_REGEX = "\\s+";
 	public static final String EMPTY_STRING = "";
 	public static final String SPACE = " ";
+	public static final char SPACES = ' ';
+	public static final char QUOTES = '"';
 	
 	public static final boolean OPTIONAL = true;
 	public static final boolean NOT_OPTIONAL = false;
@@ -47,7 +46,7 @@ class Parser implements ParserConstants {
 	private static HashMap<COMMAND_TYPE, EnumMap<OPTIONS, TYPE>> optionsMap = new HashMap<COMMAND_TYPE, EnumMap<OPTIONS, TYPE>>();
 	protected static com.joestelmach.natty.Parser dateParser = new com.joestelmach.natty.Parser();
 	
-	public Parser() {
+	public ParserBackend() {
 		parseDate("warmup");
 		setupCommandEnums();
 	}
@@ -100,6 +99,7 @@ class Parser implements ParserConstants {
 		shortHandMap.put(OPTIONS.TAG_SHORT.toString(), OPTIONS.TAG.toString());
 		shortHandMap.put(OPTIONS.UNTAG_SHORT.toString(), OPTIONS.UNTAG.toString());
 		shortHandMap.put(OPTIONS.PRIORITY_SHORT.toString(), OPTIONS.PRIORITY.toString());
+		shortHandMap.put(OPTIONS.EVERY_SHORT.toString(), OPTIONS.EVERY.toString());
 	}
 	
 	private void setupTrivialOptions() {
@@ -175,6 +175,7 @@ class Parser implements ParserConstants {
 		editOptions.put(OPTIONS.START, TYPE.DATE);
 		editOptions.put(OPTIONS.END, TYPE.DATE);
 		editOptions.put(OPTIONS.PRIORITY, TYPE.INTEGER);
+		editOptions.put(OPTIONS.EVERY, TYPE.DAY);
 		
 		editOptions.put(OPTIONS.EDIT_SHORT, TYPE.INTEGER);
 		editOptions.put(OPTIONS.DESC_SHORT, TYPE.STRING);
@@ -185,6 +186,7 @@ class Parser implements ParserConstants {
 		editOptions.put(OPTIONS.START_SHORT, TYPE.DATE);
 		editOptions.put(OPTIONS.END_SHORT, TYPE.DATE);
 		editOptions.put(OPTIONS.PRIORITY_SHORT, TYPE.INTEGER);
+		editOptions.put(OPTIONS.EVERY_SHORT, TYPE.DAY);
 		optionsMap.put(COMMAND_TYPE.EDIT, editOptions);
 	}
 
@@ -218,6 +220,7 @@ class Parser implements ParserConstants {
 		addOptions.put(OPTIONS.START, TYPE.DATE);
 		addOptions.put(OPTIONS.END, TYPE.DATE);
 		addOptions.put(OPTIONS.PRIORITY, TYPE.INTEGER);
+		addOptions.put(OPTIONS.EVERY, TYPE.DAY);
 
 		addOptions.put(OPTIONS.ADD_SHORT, TYPE.STRING);
 		addOptions.put(OPTIONS.BY_SHORT, TYPE.DATE);
@@ -227,6 +230,7 @@ class Parser implements ParserConstants {
 		addOptions.put(OPTIONS.START_SHORT, TYPE.DATE);
 		addOptions.put(OPTIONS.END_SHORT, TYPE.DATE);
 		addOptions.put(OPTIONS.PRIORITY_SHORT, TYPE.INTEGER);
+		addOptions.put(OPTIONS.EVERY_SHORT, TYPE.DAY);
 		optionsMap.put(COMMAND_TYPE.ADD, addOptions);
 	}
 	
@@ -256,15 +260,13 @@ class Parser implements ParserConstants {
 	public List<String> breakDownCommand(String userCommand) {
 		LOGGER.info("Attempt to breakdown user input into chunks of words.");
 		assert(userCommand != null && userCommand.length() > 0);
-		List<String> commandLine = new ArrayList<String>();
-		commandLine.addAll(Arrays.asList(userCommand.split(SPACE_REGEX)));
-		return commandLine;
+		return preprocessUserCommand(userCommand);
 	}
 	
 	protected String getMainCommand(String userCommand) {
 		LOGGER.log(Level.INFO, "Get first word of user input: {0}", userCommand);
 		assert(userCommand != null && userCommand.length() > 0);
-		return userCommand.split(SPACE_REGEX)[0];
+		return userCommand.split(SPACE)[0];
 	}
 	
 	protected boolean isOption(EnumMap<OPTIONS, TYPE> optionMap, String option) {
@@ -280,6 +282,15 @@ class Parser implements ParserConstants {
 		for (OPTIONS value : optionMap.keySet()) {
 			if (value.toString().equalsIgnoreCase(option)) {
 				return isTrivialOption(optionMap.get(value));
+			}
+		}
+		return false;
+	}
+	
+	protected boolean isDay(String day) {
+		for (DAY d : DAY.values()) {
+			if (d.toString().equalsIgnoreCase(day)) {
+				return true;
 			}
 		}
 		return false;
@@ -313,5 +324,49 @@ class Parser implements ParserConstants {
 			throw new Error("Corrupted commandType");
 		}
 		return optionsMap.get(commandType);
+	}
+	
+	private List<String> preprocessUserCommand(String userCommand) {
+		List<String> processedCommand = new ArrayList<String>();
+		int head = 0;
+		for (int i = 0; !isEOL(userCommand, i); i++) {
+			if (isEOL(userCommand, i + 1)) {
+				addTo(processedCommand, userCommand, head, i + 1);
+			} else if (isSpace(userCommand, i)) {
+				addTo(processedCommand, userCommand, head, i);
+				head = i + 1;
+			} else if (isQuote(userCommand, i)) {
+				int j = i + 1;
+				while (!isEOL(userCommand, j) && !isQuote(userCommand, j)) {
+					j++;
+				}
+				if (!isEOL(userCommand, j)) {
+					i = j + 1;
+					addTo(processedCommand, userCommand, head + 1, j);
+					head = i + 1;
+				}
+			}
+		}
+		return processedCommand;
+	}
+	
+	private boolean isQuote(String s, int i) {
+		return s.charAt(i) == QUOTES;
+	}
+	
+	private boolean isSpace(String s, int i) {
+		return s.charAt(i) == SPACES;
+	}
+	
+	private boolean isEOL(String s, int i) {
+		return i >= s.length();
+	}
+	
+	private String substring(String s, int i, int j) {
+		return s.substring(i, j);
+	}
+	
+	private void addTo(List<String> command, String s, int i, int j) {
+		command.add(substring(s, i, j));
 	}
 }
