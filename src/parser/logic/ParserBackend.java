@@ -100,6 +100,7 @@ class ParserBackend implements ParserConstants {
 		shortHandMap.put(OPTIONS.TAG_SHORT.toString(), OPTIONS.TAG.toString());
 		shortHandMap.put(OPTIONS.UNTAG_SHORT.toString(), OPTIONS.UNTAG.toString());
 		shortHandMap.put(OPTIONS.PRIORITY_SHORT.toString(), OPTIONS.PRIORITY.toString());
+		shortHandMap.put(OPTIONS.EVERY_SHORT.toString(), OPTIONS.EVERY.toString());
 	}
 	
 	private void setupTrivialOptions() {
@@ -175,6 +176,7 @@ class ParserBackend implements ParserConstants {
 		editOptions.put(OPTIONS.START, TYPE.DATE);
 		editOptions.put(OPTIONS.END, TYPE.DATE);
 		editOptions.put(OPTIONS.PRIORITY, TYPE.INTEGER);
+		editOptions.put(OPTIONS.EVERY, TYPE.DAY);
 		
 		editOptions.put(OPTIONS.EDIT_SHORT, TYPE.INTEGER);
 		editOptions.put(OPTIONS.DESC_SHORT, TYPE.STRING);
@@ -185,6 +187,7 @@ class ParserBackend implements ParserConstants {
 		editOptions.put(OPTIONS.START_SHORT, TYPE.DATE);
 		editOptions.put(OPTIONS.END_SHORT, TYPE.DATE);
 		editOptions.put(OPTIONS.PRIORITY_SHORT, TYPE.INTEGER);
+		editOptions.put(OPTIONS.EVERY_SHORT, TYPE.DAY);
 		optionsMap.put(COMMAND_TYPE.EDIT, editOptions);
 	}
 
@@ -218,6 +221,7 @@ class ParserBackend implements ParserConstants {
 		addOptions.put(OPTIONS.START, TYPE.DATE);
 		addOptions.put(OPTIONS.END, TYPE.DATE);
 		addOptions.put(OPTIONS.PRIORITY, TYPE.INTEGER);
+		addOptions.put(OPTIONS.EVERY, TYPE.DAY);
 
 		addOptions.put(OPTIONS.ADD_SHORT, TYPE.STRING);
 		addOptions.put(OPTIONS.BY_SHORT, TYPE.DATE);
@@ -227,6 +231,7 @@ class ParserBackend implements ParserConstants {
 		addOptions.put(OPTIONS.START_SHORT, TYPE.DATE);
 		addOptions.put(OPTIONS.END_SHORT, TYPE.DATE);
 		addOptions.put(OPTIONS.PRIORITY_SHORT, TYPE.INTEGER);
+		addOptions.put(OPTIONS.EVERY_SHORT, TYPE.DAY);
 		optionsMap.put(COMMAND_TYPE.ADD, addOptions);
 	}
 	
@@ -280,6 +285,15 @@ class ParserBackend implements ParserConstants {
 		for (OPTIONS value : optionMap.keySet()) {
 			if (value.toString().equalsIgnoreCase(option)) {
 				return isTrivialOption(optionMap.get(value));
+			}
+		}
+		return false;
+	}
+	
+	protected boolean isDay(String day) {
+		for (DAY d : DAY.values()) {
+			if (d.toString().equalsIgnoreCase(day)) {
+				return true;
 			}
 		}
 		return false;

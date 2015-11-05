@@ -173,6 +173,9 @@ public class ParseLogic extends ParserBackend {
 				case DATE:
 					newOption = expectDate(commandList, false);
 					break;
+				case DAY:
+					newOption = expectDay(commandList, false);
+					break;
 				case STRING_OPT:
 					newOption = expectString(commandList, true);
 					break;
@@ -234,6 +237,28 @@ public class ParseLogic extends ParserBackend {
 		List<LocalDateTime> dates = parseDates(expectedString);
 		while (!dates.isEmpty()) {
 			commandOption.addValue(dates.remove(0));
+		}
+		return commandOption;
+	}
+
+	private Option expectDay(List<String> commandList, boolean optional) throws Exception {
+		LOGGER.log(Level.INFO, "Attempt to parse expected array of integers from user input");
+		assert(commandList != null);
+		Option commandOption = new Option();
+		if (commandList.isEmpty()) {
+			if (optional) {
+				return null;
+			} else {
+				LOGGER.log(Level.SEVERE, "expected input not found");
+				throw new InvalidCommandFormatException("Expected input not found!");
+			}
+		}
+		for (int i = 0; i < commandList.size(); i++) {
+			String expectedDay = commandList.get(i);
+			if (!isDay(expectedDay)) {
+				return null;
+			}
+			commandOption.addValue(expectedDay);
 		}
 		return commandOption;
 	}
