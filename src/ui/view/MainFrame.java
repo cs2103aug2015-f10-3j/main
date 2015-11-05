@@ -45,7 +45,7 @@ public class MainFrame implements Observer{
 	private static CommandLinePanel panel;
 	private static boolean isMinimized = false;
 	private static Scanner sc = new Scanner(System.in);
-	private static final String GUI_COMMAND = "guimode";
+	private static final String CLI_COMMAND = "cli";
 	private static UIController uiController;
 	private static final char PRIORITY_INDICATOR = '*';
 	private static final char BOLD_INDICATOR = '@';
@@ -65,21 +65,30 @@ public class MainFrame implements Observer{
 	public static void main(String[] args) {
 		//Schedule a job for the event-dispatching thread:
 		//creating and showing this application's GUI.
-		mainFrame = new MainFrame();
-		mainFrame.initiate();
+		
+		initiate(args);
 	}
 
-	public void initiate() {
+	public static boolean initiate(String[] args) {
+		mainFrame = new MainFrame();
+		if(args.length > 0){
+			String input = args[0];
+			if(input.equals(CLI_COMMAND)){
+				//mainFrame.cliMode();
+				return true;
+			}
+		}
+		initiateGUI();
+		return true;
+	}
+	
+	public void cliMode(){
 		prepareWelcome();
 		while(sc.hasNext()){
 			String command = sc.nextLine();
-			if(command.equalsIgnoreCase(GUI_COMMAND)){
-				initiateGUI();
-			} else{
-				String[] output = uiController.processUserInput(command);
-				if(output!= null){
-					outputToCmd(output);
-				}
+			String[] output = uiController.processUserInput(command);
+			if(output!= null){
+				outputToCmd(output);
 			}
 
 		}

@@ -8,13 +8,15 @@ import org.junit.Test;
 
 import ui.controller.UIController;
 import ui.view.CommandLinePanel;
+import ui.view.MainFrame;
 
 public class FlowTest {
 	UIController uiController;
 	@Before
 	public void setUp() throws Exception {
-		CommandLinePanel panel = new CommandLinePanel();
-		UIController uiController = UIController.getInstance(panel);
+		MainFrame mainFrame = new MainFrame();
+		CommandLinePanel panel = new CommandLinePanel(null);
+		UIController uiController = UIController.getInstance(mainFrame);
 	}
 
 	@After

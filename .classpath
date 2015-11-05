@@ -3,7 +3,6 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/External"/>
 	<classpathentry kind="lib" path="src/External Libraries/jnativehook-2.0.2.jar"/>
 	<classpathentry kind="lib" path="src/External Libraries/natty-0.12.jar"/>
 	<classpathentry kind="lib" path="src/External Libraries/antlr-runtime-3.5.2.jar"/>
