@@ -53,6 +53,10 @@ public class DateTimeHelper {
 	public static LocalDateTime addMonths(LocalDateTime inputDateTime, int monthsToAdd) {
 		return inputDateTime.plusMonths(monthsToAdd);
 	}
+	
+	public static LocalDateTime addWeeks(LocalDateTime inputDateTime, int weeksToAdd) {
+        return inputDateTime.plusWeeks(weeksToAdd);
+    }
 
 	public static LocalDateTime addDays(LocalDateTime inputDateTime, int daysToAdd) {
 		return inputDateTime.plusDays(daysToAdd);
