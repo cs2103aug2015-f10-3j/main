@@ -23,7 +23,7 @@ public class Reminder extends Observable {
 		createRunnable();
 		thread = new Thread(r);
 		thread.start();
-		System.out.println("Reminder Thread started...\n");
+		//System.out.println("Reminder Thread started...\n");
 	}
 
 	public static Reminder getInstance(Observer reminderObserver) {
@@ -72,7 +72,7 @@ public class Reminder extends Observable {
 						}
 					}
 					
-					System.out.println("dueTaskList.size(): " + dueTaskList.size());
+					//System.out.println("dueTaskList.size(): " + dueTaskList.size());
 
 					// Notify observers
 					if (dueTaskList.size() > 0) {

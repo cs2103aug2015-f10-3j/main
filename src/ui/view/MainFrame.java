@@ -3,6 +3,7 @@ package ui.view;
 import java.awt.*;
 import java.awt.event.*;
 import java.net.URL;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
@@ -20,6 +21,7 @@ import background.Reminder;
 import command.api.ClearCommand;
 import command.api.SearchTaskCommand;
 import command.api.ViewTaskCommand;
+import common.util.DateTimeHelper;
 import common.util.LoggingHandler;
 import task.entity.Task;
 import ui.controller.UIController;
@@ -35,17 +37,23 @@ public class MainFrame implements Observer{
 	/*** Variables ***/
 	private static final String TITLE = "PaddleTask";
 	private static final String SEA_GLASS_LOOK_AND_FEEL = "com.seaglasslookandfeel.SeaGlassLookAndFeel";
+	private static final String WELCOME_MSG_1 = "Welcome to PaddleTask.";
+	private static final String WELCOME_MSG_2 = "Today is %s.";
+	private static final String WELCOME_MSG_3 = "Your upcoming tasks for today:";
+	private static final String FIRST_COMMAND = "view all today";
 	private static JFrame frame;
 	private static CommandLinePanel panel;
 	private static boolean isMinimized = false;
 	private static Scanner sc = new Scanner(System.in);
 	private static final String GUI_COMMAND = "startx";
 	private static UIController uiController;
+	private static final char PRIORITY_INDICATOR = '*';
+	private static final char BOLD_INDICATOR = '@';
 
 	public MainFrame(){
 		uiController = UIController.getInstance(this);
 	}
-	
+
 	/*** Methods ***/
 	/**
 	 * This method is the main method of the program.
@@ -60,6 +68,7 @@ public class MainFrame implements Observer{
 	}
 
 	public void initiate() {
+		prepareWelcome();
 		while(sc.hasNext()){
 			String command = sc.nextLine();
 			if(command.equals(GUI_COMMAND)){
@@ -70,16 +79,33 @@ public class MainFrame implements Observer{
 					outputToCmd(output);
 				}
 			}
-			
+
 		}
 	}
 	
+	public void prepareWelcome(){
+		String today = DateTimeHelper.getDate(LocalDateTime.now());
+		String[] outputs = new String[3];
+		int counter = 0;
+		outputs[counter++] = WELCOME_MSG_1;
+		outputs[counter++] = String.format(WELCOME_MSG_2, today);
+		outputs[counter++] = WELCOME_MSG_3;
+		String[] output = uiController.processUserInput(FIRST_COMMAND);
+		outputToCmd(outputs);
+		outputToCmd(output);
+	}
+
 	public void outputToCmd(String[] output){
 		for(String s : output){
-			System.out.println(s);
+			if(s!=null){
+				while(s.charAt(0) == BOLD_INDICATOR || s.charAt(0) == PRIORITY_INDICATOR ){
+					s = s.substring(1);
+				}
+				System.out.println(s);
+			}
 		}
 	}
-	
+
 	/**
 	 * This method is to schedule a job for the event-dispatching thread, followed
 	 * by creating and showing this application's GUI.
@@ -141,7 +167,7 @@ public class MainFrame implements Observer{
 		//nextPanel.populateContentPane(contentPane);
 		//panel = new MainPanel();
 		panel.populateContentPane(frame.getContentPane());
-		
+
 		//Display the window.
 		Dimension size = frame.getToolkit().getScreenSize();
 		size.setSize(size.width / 2, size.height / 2);
@@ -159,7 +185,7 @@ public class MainFrame implements Observer{
 	 *  @param  Component 
 	 *  			JFrame frame
 	 */
-	
+
 	private static void removeDefaultButtons(Component com){
 		if(com instanceof JButton){
 			String name = ((JButton) com).getAccessibleContext().getAccessibleName();
@@ -250,7 +276,7 @@ public class MainFrame implements Observer{
 	public void update(Observable o, Object arg) {
 		// TODO Auto-generated method stub
 		if (o instanceof ClearCommand || o instanceof ViewTaskCommand || o instanceof SearchTaskCommand) {
-			System.out.print("\033[H\033[2J");
+			System.out.println("\033[H\033[2J");
 		} else if(o instanceof Reminder){
 			String[] output = uiController.format((ArrayList<Task>)arg);
 			outputToCmd(output);
