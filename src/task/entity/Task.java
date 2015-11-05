@@ -5,15 +5,15 @@ import java.util.ArrayList;
 
 public class Task {
 	/*** Variables ***/
-	private static ArrayList<Task> taskList;
-	private int taskId;
-	private String description;
-	private LocalDateTime createdAt;
-	private TASK_TYPE type;
-    private boolean complete;
-    private int priority;
-    private ArrayList<String> tags;
-    private String[] details = {"-","-","-","-","-","-","-"};
+	private static ArrayList<Task> _tasks;
+	private int _taskId;
+	private String _description;
+	private LocalDateTime _createdAt;
+	private TASK_TYPE _type;
+    private boolean _isComplete;
+    private int _priority;
+    private ArrayList<String> _tags;
+    private String[] _details = {"-","-","-","-","-","-","-"};
 
     public enum TASK_TYPE {
         FLOATING {
@@ -76,81 +76,87 @@ public class Task {
 	
 	/*** Constructors ***/
 	public Task() {
-		if (taskList == null) {
-			taskList = new ArrayList<Task>();
+		if (_tasks == null) {
+			_tasks = new ArrayList<Task>();
 		}
 	}
 	
 	public Task(String description, int priority, String type) {
-		this.description = description;
-		this.createdAt = LocalDateTime.now();
-		this.type = determineTaskType(type);
-        this.priority = priority;
-		this.complete = false;
-		this.tags = new ArrayList<String>();
+		this._description = description;
+		this._createdAt = LocalDateTime.now();
+		this._type = determineTaskType(type);
+        this._priority = priority;
+		this._isComplete = false;
+		this._tags = new ArrayList<String>();
 	}
 
-    public Task(int taskId, String description, LocalDateTime createdAt, boolean complete, int priority, ArrayList<String> tags, String type) {
-	    this.taskId = taskId;
-	    this.description = description;
-	    this.createdAt = createdAt;
-        this.complete = complete;
-        this.priority = priority;
-        this.tags = tags;
-	    this.type = determineTaskType(type);
+    public Task(int taskId, String description, LocalDateTime createdAt, boolean isComplete, int priority, ArrayList<String> tags, String type) {
+	    this._taskId = taskId;
+	    this._description = description;
+	    this._createdAt = createdAt;
+        this._isComplete = isComplete;
+        this._priority = priority;
+        this._tags = tags;
+	    this._type = determineTaskType(type);
 	}
 	
 	/*** Assessors ***/
 	public static ArrayList<Task> getTaskList() {
-		return taskList;
+		return _tasks;
 	}
-	public static void setTaskList(ArrayList<Task> taskList) {
-		Task.taskList = taskList;
+	public static void setTaskList(ArrayList<Task> tasks) {
+		Task._tasks = tasks;
 	}
 	public int getTaskId() {
-		return taskId;
+		return _taskId;
 	}
 	public void setTaskId(int taskId) {
-		this.taskId = taskId;
+		this._taskId = taskId;
 	}
 	public String getDescription() {
-		return description;
+		return _description;
 	}
 	public void setDescription(String description) {
-		this.description = description;
+		this._description = description;
 	}
 	public LocalDateTime getCreatedAt() {
-		return createdAt;
+		return _createdAt;
 	}
 	public void setCreatedAt(LocalDateTime createdAt) {
-		this.createdAt = createdAt;
+		this._createdAt = createdAt;
 	}
     public TASK_TYPE getType() {
-        return type;
+        return _type;
     }
     public void setType(TASK_TYPE type) {
-        this.type = type;
+        this._type = type;
     }
     public boolean isComplete() {
-        return complete;
+        return _isComplete;
     }
-    public void setComplete(boolean complete) {
-        this.complete = complete;
+    public void setComplete(boolean isComplete) {
+        this._isComplete = isComplete;
     }
     public int getPriority() {
-        return priority;
+        return _priority;
     }
     public void setPriority(int priority) {
-        this.priority = priority;
+        this._priority = priority;
     }
     public ArrayList<String> getTags() {
-        return tags;
+        return _tags;
     }
     public void setTags(ArrayList<String> tags) {
-        this.tags = tags;
+        this._tags = tags;
     }
 
     /*** Method ***/
+    /**
+     * This method gets the task type from a string
+     * 
+     * @param  typeString  task type in string
+     * @return             task type in TASK_TYPE
+     */
     public static TASK_TYPE determineTaskType(String typeString) {
         TASK_TYPE type = null;
 
@@ -169,6 +175,12 @@ public class Task {
         return type;
     }
     
+    /**
+     * This method gets the recurring type from a string
+     * 
+     * @param  typeString  recurring type in string
+     * @return             recurring type in TASK_TYPE
+     */
     public static RECUR_TYPE determineRecurType(String typeString) {
         RECUR_TYPE type = null;
 
@@ -189,11 +201,17 @@ public class Task {
         return type;
     }
     
+    /**
+     * This method gets the taskId, type and description
+     * in a primitive array
+     * 
+     * @return      array of information
+     */
     public String[] toDetailsArray(){
     	int counter = 0;
-    	details[counter] = taskId + "";
-    	details[++counter] = type.toString().toLowerCase();
-    	details[++counter] = description;
-    	return details;
+    	_details[counter] = _taskId + "";
+    	_details[++counter] = _type.toString().toLowerCase();
+    	_details[++counter] = _description;
+    	return _details;
     }
 }

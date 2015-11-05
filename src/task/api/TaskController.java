@@ -15,7 +15,7 @@ import task.entity.TimedTask;
 public class TaskController {
     /*** Variables ***/
     protected StorageController sController;
-    private static TaskController thisInstance;
+    private static TaskController _thisInstance;
 
     /*** Constructor ***/
     private TaskController() {
@@ -24,19 +24,18 @@ public class TaskController {
     }
     
     public static synchronized TaskController getInstance( ) {
-        if (thisInstance == null)
-        	thisInstance = new TaskController();
-        return thisInstance;
+        if (_thisInstance == null)
+        	_thisInstance = new TaskController();
+        return _thisInstance;
      }
 
     /*** Methods ***/
     /**
      * This method adds the Task object to file
      * 
-     * @param task
-     *            Task entry to be added
-     * @return <code>true</code> if the task is successfully added;
-     *         <code>false</code> otherwise.
+     * @param  task  Task entry to be added
+     * @return       <code>true</code> if the task is successfully added;
+     *               <code>false</code> otherwise.
      */
     public boolean addTask(Task task) {
         // Get and set the smallest available tasId
@@ -44,65 +43,63 @@ public class TaskController {
         task.setTaskId(taskId);
 
         // Add this task to our arraylist
-        ArrayList<Task> taskList = Task.getTaskList();
-        taskList.add(task);
-        Task.setTaskList(taskList);
+        ArrayList<Task> tasks = Task.getTaskList();
+        tasks.add(task);
+        Task.setTaskList(tasks);
 
         // Store to file
-        Document doc = sController.parseTask(taskList);
-        boolean result = sController.writeXml(doc);
+        Document doc = sController.parseTask(tasks);
+        boolean isSuccessful = sController.writeXml(doc);
 
-        return result;
+        return isSuccessful;
     }
 
     /**
      * This method returns a list of all tasks
      * 
-     * @return an ArrayList of Tasks
+     * @return      an ArrayList of Tasks
      */
     public ArrayList<Task> getTask() {
         checkRecurring();
-        ArrayList<Task> taskList = Task.getTaskList();
-        return taskList;
+        ArrayList<Task> tasks = Task.getTaskList();
+        return tasks;
     }
 
     /**
      * This method returns a list of the specified tasks
      * 
-     * @param TASK_TYPE
-     *            type of the Tasks to be selected
-     * @return an ArrayList of Tasks
+     * @param  type  type of the Tasks to be selected
+     * @return       an ArrayList of Tasks
      */
     public ArrayList<Task> getTask(TASK_TYPE type) {
         checkRecurring();
-        ArrayList<Task> taskList = Task.getTaskList();
+        ArrayList<Task> tasks = Task.getTaskList();
         
         if (type == TASK_TYPE.ANY) {
-        	return taskList;
+        	return tasks;
         }
         
-        ArrayList<Task> filteredTaskList = new ArrayList<Task>();
+        ArrayList<Task> filteredTasks = new ArrayList<Task>();
 
-        for (Task task : taskList) {
+        for (Task task : tasks) {
             if (task.getType() == type) {
-                filteredTaskList.add(task);
+                filteredTasks.add(task);
             }
         }
 
-        return filteredTaskList;
+        return filteredTasks;
     }
 
     /**
      * This method returns a Task object
      * 
-     * @param taskId
-     *            the unique identifier of the Task object
-     * @return the specified Task object
+     * @param  taskId  the unique identifier of the Task object
+     * @return         the specified Task object
      */
     public Task getTask(int taskId) {
         checkRecurring();
-        ArrayList<Task> taskList = Task.getTaskList();
-        for (Task task : taskList) {
+        ArrayList<Task> tasks = Task.getTaskList();
+        for (Task task : tasks) {
             if (task.getTaskId() == taskId) {
                 return task;
             }
@@ -113,155 +110,151 @@ public class TaskController {
     /**
      * This method updates the Task object to file
      * 
-     * @param task
-     *            Task entry to be updated
-     * @return <code>true</code> if the task is successfully updated;
-     *         <code>false</code> otherwise.
+     * @param  task  Task entry to be updated
+     * @return       <code>true</code> if the task is successfully updated;
+     *               <code>false</code> otherwise.
      */
     public boolean updateTask(Task task) {
-        ArrayList<Task> taskList = Task.getTaskList();
-        boolean found = false;
+        ArrayList<Task> tasks = Task.getTaskList();
+        boolean isFound = false;
 
         // Find task
-        for (int i = 0; i < taskList.size(); i++) {
-            Task existingTask = taskList.get(i);
+        for (int i = 0; i < tasks.size(); i++) {
+            Task existingTask = tasks.get(i);
             if (existingTask.getTaskId() == task.getTaskId()) {
-                taskList.set(i, task);
-                found = true;
+                tasks.set(i, task);
+                isFound = true;
                 break;
             }
         }
 
         // Return if task is not found
-        if (!found) {
+        if (!isFound) {
             return false;
         }
 
         // Store to file
-        Task.setTaskList(taskList);
-        Document doc = sController.parseTask(taskList);
-        boolean result = sController.writeXml(doc);
+        Task.setTaskList(tasks);
+        Document doc = sController.parseTask(tasks);
+        boolean isSuccessful = sController.writeXml(doc);
 
-        return result;
+        return isSuccessful;
     }
 
     /**
      * This method delete the Task from file
      * 
-     * @param taskId
-     *            the unique identifier of the Task object
-     * @return <code>true</code> if the task is successfully updated;
-     *         <code>false</code> otherwise.
+     * @param  taskId  the unique identifier of the Task object
+     * @return         <code>true</code> if the task is successfully updated;
+     *                 <code>false</code> otherwise.
      */
     public boolean deleteTask(int taskId) {
-        ArrayList<Task> taskList = Task.getTaskList();
-        boolean found = false;
+        ArrayList<Task> tasks = Task.getTaskList();
+        boolean isFound = false;
 
         // Find task
-        for (int i = 0; i < taskList.size(); i++) {
-            Task task = taskList.get(i);
+        for (int i = 0; i < tasks.size(); i++) {
+            Task task = tasks.get(i);
             if (task.getTaskId() == taskId) {
-                taskList.remove(i);
-                found = true;
+                tasks.remove(i);
+                isFound = true;
                 break;
             }
         }
 
         // Return if task is not found
-        if (!found) {
+        if (!isFound) {
             return false;
         }
 
         // Store to file
-        Task.setTaskList(taskList);
-        Document doc = sController.parseTask(taskList);
-        boolean result = sController.writeXml(doc);
+        Task.setTaskList(tasks);
+        Document doc = sController.parseTask(tasks);
+        boolean isSuccessful = sController.writeXml(doc);
 
-        return result;
+        return isSuccessful;
     }
 
     /**
      * This method marks a Task as completed
      * 
-     * @param taskId
-     *            the unique identifier of the Task object
-     * @return <code>true</code> if the task is successfully marked as
-     *         completed; <code>false</code> otherwise.
+     * @param  taskId  the unique identifier of the Task object
+     * @return         <code>true</code> if the task is successfully marked as completed;
+     *                 <code>false</code> otherwise.
      */
     public boolean completeTask(int taskId) {
-        ArrayList<Task> taskList = Task.getTaskList();
+        ArrayList<Task> tasks = Task.getTaskList();
         Task task = null;
-        boolean found = false;
+        boolean isFound = false;
         int index = -1;
 
         // Find task
-        for (int i = 0; i < taskList.size(); i++) {
-            task = taskList.get(i);
+        for (int i = 0; i < tasks.size(); i++) {
+            task = tasks.get(i);
             if (task.getTaskId() == taskId) {
                 index = i;
-                found = true;
+                isFound = true;
                 break;
             }
         }
 
         // Return if task is not found
-        if (!found) {
+        if (!isFound) {
             return false;
         }
 
         // Modify complete status
         task.setComplete(true);
-        taskList.set(index, task);
+        tasks.set(index, task);
 
         // Store to file
-        Task.setTaskList(taskList);
-        Document doc = sController.parseTask(taskList);
-        boolean result = sController.writeXml(doc);
+        Task.setTaskList(tasks);
+        Document doc = sController.parseTask(tasks);
+        boolean isSuccessful = sController.writeXml(doc);
 
-        return result;
+        return isSuccessful;
     }
 
     /**
      * This method overwrites the entire file with an new list of Tasks
      * 
-     * @param taskList
-     *            list of the new Task objects
-     * @return <code>true</code> if the task is successfully marked as
-     *         completed; <code>false</code> otherwise.
+     * @param  tasks  list of the new Task objects
+     * @return        <code>true</code> if the task is successfully marked as 
+     *                completed;
+     *                <code>false</code> otherwise.
      */
-    public boolean writeAllToFile(ArrayList<Task> taskList) {
+    public boolean writeAllToFile(ArrayList<Task> tasks) {
         // Store to file
-        Task.setTaskList(taskList);
-        Document doc = sController.parseTask(taskList);
-        boolean result = sController.writeXml(doc);
+        Task.setTaskList(tasks);
+        Document doc = sController.parseTask(tasks);
+        boolean isSuccessful = sController.writeXml(doc);
 
-        return result;
+        return isSuccessful;
     }
 
     /**
      * This method gets the next available taskId
      * 
-     * @return an int as the next taskId
+     * @return      an int as the next taskId
      */
     public int getAvailableTaskId() {
-        ArrayList<Task> taskList = Task.getTaskList();
+        ArrayList<Task> tasks = Task.getTaskList();
         
-        if (taskList.size() == 0) {
+        if (tasks.size() == 0) {
             return 1;
         }
         
-        int[] testArray = new int[taskList.size()];
+        int[] testArray = new int[tasks.size()];
 
         for (int i = 0; i < testArray.length; i++) {
-            testArray[i] = taskList.get(i).getTaskId();
+            testArray[i] = tasks.get(i).getTaskId();
         }
 
         Arrays.sort(testArray);
         int smallest = testArray[0];
         int largest = testArray[testArray.length - 1];
         int smallestUnused = largest + 1;
-        // System.out.println("smallest: "+smallest);
-        // System.out.println("largest: "+largest);
+        
         if (smallest > 1) {
             smallestUnused = 1;
         } else {
@@ -272,7 +265,6 @@ public class TaskController {
                 }
             }
         }
-        // System.out.println("Smallest unused: "+smallestUnused);
 
         return smallestUnused;
     }
@@ -281,17 +273,15 @@ public class TaskController {
      * This method checks recurring tasks
      * and updates their end dates if necessary
      * 
-     * @param taskList
-     *            list of the new Task objects
      * @return <code>true</code> if the check is successfully performed; 
      *         <code>false</code> otherwise.
      */
     public boolean checkRecurring() {
-        ArrayList<Task> taskList = Task.getTaskList();
+        ArrayList<Task> tasks = Task.getTaskList();
 
         // Loop through all task
-        for (int i = 0; i < taskList.size(); i++) {
-            Task task = taskList.get(i);
+        for (int i = 0; i < tasks.size(); i++) {
+            Task task = tasks.get(i);
             switch (task.getType()) {
                 case DEADLINE:
                     if ((task.isComplete() == false) &&
@@ -301,22 +291,22 @@ public class TaskController {
                         switch (((DeadlineTask) task).getRecurPeriod()) {
                             case DAY:
                                 while (newEndDate.isBefore(LocalDateTime.now())) {
-                                    newEndDate.plusDays(1);
+                                    newEndDate = newEndDate.plusDays(1);
                                 }
                                 break;
                             case WEEK:
                                 while (newEndDate.isBefore(LocalDateTime.now())) {
-                                    newEndDate.plusWeeks(1);
+                                    newEndDate = newEndDate.plusWeeks(1);
                                 }
                                 break;
                             case MONTH:
                                 while (newEndDate.isBefore(LocalDateTime.now())) {
-                                    newEndDate.plusMonths(1);
+                                    newEndDate = newEndDate.plusMonths(1);
                                 }
                                 break;
                             case YEAR:
                                 while (newEndDate.isBefore(LocalDateTime.now())) {
-                                    newEndDate.plusYears(1);
+                                    newEndDate = newEndDate.plusYears(1);
                                 }
                                 break;
                             default:
@@ -324,7 +314,7 @@ public class TaskController {
                         }
                         ((DeadlineTask) task).setEnd(newEndDate);
                         ((DeadlineTask) task).setReminder(newEndDate.minusMinutes(5));
-                        taskList.set(i, task);
+                        tasks.set(i, task);
                     }
                     break;
                 case TIMED:
@@ -335,22 +325,22 @@ public class TaskController {
                         switch (((TimedTask) task).getRecurPeriod()) {
                             case DAY:
                                 while (newEndDate.isBefore(LocalDateTime.now())) {
-                                    newEndDate.plusDays(1);
+                                    newEndDate = newEndDate.plusDays(1);
                                 }
                                 break;
                             case WEEK:
                                 while (newEndDate.isBefore(LocalDateTime.now())) {
-                                    newEndDate.plusWeeks(1);
+                                    newEndDate = newEndDate.plusWeeks(1);
                                 }
                                 break;
                             case MONTH:
                                 while (newEndDate.isBefore(LocalDateTime.now())) {
-                                    newEndDate.plusMonths(1);
+                                    newEndDate = newEndDate.plusMonths(1);
                                 }
                                 break;
                             case YEAR:
                                 while (newEndDate.isBefore(LocalDateTime.now())) {
-                                    newEndDate.plusYears(1);
+                                    newEndDate = newEndDate.plusYears(1);
                                 }
                                 break;
                             default:
@@ -358,7 +348,7 @@ public class TaskController {
                         }
                         ((TimedTask) task).setEnd(newEndDate);
                         ((TimedTask) task).setReminder(newEndDate.minusMinutes(5));
-                        taskList.set(i, task);
+                        tasks.set(i, task);
                     }
                     break;
                 default:
@@ -367,10 +357,10 @@ public class TaskController {
         }
 
         // Store to file
-        Task.setTaskList(taskList);
-        Document doc = sController.parseTask(taskList);
-        boolean result = sController.writeXml(doc);
+        Task.setTaskList(tasks);
+        Document doc = sController.parseTask(tasks);
+        boolean isSuccessful = sController.writeXml(doc);
 
-        return result;
+        return isSuccessful;
     }
 }
