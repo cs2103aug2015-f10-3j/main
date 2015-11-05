@@ -70,7 +70,6 @@ public class TagTaskCommand extends Command {
 	private void processTags() throws UpdateTaskException {
 		archiveOriginalTags(getExistingTags());
 		updateOriginalTags();
-		//saveTagToTask(updateTaskTags());
 	}
 	
 	private void updateOriginalTags() {
