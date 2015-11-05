@@ -1,3 +1,4 @@
+//@@author A0126332R
 package main.paddletask.command.api;
 
 import java.util.ArrayList;
@@ -13,19 +14,31 @@ public class CompleteTaskCommand extends Command {
     private TaskController taskController;
     
     /*** Methods ***/
-	@Override
-	public ArrayList<Task> execute() {
-	    taskController = TaskController.getInstance();
-	    if (hasOption(KEYWORD_COMPLETE)) {
-	        completedTaskList = completeTask();
-	        return completedTaskList;
-	    } else {
-	        return null;
-	    }
-	}
-	
-	private ArrayList<Task> completeTask() {
-	    ArrayList<Task> taskList = new ArrayList<Task>();
+    /**
+     * This method complete Tasks based on user input
+     * 
+     * @return an ArrayList of Task objects that contains the completed Task
+     *         objects
+     */
+    @Override
+    public ArrayList<Task> execute() {
+        taskController = TaskController.getInstance();
+        if (hasOption(KEYWORD_COMPLETE)) {
+            completedTaskList = completeTask();
+            return completedTaskList;
+        } else {
+            return null;
+        }
+    }
+    
+    /**
+     * This method complete Tasks based on taskId
+     * 
+     * @return an ArrayList of Task objects that contains the completed Task
+     *         objects
+     */
+    private ArrayList<Task> completeTask() {
+        ArrayList<Task> taskList = new ArrayList<Task>();
         boolean deleteTaskResult = false;
         int numOfValues = -1;
         
@@ -53,16 +66,23 @@ public class CompleteTaskCommand extends Command {
         }
         
         return taskList;
-	}
+    }
 
-	@Override
-	public ArrayList<Task> undo() {
-	    if (completedTaskList != null) {
+    /**
+     * This method reverse the previous execute() of the previous
+     * CompleteTaskCommand
+     * 
+     * @return an ArrayList of Task objects that contains the completed Task
+     *         objects
+     */
+    @Override
+    public ArrayList<Task> undo() {
+        if (completedTaskList != null) {
             for (Task task : completedTaskList) {
                 task.setComplete(!task.isComplete());
                 TaskController.getInstance().updateTask(task);
             }
         }
         return completedTaskList;
-	}
+    }
 }

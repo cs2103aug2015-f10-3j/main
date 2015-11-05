@@ -1,3 +1,4 @@
+//@@author A0126332R
 package main.paddletask.task.api;
 
 import java.time.LocalDateTime;
@@ -20,13 +21,13 @@ public class TaskController {
 
     /*** Constructor ***/
     private TaskController() {
-    	sController = StorageController.getInstance();
+        sController = StorageController.getInstance();
         Task.setTaskList(sController.readTask());
     }
     
     public static synchronized TaskController getInstance( ) {
         if (_thisInstance == null)
-        	_thisInstance = new TaskController();
+            _thisInstance = new TaskController();
         return _thisInstance;
      }
 
@@ -77,7 +78,7 @@ public class TaskController {
         ArrayList<Task> tasks = Task.getTaskList();
         
         if (type == TASK_TYPE.ANY) {
-        	return tasks;
+            return tasks;
         }
         
         ArrayList<Task> filteredTasks = new ArrayList<Task>();

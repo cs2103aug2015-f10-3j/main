@@ -1,3 +1,4 @@
+//@@author A0126332R
 package main.paddletask.storage.api;
 
 import java.io.File;
@@ -47,10 +48,10 @@ public class StorageController {
     }
     
     public static StorageController getInstance() {
-    	if (_thisInstance == null) {
-    		_thisInstance = new StorageController();
-    	}
-    	return _thisInstance;
+        if (_thisInstance == null) {
+            _thisInstance = new StorageController();
+        }
+        return _thisInstance;
     }
     
     /*** Methods ***/
