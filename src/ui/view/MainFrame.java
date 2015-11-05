@@ -45,7 +45,7 @@ public class MainFrame implements Observer{
 	private static CommandLinePanel panel;
 	private static boolean isMinimized = false;
 	private static Scanner sc = new Scanner(System.in);
-	private static final String GUI_COMMAND = "startx";
+	private static final String GUI_COMMAND = "guimode";
 	private static UIController uiController;
 	private static final char PRIORITY_INDICATOR = '*';
 	private static final char BOLD_INDICATOR = '@';
@@ -73,7 +73,7 @@ public class MainFrame implements Observer{
 		prepareWelcome();
 		while(sc.hasNext()){
 			String command = sc.nextLine();
-			if(command.equals(GUI_COMMAND)){
+			if(command.equalsIgnoreCase(GUI_COMMAND)){
 				initiateGUI();
 			} else{
 				String[] output = uiController.processUserInput(command);
