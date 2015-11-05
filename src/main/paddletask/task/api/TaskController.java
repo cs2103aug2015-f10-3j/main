@@ -16,6 +16,7 @@ import main.paddletask.task.entity.TimedTask;
 
 public class TaskController {
     /*** Variables ***/
+    private static final int NEGATIVE_ONE = -1;
     protected StorageController sController;
     private static TaskController _thisInstance;
 
@@ -188,7 +189,7 @@ public class TaskController {
         ArrayList<Task> tasks = Task.getTaskList();
         Task task = null;
         boolean isFound = false;
-        int index = -1;
+        int index = NEGATIVE_ONE;
 
         // Find task
         for (int i = 0; i < tasks.size(); i++) {

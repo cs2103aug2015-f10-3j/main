@@ -8,6 +8,7 @@ import main.paddletask.task.entity.Task;
 public class CompleteTaskCommand extends Command {
 
     /*** Variables ***/
+    private static final int NEGATIVE_ONE = -1;
     private static final String KEYWORD_COMPLETE = "complete";
     private static ArrayList<Task> completedTaskList;
     
@@ -40,13 +41,13 @@ public class CompleteTaskCommand extends Command {
     private ArrayList<Task> completeTask() {
         ArrayList<Task> taskList = new ArrayList<Task>();
         boolean deleteTaskResult = false;
-        int numOfValues = -1;
+        int numOfValues = NEGATIVE_ONE;
         
         numOfValues = getOption(KEYWORD_COMPLETE).getValuesCount();
         
         for (int i = 0; i < numOfValues; i++) {
             // Get params
-            int taskId = -1;
+            int taskId = NEGATIVE_ONE;
             taskId = getOption(KEYWORD_COMPLETE).getIntegerValue(i);
             
             // Check if task exist

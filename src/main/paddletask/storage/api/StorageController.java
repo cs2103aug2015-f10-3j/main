@@ -37,8 +37,29 @@ import main.paddletask.task.entity.TimedTask;
 import main.paddletask.task.entity.Task.TASK_TYPE;
 
 public class StorageController {
-    private static final String DEFAULT_XML = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"no\"?><task></task>";
     /*** Variables ***/
+    private static final String ERROR_INITIALIZING_TRANSFORMER = "Error initializing transformer";
+    private static final String ERROR_OUTPUTTING_DOCUMENT = "Error outputting document";
+    private static final String ERROR_WRITING_TO_FILE = "Error writing to file";
+    private static final String YES = "yes";
+    private static final String INDENT_AMOUNT = "4";
+    private static final String INDENT_AMOUNT_DOCS = "{http://xml.apache.org/xslt}indent-amount";
+    private static final String ENCODING = "ISO-8859-1";
+    private static final String TASK = "task";
+    private static final String RECURTYPE = "recurtype";
+    private static final String RECURRING = "recurring";
+    private static final String REMINDER = "reminder";
+    private static final String END = "end";
+    private static final String START = "start";
+    private static final String TAG = "tag";
+    private static final String PRIORITY = "priority";
+    private static final String COMPLETE = "complete";
+    private static final String TASKTYPE = "tasktype";
+    private static final String CREATED_AT = "createdAt";
+    private static final String DESCRIPTION = "description";
+    private static final String TASK_ID = "taskId";
+    private static final String ITEM = "item";
+    private static final String DEFAULT_XML = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"no\"?><task></task>";
     public static final String CONFIG_FILE = ".config";
     protected static String DEFAULT_FILE = "task.xml";
     private static StorageController _thisInstance;
@@ -211,7 +232,7 @@ public class StorageController {
             Document doc = parseXml();
             
             //~ System.out.println("Root element :" + doc.getDocumentElement().getNodeName());
-            NodeList nodeList = doc.getElementsByTagName("item");
+            NodeList nodeList = doc.getElementsByTagName(ITEM);
             
             for (int temp = 0; temp < nodeList.getLength(); temp++) {
                 Node node = nodeList.item(temp);
@@ -221,30 +242,30 @@ public class StorageController {
                     Element element = (Element) node;
                     
                     // taskId
-                    String taskId = element.getElementsByTagName("taskId").item(0).getTextContent();
+                    String taskId = element.getElementsByTagName(TASK_ID).item(0).getTextContent();
                     int taskIdAsInt = Integer.valueOf(taskId);
                     
                     // description
-                    String description = element.getElementsByTagName("description").item(0).getTextContent();
+                    String description = element.getElementsByTagName(DESCRIPTION).item(0).getTextContent();
                     
                     // createdAt
-                    String createdAt = element.getElementsByTagName("createdAt").item(0).getTextContent();
+                    String createdAt = element.getElementsByTagName(CREATED_AT).item(0).getTextContent();
                     LocalDateTime createdAtAsLocalDateTime = DateTimeHelper.parseStringToDateTime(createdAt);
                     
                     // task type
-                    String taskTypeAsString = element.getElementsByTagName("tasktype").item(0).getTextContent();
+                    String taskTypeAsString = element.getElementsByTagName(TASKTYPE).item(0).getTextContent();
                     TASK_TYPE taskType = Task.determineTaskType(taskTypeAsString);
                     
                     // complete
-                    String complete = element.getElementsByTagName("complete").item(0).getTextContent();
+                    String complete = element.getElementsByTagName(COMPLETE).item(0).getTextContent();
                     boolean isCompleteAsBoolean = Boolean.valueOf(complete);
                     
                     // priority
-                    String priority = element.getElementsByTagName("priority").item(0).getTextContent();
+                    String priority = element.getElementsByTagName(PRIORITY).item(0).getTextContent();
                     int priorityAsInt = Integer.valueOf(priority);
                     
                     // tags
-                    String tag = element.getElementsByTagName("tag").item(0).getTextContent();
+                    String tag = element.getElementsByTagName(TAG).item(0).getTextContent();
                     ArrayList<String> tagsAsArray = getTagsInArrayList(tag);
                     
                     String start;
@@ -263,42 +284,42 @@ public class StorageController {
                             break;
                         case TIMED:
                             // start
-                            start = element.getElementsByTagName("start").item(0).getTextContent();
+                            start = element.getElementsByTagName(START).item(0).getTextContent();
                             startAsLocalDateTime = DateTimeHelper.parseStringToDateTime(start);
                             
                             // end
-                            end = element.getElementsByTagName("end").item(0).getTextContent();
+                            end = element.getElementsByTagName(END).item(0).getTextContent();
                             endAsLocalDateTime = DateTimeHelper.parseStringToDateTime(end);
                             
                             // reminder
-                            reminder = element.getElementsByTagName("reminder").item(0).getTextContent();
+                            reminder = element.getElementsByTagName(REMINDER).item(0).getTextContent();
                             reminderAsLocalDateTime = DateTimeHelper.parseStringToDateTime(reminder);
                             
                             // recurring
-                            recurring = element.getElementsByTagName("recurring").item(0).getTextContent();
+                            recurring = element.getElementsByTagName(RECURRING).item(0).getTextContent();
                             isRecurringAsBoolean = Boolean.valueOf(recurring);
                             
                             // recur type
-                            recurTypeAsString = element.getElementsByTagName("recurtype").item(0).getTextContent();
+                            recurTypeAsString = element.getElementsByTagName(RECURTYPE).item(0).getTextContent();
                             recurType = Task.determineRecurType(recurTypeAsString);
                             
                             task = new TimedTask(taskIdAsInt, description, createdAtAsLocalDateTime, startAsLocalDateTime, endAsLocalDateTime, reminderAsLocalDateTime, isCompleteAsBoolean, priorityAsInt, tagsAsArray, isRecurringAsBoolean, recurType);
                             break;
                         case DEADLINE:
                             // end
-                            end = element.getElementsByTagName("end").item(0).getTextContent();
+                            end = element.getElementsByTagName(END).item(0).getTextContent();
                             endAsLocalDateTime = DateTimeHelper.parseStringToDateTime(end);
                             
                             // reminder
-                            reminder = element.getElementsByTagName("reminder").item(0).getTextContent();
+                            reminder = element.getElementsByTagName(REMINDER).item(0).getTextContent();
                             reminderAsLocalDateTime = DateTimeHelper.parseStringToDateTime(reminder);
                             
                             // recurring
-                            recurring = element.getElementsByTagName("recurring").item(0).getTextContent();
+                            recurring = element.getElementsByTagName(RECURRING).item(0).getTextContent();
                             isRecurringAsBoolean = Boolean.valueOf(recurring);
                             
                             // recur type
-                            recurTypeAsString = element.getElementsByTagName("recurtype").item(0).getTextContent();
+                            recurTypeAsString = element.getElementsByTagName(RECURTYPE).item(0).getTextContent();
                             recurType = Task.determineRecurType(recurTypeAsString);
                             
                             task = new DeadlineTask(taskIdAsInt, description, createdAtAsLocalDateTime, endAsLocalDateTime, reminderAsLocalDateTime, isCompleteAsBoolean, priorityAsInt, tagsAsArray, isRecurringAsBoolean, recurType);
@@ -334,50 +355,50 @@ public class StorageController {
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
             doc = dBuilder.newDocument();
             
-            Element root = doc.createElement("task");
+            Element root = doc.createElement(TASK);
             doc.appendChild(root);
             
             //for (Task task : taskList) {
             for (int i = 0; i < tasks.size(); i++) {
                 Task task = tasks.get(i);
                 
-                Element item = doc.createElement("item");
+                Element item = doc.createElement(ITEM);
                 root.appendChild(item);
 
                 // taskId
-                Element taskId = doc.createElement("taskId");
+                Element taskId = doc.createElement(TASK_ID);
                 taskId.appendChild(doc.createTextNode(Integer.toString(task.getTaskId())));
                 item.appendChild(taskId);
                 
                 // description
-                Element description = doc.createElement("description");
+                Element description = doc.createElement(DESCRIPTION);
                 description.appendChild(doc.createTextNode(task.getDescription()));
                 item.appendChild(description);
                 
                 // createdAt
                 String formattedDateTime = DateTimeHelper.parseDateTimeToString(task.getCreatedAt());
-                Element createdAt = doc.createElement("createdAt");
+                Element createdAt = doc.createElement(CREATED_AT);
                 createdAt.appendChild(doc.createTextNode(formattedDateTime));
                 item.appendChild(createdAt);
                 
                 // type
-                Element taskType = doc.createElement("tasktype");
+                Element taskType = doc.createElement(TASKTYPE);
                 taskType.appendChild(doc.createTextNode(task.getType().toString()));
                 item.appendChild(taskType);
                 
                 // complete
-                Element complete = doc.createElement("complete");
+                Element complete = doc.createElement(COMPLETE);
                 String complete_string = String.valueOf(task.isComplete());
                 complete.appendChild(doc.createTextNode(complete_string));
                 item.appendChild(complete);
                 
                 // priority
-                Element priority = doc.createElement("priority");
+                Element priority = doc.createElement(PRIORITY);
                 priority.appendChild(doc.createTextNode(Integer.toString(task.getPriority())));
                 item.appendChild(priority);
                 
                 // tag
-                Element tag = doc.createElement("tag");
+                Element tag = doc.createElement(TAG);
                 tag.appendChild(doc.createTextNode(getTagsInString(task.getTags())));
                 item.appendChild(tag);
                 
@@ -390,72 +411,72 @@ public class StorageController {
                 switch (task.getType()) {
                     case FLOATING:
                         // start
-                        start = doc.createElement("start");
+                        start = doc.createElement(START);
                         start.appendChild(doc.createTextNode(""));
                         item.appendChild(start);
                         
                         // end
-                        end = doc.createElement("end");
+                        end = doc.createElement(END);
                         end.appendChild(doc.createTextNode(""));
                         item.appendChild(end);
                         break;
                     case TIMED:
                         //start
-                        start = doc.createElement("start");
+                        start = doc.createElement(START);
                         formattedDateTime = DateTimeHelper.parseDateTimeToString(((TimedTask) task).getStart());
                         start.appendChild(doc.createTextNode(formattedDateTime));
                         item.appendChild(start);
                         
                         // end
-                        end = doc.createElement("end");
+                        end = doc.createElement(END);
                         formattedDateTime = DateTimeHelper.parseDateTimeToString(((TimedTask) task).getEnd());
                         end.appendChild(doc.createTextNode(formattedDateTime));
                         item.appendChild(end);
                         
                         // reminder
-                        reminder = doc.createElement("reminder");
+                        reminder = doc.createElement(REMINDER);
                         formattedDateTime = DateTimeHelper.parseDateTimeToString(((TimedTask) task).getReminder());
                         reminder.appendChild(doc.createTextNode(formattedDateTime));
                         item.appendChild(reminder);
                         
                         // recurring
-                        recurring = doc.createElement("recurring");
+                        recurring = doc.createElement(RECURRING);
                         recurringAsString = String.valueOf(((TimedTask) task).isRecurring());
                         recurring.appendChild(doc.createTextNode(recurringAsString));
                         item.appendChild(complete);
                         
                         // type
-                        recurType = doc.createElement("recurtype");
+                        recurType = doc.createElement(RECURTYPE);
                         recurType.appendChild(doc.createTextNode(((TimedTask) task).getRecurPeriod().toString()));
                         item.appendChild(recurType);
                         
                         break;
                     case DEADLINE:
                         // start
-                        start = doc.createElement("start");
+                        start = doc.createElement(START);
                         start.appendChild(doc.createTextNode(""));
                         item.appendChild(start);
                         
                         // end
-                        end = doc.createElement("end");
+                        end = doc.createElement(END);
                         formattedDateTime = DateTimeHelper.parseDateTimeToString(((DeadlineTask) task).getEnd());
                         end.appendChild(doc.createTextNode(formattedDateTime));
                         item.appendChild(end);
                         
                         // reminder
-                        reminder = doc.createElement("reminder");
+                        reminder = doc.createElement(REMINDER);
                         formattedDateTime = DateTimeHelper.parseDateTimeToString(((DeadlineTask) task).getReminder());
                         reminder.appendChild(doc.createTextNode(formattedDateTime));
                         item.appendChild(reminder);
                         
                         // recurring
-                        recurring = doc.createElement("recurring");
+                        recurring = doc.createElement(RECURRING);
                         recurringAsString = String.valueOf(((DeadlineTask) task).isRecurring());
                         recurring.appendChild(doc.createTextNode(recurringAsString));
                         item.appendChild(complete);
                         
                         // type
-                        recurType = doc.createElement("recurtype");
+                        recurType = doc.createElement(RECURTYPE);
                         recurType.appendChild(doc.createTextNode(((DeadlineTask) task).getRecurPeriod().toString()));
                         item.appendChild(recurType);
                         
@@ -465,7 +486,8 @@ public class StorageController {
                 }
             }
         } catch (ParserConfigurationException e) {
-            System.out.println("Error building document");
+            String ERROR_BUILDING_DOCUMENT = "Error building document";
+            System.out.println(ERROR_BUILDING_DOCUMENT);
         }
         return doc;
     }
@@ -505,11 +527,11 @@ public class StorageController {
             Transformer aTransformer = tranFactory.newTransformer();
 
             // format the XML nicely
-            aTransformer.setOutputProperty(OutputKeys.ENCODING, "ISO-8859-1");
+            aTransformer.setOutputProperty(OutputKeys.ENCODING, ENCODING);
 
             aTransformer.setOutputProperty(
-                    "{http://xml.apache.org/xslt}indent-amount", "4");
-            aTransformer.setOutputProperty(OutputKeys.INDENT, "yes");
+                    INDENT_AMOUNT_DOCS, INDENT_AMOUNT);
+            aTransformer.setOutputProperty(OutputKeys.INDENT, YES);
 
             DOMSource source = new DOMSource(doc);
             
@@ -518,13 +540,13 @@ public class StorageController {
             aTransformer.transform(source, result);
 
         } catch (IOException e) {
-            System.out.println("Error writing to file");
+            System.out.println(ERROR_WRITING_TO_FILE);
             return false;
         } catch (TransformerConfigurationException e1) {
-            System.out.println("Error outputting document");
+            System.out.println(ERROR_OUTPUTTING_DOCUMENT);
             return false;
         } catch (TransformerException e) {
-            System.out.println("Error initializing transformer");
+            System.out.println(ERROR_INITIALIZING_TRANSFORMER);
             e.printStackTrace();
             return false;
         }   
