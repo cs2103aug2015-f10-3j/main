@@ -24,9 +24,11 @@ import background.Reminder;
 public class MainPanel extends JPanel{
 	
 	private static Container contentPane = null;
+	private static MainFrame mainFrame = null;
 	
-	public void populateContentPane(Container contentPane) {
+	public void populateContentPane(Container contentPane, MainFrame mainFrame) {
 		MainPanel.contentPane = contentPane;
+		this.mainFrame = mainFrame;
 		JPanel panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
 		panel.setBorder(BorderFactory.createLineBorder(Color.black));
@@ -59,7 +61,7 @@ public class MainPanel extends JPanel{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				contentPane.removeAll();
-				CommandLinePanel nextPanel = new CommandLinePanel();
+				CommandLinePanel nextPanel = new CommandLinePanel(mainFrame);
 				nextPanel.populateContentPane(contentPane);
 				contentPane.validate();
 				contentPane.repaint();

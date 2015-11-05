@@ -58,6 +58,12 @@ public class UIController {
 		return output;
 	}
 	
+	/**
+	 * This method returns an array of output from Logic Component, OutputProcessor class.
+	 * 
+	 * @param new_Observer
+	 *            Observer class to be used
+	 */
 	public static void setObserver(Observer new_Observer){
 		observer = new_Observer;
 	}

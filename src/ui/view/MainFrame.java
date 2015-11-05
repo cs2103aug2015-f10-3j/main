@@ -49,6 +49,8 @@ public class MainFrame implements Observer{
 	private static UIController uiController;
 	private static final char PRIORITY_INDICATOR = '*';
 	private static final char BOLD_INDICATOR = '@';
+	private static boolean ui_Mode = false;
+	private static MainFrame mainFrame = null;
 
 	public MainFrame(){
 		uiController = UIController.getInstance(this);
@@ -63,7 +65,7 @@ public class MainFrame implements Observer{
 	public static void main(String[] args) {
 		//Schedule a job for the event-dispatching thread:
 		//creating and showing this application's GUI.
-		MainFrame mainFrame = new MainFrame();
+		mainFrame = new MainFrame();
 		mainFrame.initiate();
 	}
 
@@ -82,7 +84,7 @@ public class MainFrame implements Observer{
 
 		}
 	}
-	
+
 	public void prepareWelcome(){
 		String today = DateTimeHelper.getDate(LocalDateTime.now());
 		String[] outputs = new String[3];
@@ -112,6 +114,7 @@ public class MainFrame implements Observer{
 	 * 
 	 */
 	public static void initiateGUI() {
+		ui_Mode = true;
 		javax.swing.SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				createAndShowGUI();
@@ -163,7 +166,7 @@ public class MainFrame implements Observer{
 			}
 		});
 		removeDefaultButtons(frame);
-		panel = new CommandLinePanel();
+		panel = new CommandLinePanel(mainFrame);
 		//nextPanel.populateContentPane(contentPane);
 		//panel = new MainPanel();
 		panel.populateContentPane(frame.getContentPane());
@@ -272,17 +275,32 @@ public class MainFrame implements Observer{
 		});
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void update(Observable o, Object arg) {
 		// TODO Auto-generated method stub
 		if (o instanceof ClearCommand || o instanceof ViewTaskCommand || o instanceof SearchTaskCommand) {
-			System.out.println("\033[H\033[2J");
+			if(ui_Mode){
+				CommandLinePanel.setPaneToNull();
+			} else{
+				System.out.println("\033[H\033[2J");
+			}
 		} else if(o instanceof Reminder){
-			String[] output = uiController.format((ArrayList<Task>)arg);
-			outputToCmd(output);
+			if(arg instanceof ArrayList<?>){
+				if(ui_Mode){
+					CommandLinePanel.createReminder((ArrayList<Task>)arg);
+				} else{
+					String[] output = uiController.format((ArrayList<Task>)arg);
+					outputToCmd(output);
+				}
+			}
 		} else {
 			String msg = (String)arg;
-			System.out.println(msg);
+			if(ui_Mode){
+				CommandLinePanel.updatePrint(msg);
+			} else{
+				System.out.println(msg);
+			}
 		}
 	}
 }
