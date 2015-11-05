@@ -11,7 +11,7 @@ public class Option {
 	private static final int INVALID_INT_VALUE = -1;
 	private List<Object> values = new ArrayList<Object>();
 	
-
+	/*** Methods ***/
 	public LocalDateTime getDateValue() {
 		return getDateValue(0);
 	}
@@ -63,6 +63,9 @@ public class Option {
 		}
 	}
 	
+	// this function throws exception because it is called during
+	// the creation of a command. The exception will tell the 
+	// parser that whatever it is currently doing is invalid
 	public boolean addValues(Object[] values) throws Exception {
 		boolean success = false;
 		for (Object value : values) {
