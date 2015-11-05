@@ -10,14 +10,17 @@ import java.util.logging.Level;
 import main.paddletask.command.api.*;
 import main.paddletask.command.data.Option;
 import main.paddletask.common.exception.InvalidCommandFormatException;
+import main.paddletask.common.util.DateTimeHelper;
 
 public class ParseLogic extends ParserBackend {
 	
+	/*** Constructor ***/
 	public ParseLogic() {
 		LOGGER.info("Initiating ParseLogic");
 	}
 
-	public COMMAND_TYPE determineCommandType(String userCommand) {
+	/*** Methods ***/
+	private COMMAND_TYPE determineCommandType(String userCommand) {
 		LOGGER.log(Level.INFO, "Attempt to determine command type from user input: {0}", userCommand);
 		assert(userCommand != null);
 		String mainCommand = getMainCommand(userCommand).toLowerCase();
@@ -86,9 +89,17 @@ public class ParseLogic extends ParserBackend {
 		}
 	}
 		
-	public Command createCommand(COMMAND_TYPE commandType) {
-		LOGGER.log(Level.INFO, "Create command based on determined command type: {0}", commandType);
-		assert(commandType != null);
+	public Command createCommand(String userCommand) throws Exception {
+		LOGGER.log(Level.INFO, "Create command based on determined command type: {0}", userCommand);
+		assert(userCommand != null);
+		COMMAND_TYPE commandType = determineCommandType(userCommand);
+		Command newCommand = createCommandByType(commandType);
+		processOptions(commandType, newCommand, userCommand);
+		addCommandToList(newCommand, commandType);
+		return newCommand;
+	}
+	
+	private Command createCommandByType(COMMAND_TYPE commandType){
 		switch (commandType) {
 			case ADD:
 				return new AddTaskCommand();
@@ -99,7 +110,7 @@ public class ParseLogic extends ParserBackend {
 			case DELETE:
 				return new DeleteTaskCommand();
 			case COMPLETE:
-                return new CompleteTaskCommand();
+				return new CompleteTaskCommand();
 			case SEARCH:
 				return new SearchTaskCommand();
 			case UNDO:
@@ -128,7 +139,25 @@ public class ParseLogic extends ParserBackend {
 		}
 	}
 
-	public void addOptionsToCommand(COMMAND_TYPE commandType, Command command, List<String> commandList) throws Exception {
+	private void addCommandToList(Command newCommand, ParseLogic.COMMAND_TYPE commandType) {
+		assert(newCommand != null);
+		if (!isInvalidTypeToAdd(commandType)) {
+			Command.getCommandList().add(newCommand);
+		}
+	}
+
+	private void processOptions(COMMAND_TYPE commandType, Command newCommand, String userCommand) throws Exception {
+		assert(newCommand != null && userCommand != null);
+		List<String> commandList = breakDownCommand(userCommand);
+		if (commandType == COMMAND_TYPE.SEARCH) {
+			addPossibleDates(newCommand, commandList);
+		} else if (commandType == COMMAND_TYPE.TAG || commandType == COMMAND_TYPE.UNTAG) {
+			addTags(newCommand, commandList);
+		}
+		addOptionsToCommand(commandType, newCommand, commandList);
+	}
+
+	private void addOptionsToCommand(COMMAND_TYPE commandType, Command command, List<String> commandList) throws Exception {
 		LOGGER.info("Attempt to add list of options to Command specified");
 		assert(command != null && commandList != null);
 		EnumMap<OPTIONS, TYPE> optionMap = getOptionMap(commandType);
@@ -227,7 +256,7 @@ public class ParseLogic extends ParserBackend {
 		for (String s : commandList) { 
 			LOGGER.fine("Expecting a list of Strings");
 			expectedString = s;
-			if (isDate(expectedString)) {
+			if (DateTimeHelper.isDate(expectedString)) {
 				String[] testedString = expectedString.split("/");
 				expectedString = String.format("%1$s/%2$s/%3$s", testedString[2], testedString[1], testedString[0]);
 			}
@@ -404,7 +433,7 @@ public class ParseLogic extends ParserBackend {
 		for (int i = 0; i < commandList.size(); i++) { 
 			LOGGER.fine("Expecting a list of Strings");
 			expectedString = commandList.get(i);
-			if (isDate(expectedString)) {
+			if (DateTimeHelper.isDate(expectedString)) {
 				String[] testedString = expectedString.split("/");
 				expectedString = String.format("%1$s/%2$s/%3$s", testedString[2], testedString[1], testedString[0]);
 			}
@@ -420,11 +449,7 @@ public class ParseLogic extends ParserBackend {
 		return commandOption;
 	}
 	
-	private boolean isDate(String date) {
-		return date.matches("(\\d{2})/(\\d{2})/(\\d{4})");
-	}
-	
-	public boolean isInvalidTypeToAdd(COMMAND_TYPE commandType) {
+	private boolean isInvalidTypeToAdd(COMMAND_TYPE commandType) {
 		switch (commandType) {
 			case UNDO:
 			case REDO:
@@ -438,7 +463,15 @@ public class ParseLogic extends ParserBackend {
 		}
 	}
 	
-	public boolean isStatefulCommand(COMMAND_TYPE commandType) {
+	public boolean isStatefulCommand(String userCommand) {
+		return isStatefulCommand(determineCommandType(userCommand));
+	}
+	
+	public boolean isSaveStateCommand(String userCommand) {
+		return isSaveStateCommand(determineCommandType(userCommand));
+	}
+	
+	private boolean isStatefulCommand(COMMAND_TYPE commandType) {
 		switch (commandType) {
 			case EDIT:
 			case DELETE:
@@ -452,7 +485,7 @@ public class ParseLogic extends ParserBackend {
 		}
 	}
 	
-	public boolean isSaveStateCommand(COMMAND_TYPE commandType) {
+	private boolean isSaveStateCommand(COMMAND_TYPE commandType) {
 		switch (commandType) {
 			case VIEW:
 			case SEARCH:

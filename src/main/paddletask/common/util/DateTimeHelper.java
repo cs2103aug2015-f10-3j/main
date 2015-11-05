@@ -45,6 +45,10 @@ public class DateTimeHelper {
 			return null;
 		}
 	}
+	
+	public static boolean isDate(String date) {
+		return date.matches("(\\d{2})/(\\d{2})/(\\d{4})");
+	}
 
 	// Date/Time manipulation helper functions
 	public static LocalDateTime now() {
