@@ -1,3 +1,4 @@
+//@@author A0125528E
 package main.paddletask.command.api;
 
 import java.time.LocalDateTime;
@@ -40,9 +41,6 @@ public class ViewTaskCommand extends Command {
      * 
      * @return Pair
      * 				Array list of task
-     * 				returns <code>True</code> if the operation is a success,
-	 * 		   		returns <code>False</code> otherwise
-     * 	
      * 
      */
 	@Override
@@ -66,6 +64,12 @@ public class ViewTaskCommand extends Command {
 		return taskList;
 	}
 	
+    /**
+     * This method determines the type 
+     * and the period from the options 
+     * given by the user input.
+     * The type and period variable will be set here.
+     */
 	private void determineTypePeriod() {
 		if (hasOption(TYPE_FLOATING)) {
 			this.type = TYPE_FLOATING;
@@ -126,9 +130,10 @@ public class ViewTaskCommand extends Command {
      * and return a list of selected Tasks.
      * All tasks with deadline before the period variable will be returned.
      * 
-     * @param ArrayList<Task>
-     *            a list of tasks to select from
-     * @return Array list of selected tasks
+     * @param allTask
+     *            an array list of tasks to select from
+     * @return selectedTask
+     * 			  an array list of selected tasks
      */
 	public ArrayList<Task> selectTaskByPeriod(ArrayList<Task> allTask) throws Exception{
 		if (this.period == PERIOD_ALL) {
@@ -200,6 +205,7 @@ public class ViewTaskCommand extends Command {
 		return beforeThisTime;
 	}
 
+	//@@author A0125473H-reused
 	@Override
 	public ArrayList<Task> undo() {
 		// TODO Auto-generated method stub
