@@ -3,15 +3,15 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
-	<classpathentry kind="lib" path="src/External Libraries/jnativehook-2.0.2.jar"/>
-	<classpathentry kind="lib" path="src/External Libraries/natty-0.12.jar"/>
-	<classpathentry kind="lib" path="src/External Libraries/antlr-runtime-3.5.2.jar"/>
-	<classpathentry kind="lib" path="src/External Libraries/slf4j-api-1.7.10.jar"/>
-	<classpathentry kind="lib" path="src/External Libraries/slf4j-nop-1.7.10.jar"/>
-	<classpathentry kind="lib" path="src/External Libraries/ical4j-1.0.2.jar"/>
-	<classpathentry kind="lib" path="src/External Libraries/commons-logging-1.1.1.jar"/>
-	<classpathentry kind="lib" path="src/External Libraries/backport-util-concurrent-3.1.jar"/>
-	<classpathentry kind="lib" path="src/External Libraries/commons-codec-1.5.jar"/>
-	<classpathentry kind="lib" path="src/External Libraries/commons-lang-2.6.jar"/>
+	<classpathentry kind="lib" path="src/main/resources/external/antlr-runtime-3.5.2.jar"/>
+	<classpathentry kind="lib" path="src/main/resources/external/backport-util-concurrent-3.1.jar"/>
+	<classpathentry kind="lib" path="src/main/resources/external/commons-codec-1.5.jar"/>
+	<classpathentry kind="lib" path="src/main/resources/external/commons-lang-2.6.jar"/>
+	<classpathentry kind="lib" path="src/main/resources/external/commons-logging-1.1.1.jar"/>
+	<classpathentry kind="lib" path="src/main/resources/external/ical4j-1.0.2.jar"/>
+	<classpathentry kind="lib" path="src/main/resources/external/jnativehook-2.0.2.jar"/>
+	<classpathentry kind="lib" path="src/main/resources/external/natty-0.12.jar"/>
+	<classpathentry kind="lib" path="src/main/resources/external/slf4j-api-1.7.10.jar"/>
+	<classpathentry kind="lib" path="src/main/resources/external/slf4j-nop-1.7.10.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
