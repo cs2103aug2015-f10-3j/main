@@ -1,3 +1,4 @@
+//@@author A0125528E
 package main.paddletask.ui.view;
 import java.awt.*;
 import java.awt.Dialog.ModalityType;
@@ -32,7 +33,10 @@ public class CommandLinePanel extends JPanel implements KeyListener {
 	private static final String WELCOME_MSG_1 = "Welcome to PaddleTask.";
 	private static final String WELCOME_MSG_2 = "Today is %s.";
 	private static final String WELCOME_MSG_3 = "Your upcoming tasks for today:";
+	private static final String MODAL_OPTION = "Modal Dialog";
 	private static final String FIRST_COMMAND = "view all today";
+	private static final int OFFSET_ZERO = 0;
+	private static final int SUBSTRING_BEGIN = 1;
 	private static final char PRIORITY_INDICATOR = '*';
 	private static final char BOLD_INDICATOR = '@';
 	protected static int NUM_COMPONENTS = 3;
@@ -49,9 +53,6 @@ public class CommandLinePanel extends JPanel implements KeyListener {
 	private String currentCommand = null;
 	private static JScrollPane scrollPane = null;
 	private MainFrame mainFrame = null;
-
-	//protected static boolean restrictSize = true;
-	//protected static boolean sizeIsRandom = false;
 
 	/*** Constructors ***/
 	public CommandLinePanel(MainFrame mainFrame){
@@ -135,20 +136,6 @@ public class CommandLinePanel extends JPanel implements KeyListener {
 		areaScrollPane.setVerticalScrollBarPolicy(
 				JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		areaScrollPane.setAutoscrolls(true);
-		/*areaScrollPane.getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener() {
-
-			BoundedRangeModel brm = areaScrollPane.getVerticalScrollBar().getModel();
-			boolean wasAtBottom = true;
-
-			public void adjustmentValueChanged(AdjustmentEvent e) {
-				if (!brm.getValueIsAdjusting()) {
-					if (wasAtBottom)
-						brm.setValue(brm.getMaximum());
-				} else
-					wasAtBottom = ((brm.getValue() + brm.getExtent()) == brm.getMaximum());
-
-			}
-		});*/
 		return areaScrollPane;
 	}
 
@@ -211,22 +198,22 @@ public class CommandLinePanel extends JPanel implements KeyListener {
 		try {
 			Document doc = textPane.getDocument();
 			textPane.setCaretPosition(doc.getLength());
-			String outputString = "";
+			String outputString = STRING_EMPTY;
 			for(String s : output ){
 				if(s != null){
 					outputString = s + NEXT_LINE;
 					AttributeSet color = null;
-					if(outputString.charAt(0)==BOLD_INDICATOR){
+					if(outputString.charAt(OFFSET_ZERO)==BOLD_INDICATOR){
 						color = CustomizedDocumentFilter.setBold();
-						outputString = outputString.substring(1);
+						outputString = outputString.substring(SUBSTRING_BEGIN);
 					}
-					if(outputString.charAt(0)==PRIORITY_INDICATOR){
+					if(outputString.charAt(OFFSET_ZERO)==PRIORITY_INDICATOR){
 						color = CustomizedDocumentFilter.changeToOrange();
-						outputString = outputString.substring(1);
+						outputString = outputString.substring(SUBSTRING_BEGIN);
 					}
-					if(outputString.charAt(0)==PRIORITY_INDICATOR){
+					if(outputString.charAt(OFFSET_ZERO)==PRIORITY_INDICATOR){
 						color = CustomizedDocumentFilter.changeToRed();
-						outputString = outputString.substring(1);
+						outputString = outputString.substring(SUBSTRING_BEGIN);
 					}
 					doc.insertString(doc.getLength(), outputString, color);
 				}
@@ -238,6 +225,16 @@ public class CommandLinePanel extends JPanel implements KeyListener {
 		}
 	}
 
+	/**
+	 * This method performs the command from the
+	 * given string and uses uiController to 
+	 * continue the process.
+	 * It will prepare to append 
+	 * the outputs to be displayed.
+	 * 
+	 * @return input
+	 * 				String input from user
+	 */
 	public void performCommand(String input){
 		String[] output = uiController.processUserInput(input);
 		if(output!= null){
@@ -247,10 +244,11 @@ public class CommandLinePanel extends JPanel implements KeyListener {
 	}
 
 	/**
-	 * This method prepares a text area for the output of the program to be displayed
-	 * on.
+	 * This method prepares a text pane for the 
+	 * output of the program to be displayed on.
 	 * 
-	 * @return JTextArea for display
+	 * @return inputTextPane
+	 * 				JTextPane for the panel
 	 */
 	private JTextPane prepareJTextPane() {
 		JTextPane inputTextPane = new JTextPane();
@@ -272,21 +270,40 @@ public class CommandLinePanel extends JPanel implements KeyListener {
 	public boolean setInputFocus() {
 		return inputField.requestFocusInWindow();
 	}
-	
+
+	/**
+	 * This method will set the text pane
+	 * to null for clearing text.
+	 * 
+	 */
 	public static void setPaneToNull(){
 		textPane.setText(null);
 	}
-	
+
+	/**
+	 * This method will update and print out
+	 * the given string.
+	 * 
+	 * @param msg
+	 * 				String msg to be displayed
+	 */
 	public static void updatePrint(String msg){
 		append(commandList.getLast().getData());
 		append(msg +NEXT_LINE);
 	}
 
+	/**
+	 * This method prepare the reminder panel 
+	 * to display the reminders of tasks.
+	 * 
+	 * @param taskList
+	 * 				array list of tasks 
+	 */
 	public static void createReminder(ArrayList<Task> taskList){
-		System.out.println("Reminder alert");
+		//System.out.println("Reminder alert");
 		if (reminderDialog == null) {
 			Window topWindow = SwingUtilities.getWindowAncestor(panel);
-			reminderDialog = new JDialog(topWindow, "Modal Dialog", ModalityType.APPLICATION_MODAL);
+			reminderDialog = new JDialog(topWindow, MODAL_OPTION , ModalityType.APPLICATION_MODAL);
 			reminderDialog.getContentPane().add(new ReminderPanel(taskList, reminderDialog).getMainPanel());
 			reminderDialog.pack();
 			reminderDialog.setLocationRelativeTo(topWindow);
@@ -298,16 +315,21 @@ public class CommandLinePanel extends JPanel implements KeyListener {
 		}
 	}
 
+	/**
+	 * This method sets the dialog to null
+	 * for next reminder.
+	 * 
+	 */
 	public static void setDialogNull(){
 		reminderDialog = null;
 	}
 
-	@Override
-	public void keyTyped(KeyEvent e) {
-		// TODO Auto-generated method stub
-
-	}
-
+	/**
+	 * This method processes the key pressed by user
+	 * and specifically looks for key up and key down
+	 * to perform histories of commands.
+	 * 
+	 */
 	@Override
 	public void keyPressed(KeyEvent e) {
 		// TODO Auto-generated method stub
@@ -315,39 +337,11 @@ public class CommandLinePanel extends JPanel implements KeyListener {
 		switch( keyCode ) { 
 		case KeyEvent.VK_UP:
 			// handle up 
-			if(node == null){
-				node = commandList.getLast();
-				if(currentCommand == null){
-					currentCommand = inputField.getText();
-				}
-				if(node!=null){
-					inputField.setText(node.getData());
-				}
-
-			} else{
-				if(node.getPrevious()!=null){
-					node = node.getPrevious();
-					if(currentCommand == null){
-						currentCommand = inputField.getText();
-						node = commandList.getLast();
-					}
-					inputField.setText(node.getData());
-				}
-			}
+			historyOnUp();
 			break;
 		case KeyEvent.VK_DOWN:
 			// handle down
-			if(node != null){
-				if(node.getNext()!=null){
-					node = node.getNext();
-					inputField.setText(node.getData());
-				} else{
-					if(currentCommand!=null){
-						inputField.setText(currentCommand);
-						currentCommand = null;
-					}
-				}
-			}
+			historyOnDown();
 			break;
 		case KeyEvent.VK_LEFT:
 			// handle left
@@ -358,6 +352,68 @@ public class CommandLinePanel extends JPanel implements KeyListener {
 		}
 	}
 
+	/**
+	 * This method keeps track of the
+	 * history of the commands keyed by users and
+	 * on down button. It will display the history which 
+	 * is more recent. If it is most recent,
+	 * it will not change anymore.
+	 * 
+	 */
+	public void historyOnDown() {
+		if(node != null){
+			if(node.getNext()!=null){
+				node = node.getNext();
+				inputField.setText(node.getData());
+			} else{
+				if(currentCommand!=null){
+					inputField.setText(currentCommand);
+					currentCommand = null;
+				}
+			}
+		}
+	}
+
+	/**
+	 * This method keeps track of the
+	 * history of the commands keyed by users and
+	 * on up button. It will display the history which is 
+	 * previously typed, in chronological order. If it is 
+	 * the last of the commands keyed, it will not change anymore.
+	 * Current command keyed will be saved on the cache and can
+	 * be retrieved by down button.
+	 * 
+	 */
+	public void historyOnUp() {
+		if(node == null){
+			node = commandList.getLast();
+			if(currentCommand == null){
+				currentCommand = inputField.getText();
+			}
+			if(node!=null){
+				inputField.setText(node.getData());
+			}
+
+		} else{
+			if(node.getPrevious()!=null){
+				node = node.getPrevious();
+				if(currentCommand == null){
+					currentCommand = inputField.getText();
+					node = commandList.getLast();
+				}
+				inputField.setText(node.getData());
+			}
+		}
+	}
+
+	//@@author generated
+	@Override
+	public void keyTyped(KeyEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	//@@author generated
 	@Override
 	public void keyReleased(KeyEvent e) {
 		// TODO Auto-generated method stub
