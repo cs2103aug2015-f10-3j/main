@@ -61,6 +61,7 @@ public class TaskController {
      * @return an ArrayList of Tasks
      */
     public ArrayList<Task> getTask() {
+        checkRecurring();
         ArrayList<Task> taskList = Task.getTaskList();
         return taskList;
     }
@@ -73,6 +74,7 @@ public class TaskController {
      * @return an ArrayList of Tasks
      */
     public ArrayList<Task> getTask(TASK_TYPE type) {
+        checkRecurring();
         ArrayList<Task> taskList = Task.getTaskList();
         
         if (type == TASK_TYPE.ANY) {
@@ -98,6 +100,7 @@ public class TaskController {
      * @return the specified Task object
      */
     public Task getTask(int taskId) {
+        checkRecurring();
         ArrayList<Task> taskList = Task.getTaskList();
         for (Task task : taskList) {
             if (task.getTaskId() == taskId) {
