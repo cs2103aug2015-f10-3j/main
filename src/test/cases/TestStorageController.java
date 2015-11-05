@@ -1,3 +1,4 @@
+//@@author A0126332R
 package test.cases;
 
 import static org.junit.Assert.*;
@@ -20,7 +21,7 @@ import main.paddletask.task.entity.Task;
 import main.paddletask.task.entity.Task.RECUR_TYPE;
 import main.paddletask.task.entity.TimedTask;
 
-public class StorageControllerTest {
+public class TestStorageController {
     /*** Variables ***/
     protected static final String FILE_NAME = "task.xml";
     StorageController sdParser;

@@ -1,3 +1,4 @@
+//@@author A0126332R
 package main.paddletask.command.api;
 
 import java.time.LocalDateTime;
@@ -14,27 +15,39 @@ public class DeleteTaskCommand extends Command {
     private static final String KEYWORD_DELETE = "delete";
     private static final String KEYWORD_BETWEEN = "between";
     private static final String KEYWORD_AND = "and";
-    private static ArrayList<Task> deletedTaskList;
+    private static ArrayList<Task> _deletedTasks;
     
     private TaskController taskController;
     
     /*** Methods ***/
-	@Override
-	public ArrayList<Task> execute() {
-	    taskController = TaskController.getInstance();
-	    if (hasOption(KEYWORD_DELETE) && getOption(KEYWORD_DELETE) != null) {
-            deletedTaskList = deleteByTaskId();
-	        return deletedTaskList;
-	    } else if (hasOption(KEYWORD_BETWEEN) && hasOption(KEYWORD_AND)) {
-	        deletedTaskList = deleteByPeriod();
-            return deletedTaskList;
-	    } else {
-	        return null;
-	    }
-	}
-	
-	private ArrayList<Task> deleteByTaskId() {
-	    ArrayList<Task> taskList = new ArrayList<Task>();
+    /**
+     * This method delete Tasks based on user input
+     * 
+     * @return an ArrayList of Task objects that contains the deleted Task
+     *         objects
+     */
+    @Override
+    public ArrayList<Task> execute() {
+        taskController = TaskController.getInstance();
+        if (hasOption(KEYWORD_DELETE) && getOption(KEYWORD_DELETE) != null) {
+            _deletedTasks = deleteByTaskId();
+            return _deletedTasks;
+        } else if (hasOption(KEYWORD_BETWEEN) && hasOption(KEYWORD_AND)) {
+            _deletedTasks = deleteByPeriod();
+            return _deletedTasks;
+        } else {
+            return null;
+        }
+    }
+    
+    /**
+     * This method delete Tasks based on taskId
+     * 
+     * @return an ArrayList of Task objects that contains the deleted Task
+     *         objects
+     */
+    private ArrayList<Task> deleteByTaskId() {
+        ArrayList<Task> taskList = new ArrayList<Task>();
         boolean deleteTaskResult = false;
         int numOfValues = -1;
         
@@ -60,10 +73,16 @@ public class DeleteTaskCommand extends Command {
         }
         
         return taskList;
-	}
-	
-	private ArrayList<Task> deleteByPeriod() {
-	    ArrayList<Task> taskList = new ArrayList<Task>();
+    }
+    
+    /**
+     * This method delete Tasks based on a user defined period of time
+     * 
+     * @return an ArrayList of Task objects that contains the deleted Task
+     *         objects
+     */
+    private ArrayList<Task> deleteByPeriod() {
+        ArrayList<Task> taskList = new ArrayList<Task>();
         boolean deleteTaskResult = false;
         
         // Get period
@@ -85,8 +104,15 @@ public class DeleteTaskCommand extends Command {
         }
         
         return taskList;
-	}
+    }
 
+    /**
+     * This method retrieves a Task based on a user defined period of time
+     * 
+     * @param  start  start of the time period
+     * @param  end    end of the time period
+     * @return        an ArrayList of Task objects that is within the period
+     */
     private ArrayList<Task> getTaskByPeriod(LocalDateTime start, LocalDateTime end) {
         ArrayList<Task> allTask = taskController.getTask();
         ArrayList<Task> filteredTask = new ArrayList<Task>();
@@ -115,14 +141,21 @@ public class DeleteTaskCommand extends Command {
         return filteredTask;
     }
 
-	@Override
-	public ArrayList<Task> undo() {
-		if (deletedTaskList != null) {
-		    for (Task task : deletedTaskList) {
-		        TaskController.getInstance().addTask(task);
-		    }
-		}
-		return deletedTaskList;
-	}
+    /**
+     * This method reverse the previous execute() of the previous
+     * DeleteTaskCommand
+     * 
+     * @return an ArrayList of Task objects that contains the deleted Task
+     *         objects
+     */
+    @Override
+    public ArrayList<Task> undo() {
+        if (_deletedTasks != null) {
+            for (Task task : _deletedTasks) {
+                TaskController.getInstance().addTask(task);
+            }
+        }
+        return _deletedTasks;
+    }
 
 }

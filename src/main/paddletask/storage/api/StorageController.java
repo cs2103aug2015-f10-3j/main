@@ -1,3 +1,4 @@
+//@@author A0126332R
 package main.paddletask.storage.api;
 
 import java.io.File;
@@ -36,6 +37,7 @@ import main.paddletask.task.entity.TimedTask;
 import main.paddletask.task.entity.Task.TASK_TYPE;
 
 public class StorageController {
+    private static final String DEFAULT_XML = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"no\"?><task></task>";
     /*** Variables ***/
     public static final String CONFIG_FILE = ".config";
     protected static String DEFAULT_FILE = "task.xml";
@@ -47,10 +49,10 @@ public class StorageController {
     }
     
     public static StorageController getInstance() {
-    	if (_thisInstance == null) {
-    		_thisInstance = new StorageController();
-    	}
-    	return _thisInstance;
+        if (_thisInstance == null) {
+            _thisInstance = new StorageController();
+        }
+        return _thisInstance;
     }
     
     /*** Methods ***/
@@ -186,7 +188,7 @@ public class StorageController {
             try {
                 file = new File(fileName);
                 file.createNewFile();
-                String xml = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"no\"?><task></task>";
+                String xml = DEFAULT_XML;
                 FileWriter fileWriter = new FileWriter(fileName);
                 fileWriter.write(xml);
                 fileWriter.close();
