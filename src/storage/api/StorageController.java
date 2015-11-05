@@ -38,8 +38,8 @@ import task.entity.Task.TASK_TYPE;
 public class StorageController {
     /*** Variables ***/
     public static final String CONFIG_FILE = ".config";
-    protected static String DEFAULT_FILE_NAME = "task.xml";
-    private static StorageController thisInstance;
+    protected static String DEFAULT_FILE = "task.xml";
+    private static StorageController _thisInstance;
     
     /*** Constructor ***/
     private StorageController() {
@@ -47,10 +47,10 @@ public class StorageController {
     }
     
     public static StorageController getInstance() {
-    	if (thisInstance == null) {
-    		thisInstance = new StorageController();
+    	if (_thisInstance == null) {
+    		_thisInstance = new StorageController();
     	}
-    	return thisInstance;
+    	return _thisInstance;
     }
     
     /*** Methods ***/
@@ -58,7 +58,7 @@ public class StorageController {
      * This method get the file location from the config file
      * returning the default file path if it does not exit
      * 
-     * @return          file name
+     * @return      file name
      */
     protected boolean setFileName() {
         File file = new File(CONFIG_FILE);
@@ -66,9 +66,9 @@ public class StorageController {
          // Create file if it does not exist
             try {
                 file.createNewFile();
-                FileWriter fw = new FileWriter(CONFIG_FILE);
-                fw.write(DEFAULT_FILE_NAME);
-                fw.close();
+                FileWriter fileWriter = new FileWriter(CONFIG_FILE);
+                fileWriter.write(DEFAULT_FILE);
+                fileWriter.close();
             } catch (IOException e) {
                 e.printStackTrace();
                 return false;
@@ -76,7 +76,7 @@ public class StorageController {
         } else {
             // Read the file name from file
             byte[] content = getFileInBytes(CONFIG_FILE);
-            DEFAULT_FILE_NAME = new String(content, StandardCharsets.UTF_8);
+            DEFAULT_FILE = new String(content, StandardCharsets.UTF_8);
         }
         return true;
     }
@@ -85,21 +85,21 @@ public class StorageController {
      * This method set the new path of the xml file
      * It will copy the existing xml file to the new location
      * 
-     * @param new_path  the new path of the xml file
+     * @param  newPath  the new path of the xml file
      * @return          success status
      */
-    public boolean setDirectory(String new_path) {
+    public boolean setDirectory(String newPath) {
         boolean success;
         // Get existing content
-        byte[] content = getFileInBytes(DEFAULT_FILE_NAME);
+        byte[] content = getFileInBytes(DEFAULT_FILE);
         
         // Copy data to new path
-        success = writeBytesToFile(new_path, content, false);
+        success = writeBytesToFile(newPath, content, false);
         if (success) {
             // Write new path to CONFIG
-            success = writeBytesToFile(CONFIG_FILE, new_path.getBytes(), false);
+            success = writeBytesToFile(CONFIG_FILE, newPath.getBytes(), false);
             if (success) {
-                DEFAULT_FILE_NAME = new_path;
+                DEFAULT_FILE = newPath;
                 Task.setTaskList(readTask());
                 return success;
             } else {
@@ -113,8 +113,8 @@ public class StorageController {
     /**
      * This method retrieves a File object
      * 
-     * @param  fileName the full file path
-     * @return          file object
+     * @param  fileName  the full file path
+     * @return           file object
      */
     protected File getFile(String fileName) {
         File file = new File(fileName);
@@ -127,8 +127,8 @@ public class StorageController {
     /**
      * This method retrieves the bytes of a File
      * 
-     * @param fileName  the full file path
-     * @return          byte array of the file content
+     * @param  fileName  the full file path
+     * @return           byte array of the file content
      */
     public byte[] getFileInBytes(String fileName) {
         byte[] content = null;
@@ -145,10 +145,10 @@ public class StorageController {
      * This method writes bytes to a File
      * creating the file if it does not exist
      * 
-     * @param fileName  the full file path
-     * @param content   the bytes to be written
-     * @param append    whether the content should be appended or overwritten
-     * @return          success status
+     * @param  fileName  the full file path
+     * @param  content   the bytes to be written
+     * @param  append    whether the content should be appended or overwritten
+     * @return           success status
      */
     public boolean writeBytesToFile(String fileName, byte[] content, boolean append) {
         File file = new File(fileName);
@@ -163,9 +163,9 @@ public class StorageController {
         }
         
         try {
-            FileOutputStream fos = new FileOutputStream(fileName, append);
-            fos.write(content);
-            fos.close();
+            FileOutputStream fileOutputStream = new FileOutputStream(fileName, append);
+            fileOutputStream.write(content);
+            fileOutputStream.close();
         } catch (IOException ioe) {
             ioe.printStackTrace();
             return false;
@@ -176,7 +176,8 @@ public class StorageController {
     /**
      * This method creates a new XML file 
      * 
-     * @return       file containing Task objects
+     * @param  fileName  the full file path
+     * @return           file containing Task objects
      */
     protected File getXmlFile(String fileName) {
         File file = getFile(fileName);
@@ -186,9 +187,9 @@ public class StorageController {
                 file = new File(fileName);
                 file.createNewFile();
                 String xml = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"no\"?><task></task>";
-                FileWriter fw = new FileWriter(fileName);
-                fw.write(xml);
-                fw.close();
+                FileWriter fileWriter = new FileWriter(fileName);
+                fileWriter.write(xml);
+                fileWriter.close();
             } catch (IOException e) {
                 e.printStackTrace();
                 return null;
@@ -203,7 +204,7 @@ public class StorageController {
      * @return       ArrayList of all Task objects
      */
     public ArrayList<Task> readTask() {
-        ArrayList<Task> taskList = new ArrayList<Task>();
+        ArrayList<Task> tasks = new ArrayList<Task>();
         try {
             Document doc = parseXml();
             
@@ -211,106 +212,94 @@ public class StorageController {
             NodeList nodeList = doc.getElementsByTagName("item");
             
             for (int temp = 0; temp < nodeList.getLength(); temp++) {
-                Node nNode = nodeList.item(temp);
+                Node node = nodeList.item(temp);
                 Task task = null;
                 //System.out.println("\nCurrent Element :" + nNode.getNodeName());
-                if (nNode.getNodeType() == Node.ELEMENT_NODE) {
-                    Element eElement = (Element) nNode;
-                    // DateTimeFormatter
-                    // DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+                if (node.getNodeType() == Node.ELEMENT_NODE) {
+                    Element element = (Element) node;
                     
                     // taskId
-                    String taskId = eElement.getElementsByTagName("taskId").item(0).getTextContent();
-                    int taskId_int = Integer.valueOf(taskId);
+                    String taskId = element.getElementsByTagName("taskId").item(0).getTextContent();
+                    int taskIdAsInt = Integer.valueOf(taskId);
                     
                     // description
-                    String description = eElement.getElementsByTagName("description").item(0).getTextContent();
+                    String description = element.getElementsByTagName("description").item(0).getTextContent();
                     
                     // createdAt
-                    String createdAt = eElement.getElementsByTagName("createdAt").item(0).getTextContent();
-                    LocalDateTime createdAt_localdatetime = DateTimeHelper.parseStringToDateTime(createdAt);
+                    String createdAt = element.getElementsByTagName("createdAt").item(0).getTextContent();
+                    LocalDateTime createdAtAsLocalDateTime = DateTimeHelper.parseStringToDateTime(createdAt);
                     
                     // task type
-                    String task_type_string = eElement.getElementsByTagName("tasktype").item(0).getTextContent();
-                    TASK_TYPE taskType = Task.determineTaskType(task_type_string);
+                    String taskTypeAsString = element.getElementsByTagName("tasktype").item(0).getTextContent();
+                    TASK_TYPE taskType = Task.determineTaskType(taskTypeAsString);
                     
                     // complete
-                    String complete = eElement.getElementsByTagName("complete").item(0).getTextContent();
-                    boolean complete_boolean = Boolean.valueOf(complete);
+                    String complete = element.getElementsByTagName("complete").item(0).getTextContent();
+                    boolean isCompleteAsBoolean = Boolean.valueOf(complete);
                     
                     // priority
-                    String priority = eElement.getElementsByTagName("priority").item(0).getTextContent();
-                    int priority_int = Integer.valueOf(priority);
+                    String priority = element.getElementsByTagName("priority").item(0).getTextContent();
+                    int priorityAsInt = Integer.valueOf(priority);
                     
                     // tags
-                    String tag = eElement.getElementsByTagName("tag").item(0).getTextContent();
-                    ArrayList<String> tag_array = getTagsInArrayList(tag);
-                    
-                    /*
-                    System.out.println("taskId: " + taskId);
-                    System.out.println("description: " + description);
-                    System.out.println("createdAt: " + createdAt);
-                    System.out.println("type: " + type);
-                    System.out.println("start: " + start);
-                    System.out.println("end: " + end);
-                    System.out.println("complete: " + complete);
-                    */
+                    String tag = element.getElementsByTagName("tag").item(0).getTextContent();
+                    ArrayList<String> tagsAsArray = getTagsInArrayList(tag);
                     
                     String start;
-                    LocalDateTime start_localdatetime;
+                    LocalDateTime startAsLocalDateTime;
                     String end;
-                    LocalDateTime end_localdatetime;
+                    LocalDateTime endAsLocalDateTime;
                     String reminder;
-                    LocalDateTime reminder_localdatetime;
+                    LocalDateTime reminderAsLocalDateTime;
                     String recurring;
-                    boolean recurring_boolean;
-                    String recur_type_string;
+                    boolean isRecurringAsBoolean;
+                    String recurTypeAsString;
                     RECUR_TYPE recurType;
                     switch (taskType) {
                         case FLOATING:
-                            task = new FloatingTask(taskId_int, description, createdAt_localdatetime, complete_boolean, priority_int, tag_array);
+                            task = new FloatingTask(taskIdAsInt, description, createdAtAsLocalDateTime, isCompleteAsBoolean, priorityAsInt, tagsAsArray);
                             break;
                         case TIMED:
                             // start
-                            start = eElement.getElementsByTagName("start").item(0).getTextContent();
-                            start_localdatetime = DateTimeHelper.parseStringToDateTime(start);
+                            start = element.getElementsByTagName("start").item(0).getTextContent();
+                            startAsLocalDateTime = DateTimeHelper.parseStringToDateTime(start);
                             
                             // end
-                            end = eElement.getElementsByTagName("end").item(0).getTextContent();
-                            end_localdatetime = DateTimeHelper.parseStringToDateTime(end);
+                            end = element.getElementsByTagName("end").item(0).getTextContent();
+                            endAsLocalDateTime = DateTimeHelper.parseStringToDateTime(end);
                             
                             // reminder
-                            reminder = eElement.getElementsByTagName("reminder").item(0).getTextContent();
-                            reminder_localdatetime = DateTimeHelper.parseStringToDateTime(reminder);
+                            reminder = element.getElementsByTagName("reminder").item(0).getTextContent();
+                            reminderAsLocalDateTime = DateTimeHelper.parseStringToDateTime(reminder);
                             
                             // recurring
-                            recurring = eElement.getElementsByTagName("recurring").item(0).getTextContent();
-                            recurring_boolean = Boolean.valueOf(recurring);
+                            recurring = element.getElementsByTagName("recurring").item(0).getTextContent();
+                            isRecurringAsBoolean = Boolean.valueOf(recurring);
                             
                             // recur type
-                            recur_type_string = eElement.getElementsByTagName("recurtype").item(0).getTextContent();
-                            recurType = Task.determineRecurType(recur_type_string);
+                            recurTypeAsString = element.getElementsByTagName("recurtype").item(0).getTextContent();
+                            recurType = Task.determineRecurType(recurTypeAsString);
                             
-                            task = new TimedTask(taskId_int, description, createdAt_localdatetime, start_localdatetime, end_localdatetime, reminder_localdatetime, complete_boolean, priority_int, tag_array, recurring_boolean, recurType);
+                            task = new TimedTask(taskIdAsInt, description, createdAtAsLocalDateTime, startAsLocalDateTime, endAsLocalDateTime, reminderAsLocalDateTime, isCompleteAsBoolean, priorityAsInt, tagsAsArray, isRecurringAsBoolean, recurType);
                             break;
                         case DEADLINE:
                             // end
-                            end = eElement.getElementsByTagName("end").item(0).getTextContent();
-                            end_localdatetime = DateTimeHelper.parseStringToDateTime(end);
+                            end = element.getElementsByTagName("end").item(0).getTextContent();
+                            endAsLocalDateTime = DateTimeHelper.parseStringToDateTime(end);
                             
                             // reminder
-                            reminder = eElement.getElementsByTagName("reminder").item(0).getTextContent();
-                            reminder_localdatetime = DateTimeHelper.parseStringToDateTime(reminder);
+                            reminder = element.getElementsByTagName("reminder").item(0).getTextContent();
+                            reminderAsLocalDateTime = DateTimeHelper.parseStringToDateTime(reminder);
                             
                             // recurring
-                            recurring = eElement.getElementsByTagName("recurring").item(0).getTextContent();
-                            recurring_boolean = Boolean.valueOf(recurring);
+                            recurring = element.getElementsByTagName("recurring").item(0).getTextContent();
+                            isRecurringAsBoolean = Boolean.valueOf(recurring);
                             
                             // recur type
-                            recur_type_string = eElement.getElementsByTagName("recurtype").item(0).getTextContent();
-                            recurType = Task.determineRecurType(recur_type_string);
+                            recurTypeAsString = element.getElementsByTagName("recurtype").item(0).getTextContent();
+                            recurType = Task.determineRecurType(recurTypeAsString);
                             
-                            task = new DeadlineTask(taskId_int, description, createdAt_localdatetime, end_localdatetime, reminder_localdatetime, complete_boolean, priority_int, tag_array, recurring_boolean, recurType);
+                            task = new DeadlineTask(taskIdAsInt, description, createdAtAsLocalDateTime, endAsLocalDateTime, reminderAsLocalDateTime, isCompleteAsBoolean, priorityAsInt, tagsAsArray, isRecurringAsBoolean, recurType);
                             break;
                         default:
                             break;
@@ -318,7 +307,7 @@ public class StorageController {
                 }
                 
                 if (task != null) {
-                    taskList.add(task);
+                    tasks.add(task);
                 }
             }
         } catch (Exception e) {
@@ -326,16 +315,16 @@ public class StorageController {
             //return null;
         }
         
-        return taskList;
+        return tasks;
     }
     
     /**
      * This method returns a string representation of the XML version of the Task objects
      * 
-     * @param  task  an ArrayList of all Task objects
-     * @return       a Document representing the XML document
+     * @param  tasks  an ArrayList of all Task objects
+     * @return        a Document representing the XML document
      */
-    public Document parseTask(ArrayList<Task> taskList) {
+    public Document parseTask(ArrayList<Task> tasks) {
         Document doc = null;
         try {
 
@@ -347,8 +336,8 @@ public class StorageController {
             doc.appendChild(root);
             
             //for (Task task : taskList) {
-            for (int i = 0; i < taskList.size(); i++) {
-                Task task = taskList.get(i);
+            for (int i = 0; i < tasks.size(); i++) {
+                Task task = tasks.get(i);
                 
                 Element item = doc.createElement("item");
                 root.appendChild(item);
@@ -364,7 +353,6 @@ public class StorageController {
                 item.appendChild(description);
                 
                 // createdAt
-                //DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
                 String formattedDateTime = DateTimeHelper.parseDateTimeToString(task.getCreatedAt());
                 Element createdAt = doc.createElement("createdAt");
                 createdAt.appendChild(doc.createTextNode(formattedDateTime));
@@ -395,7 +383,7 @@ public class StorageController {
                 Element end;
                 Element reminder;
                 Element recurring;
-                String recurring_string;
+                String recurringAsString;
                 Element recurType;
                 switch (task.getType()) {
                     case FLOATING:
@@ -430,8 +418,8 @@ public class StorageController {
                         
                         // recurring
                         recurring = doc.createElement("recurring");
-                        recurring_string = String.valueOf(((TimedTask) task).isRecurring());
-                        recurring.appendChild(doc.createTextNode(recurring_string));
+                        recurringAsString = String.valueOf(((TimedTask) task).isRecurring());
+                        recurring.appendChild(doc.createTextNode(recurringAsString));
                         item.appendChild(complete);
                         
                         // type
@@ -460,8 +448,8 @@ public class StorageController {
                         
                         // recurring
                         recurring = doc.createElement("recurring");
-                        recurring_string = String.valueOf(((DeadlineTask) task).isRecurring());
-                        recurring.appendChild(doc.createTextNode(recurring_string));
+                        recurringAsString = String.valueOf(((DeadlineTask) task).isRecurring());
+                        recurring.appendChild(doc.createTextNode(recurringAsString));
                         item.appendChild(complete);
                         
                         // type
@@ -490,7 +478,7 @@ public class StorageController {
         try {
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-            doc = dBuilder.parse(getXmlFile(DEFAULT_FILE_NAME));
+            doc = dBuilder.parse(getXmlFile(DEFAULT_FILE));
             
             // Ensures that the XML DOM view of a document is identical
             doc.getDocumentElement().normalize();
@@ -523,8 +511,8 @@ public class StorageController {
 
             DOMSource source = new DOMSource(doc);
             
-            FileWriter fos = new FileWriter(DEFAULT_FILE_NAME);
-            StreamResult result = new StreamResult(fos);
+            FileWriter fileWriter = new FileWriter(DEFAULT_FILE);
+            StreamResult result = new StreamResult(fileWriter);
             aTransformer.transform(source, result);
 
         } catch (IOException e) {
@@ -546,14 +534,14 @@ public class StorageController {
      * This method converts an arraylist of tags into string
      * 
      * @param  tags  an arraylist of tags
-     * @return      a string representation
+     * @return       a string representation
      */
     public String getTagsInString(ArrayList<String> tags) { 
-        String tags_string = "";
+        String tagsAsString = "";
         for (String tag : tags) {
-            tags_string += tag + " ";
+            tagsAsString += tag + " ";
         }
-        return tags_string.trim();
+        return tagsAsString.trim();
     }
     
     /**
@@ -564,11 +552,11 @@ public class StorageController {
      * @return       an arraylist representation
      */
     public ArrayList<String> getTagsInArrayList(String tags) { 
-         ArrayList<String> tags_array = new ArrayList<String>();
+         ArrayList<String> tagsAsArray = new ArrayList<String>();
          String[] splittedTags = tags.split(" ");
          for (String tag : splittedTags) {
-             tags_array.add(tag);
+             tagsAsArray.add(tag);
          }
-         return tags_array;
+         return tagsAsArray;
     }
 }

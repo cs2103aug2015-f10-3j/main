@@ -12,42 +12,48 @@ import task.entity.TimedTask;
 
 public class Reminder extends Observable {
 	/*** Variables ***/
-	private static Reminder thisInstance;
-	private static Observer observer;
-	private static Thread thread;
-	private static Runnable r;
+	private static Reminder _thisInstance;
+	private static Observer _observer;
+	private static Thread _thread;
+	private static Runnable _runnable;
 
 	/*** Constructor ***/
 	private Reminder() {
-		addObserver(observer);
+		addObserver(_observer);
 		createRunnable();
-		thread = new Thread(r);
-		thread.start();
-		System.out.println("Reminder Thread started...\n");
+		_thread = new Thread(_runnable);
+		_thread.start();
+		//System.out.println("Reminder Thread started...\n");
 	}
 
 	public static Reminder getInstance(Observer reminderObserver) {
-		if (thisInstance == null) {
-			observer = reminderObserver;
-			thisInstance = new Reminder();
+		if (_thisInstance == null) {
+			_observer = reminderObserver;
+			_thisInstance = new Reminder();
 		}
-		return thisInstance;
+		return _thisInstance;
 	}
-
+	
+	/*** Methods ***/
+	/**
+     * This method creates a runnable that
+     * runs in the background
+     * 
+     */
 	private void createRunnable() {
-		r = new Runnable() {
+		_runnable = new Runnable() {
 			public void run() {
 				while (true) {
 					// Retrieve task
-					ArrayList<Task> taskList = Task.getTaskList();
+					ArrayList<Task> tasks = Task.getTaskList();
 
 					// Get task with reminders in the next minute
-					ArrayList<Task> dueTaskList = new ArrayList<Task>();
+					ArrayList<Task> dueTasks = new ArrayList<Task>();
 					LocalDateTime reminder;
 					LocalDateTime now = LocalDateTime.now();
 					Duration duration;
-					if(taskList != null){
-						for (Task task : taskList) {
+					if(tasks != null){
+						for (Task task : tasks) {
 							// Select tasks that are not completed only
 							if (!task.isComplete()) {
 								switch (task.getType()) {
@@ -55,14 +61,14 @@ public class Reminder extends Observable {
 									reminder = ((TimedTask) task).getReminder();
 									duration = Duration.between(reminder, now);
 									if ((reminder.isAfter(now)) && (Math.abs(duration.getSeconds()) < 61)) {
-										dueTaskList.add(task);
+										dueTasks.add(task);
 									}
 									break;
 								case DEADLINE:
 									reminder = ((DeadlineTask) task).getReminder();
 									duration = Duration.between(reminder, now);
 									if ((reminder.isAfter(now)) && (Math.abs(duration.getSeconds()) < 61)) {
-										dueTaskList.add(task);
+										dueTasks.add(task);
 									}
 									break;
 								default:
@@ -72,12 +78,12 @@ public class Reminder extends Observable {
 						}
 					}
 					
-					System.out.println("dueTaskList.size(): " + dueTaskList.size());
+					//System.out.println("dueTaskList.size(): " + dueTaskList.size());
 
 					// Notify observers
-					if (dueTaskList.size() > 0) {
+					if (dueTasks.size() > 0) {
 						setChanged();
-						notifyObservers(dueTaskList);
+						notifyObservers(dueTasks);
 					}
 
 					// Sleep for 1 minute

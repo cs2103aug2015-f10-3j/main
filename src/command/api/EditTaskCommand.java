@@ -209,7 +209,9 @@ public class EditTaskCommand extends Command {
 				getEditedTaskReminder(),
 				originalTask.isComplete(),
 				getEditedTaskPriority(),
-				originalTask.getTags());
+				originalTask.getTags(),
+				((DeadlineTask) originalTask).isRecurring(),
+				((DeadlineTask) originalTask).getRecurPeriod());
 	}
 
 	private void createNewTimedTask() throws InvalidPriorityException {
@@ -222,7 +224,9 @@ public class EditTaskCommand extends Command {
 				getEditedTaskReminder(),
 				originalTask.isComplete(),
 				getEditedTaskPriority(),
-				originalTask.getTags());
+				originalTask.getTags(),
+                ((TimedTask) originalTask).isRecurring(),
+                ((TimedTask) originalTask).getRecurPeriod());
 	}
 
 	/*** Setter and Getter Methods ***/
