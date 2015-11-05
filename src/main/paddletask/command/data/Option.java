@@ -9,7 +9,7 @@ public class Option {
 	
 	private static final String INVALID_STRING = "";
 	private static final int INVALID_INT_VALUE = -1;
-	private List<Object> values = new ArrayList<Object>();
+	private List<Object> _values = new ArrayList<Object>();
 	
 	/*** Methods ***/
 	public LocalDateTime getDateValue() {
@@ -57,7 +57,7 @@ public class Option {
 			return null;
 		}
 		try {
-			return values.get(position);
+			return _values.get(position);
 		} catch (IndexOutOfBoundsException e) {
 			return null;
 		}
@@ -69,20 +69,20 @@ public class Option {
 	public boolean addValues(Object[] values) throws Exception {
 		boolean success = false;
 		for (Object value : values) {
-			success |= this.values.add(value);
+			success |= this._values.add(value);
 		}
 		return success;
 	}
 	
 	public boolean addValue(Object value) throws Exception {
-		return values.add(value);
+		return _values.add(value);
 	}
 	
 	public boolean hasValues() {
-		return !values.isEmpty();
+		return !_values.isEmpty();
 	}
 	
 	public int getValuesCount() {
-		return values.size();
+		return _values.size();
 	}
 }

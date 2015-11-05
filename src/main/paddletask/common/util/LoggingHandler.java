@@ -9,24 +9,38 @@ import java.util.logging.Logger;
 
 public class LoggingHandler {
 	
-	private static final Logger LOGGER = Logger.getLogger("");
+	/*** Variables ***/
+	private static final String EMPTY = "";
+	private static final String LOG_NAME = "./paddleTask.log";
+	private static final String CONFIG_MESSAGE = "Configuration done";
+	private static final String ERROR_MESSAGE = "Error occur in FileHandler";
 	
+	private static final Logger LOGGER = Logger.getLogger(EMPTY);
+
+	/*** Methods ***/
 	public void setupLoggingHandler() {
 		try{
-			LOGGER.removeHandler(LOGGER.getHandlers()[0]);
-			//Creating consoleHandler and fileHandler
-			Handler fileHandler  = new FileHandler("./paddleTask.log");
-			
-			LOGGER.addHandler(fileHandler);
-			
-			//Setting levels to handlers and LOGGER
-			fileHandler.setLevel(Level.INFO);
-			LOGGER.setLevel(Level.INFO);
-			
-			LOGGER.config("Configuration done.");
-			
+			supressConsoleOutput();
+			Handler fileHandler = createLogFile();
+			setLoggingLevel(fileHandler);
+			LOGGER.config(CONFIG_MESSAGE);
 		}catch(IOException exception){
-			LOGGER.log(Level.SEVERE, "Error occur in FileHandler.", exception);
+			LOGGER.log(Level.SEVERE, ERROR_MESSAGE, exception);
 		}
+	}
+
+	private void supressConsoleOutput() {
+		LOGGER.removeHandler(LOGGER.getHandlers()[0]);
+	}
+
+	private void setLoggingLevel(Handler fileHandler) {
+		fileHandler.setLevel(Level.INFO);
+		LOGGER.setLevel(Level.INFO);
+	}
+
+	private Handler createLogFile() throws IOException {
+		Handler fileHandler  = new FileHandler(LOG_NAME);
+		LOGGER.addHandler(fileHandler);
+		return fileHandler;
 	}
 }
