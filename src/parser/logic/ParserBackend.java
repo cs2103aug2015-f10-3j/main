@@ -3,7 +3,6 @@ package parser.logic;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -17,10 +16,10 @@ import common.data.ParserConstants;
 
 class ParserBackend implements ParserConstants {
 
-	
-	public static final String SPACE_REGEX = "\\s+";
 	public static final String EMPTY_STRING = "";
 	public static final String SPACE = " ";
+	public static final char SPACES = ' ';
+	public static final char QUOTES = '"';
 	
 	public static final boolean OPTIONAL = true;
 	public static final boolean NOT_OPTIONAL = false;
@@ -261,15 +260,13 @@ class ParserBackend implements ParserConstants {
 	public List<String> breakDownCommand(String userCommand) {
 		LOGGER.info("Attempt to breakdown user input into chunks of words.");
 		assert(userCommand != null && userCommand.length() > 0);
-		List<String> commandLine = new ArrayList<String>();
-		commandLine.addAll(Arrays.asList(userCommand.split(SPACE_REGEX)));
-		return commandLine;
+		return preprocessUserCommand(userCommand);
 	}
 	
 	protected String getMainCommand(String userCommand) {
 		LOGGER.log(Level.INFO, "Get first word of user input: {0}", userCommand);
 		assert(userCommand != null && userCommand.length() > 0);
-		return userCommand.split(SPACE_REGEX)[0];
+		return userCommand.split(SPACE)[0];
 	}
 	
 	protected boolean isOption(EnumMap<OPTIONS, TYPE> optionMap, String option) {
@@ -327,5 +324,49 @@ class ParserBackend implements ParserConstants {
 			throw new Error("Corrupted commandType");
 		}
 		return optionsMap.get(commandType);
+	}
+	
+	private List<String> preprocessUserCommand(String userCommand) {
+		List<String> processedCommand = new ArrayList<String>();
+		int head = 0;
+		for (int i = 0; !isEOL(userCommand, i); i++) {
+			if (isEOL(userCommand, i + 1)) {
+				addTo(processedCommand, userCommand, head, i + 1);
+			} else if (isSpace(userCommand, i)) {
+				addTo(processedCommand, userCommand, head, i);
+				head = i + 1;
+			} else if (isQuote(userCommand, i)) {
+				int j = i + 1;
+				while (!isEOL(userCommand, j) && !isQuote(userCommand, j)) {
+					j++;
+				}
+				if (!isEOL(userCommand, j)) {
+					i = j + 1;
+					addTo(processedCommand, userCommand, head + 1, j);
+					head = i + 1;
+				}
+			}
+		}
+		return processedCommand;
+	}
+	
+	private boolean isQuote(String s, int i) {
+		return s.charAt(i) == QUOTES;
+	}
+	
+	private boolean isSpace(String s, int i) {
+		return s.charAt(i) == SPACES;
+	}
+	
+	private boolean isEOL(String s, int i) {
+		return i >= s.length();
+	}
+	
+	private String substring(String s, int i, int j) {
+		return s.substring(i, j);
+	}
+	
+	private void addTo(List<String> command, String s, int i, int j) {
+		command.add(substring(s, i, j));
 	}
 }
