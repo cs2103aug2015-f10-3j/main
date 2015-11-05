@@ -291,22 +291,22 @@ public class TaskController {
                         switch (((DeadlineTask) task).getRecurPeriod()) {
                             case DAY:
                                 while (newEndDate.isBefore(LocalDateTime.now())) {
-                                    newEndDate.plusDays(1);
+                                    newEndDate = newEndDate.plusDays(1);
                                 }
                                 break;
                             case WEEK:
                                 while (newEndDate.isBefore(LocalDateTime.now())) {
-                                    newEndDate.plusWeeks(1);
+                                    newEndDate = newEndDate.plusWeeks(1);
                                 }
                                 break;
                             case MONTH:
                                 while (newEndDate.isBefore(LocalDateTime.now())) {
-                                    newEndDate.plusMonths(1);
+                                    newEndDate = newEndDate.plusMonths(1);
                                 }
                                 break;
                             case YEAR:
                                 while (newEndDate.isBefore(LocalDateTime.now())) {
-                                    newEndDate.plusYears(1);
+                                    newEndDate = newEndDate.plusYears(1);
                                 }
                                 break;
                             default:
@@ -325,22 +325,22 @@ public class TaskController {
                         switch (((TimedTask) task).getRecurPeriod()) {
                             case DAY:
                                 while (newEndDate.isBefore(LocalDateTime.now())) {
-                                    newEndDate.plusDays(1);
+                                    newEndDate = newEndDate.plusDays(1);
                                 }
                                 break;
                             case WEEK:
                                 while (newEndDate.isBefore(LocalDateTime.now())) {
-                                    newEndDate.plusWeeks(1);
+                                    newEndDate = newEndDate.plusWeeks(1);
                                 }
                                 break;
                             case MONTH:
                                 while (newEndDate.isBefore(LocalDateTime.now())) {
-                                    newEndDate.plusMonths(1);
+                                    newEndDate = newEndDate.plusMonths(1);
                                 }
                                 break;
                             case YEAR:
                                 while (newEndDate.isBefore(LocalDateTime.now())) {
-                                    newEndDate.plusYears(1);
+                                    newEndDate = newEndDate.plusYears(1);
                                 }
                                 break;
                             default:
