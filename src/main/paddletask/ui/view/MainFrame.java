@@ -1,3 +1,4 @@
+//@@author A0125528E
 package main.paddletask.ui.view;
 
 import java.awt.*;
@@ -27,16 +28,17 @@ import main.paddletask.task.entity.Task;
 import main.paddletask.ui.controller.UIController;
 
 /**
- * Create the GUI and show it.  For thread safety,
- * this method should be invoked from the
- * event-dispatching thread.
+ * This create the GUI and show it. This is the Mainframe class
+ * to hold the panel and the GUI that will be displayed.
+ * If CLI mode were to be enabled, this class will be 
+ * responsible for getting user input and displaying onto
+ * the command line.
  */
 
 public class MainFrame implements Observer{
 
 	/*** Variables ***/
 	private static final String TITLE = "PaddleTask";
-	private static final String SEA_GLASS_LOOK_AND_FEEL = "com.seaglasslookandfeel.SeaGlassLookAndFeel";
 	private static final String WELCOME_MSG_1 = "Welcome to PaddleTask.";
 	private static final String WELCOME_MSG_2 = "Today is %s.";
 	private static final String WELCOME_MSG_3 = "Your upcoming tasks for today:";
@@ -51,7 +53,17 @@ public class MainFrame implements Observer{
 	private static final char BOLD_INDICATOR = '@';
 	private static boolean ui_Mode = false;
 	private static MainFrame mainFrame = null;
+	private static final int WELCOME_MSG_SIZE = 3;
+	private static final String OPTION_MAXIMIZE = "Maximize";
+	private static final String OPTION_ICONIFY = "Iconify";
+	private static final String OPTION_CLOSE = "Close";
+	private static final String CLEAR_SCREEN = "\033[H\033[2J";
+	private static final int SIZE_PROPORTION = 2;
+	private static final int REMOVE_ONE = 1;
+	private static final int CHARACTER_LOCATION = 0;
+	private static final int OFFSET_ZERO = 0;
 
+	/*** Constructor ***/
 	public MainFrame(){
 		uiController = UIController.getInstance(this);
 	}
@@ -71,10 +83,18 @@ public class MainFrame implements Observer{
 		initiate(args);
 	}
 
+	/**
+	 * This method is to initiate the mainFrame object and determine
+	 * command line mode or GUI mode to be deployed.
+	 * 
+	 * @param  String[] argument on execution
+	 * 
+	 * @return true when the method completes
+	 */
 	public static boolean initiate(String[] args) {
 		mainFrame = new MainFrame();
-		if(args.length > 0){
-			String input = args[0];
+		if(args.length > OFFSET_ZERO){
+			String input = args[OFFSET_ZERO];
 			if(input.equals(CLI_COMMAND)){
 				//mainFrame.cliMode();
 				return true;
@@ -84,6 +104,12 @@ public class MainFrame implements Observer{
 		return true;
 	}
 	
+	/**
+	 * This method is to initiate the command line mode
+	 * of PaddleTask. This will take in input from the user
+	 * to be processed.
+	 * 
+	 */
 	public void cliMode(){
 		prepareWelcome();
 		while(sc.hasNext()){
@@ -96,10 +122,17 @@ public class MainFrame implements Observer{
 		}
 	}
 
+	/**
+	 * This method is to prepare the welcome message of 
+	 * PaddleTask. It will also send a "view all today"
+	 * command that will be used to display user's task today
+	 * on initialization of PaddleTask.
+	 * 
+	 */
 	public void prepareWelcome(){
 		String today = DateTimeHelper.getDate(LocalDateTime.now());
-		String[] outputs = new String[3];
-		int counter = 0;
+		String[] outputs = new String[WELCOME_MSG_SIZE];
+		int counter = OFFSET_ZERO;
 		outputs[counter++] = WELCOME_MSG_1;
 		outputs[counter++] = String.format(WELCOME_MSG_2, today);
 		outputs[counter++] = WELCOME_MSG_3;
@@ -108,11 +141,20 @@ public class MainFrame implements Observer{
 		outputToCmd(output);
 	}
 
+	/**
+	 * This method is process the output and
+	 * display it onto the command line.
+	 * 
+	 * @param output 
+	 * 					String array to be displayed
+	 * 
+	 */
 	public void outputToCmd(String[] output){
 		for(String s : output){
 			if(s!=null){
-				while(s.charAt(0) == BOLD_INDICATOR || s.charAt(0) == PRIORITY_INDICATOR ){
-					s = s.substring(1);
+				while(s.charAt(CHARACTER_LOCATION) == BOLD_INDICATOR || 
+						s.charAt(CHARACTER_LOCATION) == PRIORITY_INDICATOR ){
+					s = s.substring(REMOVE_ONE);
 				}
 				System.out.println(s);
 			}
@@ -143,12 +185,6 @@ public class MainFrame implements Observer{
 	 * 
 	 */
 	private static void createAndShowGUI() {
-		//Create and set up the window.
-		//Use SeaGlass Look and Feel to enhance display
-		try {
-			//UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
-			//UIManager.setLookAndFeel(SEA_GLASS_LOOK_AND_FEEL);
-		} catch (Exception e) { }
 		prepareFrame();
 		if (isSystemTrayReady()) {
 			isMinimized = false;
@@ -159,9 +195,10 @@ public class MainFrame implements Observer{
 	/**
 	 * This method prepare the Frame to be displayed.
 	 * It sets the variable for the frame and uses CommandLinePanel.
-	 * 
+	 * The default size of PaddleTask is set
+	 * to the halved of the resolution of the user's screen dynamically
+	 * to suit all users' screen.
 	 */
-
 	public static void prepareFrame() {
 		frame = new JFrame(TITLE);
 		frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
@@ -176,18 +213,12 @@ public class MainFrame implements Observer{
 		});
 		removeDefaultButtons(frame);
 		panel = new CommandLinePanel(mainFrame);
-		//nextPanel.populateContentPane(contentPane);
-		//panel = new MainPanel();
 		panel.populateContentPane(frame.getContentPane());
-
-		//Display the window.
 		Dimension size = frame.getToolkit().getScreenSize();
-		size.setSize(size.width / 2, size.height / 2);
+		size.setSize(size.width / SIZE_PROPORTION, size.height / SIZE_PROPORTION);
 		frame.setSize(size);
-		//frame.pack();
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
-
 	}
 
 	/**
@@ -197,12 +228,11 @@ public class MainFrame implements Observer{
 	 *  @param  Component 
 	 *  			JFrame frame
 	 */
-
 	private static void removeDefaultButtons(Component com){
 		if(com instanceof JButton){
 			String name = ((JButton) com).getAccessibleContext().getAccessibleName();
-			if(name.equals("Maximize")|| name.equals("Iconify")||
-					name.equals("Close")){
+			if(name.equals(OPTION_MAXIMIZE)|| name.equals(OPTION_ICONIFY)||
+					name.equals(OPTION_CLOSE)){
 				com.getParent().remove(com);
 			}
 		}
@@ -214,6 +244,46 @@ public class MainFrame implements Observer{
 		}
 	}
 
+	/**
+	 * This method is the update method for Observer class
+	 * of MainFrame. 
+	 * 
+	 *  @param 	o
+	 *  			Observable that called update
+	 *			arg  
+	 *  			argument passed with update
+	 *  
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public void update(Observable o, Object arg) {
+		// TODO Auto-generated method stub
+		if (o instanceof ClearCommand || o instanceof ViewTaskCommand || o instanceof SearchTaskCommand) {
+			if(ui_Mode){
+				CommandLinePanel.setPaneToNull();
+			} else{
+				System.out.println(CLEAR_SCREEN);
+			}
+		} else if(o instanceof Reminder){
+			if(arg instanceof ArrayList<?>){
+				if(ui_Mode){
+					CommandLinePanel.createReminder((ArrayList<Task>)arg);
+				} else{
+					String[] output = uiController.format((ArrayList<Task>)arg);
+					outputToCmd(output);
+				}
+			}
+		} else {
+			String msg = (String)arg;
+			if(ui_Mode){
+				CommandLinePanel.updatePrint(msg);
+			} else{
+				System.out.println(msg);
+			}
+		}
+	}
+	
+	//@@author A0125473H
 	private static void minimizeToTray() {
 		int state = frame.getExtendedState(); // get current state
 		state = state | Frame.ICONIFIED; // add minimized to the state
@@ -282,34 +352,5 @@ public class MainFrame implements Observer{
 				}
 			}
 		});
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public void update(Observable o, Object arg) {
-		// TODO Auto-generated method stub
-		if (o instanceof ClearCommand || o instanceof ViewTaskCommand || o instanceof SearchTaskCommand) {
-			if(ui_Mode){
-				CommandLinePanel.setPaneToNull();
-			} else{
-				System.out.println("\033[H\033[2J");
-			}
-		} else if(o instanceof Reminder){
-			if(arg instanceof ArrayList<?>){
-				if(ui_Mode){
-					CommandLinePanel.createReminder((ArrayList<Task>)arg);
-				} else{
-					String[] output = uiController.format((ArrayList<Task>)arg);
-					outputToCmd(output);
-				}
-			}
-		} else {
-			String msg = (String)arg;
-			if(ui_Mode){
-				CommandLinePanel.updatePrint(msg);
-			} else{
-				System.out.println(msg);
-			}
-		}
 	}
 }
