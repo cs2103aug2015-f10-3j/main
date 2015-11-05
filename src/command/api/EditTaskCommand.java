@@ -34,8 +34,8 @@ public class EditTaskCommand extends Command {
 	private Task originalTask, editedTask;
 	private String originalTaskType, newDescription = null;
 	private LocalDateTime newStart, newEnd, newReminder = null;
-	private boolean validity = true;
-
+	private boolean isValidTaskType = true;
+	
 	/*** Methods ***/
 	/**
 	 * This method modifies a Task based on user input for the edit command
@@ -106,7 +106,7 @@ public class EditTaskCommand extends Command {
 	 * @throws UpdateTaskException 
 	 */
 	private void prepareExecutionResult() throws UpdateTaskException {
-		if (validity) {
+		if (isValidTaskType) {
 			executionResult.clear();
 			executionResult.add(editedTask);
 			storeTaskToStorage(editedTask);
@@ -185,7 +185,7 @@ public class EditTaskCommand extends Command {
 			createNewTimedTask();
 			break;
 		case TASK_TYPE_INVALID :
-			validity = false;
+			isValidTaskType = false;
 			break;
 		}
 	}
