@@ -147,23 +147,80 @@ public class OutputProcessor {
 	}
 
 	/**
-	 * This method formats the variable needed from each task to string
+	 * This method formats the variable needed from the selected task to string
 	 * and store them into a string array.
 	 * 
-	 * @param ArrayList 
-	 *            Array list of task
+	 * @param task
+	 * 				selected task to display
 	 * @return String array
 	 */
 	public String[] formatOutput(Task task){
 		ArrayList<String> output = new ArrayList<String>();
+		String line;
+		formatDescription(task, output);
+		formatType(task, output);
+		formatPriority(task, output);
+		formatBaseOnTaskType(task, output);
+		formatTags(output, task);
+		return output.toArray(new String[output.size()]);
+	}
+	
+	/**
+	 * This method formats the descriptions of the given task
+	 * and insert into the output array list.
+	 * 
+	 * @param task
+	 * 				selected Task
+	 * 		  output
+	 *            	Array list of outputs
+	 */
+	public void formatDescription(Task task, ArrayList<String> output) {
 		String line =  DESC_STRING + task.getDescription();
 		output.add(line);
+	}
+
+	/**
+	 * This method formats the task types of the given task
+	 * and insert into the output array list.
+	 * 
+	 * @param task
+	 * 				selected Task
+	 * 		  output
+	 *            	Array list of outputs
+	 */
+	public void formatType(Task task, ArrayList<String> output) {
+		String line;
 		line =  TYPE_STRING + task.getType().toString().toLowerCase();
 		output.add(line);
+	}
+
+	/**
+	 * This method formats the priority of the given task
+	 * and insert into the output array list.
+	 * 
+	 * @param task
+	 * 				selected Task
+	 * 		  output
+	 *            	Array list of outputs
+	 */
+	public void formatPriority(Task task, ArrayList<String> output) {
+		String line;
 		line =  PRIORITY_STRING + task.getPriority();
 		output.add(line);
-		formatBaseOnTaskType(task, output);
+	}
+	
+	/**
+	 * This method formats the tags of the given task
+	 * and insert into the output array list.
+	 * 
+	 * @param task
+	 * 				selected Task
+	 * 		  output
+	 *            	Array list of outputs
+	 */
+	public void formatTags(ArrayList<String> output, Task task) {
 		ArrayList<String> tags = task.getTags();
+		String line;
 		if(tags!= null){
 			if(tags.size()>MIN_SIZE){
 				line = TAG_STRING;
@@ -176,9 +233,17 @@ public class OutputProcessor {
 			}
 		}
 		output.add(NEXT_LINE);
-		return output.toArray(new String[output.size()]);
 	}
 
+	/**
+	 * This method formats the task based on the task type to extract
+	 * necessary attributes uniquely to the task types.
+	 * 
+	 * @param task
+	 * 				selected Task
+	 * 		  output
+	 *            	Array list of outputs
+	 */
 	public void formatBaseOnTaskType(Task task, ArrayList<String> output) {
 		String line;
 		if(task instanceof TimedTask){
