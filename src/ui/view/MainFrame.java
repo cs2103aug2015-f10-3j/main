@@ -3,6 +3,11 @@ package ui.view;
 import java.awt.*;
 import java.awt.event.*;
 import java.net.URL;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Observable;
+import java.util.Observer;
+import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -13,7 +18,13 @@ import org.jnativehook.keyboard.NativeKeyEvent;
 import org.jnativehook.keyboard.NativeKeyListener;
 
 import background.Reminder;
+import command.api.ClearCommand;
+import command.api.SearchTaskCommand;
+import command.api.ViewTaskCommand;
+import common.util.DateTimeHelper;
 import common.util.LoggingHandler;
+import task.entity.Task;
+import ui.controller.UIController;
 
 /**
  * Create the GUI and show it.  For thread safety,
@@ -21,14 +32,29 @@ import common.util.LoggingHandler;
  * event-dispatching thread.
  */
 
-public class MainFrame {
+public class MainFrame implements Observer{
 
 	/*** Variables ***/
 	private static final String TITLE = "PaddleTask";
 	private static final String SEA_GLASS_LOOK_AND_FEEL = "com.seaglasslookandfeel.SeaGlassLookAndFeel";
+	private static final String WELCOME_MSG_1 = "Welcome to PaddleTask.";
+	private static final String WELCOME_MSG_2 = "Today is %s.";
+	private static final String WELCOME_MSG_3 = "Your upcoming tasks for today:";
+	private static final String FIRST_COMMAND = "view all today";
 	private static JFrame frame;
 	private static CommandLinePanel panel;
 	private static boolean isMinimized = false;
+	private static Scanner sc = new Scanner(System.in);
+	private static final String CLI_COMMAND = "cli";
+	private static UIController uiController;
+	private static final char PRIORITY_INDICATOR = '*';
+	private static final char BOLD_INDICATOR = '@';
+	private static boolean ui_Mode = false;
+	private static MainFrame mainFrame = null;
+
+	public MainFrame(){
+		uiController = UIController.getInstance(this);
+	}
 
 	/*** Methods ***/
 	/**
@@ -39,6 +65,65 @@ public class MainFrame {
 	public static void main(String[] args) {
 		//Schedule a job for the event-dispatching thread:
 		//creating and showing this application's GUI.
+		
+		initiate(args);
+	}
+
+	public static boolean initiate(String[] args) {
+		mainFrame = new MainFrame();
+		if(args.length > 0){
+			String input = args[0];
+			if(input.equals(CLI_COMMAND)){
+				//mainFrame.cliMode();
+				return true;
+			}
+		}
+		initiateGUI();
+		return true;
+	}
+	
+	public void cliMode(){
+		prepareWelcome();
+		while(sc.hasNext()){
+			String command = sc.nextLine();
+			String[] output = uiController.processUserInput(command);
+			if(output!= null){
+				outputToCmd(output);
+			}
+
+		}
+	}
+
+	public void prepareWelcome(){
+		String today = DateTimeHelper.getDate(LocalDateTime.now());
+		String[] outputs = new String[3];
+		int counter = 0;
+		outputs[counter++] = WELCOME_MSG_1;
+		outputs[counter++] = String.format(WELCOME_MSG_2, today);
+		outputs[counter++] = WELCOME_MSG_3;
+		String[] output = uiController.processUserInput(FIRST_COMMAND);
+		outputToCmd(outputs);
+		outputToCmd(output);
+	}
+
+	public void outputToCmd(String[] output){
+		for(String s : output){
+			if(s!=null){
+				while(s.charAt(0) == BOLD_INDICATOR || s.charAt(0) == PRIORITY_INDICATOR ){
+					s = s.substring(1);
+				}
+				System.out.println(s);
+			}
+		}
+	}
+
+	/**
+	 * This method is to schedule a job for the event-dispatching thread, followed
+	 * by creating and showing this application's GUI.
+	 * 
+	 */
+	public static void initiateGUI() {
+		ui_Mode = true;
 		LoggingHandler handler = new LoggingHandler();
 		handler.setupLoggingHandler();
 		javax.swing.SwingUtilities.invokeLater(new Runnable() {
@@ -55,7 +140,6 @@ public class MainFrame {
 
 	/**
 	 * This method prepare the UI for display and decorations.
-	 * 
 	 * 
 	 */
 	private static void createAndShowGUI() {
@@ -91,11 +175,11 @@ public class MainFrame {
 			}
 		});
 		removeDefaultButtons(frame);
-		panel = new CommandLinePanel();
+		panel = new CommandLinePanel(mainFrame);
 		//nextPanel.populateContentPane(contentPane);
 		//panel = new MainPanel();
 		panel.populateContentPane(frame.getContentPane());
-		
+
 		//Display the window.
 		Dimension size = frame.getToolkit().getScreenSize();
 		size.setSize(size.width / 2, size.height / 2);
@@ -113,7 +197,7 @@ public class MainFrame {
 	 *  @param  Component 
 	 *  			JFrame frame
 	 */
-	
+
 	private static void removeDefaultButtons(Component com){
 		if(com instanceof JButton){
 			String name = ((JButton) com).getAccessibleContext().getAccessibleName();
@@ -198,5 +282,34 @@ public class MainFrame {
 				}
 			}
 		});
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public void update(Observable o, Object arg) {
+		// TODO Auto-generated method stub
+		if (o instanceof ClearCommand || o instanceof ViewTaskCommand || o instanceof SearchTaskCommand) {
+			if(ui_Mode){
+				CommandLinePanel.setPaneToNull();
+			} else{
+				System.out.println("\033[H\033[2J");
+			}
+		} else if(o instanceof Reminder){
+			if(arg instanceof ArrayList<?>){
+				if(ui_Mode){
+					CommandLinePanel.createReminder((ArrayList<Task>)arg);
+				} else{
+					String[] output = uiController.format((ArrayList<Task>)arg);
+					outputToCmd(output);
+				}
+			}
+		} else {
+			String msg = (String)arg;
+			if(ui_Mode){
+				CommandLinePanel.updatePrint(msg);
+			} else{
+				System.out.println(msg);
+			}
+		}
 	}
 }

@@ -109,7 +109,7 @@ public class OutputProcessor {
 					if(!tags.get(0).equals("")){
 						for(int j = 0; j < tags.size(); j++){
 							String s = tags.get(j);
-							if(s!=null || !s.equals("")){
+							if(!s.equals("")){
 								tag+=String.format(TAGS_FORMAT, tags.get(j));
 							}
 							if(j == 3){

@@ -11,7 +11,6 @@ import javax.swing.*;
 import javax.swing.text.AbstractDocument;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
-import javax.swing.text.DefaultCaret;
 import javax.swing.text.Document;
 
 import background.Reminder;
@@ -25,7 +24,7 @@ import task.entity.Task;
 import ui.controller.UIController;
 
 @SuppressWarnings("serial")
-public class CommandLinePanel extends JPanel implements Observer,KeyListener {
+public class CommandLinePanel extends JPanel implements KeyListener {
 
 	/*** Variables ***/
 	private static final String STRING_EMPTY = "";
@@ -41,21 +40,23 @@ public class CommandLinePanel extends JPanel implements Observer,KeyListener {
 	private static Font font = new Font("Consolas",Font.PLAIN, 14);
 	private JTextField inputField = null;
 	//private JTextArea textArea = null;
-	private JTextPane textPane = null;
+	private static JTextPane textPane = null;
 	public static JDialog reminderDialog = null;
-	private JPanel panel = null;
-	private DoublyLinkedList commandList = null;
+	private static JPanel panel = null;
+	private static DoublyLinkedList commandList = null;
 	private Box box = null;
 	private Node node = null;
 	private String currentCommand = null;
-	private JScrollPane scrollPane = null;
+	private static JScrollPane scrollPane = null;
+	private MainFrame mainFrame = null;
 
 	//protected static boolean restrictSize = true;
 	//protected static boolean sizeIsRandom = false;
 
 	/*** Constructors ***/
-	public CommandLinePanel(){
-		uiController = UIController.getInstance(this);
+	public CommandLinePanel(MainFrame mainFrame){
+		this.mainFrame = mainFrame;
+		uiController = UIController.getInstance(mainFrame);
 		commandList = new DoublyLinkedList();
 	}
 
@@ -187,7 +188,7 @@ public class CommandLinePanel extends JPanel implements Observer,KeyListener {
 	 * @param s
 	 *        	String s to be appended to textPane
 	 */
-	public void append(String s) {
+	public static void append(String s) {
 		try {
 			Document doc = textPane.getDocument();
 			textPane.setCaretPosition(doc.getLength());
@@ -271,22 +272,17 @@ public class CommandLinePanel extends JPanel implements Observer,KeyListener {
 	public boolean setInputFocus() {
 		return inputField.requestFocusInWindow();
 	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public void update(Observable o, Object arg) {
-		if (o instanceof ClearCommand || o instanceof ViewTaskCommand || o instanceof SearchTaskCommand) {
-			textPane.setText(null);
-		} else if(o instanceof Reminder){
-			createReminder((ArrayList<Task>)arg);
-		} else {
-			String msg = (String)arg;
-			append(commandList.getLast().getData());
-			append(msg +NEXT_LINE);
-		}
+	
+	public static void setPaneToNull(){
+		textPane.setText(null);
+	}
+	
+	public static void updatePrint(String msg){
+		append(commandList.getLast().getData());
+		append(msg +NEXT_LINE);
 	}
 
-	public void createReminder(ArrayList<Task> taskList){
+	public static void createReminder(ArrayList<Task> taskList){
 		System.out.println("Reminder alert");
 		if (reminderDialog == null) {
 			Window topWindow = SwingUtilities.getWindowAncestor(panel);
