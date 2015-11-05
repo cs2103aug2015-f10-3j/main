@@ -44,6 +44,7 @@ public class OutputProcessor {
 	private static final String DEADLINE_STRING = "Deadline: ";
 	private static final String REMINDER_STRING = "Reminder: ";
 	private static final String TAG_STRING = "Tags: ";
+	private static final String RECURRING_STRING = "Recurring: ";
 
 	/*** Constructor ***/
 	private OutputProcessor(){
@@ -161,26 +162,7 @@ public class OutputProcessor {
 		output.add(line);
 		line =  PRIORITY_STRING + task.getPriority();
 		output.add(line);
-		if(task instanceof TimedTask){
-			TimedTask t = (TimedTask)task;
-			line =  START_STRING + DateTimeHelper.getDate(t.getStart()) + SPACE_STRING + DateTimeHelper.getTime(t.getStart());
-			output.add(line);
-			line =  DEADLINE_STRING + DateTimeHelper.getDate(t.getEnd()) + SPACE_STRING + DateTimeHelper.getTime(t.getEnd());
-			output.add(line);
-			if(t.getReminder()!=null){
-				line = REMINDER_STRING + DateTimeHelper.getDate(t.getReminder()) + SPACE_STRING + DateTimeHelper.getTime(t.getReminder());
-				output.add(line);
-			}
-		} else if(task instanceof DeadlineTask){
-			DeadlineTask t = (DeadlineTask)task;
-			line = DEADLINE_STRING  + DateTimeHelper.getDate(t.getEnd()) + SPACE_STRING + DateTimeHelper.getTime(t.getEnd());
-			output.add(line);
-			if(t.getReminder()!=null){
-				line = REMINDER_STRING + DateTimeHelper.getDate(t.getReminder()) + SPACE_STRING + DateTimeHelper.getTime(t.getReminder());
-				output.add(line);
-			}
-		} else {
-		}
+		formatBaseOnTaskType(task, output);
 		ArrayList<String> tags = task.getTags();
 		if(tags!= null){
 			if(tags.size()>MIN_SIZE){
@@ -195,6 +177,36 @@ public class OutputProcessor {
 		}
 		output.add(NEXT_LINE);
 		return output.toArray(new String[output.size()]);
+	}
+
+	public void formatBaseOnTaskType(Task task, ArrayList<String> output) {
+		String line;
+		if(task instanceof TimedTask){
+			TimedTask t = (TimedTask)task;
+			line =  START_STRING + DateTimeHelper.getDate(t.getStart()) + SPACE_STRING + DateTimeHelper.getTime(t.getStart());
+			output.add(line);
+			line =  DEADLINE_STRING + DateTimeHelper.getDate(t.getEnd()) + SPACE_STRING + DateTimeHelper.getTime(t.getEnd());
+			output.add(line);
+			if(t.getReminder()!=null){
+				line = REMINDER_STRING + DateTimeHelper.getDate(t.getReminder()) + SPACE_STRING + DateTimeHelper.getTime(t.getReminder());
+				output.add(line);
+			}
+			if(t.isRecurring()){
+				line = RECURRING_STRING + t.getRecurPeriod().toString();
+			}
+		} else if(task instanceof DeadlineTask){
+			DeadlineTask t = (DeadlineTask)task;
+			line = DEADLINE_STRING  + DateTimeHelper.getDate(t.getEnd()) + SPACE_STRING + DateTimeHelper.getTime(t.getEnd());
+			output.add(line);
+			if(t.getReminder()!=null){
+				line = REMINDER_STRING + DateTimeHelper.getDate(t.getReminder()) + SPACE_STRING + DateTimeHelper.getTime(t.getReminder());
+				output.add(line);
+			}
+			if(t.isRecurring()){
+				line = RECURRING_STRING + t.getRecurPeriod().toString();
+			}
+		} else {
+		}
 	}
 
 
