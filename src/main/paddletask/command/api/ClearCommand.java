@@ -6,17 +6,24 @@ import java.util.ArrayList;
 import main.paddletask.task.entity.Task;
 
 public class ClearCommand extends Command {
-	
+
+	/*** Methods ***/
 	@Override
 	public ArrayList<Task> execute() {
-		setChanged();
-		notifyObservers(null);
+		clearScreen();
 		return null;
 	}
+	
+	public void clearScreen() {
+		//set observable state as changed
+		setChanged();
+		//notify the observer - screen
+		notifyObservers(null);
+	}
 
+	//@@author generated
 	@Override
 	public ArrayList<Task> undo() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 	

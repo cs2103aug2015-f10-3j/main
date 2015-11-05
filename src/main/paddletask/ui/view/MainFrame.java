@@ -284,25 +284,41 @@ public class MainFrame implements Observer{
 	}
 	
 	//@@author A0125473H
+	/**
+	 * This method is invoked to hide and minimize the
+	 * application to window's system tray
+	 */
 	private static void minimizeToTray() {
 		int state = frame.getExtendedState(); // get current state
 		state = state | Frame.ICONIFIED; // add minimized to the state
 		frame.setExtendedState(state);
-		frame.setVisible(false);
+		frame.setVisible(false); // hide the window
 		isMinimized = true;
 	}
 
+
+	/**
+	 * This method is invoked to restore and unhide the
+	 * application from window's system tray
+	 */
 	private static void restoreToDesktop() {
 		int state = frame.getExtendedState(); // get current state
 		state = state & ~Frame.ICONIFIED; // remove minimized to the state
 		frame.setExtendedState(state);
-		frame.setVisible(true);
+		frame.setVisible(true); // unhide the window
 		frame.toFront();
 		frame.repaint();
 		panel.setInputFocus();
 		isMinimized = false;
 	}
 
+	/**
+	 * This method is invoked to check if the system tray
+	 * is accessible by the application
+	 * 
+	 * @return <code>true</code> if system tray is accessible
+	 *         <code>false</code> otherwise
+	 */
 	private static boolean isSystemTrayReady() {
 		if (!SystemTray.isSupported()) {
 			return false;
@@ -325,9 +341,14 @@ public class MainFrame implements Observer{
 		return true;
 	}
 
+	/**
+	 * This method is invoked to implement a global keystroke hook
+	 * onto the user's system
+	 */
 	private static void implementNativeKeyHook() throws Exception {
 		GlobalScreen.registerNativeHook();
 
+		//supress all warnings except level warning
 		Logger logger = Logger.getLogger(GlobalScreen.class.getPackage().getName());
 		logger.setLevel(Level.WARNING);
 
@@ -339,6 +360,8 @@ public class MainFrame implements Observer{
 			@Override
 			public void nativeKeyReleased(NativeKeyEvent e) { }
 
+			// only required to hook the key press event
+			// and check for a combination of LCTRL + SPACE
 			@Override
 			public void nativeKeyPressed(NativeKeyEvent e) {
 				if (e.getModifiers() == (NativeKeyEvent.CTRL_L_MASK)) {
