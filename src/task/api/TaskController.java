@@ -1,13 +1,16 @@
 package task.api;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.w3c.dom.Document;
 
 import storage.api.StorageController;
+import task.entity.DeadlineTask;
 import task.entity.Task;
 import task.entity.Task.TASK_TYPE;
+import task.entity.TimedTask;
 
 public class TaskController {
     /*** Variables ***/
@@ -269,5 +272,102 @@ public class TaskController {
         // System.out.println("Smallest unused: "+smallestUnused);
 
         return smallestUnused;
+    }
+    
+    /**
+     * This method checks recurring tasks
+     * and updates their end dates if necessary
+     * 
+     * @param taskList
+     *            list of the new Task objects
+     * @return <code>true</code> if the check is successfully performed; 
+     *         <code>false</code> otherwise.
+     */
+    public boolean checkRecurring() {
+        ArrayList<Task> taskList = Task.getTaskList();
+
+        // Loop through all task
+        for (int i = 0; i < taskList.size(); i++) {
+            Task task = taskList.get(i);
+            switch (task.getType()) {
+                case DEADLINE:
+                    if ((task.isComplete() == false) &&
+                            ((DeadlineTask) task).getEnd().isBefore(LocalDateTime.now()) &&
+                            (((DeadlineTask) task).isRecurring() == true)) {
+                        LocalDateTime newEndDate = ((DeadlineTask) task).getEnd();
+                        switch (((DeadlineTask) task).getRecurPeriod()) {
+                            case DAY:
+                                while (newEndDate.isBefore(LocalDateTime.now())) {
+                                    newEndDate.plusDays(1);
+                                }
+                                break;
+                            case WEEK:
+                                while (newEndDate.isBefore(LocalDateTime.now())) {
+                                    newEndDate.plusWeeks(1);
+                                }
+                                break;
+                            case MONTH:
+                                while (newEndDate.isBefore(LocalDateTime.now())) {
+                                    newEndDate.plusMonths(1);
+                                }
+                                break;
+                            case YEAR:
+                                while (newEndDate.isBefore(LocalDateTime.now())) {
+                                    newEndDate.plusYears(1);
+                                }
+                                break;
+                            default:
+                                break;
+                        }
+                        ((DeadlineTask) task).setEnd(newEndDate);
+                        ((DeadlineTask) task).setReminder(newEndDate.minusMinutes(5));
+                        taskList.set(i, task);
+                    }
+                    break;
+                case TIMED:
+                    if ((task.isComplete() == false) &&
+                            ((TimedTask) task).getEnd().isBefore(LocalDateTime.now()) &&
+                            (((TimedTask) task).isRecurring() == true)) {
+                        LocalDateTime newEndDate = ((TimedTask) task).getEnd();
+                        switch (((TimedTask) task).getRecurPeriod()) {
+                            case DAY:
+                                while (newEndDate.isBefore(LocalDateTime.now())) {
+                                    newEndDate.plusDays(1);
+                                }
+                                break;
+                            case WEEK:
+                                while (newEndDate.isBefore(LocalDateTime.now())) {
+                                    newEndDate.plusWeeks(1);
+                                }
+                                break;
+                            case MONTH:
+                                while (newEndDate.isBefore(LocalDateTime.now())) {
+                                    newEndDate.plusMonths(1);
+                                }
+                                break;
+                            case YEAR:
+                                while (newEndDate.isBefore(LocalDateTime.now())) {
+                                    newEndDate.plusYears(1);
+                                }
+                                break;
+                            default:
+                                break;
+                        }
+                        ((TimedTask) task).setEnd(newEndDate);
+                        ((TimedTask) task).setReminder(newEndDate.minusMinutes(5));
+                        taskList.set(i, task);
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        // Store to file
+        Task.setTaskList(taskList);
+        Document doc = sController.parseTask(taskList);
+        boolean result = sController.writeXml(doc);
+
+        return result;
     }
 }
