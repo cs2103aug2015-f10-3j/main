@@ -44,7 +44,7 @@ public class MainFrame implements Observer{
 	private static final String WELCOME_MSG_3 = "Your upcoming tasks for today:";
 	private static final String FIRST_COMMAND = "view all today";
 	private static JFrame frame;
-	private static CommandLinePanel panel;
+	private static MainPanel panel;
 	private static boolean isMinimized = false;
 	private static Scanner sc = new Scanner(System.in);
 	private static final String CLI_COMMAND = "cli";
@@ -212,7 +212,7 @@ public class MainFrame implements Observer{
 			}
 		});
 		removeDefaultButtons(frame);
-		panel = new CommandLinePanel(mainFrame);
+		panel = new MainPanel(mainFrame);
 		panel.populateContentPane(frame.getContentPane());
 		Dimension size = frame.getToolkit().getScreenSize();
 		size.setSize(size.width / SIZE_PROPORTION, size.height / SIZE_PROPORTION);
@@ -260,14 +260,14 @@ public class MainFrame implements Observer{
 		// TODO Auto-generated method stub
 		if (o instanceof ClearCommand || o instanceof ViewTaskCommand || o instanceof SearchTaskCommand) {
 			if(ui_Mode){
-				CommandLinePanel.setPaneToNull();
+				MainPanel.setPaneToNull();
 			} else{
 				System.out.println(CLEAR_SCREEN);
 			}
 		} else if(o instanceof Reminder){
 			if(arg instanceof ArrayList<?>){
 				if(ui_Mode){
-					CommandLinePanel.createReminder((ArrayList<Task>)arg);
+					MainPanel.createReminder((ArrayList<Task>)arg);
 				} else{
 					String[] output = uiController.format((ArrayList<Task>)arg);
 					outputToCmd(output);
@@ -276,7 +276,7 @@ public class MainFrame implements Observer{
 		} else {
 			String msg = (String)arg;
 			if(ui_Mode){
-				CommandLinePanel.updatePrint(msg);
+				MainPanel.updatePrint(msg);
 			} else{
 				System.out.println(msg);
 			}

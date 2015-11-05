@@ -160,7 +160,7 @@ public class ReminderPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				dialog.dispose();
-				CommandLinePanel.setDialogNull();
+				MainPanel.setDialogNull();
 			}
 		});
 		return button;
