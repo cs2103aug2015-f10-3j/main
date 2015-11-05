@@ -12,6 +12,7 @@ import main.paddletask.task.entity.Task;
 import main.paddletask.task.entity.TimedTask;
 
 public class Reminder extends Observable {
+    private static final int _61 = 61;
     /*** Variables ***/
     private static Reminder _thisInstance;
     private static Observer _observer;
@@ -61,14 +62,14 @@ public class Reminder extends Observable {
                                 case TIMED:
                                     reminder = ((TimedTask) task).getReminder();
                                     duration = Duration.between(reminder, now);
-                                    if ((reminder.isAfter(now)) && (Math.abs(duration.getSeconds()) < 61)) {
+                                    if ((reminder.isAfter(now)) && (Math.abs(duration.getSeconds()) < _61)) {
                                         dueTasks.add(task);
                                     }
                                     break;
                                 case DEADLINE:
                                     reminder = ((DeadlineTask) task).getReminder();
                                     duration = Duration.between(reminder, now);
-                                    if ((reminder.isAfter(now)) && (Math.abs(duration.getSeconds()) < 61)) {
+                                    if ((reminder.isAfter(now)) && (Math.abs(duration.getSeconds()) < _61)) {
                                         dueTasks.add(task);
                                     }
                                     break;
