@@ -20,7 +20,7 @@ public class ParseLogic extends ParserBackend {
 	}
 
 	/*** Methods ***/
-	private COMMAND_TYPE determineCommandType(String userCommand) {
+	public COMMAND_TYPE determineCommandType(String userCommand) {
 		LOGGER.log(Level.INFO, "Attempt to determine command type from user input: {0}", userCommand);
 		assert(userCommand != null);
 		String mainCommand = getMainCommand(userCommand).toLowerCase();
