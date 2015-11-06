@@ -43,6 +43,7 @@ public class MainFrame implements Observer{
 	private static final String WELCOME_MSG_2 = "Today is %s.";
 	private static final String WELCOME_MSG_3 = "Your upcoming tasks for today:";
 	private static final String FIRST_COMMAND = "view all today";
+	private static final String REMINDER_MSG = "Reminder Alert!";
 	private static JFrame frame;
 	private static MainPanel panel;
 	private static boolean isMinimized = false;
@@ -156,6 +157,7 @@ public class MainFrame implements Observer{
 				System.out.println(s);
 			}
 		}
+		System.out.println();
 	}
 
 	/**
@@ -260,10 +262,6 @@ public class MainFrame implements Observer{
 				MainPanel.setPaneToNull();
 			} else{
 				System.out.println();
-				System.out.println();
-				System.out.println();
-				System.out.println();
-				System.out.println();
 				//System.out.println(CLEAR_SCREEN);
 			}
 		} else if(o instanceof Reminder){
@@ -272,6 +270,7 @@ public class MainFrame implements Observer{
 					MainPanel.createReminder((ArrayList<Task>)arg);
 				} else{
 					String[] output = uiController.format((ArrayList<Task>)arg);
+					System.out.println(REMINDER_MSG);
 					outputToCmd(output);
 				}
 			}
@@ -281,6 +280,7 @@ public class MainFrame implements Observer{
 				MainPanel.updatePrint(msg);
 			} else{
 				System.out.println(msg);
+				System.out.println();
 			}
 		}
 	}
