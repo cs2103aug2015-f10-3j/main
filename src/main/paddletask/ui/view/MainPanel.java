@@ -5,8 +5,6 @@ import java.awt.Dialog.ModalityType;
 import java.awt.event.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Observable;
-import java.util.Observer;
 
 import javax.swing.*;
 import javax.swing.text.AbstractDocument;
@@ -14,10 +12,6 @@ import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 
-import main.paddletask.background.Reminder;
-import main.paddletask.command.api.ClearCommand;
-import main.paddletask.command.api.SearchTaskCommand;
-import main.paddletask.command.api.ViewTaskCommand;
 import main.paddletask.common.data.DoublyLinkedList;
 import main.paddletask.common.data.Node;
 import main.paddletask.common.util.DateTimeHelper;
