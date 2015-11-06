@@ -443,7 +443,7 @@ public class StorageController {
                         recurring = doc.createElement(RECURRING);
                         recurringAsString = String.valueOf(((TimedTask) task).isRecurring());
                         recurring.appendChild(doc.createTextNode(recurringAsString));
-                        item.appendChild(complete);
+                        item.appendChild(recurring);
                         
                         // type
                         recurType = doc.createElement(RECURTYPE);
@@ -473,7 +473,7 @@ public class StorageController {
                         recurring = doc.createElement(RECURRING);
                         recurringAsString = String.valueOf(((DeadlineTask) task).isRecurring());
                         recurring.appendChild(doc.createTextNode(recurringAsString));
-                        item.appendChild(complete);
+                        item.appendChild(recurring);
                         
                         // type
                         recurType = doc.createElement(RECURTYPE);
