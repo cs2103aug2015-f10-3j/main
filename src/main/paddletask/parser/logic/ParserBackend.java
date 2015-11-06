@@ -22,6 +22,9 @@ class ParserBackend implements ParserConstants {
 	public static final String SPACE = " ";
 	public static final char SPACES = ' ';
 	public static final char QUOTES = '"';
+	public static final String DATE_FORMAT = "%1$s/%2$s/%3$s";
+	public static final String OLD_TASKID_FORMAT = "\\s+%1$d(\\s+|$)";
+	public static final String NEW_TASKID_FORMAT = " %1$d ";
 	
 	public static final boolean OPTIONAL = true;
 	public static final boolean NOT_OPTIONAL = false;
