@@ -10,13 +10,16 @@ import java.util.logging.Level;
 import main.paddletask.command.api.*;
 import main.paddletask.command.data.Option;
 import main.paddletask.common.exception.InvalidCommandFormatException;
+import main.paddletask.common.util.DateTimeHelper;
 
 public class ParseLogic extends ParserBackend {
 	
+	/*** Constructor ***/
 	public ParseLogic() {
 		LOGGER.info("Initiating ParseLogic");
 	}
 
+	/*** Methods ***/
 	public COMMAND_TYPE determineCommandType(String userCommand) {
 		LOGGER.log(Level.INFO, "Attempt to determine command type from user input: {0}", userCommand);
 		assert(userCommand != null);
@@ -86,9 +89,17 @@ public class ParseLogic extends ParserBackend {
 		}
 	}
 		
-	public Command createCommand(COMMAND_TYPE commandType) {
-		LOGGER.log(Level.INFO, "Create command based on determined command type: {0}", commandType);
-		assert(commandType != null);
+	public Command createCommand(String userCommand) throws Exception {
+		LOGGER.log(Level.INFO, "Create command based on determined command type: {0}", userCommand);
+		assert(userCommand != null);
+		COMMAND_TYPE commandType = determineCommandType(userCommand);
+		Command newCommand = createCommandByType(commandType);
+		processOptions(commandType, newCommand, userCommand);
+		addCommandToList(newCommand, commandType);
+		return newCommand;
+	}
+	
+	private Command createCommandByType(COMMAND_TYPE commandType){
 		switch (commandType) {
 			case ADD:
 				return new AddTaskCommand();
@@ -99,7 +110,7 @@ public class ParseLogic extends ParserBackend {
 			case DELETE:
 				return new DeleteTaskCommand();
 			case COMPLETE:
-                return new CompleteTaskCommand();
+				return new CompleteTaskCommand();
 			case SEARCH:
 				return new SearchTaskCommand();
 			case UNDO:
@@ -128,7 +139,25 @@ public class ParseLogic extends ParserBackend {
 		}
 	}
 
-	public void addOptionsToCommand(COMMAND_TYPE commandType, Command command, List<String> commandList) throws Exception {
+	private void addCommandToList(Command newCommand, ParseLogic.COMMAND_TYPE commandType) {
+		assert(newCommand != null);
+		if (!isInvalidTypeToAdd(commandType)) {
+			Command.getCommandList().add(newCommand);
+		}
+	}
+
+	private void processOptions(COMMAND_TYPE commandType, Command newCommand, String userCommand) throws Exception {
+		assert(newCommand != null && userCommand != null);
+		List<String> commandList = breakDownCommand(userCommand);
+		if (commandType == COMMAND_TYPE.SEARCH) {
+			addPossibleDates(newCommand, commandList);
+		} else if (commandType == COMMAND_TYPE.TAG || commandType == COMMAND_TYPE.UNTAG) {
+			addTags(newCommand, commandList);
+		}
+		addOptionsToCommand(commandType, newCommand, commandList);
+	}
+
+	private void addOptionsToCommand(COMMAND_TYPE commandType, Command command, List<String> commandList) throws Exception {
 		LOGGER.info("Attempt to add list of options to Command specified");
 		assert(command != null && commandList != null);
 		EnumMap<OPTIONS, TYPE> optionMap = getOptionMap(commandType);
@@ -137,18 +166,25 @@ public class ParseLogic extends ParserBackend {
 				String option = commandList.get(i);
 				List<String> subList = commandList.subList(i, commandList.size());
 				Option commandOption = getOption(subList, optionMap);
-				if (!isOptionalOrNoArgumentType(optionMap, option) && commandOption == null) {
+				if (!isOptionValid(optionMap, option, commandOption)) {
 					continue;
 				}
-				option = getFullOptionName(option);
-				boolean isAddSuccess = command.addOption(option, commandOption);
-				if (!isAddSuccess) {
+				if (!addOption(option, commandOption, command)) {
 					LOGGER.severe("Unable to add option into command due to unknown reasons.");
 					throw new Error("Unknown error has occured.");
 				}
 				subList.clear();
 			}
 		}
+	}
+	
+	private boolean addOption(String option, Option commandOption, Command command) {
+		option = getFullOptionName(option);
+		return command.addOption(option, commandOption);
+	}
+	
+	private boolean isOptionValid (EnumMap<OPTIONS, TYPE> optionMap, String option, Option commandOption) {
+		return !(!isOptionalOrNoArgumentType(optionMap, option) && commandOption == null);
 	}
 	
 	private Option getOption(List<String> commandList, EnumMap<OPTIONS, TYPE> optionMap) throws Exception {
@@ -209,57 +245,68 @@ public class ParseLogic extends ParserBackend {
 		command.addOption("searchDates", dateOption);
 	}
 	
-	private Option scanForDates(List<String> commandList, boolean optional) throws Exception {
-		LOGGER.log(Level.INFO, "Attempt to parse expected string from user input");
-		assert(commandList != null);
-		Option commandOption = new Option();
-		StringBuilder stringOption = new StringBuilder();
-		LOGGER.log(Level.WARNING, "expectedString = commandList.get(0) may cause index out of bounds exception");
+	private boolean isCommandListValid(List<String> commandList, boolean optional) throws Exception {
 		if (commandList.isEmpty()) {
 			if (optional) {
-				return null;
+				return false;
 			} else {
 				LOGGER.log(Level.SEVERE, "expected input not found");
 				throw new InvalidCommandFormatException("Expected input not found!");
 			}
 		}
-		String expectedString = EMPTY_STRING;
-		for (String s : commandList) { 
-			LOGGER.fine("Expecting a list of Strings");
-			expectedString = s;
-			if (isDate(expectedString)) {
-				String[] testedString = expectedString.split("/");
-				expectedString = String.format("%1$s/%2$s/%3$s", testedString[2], testedString[1], testedString[0]);
-			}
-			stringOption.append(expectedString);
-			stringOption.append(SPACE);
+		return true;
+	}
+	
+	private Option scanForDates(List<String> commandList, boolean optional) throws Exception {
+		LOGGER.log(Level.INFO, "Attempt to parse expected string from user input");
+		assert(commandList != null);
+		Option commandOption = new Option();
+		if (!isCommandListValid(commandList, optional)) {
+			return null;
 		}
-		expectedString = stringOption.toString().trim();
-		List<LocalDateTime> dates = parseDates(expectedString);
+		String expectedDate = formatDates(commandList);
+		List<LocalDateTime> dates = parseDates(expectedDate);
 		while (!dates.isEmpty()) {
 			commandOption.addValue(dates.remove(0));
 		}
 		return commandOption;
+	}
+	
+	/** 
+	 * This method is used invoked to convert dd/mm/yyyy dates
+	 * to yyyy/mm/dd so there is no ambiguity and natty is able
+	 * to parse the dates correctly. (Natty reads dd/mm/yyyy 
+	 * dates as mm/dd/yyyy dates.)
+	 * 
+	 * @param commandList
+	 * @return
+	 */
+	private String formatDates(List<String> commandList) {
+		StringBuilder stringOption = new StringBuilder();
+		for (String s : commandList) { 
+			LOGGER.fine("Expecting a list of Strings");
+			if (DateTimeHelper.isDate(s)) {
+				String[] testedString = s.split("/");
+				s = String.format(DATE_FORMAT, testedString[2], testedString[1], testedString[0]);
+			}
+			stringOption.append(s);
+			stringOption.append(SPACE);
+		}
+		return stringOption.toString().trim();
 	}
 
 	private Option expectDay(List<String> commandList, boolean optional) throws Exception {
 		LOGGER.log(Level.INFO, "Attempt to parse expected array of integers from user input");
 		assert(commandList != null);
 		Option commandOption = new Option();
-		if (commandList.isEmpty()) {
-			if (optional) {
-				return null;
-			} else {
-				LOGGER.log(Level.SEVERE, "expected input not found");
-				throw new InvalidCommandFormatException("Expected input not found!");
-			}
+		if (!isCommandListValid(commandList, optional)) {
+			return null;
 		}
-		for (int i = 0; i < commandList.size(); i++) {
-			String expectedDay = commandList.get(i);
-			if (!isDay(expectedDay)) {
+		for (String s : commandList) {
+			if (!isDay(s)) {
 				return null;
 			}
-			commandOption.addValue(expectedDay);
+			commandOption.addValue(s);
 		}
 		return commandOption;
 	}
@@ -268,18 +315,12 @@ public class ParseLogic extends ParserBackend {
 		LOGGER.log(Level.INFO, "Attempt to parse expected array of integers from user input");
 		assert(commandList != null);
 		Option commandOption = new Option();
-		if (commandList.isEmpty()) {
-			if (optional) {
-				return null;
-			} else {
-				LOGGER.log(Level.SEVERE, "expected input not found");
-				throw new InvalidCommandFormatException("Expected input not found!");
-			}
+		if (!isCommandListValid(commandList, optional)) {
+			return null;
 		}
-		for (int i = 0; i < commandList.size(); i++) {
-			String expectedInt = commandList.get(i);
-			Integer parsedInt = tryParseInteger(expectedInt);
-			if (parsedInt == null || parsedInt < 0) {
+		for (String s : commandList) {
+			Integer parsedInt = tryParseInteger(s);
+			if (!isParsedIntValid(parsedInt)) {
 				return null;
 			}
 			commandOption.addValue(parsedInt);
@@ -287,48 +328,43 @@ public class ParseLogic extends ParserBackend {
 		return commandOption;
 	}
 	
+	private boolean isParsedIntValid(Integer parsedInt) {
+		return !(parsedInt == null || parsedInt < 0);
+	}
+	
 	private Option expectString(List<String> commandList, boolean optional) throws Exception {
 		LOGGER.log(Level.INFO, "Attempt to parse expected string from user input");
 		assert(commandList != null);
 		Option commandOption = new Option();
-		StringBuilder stringOption = new StringBuilder();
-		LOGGER.log(Level.WARNING, "expectedString = commandList.get(0) may cause index out of bounds exception");
-		if (commandList.isEmpty()) {
-			if (optional) {
-				return null;
-			} else {
-				LOGGER.log(Level.SEVERE, "expected input not found");
-				throw new InvalidCommandFormatException("Expected input not found!");
-			}
+		if (!isCommandListValid(commandList, optional)) {
+			return null;
 		}
-		String expectedString = commandList.get(0);
-		for (int i = 0; i < commandList.size(); i++) { 
-			LOGGER.fine("Expecting a list of Strings");
-			expectedString = commandList.get(i);
-			stringOption.append(expectedString);
-			stringOption.append(SPACE);
-		}
-		expectedString = stringOption.toString().trim();
+		String expectedString = findString(commandList);  
 		commandOption.addValue(expectedString);
 		return commandOption;
+	}
+	
+	private String findString(List<String> commandList) {
+		StringBuilder stringOption = new StringBuilder();
+		for (String s : commandList) { 
+			LOGGER.fine("Expecting a list of Strings");
+			stringOption.append(s);
+			stringOption.append(SPACE);
+		}
+		return stringOption.toString().trim();
 	}
 	
 	private Option expectInteger(List<String> commandList, boolean optional) throws Exception {
 		LOGGER.log(Level.INFO, "Attempt to parse single expected integer from user input");
 		assert(commandList != null);
 		Option commandOption = new Option();
-		if (commandList.isEmpty()) {
-			if (optional) {
-				return null;
-			} else {
-				LOGGER.log(Level.SEVERE, "expected input not found");
-				throw new InvalidCommandFormatException("Expected input not found!");
-			}
+		if (!isCommandListValid(commandList, optional)) {
+			return null;
 		}
 		LOGGER.log(Level.WARNING, "expectedInt = commandList.get(0) may cause index out of bounds exception");
 		String expectedInt = commandList.get(0);
 		Integer parsedInt = tryParseInteger(expectedInt);
-		if (parsedInt == null || parsedInt < 0) {
+		if (!isParsedIntValid(parsedInt)) {
 			return null;
 		}
 		commandOption.addValue(parsedInt);
@@ -339,18 +375,11 @@ public class ParseLogic extends ParserBackend {
 		LOGGER.log(Level.INFO, "Attempt to parse expected array of Strings from user input");
 		assert(commandList != null);
 		Option commandOption = new Option();
-		LOGGER.log(Level.WARNING, "expectedInt = commandList.remove(0) may cause index out of bounds exception");
-		if (commandList.isEmpty()) {
-			if (optional) {
-				return null;
-			} else {
-				LOGGER.log(Level.SEVERE, "expected input not found");
-				throw new InvalidCommandFormatException("Expected input not found!");
-			}
+		if (!isCommandListValid(commandList, optional)) {
+			return null;
 		}
-		for (int i = 0; i < commandList.size(); i++) {
-			String expectedString = commandList.get(i);
-			commandOption.addValue(expectedString);
+		for (String s : commandList) {
+			commandOption.addValue(s);
 		}
 		return commandOption;
 	}
@@ -364,55 +393,38 @@ public class ParseLogic extends ParserBackend {
 		LOGGER.log(Level.INFO, "Attempt to parse expected array of Strings from user input");
 		assert(commandList != null);
 		Option commandOption = new Option();
-		LOGGER.log(Level.WARNING, "expectedInt = commandList.remove(0) may cause index out of bounds exception");
-		if (commandList.isEmpty()) {
-			if (optional) {
-				return null;
-			} else {
-				LOGGER.log(Level.SEVERE, "expected input not found");
-				throw new InvalidCommandFormatException("Expected input not found!");
-			}
+		if (!isCommandListValid(commandList, optional)) {
+			return null;
 		}
 		for (String s : commandList) {
-			String expectedString = s;
-			if (expectedString.startsWith(OPTIONS.HASHTAG.toString())) {
-				commandOption.addValue(expectedString);
+			if (isValidTag(s)) {
+				commandOption.addValue(s);
 			}
 		}
+		checkValidOption(commandOption);
+		return commandOption;
+	}
+	
+	private void checkValidOption(Option commandOption) throws InvalidCommandFormatException {
 		if (commandOption.getValuesCount() == 0) {
 			LOGGER.log(Level.SEVERE, "expected input not found");
 			throw new InvalidCommandFormatException("Expected input not found!");
 		}
-		return commandOption;
+	}
+	
+	private boolean isValidTag(String tag) {
+		return tag.startsWith(OPTIONS.HASHTAG.toString());
 	}
 	
 	private Option expectDate(List<String> commandList, boolean optional) throws Exception {
 		LOGGER.log(Level.INFO, "Attempt to parse expected string from user input");
 		assert(commandList != null);
 		Option commandOption = new Option();
-		StringBuilder stringOption = new StringBuilder();
-		LOGGER.log(Level.WARNING, "expectedString = commandList.get(0) may cause index out of bounds exception");
-		if (commandList.isEmpty()) {
-			if (optional) {
-				return null;
-			} else {
-				LOGGER.log(Level.SEVERE, "expected input not found");
-				throw new InvalidCommandFormatException("Expected input not found!");
-			}
+		if (!isCommandListValid(commandList, optional)) {
+			return null;
 		}
-		String expectedString = EMPTY_STRING;
-		for (int i = 0; i < commandList.size(); i++) { 
-			LOGGER.fine("Expecting a list of Strings");
-			expectedString = commandList.get(i);
-			if (isDate(expectedString)) {
-				String[] testedString = expectedString.split("/");
-				expectedString = String.format("%1$s/%2$s/%3$s", testedString[2], testedString[1], testedString[0]);
-			}
-			stringOption.append(expectedString);
-			stringOption.append(SPACE);
-		}
-		expectedString = stringOption.toString().trim();
-		LocalDateTime date = parseDate(expectedString);
+		String expectedDate = formatDates(commandList);
+		LocalDateTime date = parseDate(expectedDate);
 		if (date == null) {
 			return null;
 		}
@@ -420,11 +432,7 @@ public class ParseLogic extends ParserBackend {
 		return commandOption;
 	}
 	
-	private boolean isDate(String date) {
-		return date.matches("(\\d{2})/(\\d{2})/(\\d{4})");
-	}
-	
-	public boolean isInvalidTypeToAdd(COMMAND_TYPE commandType) {
+	private boolean isInvalidTypeToAdd(COMMAND_TYPE commandType) {
 		switch (commandType) {
 			case UNDO:
 			case REDO:
@@ -438,7 +446,15 @@ public class ParseLogic extends ParserBackend {
 		}
 	}
 	
-	public boolean isStatefulCommand(COMMAND_TYPE commandType) {
+	public boolean isStatefulCommand(String userCommand) {
+		return isStatefulCommand(determineCommandType(userCommand));
+	}
+	
+	public boolean isSaveStateCommand(String userCommand) {
+		return isSaveStateCommand(determineCommandType(userCommand));
+	}
+	
+	private boolean isStatefulCommand(COMMAND_TYPE commandType) {
 		switch (commandType) {
 			case EDIT:
 			case DELETE:
@@ -452,7 +468,7 @@ public class ParseLogic extends ParserBackend {
 		}
 	}
 	
-	public boolean isSaveStateCommand(COMMAND_TYPE commandType) {
+	private boolean isSaveStateCommand(COMMAND_TYPE commandType) {
 		switch (commandType) {
 			case VIEW:
 			case SEARCH:
@@ -463,28 +479,38 @@ public class ParseLogic extends ParserBackend {
 	}
 	
 	public String replaceRunningIndex(String userCommand, int[] stateArray) throws Exception {
-		COMMAND_TYPE commandType = determineCommandType(userCommand);
 		Integer taskID = -1;
-		List<String> commandTokens;
-		if (commandType == COMMAND_TYPE.EDIT) {
-			commandTokens = new ArrayList<String>();
-			commandTokens.add(userCommand.split(SPACE)[1]);
-		} else {
-			commandTokens = breakDownCommand(userCommand);
-		}
+		List<String> commandTokens = getStatefulCommandTokens(userCommand);
 		for (String s : commandTokens) {
 			if ((taskID = tryParseInteger(s)) != null) {
-				if (taskID <= 0) {
-					String message = String.format("Failed to parse user input: %1$s", userCommand);
-					LOGGER.log(Level.SEVERE, message, "Invalid ID provided");
-					throw new InvalidCommandFormatException("Task with the following Task ID does not exist!");
-				}
-				String oldID = String.format("\\s+%1$d(\\s+|$)", taskID);
-				String newID = String.format(" %1$d ", stateArray[taskID - 1]);
+				checkTaskID(taskID, userCommand);
+				String oldID = String.format(OLD_TASKID_FORMAT, taskID);
+				String newID = String.format(NEW_TASKID_FORMAT, stateArray[taskID - 1]);
 				userCommand = userCommand.replaceFirst(oldID, newID);
 			}
 		}
 		return userCommand.trim();
+	}
+	
+	private List<String> getStatefulCommandTokens(String userCommand) {
+		COMMAND_TYPE commandType = determineCommandType(userCommand);
+		List<String> commandTokens = null;
+		if (commandType == COMMAND_TYPE.EDIT) {
+			commandTokens = new ArrayList<String>();
+			// if edit, get ID of edit
+			commandTokens.add(userCommand.split(SPACE)[1]);
+		} else {
+			commandTokens = breakDownCommand(userCommand);
+		}
+		return commandTokens;
+	}
+
+	private void checkTaskID(int taskID, String userCommand) throws InvalidCommandFormatException {
+		if (taskID <= 0) {
+			String message = String.format("Failed to parse user input: %1$s", userCommand);
+			LOGGER.log(Level.SEVERE, message, "Invalid ID provided");
+			throw new InvalidCommandFormatException("Task with the following Task ID does not exist!");
+		}
 	}
 	
 	private Integer tryParseInteger(String s1) {

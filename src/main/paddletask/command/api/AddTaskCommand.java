@@ -101,7 +101,7 @@ public class AddTaskCommand extends Command implements ParserConstants {
 		String description = getTaskDescription();
 		Integer priority = getTaskPriority();
 		LocalDateTime startDate = getTaskStartDate();
-		LocalDateTime deadline = getTaskDeadline();
+		LocalDateTime deadline = getTaskEndDate();
 		LocalDateTime reminder = calculateTaskReminderDate(deadline);
 		boolean recurring = isTaskRecurring();
 		RECUR_TYPE recurType = getTaskRecurrenceType(recurring);
@@ -143,6 +143,13 @@ public class AddTaskCommand extends Command implements ParserConstants {
      */
 	private LocalDateTime getTaskStartDate() {
 		return getOption(OPTIONS.BETWEEN.toString()).getDateValue();
+	}
+
+	/**
+     * @return LocalDateTime representing the end date
+     */
+	private LocalDateTime getTaskEndDate() {
+		return getOption(OPTIONS.AND.toString()).getDateValue();
 	}
 
 	/**

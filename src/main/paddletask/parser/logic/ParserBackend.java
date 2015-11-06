@@ -17,10 +17,14 @@ import main.paddletask.common.data.ParserConstants;
 
 class ParserBackend implements ParserConstants {
 
+	/*** Variables ***/
 	public static final String EMPTY_STRING = "";
 	public static final String SPACE = " ";
 	public static final char SPACES = ' ';
 	public static final char QUOTES = '"';
+	public static final String DATE_FORMAT = "%1$s/%2$s/%3$s";
+	public static final String OLD_TASKID_FORMAT = "\\s+%1$d(\\s+|$)";
+	public static final String NEW_TASKID_FORMAT = " %1$d ";
 	
 	public static final boolean OPTIONAL = true;
 	public static final boolean NOT_OPTIONAL = false;
@@ -41,17 +45,17 @@ class ParserBackend implements ParserConstants {
 	private static final EnumMap<OPTIONS, TYPE> redoOptions = new EnumMap<OPTIONS, TYPE>(OPTIONS.class);
 	private static final EnumMap<OPTIONS, TYPE> undoOptions = new EnumMap<OPTIONS, TYPE>(OPTIONS.class);
 	
-	
 	protected static final Logger LOGGER = Logger.getLogger(ParseLogic.class.getName());
-	private static HashMap<String, String> shortHandMap = new HashMap<String, String>();
-	private static HashMap<COMMAND_TYPE, EnumMap<OPTIONS, TYPE>> optionsMap = new HashMap<COMMAND_TYPE, EnumMap<OPTIONS, TYPE>>();
-	protected static com.joestelmach.natty.Parser dateParser = new com.joestelmach.natty.Parser();
+	private static HashMap<String, String> _shortHandMap = new HashMap<String, String>();
+	private static HashMap<COMMAND_TYPE, EnumMap<OPTIONS, TYPE>> _optionsMap = new HashMap<COMMAND_TYPE, EnumMap<OPTIONS, TYPE>>();
+	private static com.joestelmach.natty.Parser _dateParser = new com.joestelmach.natty.Parser();
 	
+	/*** Constructor ***/
 	public ParserBackend() {
-		parseDate("warmup");
 		setupCommandEnums();
 	}
-	
+
+	/*** Methods ***/
 	private void setupCommandEnums() {
 		setupAddOption();
 		setupViewOption();
@@ -65,105 +69,105 @@ class ParserBackend implements ParserConstants {
 		setupUntagOption();
 		setupMoreOption();
 		setupTrivialOptions();
-		setUpShortHandMapping();
+		setUp_shortHandMapping();
 	}
 
-	private void setUpShortHandMapping() {
-		shortHandMap.put(OPTIONS.ADD_SHORT.toString(), OPTIONS.ADD.toString());
-		shortHandMap.put(OPTIONS.VIEW_SHORT.toString(), OPTIONS.VIEW.toString());
-		shortHandMap.put(OPTIONS.EDIT_SHORT.toString(), OPTIONS.EDIT.toString());
-		shortHandMap.put(OPTIONS.DELETE_SHORT.toString(), OPTIONS.DELETE.toString());
-		shortHandMap.put(OPTIONS.COMPLETE_SHORT.toString(), OPTIONS.COMPLETE.toString());
-		shortHandMap.put(OPTIONS.SEARCH_SHORT.toString(), OPTIONS.SEARCH.toString());
-		shortHandMap.put(OPTIONS.BY_SHORT.toString(), OPTIONS.BY.toString());
-		shortHandMap.put(OPTIONS.UNDO_SHORT.toString(), OPTIONS.UNDO.toString());
-		shortHandMap.put(OPTIONS.REDO_SHORT.toString(), OPTIONS.REDO.toString());
-		shortHandMap.put(OPTIONS.REMIND_SHORT.toString(), OPTIONS.REMIND.toString());
-		shortHandMap.put(OPTIONS.CLEAR_SHORT.toString(), OPTIONS.CLEAR.toString());
-		shortHandMap.put(OPTIONS.EXIT_SHORT.toString(), OPTIONS.EXIT.toString());
-		shortHandMap.put(OPTIONS.BETWEEN_SHORT.toString(), OPTIONS.BETWEEN.toString());
-		shortHandMap.put(OPTIONS.AND_SHORT.toString(), OPTIONS.AND.toString());
-		shortHandMap.put(OPTIONS.DESC_SHORT.toString(), OPTIONS.DESC.toString());
-		shortHandMap.put(OPTIONS.START_SHORT.toString(), OPTIONS.START.toString());
-		shortHandMap.put(OPTIONS.END_SHORT.toString(), OPTIONS.END.toString());
-		shortHandMap.put(OPTIONS.ALL_SHORT.toString(), OPTIONS.ALL.toString());
-		shortHandMap.put(OPTIONS.FLOATING_SHORT.toString(), OPTIONS.FLOATING.toString());
-		shortHandMap.put(OPTIONS.DEADLINE_SHORT.toString(), OPTIONS.DEADLINE.toString());
-		shortHandMap.put(OPTIONS.TIMED_SHORT.toString(), OPTIONS.TIMED.toString());
-		shortHandMap.put(OPTIONS.TODAY_SHORT.toString(), OPTIONS.TODAY.toString());
-		shortHandMap.put(OPTIONS.TOMORROW_SHORT.toString(), OPTIONS.TOMORROW.toString());
-		shortHandMap.put(OPTIONS.WEEK_SHORT.toString(), OPTIONS.WEEK.toString());
-		shortHandMap.put(OPTIONS.MONTH_SHORT.toString(), OPTIONS.MONTH.toString());
-		shortHandMap.put(OPTIONS.HELP_SHORT.toString(), OPTIONS.HELP.toString());
-		shortHandMap.put(OPTIONS.SETDIRECTORY_SHORT.toString(), OPTIONS.SETDIRECTORY.toString());
-		shortHandMap.put(OPTIONS.MORE_SHORT.toString(), OPTIONS.MORE.toString());
-		shortHandMap.put(OPTIONS.TAG_SHORT.toString(), OPTIONS.TAG.toString());
-		shortHandMap.put(OPTIONS.UNTAG_SHORT.toString(), OPTIONS.UNTAG.toString());
-		shortHandMap.put(OPTIONS.PRIORITY_SHORT.toString(), OPTIONS.PRIORITY.toString());
-		shortHandMap.put(OPTIONS.EVERY_SHORT.toString(), OPTIONS.EVERY.toString());
+	private void setUp_shortHandMapping() {
+		_shortHandMap.put(OPTIONS.ADD_SHORT.toString(), OPTIONS.ADD.toString());
+		_shortHandMap.put(OPTIONS.VIEW_SHORT.toString(), OPTIONS.VIEW.toString());
+		_shortHandMap.put(OPTIONS.EDIT_SHORT.toString(), OPTIONS.EDIT.toString());
+		_shortHandMap.put(OPTIONS.DELETE_SHORT.toString(), OPTIONS.DELETE.toString());
+		_shortHandMap.put(OPTIONS.COMPLETE_SHORT.toString(), OPTIONS.COMPLETE.toString());
+		_shortHandMap.put(OPTIONS.SEARCH_SHORT.toString(), OPTIONS.SEARCH.toString());
+		_shortHandMap.put(OPTIONS.BY_SHORT.toString(), OPTIONS.BY.toString());
+		_shortHandMap.put(OPTIONS.UNDO_SHORT.toString(), OPTIONS.UNDO.toString());
+		_shortHandMap.put(OPTIONS.REDO_SHORT.toString(), OPTIONS.REDO.toString());
+		_shortHandMap.put(OPTIONS.REMIND_SHORT.toString(), OPTIONS.REMIND.toString());
+		_shortHandMap.put(OPTIONS.CLEAR_SHORT.toString(), OPTIONS.CLEAR.toString());
+		_shortHandMap.put(OPTIONS.EXIT_SHORT.toString(), OPTIONS.EXIT.toString());
+		_shortHandMap.put(OPTIONS.BETWEEN_SHORT.toString(), OPTIONS.BETWEEN.toString());
+		_shortHandMap.put(OPTIONS.AND_SHORT.toString(), OPTIONS.AND.toString());
+		_shortHandMap.put(OPTIONS.DESC_SHORT.toString(), OPTIONS.DESC.toString());
+		_shortHandMap.put(OPTIONS.START_SHORT.toString(), OPTIONS.START.toString());
+		_shortHandMap.put(OPTIONS.END_SHORT.toString(), OPTIONS.END.toString());
+		_shortHandMap.put(OPTIONS.ALL_SHORT.toString(), OPTIONS.ALL.toString());
+		_shortHandMap.put(OPTIONS.FLOATING_SHORT.toString(), OPTIONS.FLOATING.toString());
+		_shortHandMap.put(OPTIONS.DEADLINE_SHORT.toString(), OPTIONS.DEADLINE.toString());
+		_shortHandMap.put(OPTIONS.TIMED_SHORT.toString(), OPTIONS.TIMED.toString());
+		_shortHandMap.put(OPTIONS.TODAY_SHORT.toString(), OPTIONS.TODAY.toString());
+		_shortHandMap.put(OPTIONS.TOMORROW_SHORT.toString(), OPTIONS.TOMORROW.toString());
+		_shortHandMap.put(OPTIONS.WEEK_SHORT.toString(), OPTIONS.WEEK.toString());
+		_shortHandMap.put(OPTIONS.MONTH_SHORT.toString(), OPTIONS.MONTH.toString());
+		_shortHandMap.put(OPTIONS.HELP_SHORT.toString(), OPTIONS.HELP.toString());
+		_shortHandMap.put(OPTIONS.SETDIRECTORY_SHORT.toString(), OPTIONS.SETDIRECTORY.toString());
+		_shortHandMap.put(OPTIONS.MORE_SHORT.toString(), OPTIONS.MORE.toString());
+		_shortHandMap.put(OPTIONS.TAG_SHORT.toString(), OPTIONS.TAG.toString());
+		_shortHandMap.put(OPTIONS.UNTAG_SHORT.toString(), OPTIONS.UNTAG.toString());
+		_shortHandMap.put(OPTIONS.PRIORITY_SHORT.toString(), OPTIONS.PRIORITY.toString());
+		_shortHandMap.put(OPTIONS.EVERY_SHORT.toString(), OPTIONS.EVERY.toString());
 	}
 	
 	private void setupTrivialOptions() {
 		clearOptions.put(OPTIONS.CLEAR, TYPE.NONE);
 		clearOptions.put(OPTIONS.CLEAR_SHORT, TYPE.NONE);
-		optionsMap.put(COMMAND_TYPE.CLEAR, clearOptions);
+		_optionsMap.put(COMMAND_TYPE.CLEAR, clearOptions);
 		exitOptions.put(OPTIONS.EXIT, TYPE.NONE);
 		exitOptions.put(OPTIONS.EXIT_SHORT, TYPE.NONE);
-		optionsMap.put(COMMAND_TYPE.EXIT, exitOptions);
+		_optionsMap.put(COMMAND_TYPE.EXIT, exitOptions);
 		redoOptions.put(OPTIONS.REDO, TYPE.NONE);
 		redoOptions.put(OPTIONS.REDO_SHORT, TYPE.NONE);
-		optionsMap.put(COMMAND_TYPE.REDO, redoOptions);
+		_optionsMap.put(COMMAND_TYPE.REDO, redoOptions);
 		undoOptions.put(OPTIONS.UNDO, TYPE.NONE);
 		undoOptions.put(OPTIONS.UNDO_SHORT, TYPE.NONE);
-		optionsMap.put(COMMAND_TYPE.UNDO, undoOptions);
+		_optionsMap.put(COMMAND_TYPE.UNDO, undoOptions);
 	}
 
 	private void setupMoreOption() {
 		moreOptions.put(OPTIONS.MORE, TYPE.INTEGER);
 		moreOptions.put(OPTIONS.MORE_SHORT, TYPE.INTEGER);
-		optionsMap.put(COMMAND_TYPE.MORE, moreOptions);
+		_optionsMap.put(COMMAND_TYPE.MORE, moreOptions);
 	}
 
 	private void setupUntagOption() {
 		untagOptions.put(OPTIONS.UNTAG, TYPE.INTEGER);
 		untagOptions.put(OPTIONS.UNTAG_SHORT, TYPE.INTEGER);
-		optionsMap.put(COMMAND_TYPE.UNTAG, untagOptions);
+		_optionsMap.put(COMMAND_TYPE.UNTAG, untagOptions);
 	}
 
 	private void setupTagOption() {
 		tagOptions.put(OPTIONS.TAG, TYPE.INTEGER);
 		tagOptions.put(OPTIONS.TAG_SHORT, TYPE.INTEGER);
-		optionsMap.put(COMMAND_TYPE.TAG, tagOptions);
+		_optionsMap.put(COMMAND_TYPE.TAG, tagOptions);
 	}
 
 	private void setupSetDirectoryOption() {
 		setDirectoryOptions.put(OPTIONS.SETDIRECTORY, TYPE.STRING);
 		setDirectoryOptions.put(OPTIONS.SETDIRECTORY_SHORT, TYPE.STRING);
-		optionsMap.put(COMMAND_TYPE.SETDIRECTORY, setDirectoryOptions);
+		_optionsMap.put(COMMAND_TYPE.SETDIRECTORY, setDirectoryOptions);
 	}
 
 	private void setupHelpOption() {
 		helpOptions.put(OPTIONS.HELP, TYPE.STRING_OPT);
 		helpOptions.put(OPTIONS.HELP_SHORT, TYPE.STRING_OPT);
-		optionsMap.put(COMMAND_TYPE.HELP, helpOptions);
+		_optionsMap.put(COMMAND_TYPE.HELP, helpOptions);
 	}
 
 	private void setupSearchOption() {
 		searchOptions.put(OPTIONS.SEARCH, TYPE.STRING_ARRAY);
 		searchOptions.put(OPTIONS.SEARCH_SHORT, TYPE.STRING_ARRAY);
-		optionsMap.put(COMMAND_TYPE.SEARCH, searchOptions);
+		_optionsMap.put(COMMAND_TYPE.SEARCH, searchOptions);
 	}
 
 	private void setupCompleteOption() {
 		completeOptions.put(OPTIONS.COMPLETE, TYPE.INTEGER_ARRAY);
 		completeOptions.put(OPTIONS.COMPLETE_SHORT, TYPE.INTEGER_ARRAY);
-		optionsMap.put(COMMAND_TYPE.COMPLETE, completeOptions);
+		_optionsMap.put(COMMAND_TYPE.COMPLETE, completeOptions);
 	}
 
 	private void setupDeleteOption() {
 		deleteOptions.put(OPTIONS.DELETE, TYPE.INTEGER_ARRAY);
 		deleteOptions.put(OPTIONS.DELETE_SHORT, TYPE.INTEGER_ARRAY);
-		optionsMap.put(COMMAND_TYPE.DELETE, deleteOptions);
+		_optionsMap.put(COMMAND_TYPE.DELETE, deleteOptions);
 	}
 
 	private void setupEditOption() {
@@ -188,7 +192,7 @@ class ParserBackend implements ParserConstants {
 		editOptions.put(OPTIONS.END_SHORT, TYPE.DATE);
 		editOptions.put(OPTIONS.PRIORITY_SHORT, TYPE.INTEGER);
 		editOptions.put(OPTIONS.EVERY_SHORT, TYPE.DAY);
-		optionsMap.put(COMMAND_TYPE.EDIT, editOptions);
+		_optionsMap.put(COMMAND_TYPE.EDIT, editOptions);
 	}
 
 	private void setupViewOption() {
@@ -209,7 +213,7 @@ class ParserBackend implements ParserConstants {
 		viewOptions.put(OPTIONS.TOMORROW_SHORT, TYPE.NONE);
 		viewOptions.put(OPTIONS.WEEK_SHORT, TYPE.NONE);
 		viewOptions.put(OPTIONS.MONTH_SHORT, TYPE.NONE);
-		optionsMap.put(COMMAND_TYPE.VIEW, viewOptions);
+		_optionsMap.put(COMMAND_TYPE.VIEW, viewOptions);
 	}
 
 	private void setupAddOption() {
@@ -232,11 +236,11 @@ class ParserBackend implements ParserConstants {
 		addOptions.put(OPTIONS.END_SHORT, TYPE.DATE);
 		addOptions.put(OPTIONS.PRIORITY_SHORT, TYPE.INTEGER);
 		addOptions.put(OPTIONS.EVERY_SHORT, TYPE.DAY);
-		optionsMap.put(COMMAND_TYPE.ADD, addOptions);
+		_optionsMap.put(COMMAND_TYPE.ADD, addOptions);
 	}
 	
 	protected LocalDateTime parseDate(String expectedDate) {
-		List<DateGroup> groups = dateParser.parse(expectedDate);
+		List<DateGroup> groups = _dateParser.parse(expectedDate);
 		for(DateGroup group : groups) {
 			List<Date> dates = group.getDates();
 			if (!dates.isEmpty()) {
@@ -247,7 +251,7 @@ class ParserBackend implements ParserConstants {
 	}
 	
 	protected List<LocalDateTime> parseDates(String commandString) {
-		List<DateGroup> groups = dateParser.parse(commandString);
+		List<DateGroup> groups = _dateParser.parse(commandString);
 		List<LocalDateTime> parsedDates = new ArrayList<LocalDateTime>();
 		for(DateGroup group : groups) {
 			List<Date> dates = group.getDates();
@@ -258,7 +262,7 @@ class ParserBackend implements ParserConstants {
 		return parsedDates;
 	}
 	
-	public List<String> breakDownCommand(String userCommand) {
+	protected List<String> breakDownCommand(String userCommand) {
 		LOGGER.info("Attempt to breakdown user input into chunks of words.");
 		assert(userCommand != null && userCommand.length() > 0);
 		return preprocessUserCommand(userCommand);
@@ -298,8 +302,8 @@ class ParserBackend implements ParserConstants {
 	}
 	
 	protected String getFullOptionName(String option) {
-		if (shortHandMap.containsKey(option)) {
-			return shortHandMap.get(option);
+		if (_shortHandMap.containsKey(option)) {
+			return _shortHandMap.get(option);
 		} else {
 			return option;
 		}
@@ -320,11 +324,11 @@ class ParserBackend implements ParserConstants {
 	}
 	
 	protected EnumMap<OPTIONS, TYPE> getOptionMap(COMMAND_TYPE commandType) {
-		if (!optionsMap.containsKey(commandType)) {
+		if (!_optionsMap.containsKey(commandType)) {
 			LOGGER.severe("commandType is corrupted and not within expectations");
 			throw new Error("Corrupted commandType");
 		}
-		return optionsMap.get(commandType);
+		return _optionsMap.get(commandType);
 	}
 	
 	private List<String> preprocessUserCommand(String userCommand) {

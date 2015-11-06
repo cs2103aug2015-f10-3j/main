@@ -2,7 +2,8 @@
 package main.paddletask.common.data;
 
 public interface ParserConstants {
-	
+
+	/*** Main command enums ***/
 	public static enum COMMAND_TYPE {
 		ADD, VIEW, EDIT, DELETE, 
 		COMPLETE, SEARCH, UNDO, REDO, 
@@ -34,6 +35,7 @@ public interface ParserConstants {
 		}
 	}
 
+	/*** Sub command enums ***/
 	public static enum OPTIONS {
 		ADD("add"), VIEW("view"), EDIT("edit"), DELETE("delete"), 
 		COMPLETE("complete"), SEARCH("search"), BY("by"), UNDO("undo"), 
@@ -65,7 +67,7 @@ public interface ParserConstants {
 		}
 	}
 	
-
+	/*** Helper enums ***/
 	public static enum DAY {
 		DAY("day"), MONTH("month"), WEEK("week"), YEAR("year");
 
