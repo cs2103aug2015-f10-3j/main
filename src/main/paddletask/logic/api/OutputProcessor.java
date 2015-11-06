@@ -44,7 +44,7 @@ public class OutputProcessor {
 	private static final String DEADLINE_STRING = "Deadline: ";
 	private static final String REMINDER_STRING = "Reminder: ";
 	private static final String TAG_STRING = "Tags: ";
-	private static final String RECURRING_STRING = "Recurring: ";
+	private static final String RECURRING_STRING = "Recurring: Every ";
 
 	/*** Constructor ***/
 	private OutputProcessor(){
@@ -257,7 +257,8 @@ public class OutputProcessor {
 				output.add(line);
 			}
 			if(t.isRecurring()){
-				line = RECURRING_STRING + t.getRecurPeriod().toString();
+				line = RECURRING_STRING + t.getRecurPeriod().toString().toLowerCase();
+				output.add(line);
 			}
 		} else if(task instanceof DeadlineTask){
 			DeadlineTask t = (DeadlineTask)task;
@@ -268,7 +269,8 @@ public class OutputProcessor {
 				output.add(line);
 			}
 			if(t.isRecurring()){
-				line = RECURRING_STRING + t.getRecurPeriod().toString();
+				line = RECURRING_STRING + t.getRecurPeriod().toString().toLowerCase();
+				output.add(line);
 			}
 		} else {
 		}
