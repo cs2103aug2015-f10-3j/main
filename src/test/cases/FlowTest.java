@@ -7,15 +7,15 @@ import org.junit.Before;
 import org.junit.Test;
 
 import main.paddletask.ui.controller.UIController;
-import main.paddletask.ui.view.CommandLinePanel;
 import main.paddletask.ui.view.MainFrame;
+import main.paddletask.ui.view.MainPanel;
 
 public class FlowTest {
 	UIController uiController;
 	@Before
 	public void setUp() throws Exception {
 		MainFrame mainFrame = new MainFrame();
-		CommandLinePanel panel = new CommandLinePanel(null);
+		MainPanel panel = new MainPanel(null);
 		UIController uiController = UIController.getInstance(mainFrame);
 	}
 

@@ -1,4 +1,6 @@
-//@@author A0125473H-unused
+# A0125473Hunused
+###### src\main\paddletask\common\data\Pair.java
+``` java
 package main.paddletask.common.data;
 
 public class Pair<A,B> {
@@ -27,3 +29,4 @@ public class Pair<A,B> {
 		this.second = second;
 	}
 }
+```

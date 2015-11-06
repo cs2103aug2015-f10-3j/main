@@ -1,4 +1,3 @@
-//@@A0125473H
 package main.paddletask.common.exception;
 
 @SuppressWarnings("serial")
