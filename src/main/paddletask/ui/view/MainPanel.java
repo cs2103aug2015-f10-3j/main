@@ -50,6 +50,7 @@ public class MainPanel extends JPanel implements KeyListener {
 	private static JScrollPane scrollPane = null;
 	private MainFrame mainFrame = null;
 	private static final float OPACITY_OF_SUGGESTIONS = 0.8f;
+	private CommandSuggestor commandSuggestor = null;
 
 	/*** Constructors ***/
 	public MainPanel(MainFrame mainFrame){
@@ -158,23 +159,13 @@ public class MainPanel extends JPanel implements KeyListener {
 				currentCommand = null;
 			}
 		});
-		CommandSuggestor commandSuggestor = new CommandSuggestor(inputField, mainFrame.getFrame(), null,
+		commandSuggestor = new CommandSuggestor(inputField, mainFrame.getFrame(), null,
 				Color.WHITE.brighter(), Color.BLUE, Color.RED, OPACITY_OF_SUGGESTIONS) {
             @Override
             public boolean wordTyped(String typedWord) {
 
                 //create list for dictionary this in your case might be done via calling a method which queries db and returns results as arraylist
                 ArrayList<String> words = new ArrayList<>();
-                /*words.add("hello");
-                words.add("heritage");
-                words.add("happiness");
-                words.add("goodbye");
-                words.add("cruel");
-                words.add("car");
-                words.add("war");
-                words.add("will");
-                words.add("world");
-                words.add("wall");*/
                 ArrayList<ParserConstants.COMMANDS> commandList = new ArrayList<ParserConstants.COMMANDS>
                 												  (Arrays.asList(ParserConstants.COMMANDS.values()));
                 for(ParserConstants.COMMANDS command : commandList){

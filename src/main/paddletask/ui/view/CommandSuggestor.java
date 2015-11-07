@@ -32,8 +32,9 @@ public class CommandSuggestor {
 	private JWindow autoSuggestionPopUpWindow;
 	private String typedWord;
 	private final ArrayList<String> dictionary = new ArrayList<String>();
-	private int currentIndexOfSpace, tW, tH;
-	private static final String keyNameForF2 = "F2 released";
+	private int currentIndexOfSpace, suggestionWindowWidth, suggestionWindowHeight;
+	private static final String KEYNAME_F2 = "F2 released";
+	private static final String KEYNAME_ESC = "Esc released";
 	
 	private DocumentListener documentListener = new DocumentListener() {
 		@Override
@@ -65,8 +66,8 @@ public class CommandSuggestor {
 
 		typedWord = "";
 		currentIndexOfSpace = 0;
-		tW = 0;
-		tH = 0;
+		suggestionWindowWidth = 0;
+		suggestionWindowHeight = 0;
 		
 		mainWindow.addComponentListener(new ComponentAdapter() {
 			@Override
@@ -93,8 +94,8 @@ public class CommandSuggestor {
 	}
 
 	private void addKeyBindingToRequestFocusInPopUpWindow() {
-		textField.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0, true), keyNameForF2);
-		textField.getActionMap().put(keyNameForF2, new AbstractAction() {
+		textField.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0, true), KEYNAME_F2);
+		textField.getActionMap().put(KEYNAME_F2, new AbstractAction() {
 			@Override
 			public void actionPerformed(ActionEvent ae) {//focuses the first label on popwindow
 				for (int i = 0; i < suggestionsPanel.getComponentCount(); i++) {
@@ -109,34 +110,34 @@ public class CommandSuggestor {
 				}
 			}
 		});
-		suggestionsPanel.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0, true), keyNameForF2);
-		suggestionsPanel.getActionMap().put(keyNameForF2, new AbstractAction() {
+		suggestionsPanel.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0, true), KEYNAME_F2);
+		suggestionsPanel.getActionMap().put(KEYNAME_F2, new AbstractAction() {
 			int lastFocusableIndex = 0;
 
 			@Override
 			public void actionPerformed(ActionEvent ae) {//allows scrolling of labels in pop window (I know very hacky for now :))
 
-				ArrayList<SuggestionLabel> sls = getAddedSuggestionLabels();
-				int max = sls.size();
+				ArrayList<SuggestionLabel> suggestionLabelLists = getAddedSuggestionLabels();
+				int max = suggestionLabelLists.size();
 
 				if (max > 1) {//more than 1 suggestion
 					for (int i = 0; i < max; i++) {
-						SuggestionLabel sl = sls.get(i);
-						if (sl.isFocused()) {
+						SuggestionLabel currentLabel = suggestionLabelLists.get(i);
+						if (currentLabel.isFocused()) {
 							if (lastFocusableIndex == max - 1) {
 								lastFocusableIndex = 0;
-								sl.setFocused(false);
+								currentLabel.setFocused(false);
 								autoSuggestionPopUpWindow.setVisible(false);
 								setFocusToTextField();
 								checkForAndShowSuggestions();//fire method as if document listener change occured and fired it
 
 							} else {
-								sl.setFocused(false);
+								currentLabel.setFocused(false);
 								lastFocusableIndex = i;
 							}
 						} else if (lastFocusableIndex <= i) {
 							if (i < max) {
-								sl.setFocused(true);
+								currentLabel.setFocused(true);
 								autoSuggestionPopUpWindow.toFront();
 								autoSuggestionPopUpWindow.requestFocusInWindow();
 								suggestionsPanel.requestFocusInWindow();
@@ -152,6 +153,18 @@ public class CommandSuggestor {
 					checkForAndShowSuggestions();//fire method as if document listener change occured and fired it
 				}
 			}
+		});
+		suggestionsPanel.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, true), KEYNAME_ESC);
+		suggestionsPanel.getActionMap().put(KEYNAME_ESC, new AbstractAction(){
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				autoSuggestionPopUpWindow.setVisible(false);
+				setFocusToTextField();
+				checkForAndShowSuggestions();
+			}
+			
 		});
 	}
 
@@ -172,14 +185,14 @@ public class CommandSuggestor {
 		return sls;
 	}
 
-	private void checkForAndShowSuggestions() {
+	public void checkForAndShowSuggestions() {
 		typedWord = getCurrentlyTypedWord();
 
 		suggestionsPanel.removeAll();//remove previos words/jlabels that were added
 
 		//used to calcualte size of JWindow as new Jlabels are added
-		tW = 0;
-		tH = 0;
+		suggestionWindowWidth = 0;
+		suggestionWindowHeight = 0;
 
 		boolean added = wordTyped(typedWord);
 
@@ -218,16 +231,16 @@ public class CommandSuggestor {
 
 	private void calculatePopUpWindowSize(JLabel label) {
 		//so we can size the JWindow correctly
-		if (tW < label.getPreferredSize().width) {
-			tW = label.getPreferredSize().width;
+		if (suggestionWindowWidth < label.getPreferredSize().width) {
+			suggestionWindowWidth = label.getPreferredSize().width;
 		}
-		tH += label.getPreferredSize().height;
+		suggestionWindowHeight += label.getPreferredSize().height;
 	}
 
 	private void showPopUpWindow() {
 		autoSuggestionPopUpWindow.getContentPane().add(suggestionsPanel);
 		autoSuggestionPopUpWindow.setMinimumSize(new Dimension(textField.getWidth(), 30));
-		autoSuggestionPopUpWindow.setSize(tW, tH);
+		autoSuggestionPopUpWindow.setSize(suggestionWindowWidth, suggestionWindowHeight);
 		autoSuggestionPopUpWindow.setVisible(true);
 
 		int windowX = 0;
@@ -278,7 +291,12 @@ public class CommandSuggestor {
 	public boolean wordTyped(String typedWord) {
 
 		if (typedWord.isEmpty()) {
-			return false;
+			for(String word : dictionary){
+				if(word.charAt(0)!='/'){
+					addWordToSuggestions(word);
+				}
+			}
+			return true;
 		}
 		//System.out.println("Typed word: " + typedWord);
 
