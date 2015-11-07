@@ -177,7 +177,9 @@ public class ReminderPanel {
 	 */
 	public void appendTexts(final JTextArea textArea, String[] output) {
 		for(String s : output){
-			textArea.append( s + NEXT_LINE);
+			if(s != null){
+				textArea.append( s + NEXT_LINE);
+			}
 		}
 	}
 	
