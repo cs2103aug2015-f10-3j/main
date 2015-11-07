@@ -58,14 +58,21 @@ public class StorageController {
     private static final String DESCRIPTION = "description";
     private static final String TASK_ID = "taskId";
     private static final String ITEM = "item";
-    private static final String TASK_XML = "task.xml";
     private static final String DEFAULT_XML = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"no\"?><task></task>";
     public static final String CONFIG_FILE = ".config";
-    protected static String DEFAULT_FILE = TASK_XML;
+    private static String TASK_XML = "task.xml";
+    private static String DEFAULT_FILE = TASK_XML;
     private static StorageController _thisInstance;
     
     /*** Constructor ***/
     private StorageController() {
+        try {
+            DEFAULT_FILE = new File( "." ).getCanonicalPath() + TASK_XML;
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        
         setFileName();
     }
     
