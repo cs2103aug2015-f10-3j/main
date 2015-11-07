@@ -23,8 +23,6 @@ public final class CustomizedDocumentFilter extends DocumentFilter {
 	private static StyledDocument styledDocument = null;
 	private final static StyleContext styleContext = StyleContext.getDefaultStyleContext();
 	private static final AttributeSet redAttributeSet = styleContext.addAttribute(styleContext.getEmptySet(), StyleConstants.Foreground, Color.RED);
-	//private static final AttributeSet orangeAttributeSet = styleContext.addAttribute(styleContext.getEmptySet(), StyleConstants.Foreground, Color.ORANGE);
-	private static final AttributeSet blackAttributeSet = styleContext.addAttribute(styleContext.getEmptySet(), StyleConstants.Foreground, Color.BLACK);
 	private static final AttributeSet darkBlueAttributeSet = changeToAnyRGBColor(0, 76, 153);
 	private static final String REGEX_TAG = "#\\w{1,}";
 	private static final String REGEX_START_BOUND = "\\b";
@@ -35,12 +33,13 @@ public final class CustomizedDocumentFilter extends DocumentFilter {
 	private static final String KEYWORD_DEADLINE = "deadline";
 	private static final String[] HEADER_KEYWORDS = {"Description", "Task Type", "Priority", "Start", "Deadline", "Reminder", "Tags", "Recurring"};
 	private static final String EMPTY_STRING = "";
-	private static final String COLON_STRING = ":";
 	private static final Pattern HEADER_PATTERN = buildPattern(HEADER_KEYWORDS, "\\b:|");
+	private static final int MAX_COLOR = 255;
+	private static final int OFFSET_ONE = 1;
 	
 	/*** Constructors ***/
 	public CustomizedDocumentFilter(JTextPane textPane){
-		this.textPane = textPane;
+		CustomizedDocumentFilter.textPane = textPane;
 		styledDocument = textPane.getStyledDocument();
 	}
 
@@ -77,6 +76,23 @@ public final class CustomizedDocumentFilter extends DocumentFilter {
 		});
 	}
 
+	/**
+	 * This method will change the background of the attribute set to a gradient of teal,
+	 * and return the changed set.
+	 * 
+	 * @param gradient
+	 * 				integer value for red of RGB
+	 * 
+	 * @return background
+	 * 				edited attribute set to the gradient
+	 */
+	public SimpleAttributeSet setBackgroundColorForView(int gradient){
+        Color backgroundColor = new Color(gradient, MAX_COLOR, MAX_COLOR);
+        SimpleAttributeSet background = new SimpleAttributeSet();
+        StyleConstants.setBackground(background, backgroundColor);
+        return background;
+	}
+	
 	/**
 	 * This method will build the regex from the given
 	 * string output.
@@ -199,7 +215,6 @@ public final class CustomizedDocumentFilter extends DocumentFilter {
 		Matcher matcher = pattern.matcher(text);
 		while (matcher.find()) {
 			int start = matcher.start();
-			int end = matcher.end();
 			String beforeText = text.substring(0, start);
 			int startOfLine = beforeText.lastIndexOf(NEXT_LINE);
 			String afterText = text.substring(++startOfLine, text.length());
@@ -219,7 +234,7 @@ public final class CustomizedDocumentFilter extends DocumentFilter {
 	    MutableAttributeSet attrs = textPane.getInputAttributes();
 	    int size = StyleConstants.getFontSize(attrs);
 	    StyleConstants.setFontSize(attrs, size + change);
-	    styledDocument.setCharacterAttributes(0, styledDocument.getLength() + 1, attrs, false);
+	    styledDocument.setCharacterAttributes(0, styledDocument.getLength() + OFFSET_ONE, attrs, false);
 	}
 	
 	/**
@@ -234,10 +249,6 @@ public final class CustomizedDocumentFilter extends DocumentFilter {
 		while (matcher.find()) {
 			int start = matcher.start();
 			int end = matcher.end();
-			//String beforeText = text.substring(0, start);
-			//int startOfLine = beforeText.lastIndexOf(NEXT_LINE);
-			//String afterText = text.substring(++startOfLine, text.length());
-			//int endOfLine = afterText.indexOf(NEXT_LINE);
 			styledDocument.setCharacterAttributes(start, end - start, darkBlueAttributeSet, false);
 		}
 	}
