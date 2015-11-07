@@ -180,7 +180,7 @@ public class AddTaskCommand extends Command implements ParserConstants {
      *               <code>false</code> otherwise.
      */
 	private boolean isTaskRecurring() {
-		return hasOption(OPTIONS.EVERY.toString());
+		return hasOption(OPTIONS.REPEAT.toString());
 	}
 
 	/**
@@ -192,7 +192,7 @@ public class AddTaskCommand extends Command implements ParserConstants {
      */
 	private RECUR_TYPE getTaskRecurrenceType(boolean recurring) {
 		if (recurring) {
-			String recurranceType = getOption(OPTIONS.EVERY.toString()).getStringValue();
+			String recurranceType = getOption(OPTIONS.REPEAT.toString()).getStringValue();
 			return Task.determineRecurType(recurranceType);
 		}
 		return Task.RECUR_TYPE.NULL;

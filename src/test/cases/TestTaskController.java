@@ -26,10 +26,11 @@ import main.paddletask.task.entity.Task.TASK_TYPE;
 
 public class TestTaskController {
     /*** Variables ***/
-    protected static final String FILE_NAME = "task.xml";
+    protected static String fileName;
     StorageController sController;
     ArrayList<Task> testTaskList;
     TaskController tController;
+    byte[] backedUpContent = null;
     
     /*** Setup and Teardown ***/
     @Before
@@ -37,10 +38,26 @@ public class TestTaskController {
         sController = StorageController.getInstance();
         testTaskList = repopulateTask();
         tController = TaskController.getInstance();
+        fileName = StorageController.DEFAULT_FILE;
+        backUpData();
     }
 
     @After
     public void tearDown() throws Exception {
+        restoreData();
+    }
+    
+    public void backUpData() {
+        File file = new File(fileName);
+        if (file.exists()) {
+            backedUpContent = sController.getFileInBytes(fileName);
+        }
+    }
+    
+    public void restoreData() {
+        if (backedUpContent != null) {
+            sController.writeBytesToFile(fileName, backedUpContent, false);
+        }
     }
     
     public ArrayList<Task> repopulateTask() {
@@ -80,14 +97,10 @@ public class TestTaskController {
     @Test
     public void testAddTask() {
         // Test first add
-        File file = new File(FILE_NAME);
+        File file = new File(fileName);
         if (file.exists()) {
             System.gc();
-            try {
-                Files.delete(file.toPath());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            file.delete();
         }
         Task.setTaskList(new ArrayList<Task>());
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
@@ -247,5 +260,21 @@ public class TestTaskController {
         // Perform test
         result = tController.getAvailableTaskId();
         assertEquals(testTaskList.size() + 1, result);
+    }
+    
+    @Test
+    public void testCheckRecurring() {
+        // Set up
+        testTaskList = new ArrayList<Task>();
+        Task.setTaskList(testTaskList);
+        tController.writeAllToFile(testTaskList);
+        
+        // Perform test
+        boolean result = tController.checkRecurring();
+        if (result) {
+            assert true;
+        } else {
+            assert false;
+        }
     }
 }
