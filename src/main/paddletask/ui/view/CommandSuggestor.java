@@ -307,7 +307,7 @@ public class CommandSuggestor {
 		
 		if (typedWord.isEmpty()) {
 			for(String word : dictionary){
-				if(word.charAt(0)!='/' || word.charAt(0) != ('-')){
+				if(word.charAt(0)!='/' && word.charAt(0) != ('-')){
 					addWordToSuggestions(word);
 				}
 			}
