@@ -37,7 +37,6 @@ import main.paddletask.task.entity.TimedTask;
 import main.paddletask.task.entity.Task.TASK_TYPE;
 
 public class StorageController {
-    /*** Variables ***/
     private static final String ERROR_INITIALIZING_TRANSFORMER = "Error initializing transformer";
     private static final String ERROR_OUTPUTTING_DOCUMENT = "Error outputting document";
     private static final String ERROR_WRITING_TO_FILE = "Error writing to file";
@@ -59,9 +58,10 @@ public class StorageController {
     private static final String DESCRIPTION = "description";
     private static final String TASK_ID = "taskId";
     private static final String ITEM = "item";
+    private static final String TASK_XML = "task.xml";
     private static final String DEFAULT_XML = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"no\"?><task></task>";
     public static final String CONFIG_FILE = ".config";
-    protected static String DEFAULT_FILE = "task.xml";
+    protected static String DEFAULT_FILE = TASK_XML;
     private static StorageController _thisInstance;
     
     /*** Constructor ***/
@@ -117,6 +117,7 @@ public class StorageController {
         byte[] content = getFileInBytes(DEFAULT_FILE);
         
         // Copy data to new path
+        newPath = newPath + File.separator + TASK_XML;
         success = writeBytesToFile(newPath, content, false);
         if (success) {
             // Write new path to CONFIG
@@ -235,102 +236,151 @@ public class StorageController {
             NodeList nodeList = doc.getElementsByTagName(ITEM);
             
             for (int temp = 0; temp < nodeList.getLength(); temp++) {
-                Node node = nodeList.item(temp);
-                Task task = null;
-                //System.out.println("\nCurrent Element :" + nNode.getNodeName());
-                if (node.getNodeType() == Node.ELEMENT_NODE) {
-                    Element element = (Element) node;
-                    
-                    // taskId
-                    String taskId = element.getElementsByTagName(TASK_ID).item(0).getTextContent();
-                    int taskIdAsInt = Integer.valueOf(taskId);
-                    
-                    // description
-                    String description = element.getElementsByTagName(DESCRIPTION).item(0).getTextContent();
-                    
-                    // createdAt
-                    String createdAt = element.getElementsByTagName(CREATED_AT).item(0).getTextContent();
-                    LocalDateTime createdAtAsLocalDateTime = DateTimeHelper.parseStringToDateTime(createdAt);
-                    
-                    // task type
-                    String taskTypeAsString = element.getElementsByTagName(TASKTYPE).item(0).getTextContent();
-                    TASK_TYPE taskType = Task.determineTaskType(taskTypeAsString);
-                    
-                    // complete
-                    String complete = element.getElementsByTagName(COMPLETE).item(0).getTextContent();
-                    boolean isCompleteAsBoolean = Boolean.valueOf(complete);
-                    
-                    // priority
-                    String priority = element.getElementsByTagName(PRIORITY).item(0).getTextContent();
-                    int priorityAsInt = Integer.valueOf(priority);
-                    
-                    // tags
-                    String tag = element.getElementsByTagName(TAG).item(0).getTextContent();
-                    ArrayList<String> tagsAsArray = getTagsInArrayList(tag);
-                    
-                    String start;
-                    LocalDateTime startAsLocalDateTime;
-                    String end;
-                    LocalDateTime endAsLocalDateTime;
-                    String reminder;
-                    LocalDateTime reminderAsLocalDateTime;
-                    String recurring;
-                    boolean isRecurringAsBoolean;
-                    String recurTypeAsString;
-                    RECUR_TYPE recurType;
-                    switch (taskType) {
-                        case FLOATING:
-                            task = new FloatingTask(taskIdAsInt, description, createdAtAsLocalDateTime, isCompleteAsBoolean, priorityAsInt, tagsAsArray);
-                            break;
-                        case TIMED:
-                            // start
-                            start = element.getElementsByTagName(START).item(0).getTextContent();
-                            startAsLocalDateTime = DateTimeHelper.parseStringToDateTime(start);
-                            
-                            // end
-                            end = element.getElementsByTagName(END).item(0).getTextContent();
-                            endAsLocalDateTime = DateTimeHelper.parseStringToDateTime(end);
-                            
-                            // reminder
-                            reminder = element.getElementsByTagName(REMINDER).item(0).getTextContent();
-                            reminderAsLocalDateTime = DateTimeHelper.parseStringToDateTime(reminder);
-                            
-                            // recurring
-                            recurring = element.getElementsByTagName(RECURRING).item(0).getTextContent();
-                            isRecurringAsBoolean = Boolean.valueOf(recurring);
-                            
-                            // recur type
-                            recurTypeAsString = element.getElementsByTagName(RECURTYPE).item(0).getTextContent();
-                            recurType = Task.determineRecurType(recurTypeAsString);
-                            
-                            task = new TimedTask(taskIdAsInt, description, createdAtAsLocalDateTime, startAsLocalDateTime, endAsLocalDateTime, reminderAsLocalDateTime, isCompleteAsBoolean, priorityAsInt, tagsAsArray, isRecurringAsBoolean, recurType);
-                            break;
-                        case DEADLINE:
-                            // end
-                            end = element.getElementsByTagName(END).item(0).getTextContent();
-                            endAsLocalDateTime = DateTimeHelper.parseStringToDateTime(end);
-                            
-                            // reminder
-                            reminder = element.getElementsByTagName(REMINDER).item(0).getTextContent();
-                            reminderAsLocalDateTime = DateTimeHelper.parseStringToDateTime(reminder);
-                            
-                            // recurring
-                            recurring = element.getElementsByTagName(RECURRING).item(0).getTextContent();
-                            isRecurringAsBoolean = Boolean.valueOf(recurring);
-                            
-                            // recur type
-                            recurTypeAsString = element.getElementsByTagName(RECURTYPE).item(0).getTextContent();
-                            recurType = Task.determineRecurType(recurTypeAsString);
-                            
-                            task = new DeadlineTask(taskIdAsInt, description, createdAtAsLocalDateTime, endAsLocalDateTime, reminderAsLocalDateTime, isCompleteAsBoolean, priorityAsInt, tagsAsArray, isRecurringAsBoolean, recurType);
-                            break;
-                        default:
-                            break;
+                try {
+                    Node node = nodeList.item(temp);
+                    Task task = null;
+                    //System.out.println("\nCurrent Element :" + nNode.getNodeName());
+                    if (node.getNodeType() == Node.ELEMENT_NODE) {
+                        Element element = (Element) node;
+                        
+                        // taskId
+                        String taskId = "";
+                        int taskIdAsInt = -1;
+                        if (element.getElementsByTagName(TASK_ID).item(0) != null) {
+                            taskId = element.getElementsByTagName(TASK_ID).item(0).getTextContent();
+                            taskIdAsInt = Integer.valueOf(taskId);
+                        }
+                        
+                        // description
+                        String description = "";
+                        if (element.getElementsByTagName(DESCRIPTION).item(0) != null) {
+                            description = element.getElementsByTagName(DESCRIPTION).item(0).getTextContent();
+                        }
+                        
+                        // createdAt
+                        String createdAt = "";
+                        LocalDateTime createdAtAsLocalDateTime = LocalDateTime.MIN;
+                        if (element.getElementsByTagName(CREATED_AT).item(0) != null) {
+                            createdAt = element.getElementsByTagName(CREATED_AT).item(0).getTextContent();
+                            createdAtAsLocalDateTime = DateTimeHelper.parseStringToDateTime(createdAt);
+                        }
+                        
+                        // task type
+                        String taskTypeAsString = "";
+                        TASK_TYPE taskType = TASK_TYPE.ANY;
+                        if (element.getElementsByTagName(TASKTYPE).item(0) != null) {
+                            taskTypeAsString = element.getElementsByTagName(TASKTYPE).item(0).getTextContent();
+                            taskType = Task.determineTaskType(taskTypeAsString);
+                        }
+                        
+                        // complete
+                        String complete = "";
+                        boolean isCompleteAsBoolean = false;
+                        if (element.getElementsByTagName(COMPLETE).item(0) != null) {
+                            complete = element.getElementsByTagName(COMPLETE).item(0).getTextContent();
+                            isCompleteAsBoolean = Boolean.valueOf(complete);
+                        }
+                        
+                        // priority
+                        String priority = "";
+                        int priorityAsInt = -1;
+                        if (element.getElementsByTagName(PRIORITY).item(0) != null) {
+                            priority = element.getElementsByTagName(PRIORITY).item(0).getTextContent();
+                            priorityAsInt = Integer.valueOf(priority);
+                        }
+                        
+                        // tags
+                        String tag = "";
+                        ArrayList<String> tagsAsArray = new ArrayList<String>();
+                        if (element.getElementsByTagName(TAG).item(0) != null) {
+                            tag = element.getElementsByTagName(TAG).item(0).getTextContent();
+                            tagsAsArray = getTagsInArrayList(tag);
+                        }
+                        
+                        String start = "";
+                        LocalDateTime startAsLocalDateTime = LocalDateTime.MIN;
+                        String end = "";
+                        LocalDateTime endAsLocalDateTime = LocalDateTime.MIN;
+                        String reminder = "";
+                        LocalDateTime reminderAsLocalDateTime = LocalDateTime.MIN;
+                        String recurring = "";
+                        boolean isRecurringAsBoolean = false;
+                        String recurTypeAsString = "";
+                        RECUR_TYPE recurType = RECUR_TYPE.NULL;
+                        switch (taskType) {
+                            case FLOATING:
+                                task = new FloatingTask(taskIdAsInt, description, createdAtAsLocalDateTime, isCompleteAsBoolean, priorityAsInt, tagsAsArray);
+                                break;
+                            case TIMED:
+                                // start
+                                if (element.getElementsByTagName(START).item(0) != null) {
+                                    start = element.getElementsByTagName(START).item(0).getTextContent();
+                                    startAsLocalDateTime = DateTimeHelper.parseStringToDateTime(start);
+                                }
+                                
+                                // end
+                                if (element.getElementsByTagName(END).item(0) != null) {
+                                    end = element.getElementsByTagName(END).item(0).getTextContent();
+                                    endAsLocalDateTime = DateTimeHelper.parseStringToDateTime(end);
+                                }
+                                
+                                // reminder
+                                if (element.getElementsByTagName(REMINDER).item(0) != null) {
+                                    reminder = element.getElementsByTagName(REMINDER).item(0).getTextContent();
+                                    reminderAsLocalDateTime = DateTimeHelper.parseStringToDateTime(reminder);
+                                }
+                                
+                                // recurring
+                                if (element.getElementsByTagName(RECURRING).item(0) != null) {
+                                    recurring = element.getElementsByTagName(RECURRING).item(0).getTextContent();
+                                    isRecurringAsBoolean = Boolean.valueOf(recurring);
+                                }
+                                
+                                // recur type
+                                if (element.getElementsByTagName(RECURTYPE).item(0) != null) {
+                                    recurTypeAsString = element.getElementsByTagName(RECURTYPE).item(0).getTextContent();
+                                    recurType = Task.determineRecurType(recurTypeAsString);
+                                }
+                                
+                                task = new TimedTask(taskIdAsInt, description, createdAtAsLocalDateTime, startAsLocalDateTime, endAsLocalDateTime, reminderAsLocalDateTime, isCompleteAsBoolean, priorityAsInt, tagsAsArray, isRecurringAsBoolean, recurType);
+                                break;
+                            case DEADLINE:
+                                // end
+                                if (element.getElementsByTagName(END).item(0) != null) {
+                                    end = element.getElementsByTagName(END).item(0).getTextContent();
+                                    endAsLocalDateTime = DateTimeHelper.parseStringToDateTime(end);
+                                }
+                                
+                                // reminder
+                                if (element.getElementsByTagName(REMINDER).item(0) != null) {
+                                    reminder = element.getElementsByTagName(REMINDER).item(0).getTextContent();
+                                    reminderAsLocalDateTime = DateTimeHelper.parseStringToDateTime(reminder);
+                                }
+                                
+                                // recurring
+                                if (element.getElementsByTagName(RECURRING).item(0) != null) {
+                                    recurring = element.getElementsByTagName(RECURRING).item(0).getTextContent();
+                                    isRecurringAsBoolean = Boolean.valueOf(recurring);
+                                }
+                        
+                                // recur type
+                                if (element.getElementsByTagName(RECURTYPE).item(0) != null) {
+                                    recurTypeAsString = element.getElementsByTagName(RECURTYPE).item(0).getTextContent();
+                                    recurType = Task.determineRecurType(recurTypeAsString);
+                                }
+                                
+                                task = new DeadlineTask(taskIdAsInt, description, createdAtAsLocalDateTime, endAsLocalDateTime, reminderAsLocalDateTime, isCompleteAsBoolean, priorityAsInt, tagsAsArray, isRecurringAsBoolean, recurType);
+                                break;
+                            default:
+                                break;
+                        }
                     }
-                }
-                
-                if (task != null) {
-                    tasks.add(task);
+                    
+                    if (task != null) {
+                        tasks.add(task);
+                    }
+                } catch (Exception e) {
+                    //e.printStackTrace();
                 }
             }
         } catch (Exception e) {

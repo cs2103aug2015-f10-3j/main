@@ -11,7 +11,7 @@ public class SetDirectoryCommand extends Command {
 
     /*** Variables ***/
     private static final String NEW_PATH_ERROR = "Error in setting new path: ";
-    private static final String NEW_PATH_SET = "New path set: ";
+    private static final String NEW_PATH_SET = "New directory set: ";
     private static final String KEYWORD_SET_DIRECTORY = "setdirectory";
     private static String _oldPath = "";
     
