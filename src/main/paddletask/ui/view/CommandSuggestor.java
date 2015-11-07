@@ -2,8 +2,11 @@ package main.paddletask.ui.view;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.awt.GridLayout;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ComponentAdapter;
@@ -42,9 +45,9 @@ public class CommandSuggestor {
 	private static final String SPACE = " ";
 	private static final int COMMAND_WORD = 0;
 	private static final int OPTIONS_WORD = 1;
-	private static final int SPACE_DOES_NOT_EXIST = -1;
+	private static final int INVALID_WORD = -1;
 	private static final String EMPTY_STRING = "";
-	
+
 	private DocumentListener documentListener = new DocumentListener() {
 		@Override
 		public void insertUpdate(DocumentEvent de) {
@@ -75,12 +78,16 @@ public class CommandSuggestor {
 		currentIndexOfSpace = 0;
 		suggestionWindowWidth = 0;
 		suggestionWindowHeight = 0;
-		
+
 		createCommandOptionMap();
-		
+
 		mainWindow.addComponentListener(new ComponentAdapter() {
 			@Override
 			public void componentMoved(ComponentEvent arg0) {
+				recalculatingNewPosition();
+			}
+			
+			public void componentResized(ComponentEvent e){
 				recalculatingNewPosition();
 			}
 		});
@@ -94,12 +101,16 @@ public class CommandSuggestor {
 
 		addKeyBindingToRequestFocusInPopUpWindow();
 	}
-	
+
 	private void recalculatingNewPosition() {
 		int windowX = 0, windowY = 0;
 		windowX = textField.getLocationOnScreen().x;
 		windowY = textField.getLocationOnScreen().y + textField.getHeight();
 		autoSuggestionPopUpWindow.setLocation(windowX, windowY);
+		if(!isLocationInScreenBounds()){
+			windowY -= autoSuggestionPopUpWindow.getPreferredSize().getHeight() + textField.getHeight();
+			autoSuggestionPopUpWindow.setLocation(windowX, windowY);
+		}
 	}
 
 	private void addKeyBindingToRequestFocusInPopUpWindow() {
@@ -173,7 +184,7 @@ public class CommandSuggestor {
 				setFocusToTextField();
 				checkForAndShowSuggestions();
 			}
-			
+
 		});
 	}
 
@@ -227,24 +238,26 @@ public class CommandSuggestor {
 	public String getCurrentlyTypedWord() {//get newest word after last white spaceif any or the first word if no white spaces
 		String text = textField.getText();
 		String wordBeingTyped = "";
-		if (text.contains(" ")) {
-			int tmp = text.lastIndexOf(" ");
+		if (text.contains(SPACE)) {
+			int tmp = text.lastIndexOf(SPACE);
 			if (tmp >= currentIndexOfSpace) {
 				currentIndexOfSpace = tmp;
-				wordBeingTyped = text.substring(text.lastIndexOf(" "));
+				wordBeingTyped = text.substring(text.lastIndexOf(SPACE));
 			}
 		} else {
 			wordBeingTyped = text;
 		}
 		return wordBeingTyped.trim();
 	}
-	
+
 	public int checkWordCategory(){
 		String text = textField.getText();
 		int currentPosition = textField.getCaretPosition();
 		int firstSpacePosition = text.indexOf(SPACE);
-		if(firstSpacePosition > currentPosition || firstSpacePosition == SPACE_DOES_NOT_EXIST){
+		if(firstSpacePosition > currentPosition || firstSpacePosition == INVALID_WORD){
 			return COMMAND_WORD;
+		} else if (firstSpacePosition == currentPosition) {
+			return INVALID_WORD;
 		} else {
 			return OPTIONS_WORD;
 		}
@@ -260,7 +273,6 @@ public class CommandSuggestor {
 
 	private void showPopUpWindow() {
 		autoSuggestionPopUpWindow.getContentPane().add(suggestionsPanel);
-		autoSuggestionPopUpWindow.setMinimumSize(new Dimension(textField.getWidth(), 30));
 		autoSuggestionPopUpWindow.setSize(suggestionWindowWidth, suggestionWindowHeight);
 		autoSuggestionPopUpWindow.setVisible(true);
 
@@ -276,8 +288,12 @@ public class CommandSuggestor {
 			windowY = container.getY() + textField.getY() + textField.getHeight() + autoSuggestionPopUpWindow.getHeight();
 		}*/
 
-		autoSuggestionPopUpWindow.setLocation(windowX, windowY);
-		autoSuggestionPopUpWindow.setMinimumSize(new Dimension(textField.getWidth(), 30));
+		autoSuggestionPopUpWindow.setLocation(windowX, windowY); 
+		if(!isLocationInScreenBounds()){
+			windowY -= autoSuggestionPopUpWindow.getPreferredSize().getHeight() + textField.getHeight();
+			autoSuggestionPopUpWindow.setLocation(windowX, windowY);
+		}
+		autoSuggestionPopUpWindow.setMinimumSize(new Dimension(0, 30));
 		autoSuggestionPopUpWindow.revalidate();
 		autoSuggestionPopUpWindow.repaint();
 	}
@@ -298,13 +314,13 @@ public class CommandSuggestor {
 		ArrayList<String> dictionary = new ArrayList<String>();
 		if(wordCategory == COMMAND_WORD){
 			dictionary = optionsMap.get(EMPTY_STRING);
-		} else {
+		} else if (wordCategory == OPTIONS_WORD) {
 			String command = getFirstWordFromTextField();
 			if(optionsMap.containsKey(command)){
 				dictionary = optionsMap.get(command);
 			}
 		}
-		
+
 		if (typedWord.isEmpty()) {
 			for(String word : dictionary){
 				if(word.charAt(0)!='/' && word.charAt(0) != ('-')){
@@ -333,72 +349,102 @@ public class CommandSuggestor {
 		}
 		return suggestionAdded;
 	}
-	
+
 	public String getFirstWordFromTextField(){
 		String[] textContents = textField.getText().trim().split(SPACE);
 		return textContents[0];
 	}
-	
+
 	public void createCommandOptionMap(){
-        optionsMap.put("", createCommandsList());
-        optionsMap.put(ParserConstants.COMMANDS.ADD.toString(), addOptionList());
-        optionsMap.put(ParserConstants.COMMANDS.EDIT.toString(), editOptionList());
-        optionsMap.put(ParserConstants.COMMANDS.VIEW.toString(), viewOptionList());
-        optionsMap.put(ParserConstants.COMMANDS.TAG.toString(), tagOptionList());
-        optionsMap.put(ParserConstants.COMMANDS.UNTAG.toString(), tagOptionList());
+		optionsMap.put("", createCommandsList());
+		optionsMap.put(ParserConstants.COMMANDS.ADD.toString(), addOptionList());
+		optionsMap.put(ParserConstants.COMMANDS.EDIT.toString(), editOptionList());
+		optionsMap.put(ParserConstants.COMMANDS.VIEW.toString(), viewOptionList());
+		optionsMap.put(ParserConstants.COMMANDS.TAG.toString(), tagOptionList());
+		optionsMap.put(ParserConstants.COMMANDS.UNTAG.toString(), tagOptionList());
 	}
-	
+
 	public ArrayList<String> createCommandsList(){
-        ArrayList<String> words = new ArrayList<String>();
-        ArrayList<ParserConstants.COMMANDS> commandList = new ArrayList<ParserConstants.COMMANDS>
-        												  (Arrays.asList(ParserConstants.COMMANDS.values()));
-        for(ParserConstants.COMMANDS command : commandList){
-        	words.add(command.toString());
-        }
-        return words;
+		ArrayList<String> words = new ArrayList<String>();
+		ArrayList<ParserConstants.COMMANDS> commandList = new ArrayList<ParserConstants.COMMANDS>
+		(Arrays.asList(ParserConstants.COMMANDS.values()));
+		for(ParserConstants.COMMANDS command : commandList){
+			words.add(command.toString());
+		}
+		return words;
 	}
-	
+
 	public ArrayList<String> addOptionList(){
 		ArrayList<String> words = new ArrayList<String>();
-        ArrayList<ParserConstants.ADD_OPTIONS> commandList = new ArrayList<ParserConstants.ADD_OPTIONS>
-		  												  (Arrays.asList(ParserConstants.ADD_OPTIONS.values()));
+		ArrayList<ParserConstants.ADD_OPTIONS> commandList = new ArrayList<ParserConstants.ADD_OPTIONS>
+		(Arrays.asList(ParserConstants.ADD_OPTIONS.values()));
 		for(ParserConstants.ADD_OPTIONS command : commandList){
 			words.add(command.toString());
 		}
 		return words;
 	}
-	
+
 	public ArrayList<String> editOptionList(){
 		ArrayList<String> words = new ArrayList<String>();
-        ArrayList<ParserConstants.EDIT_OPTIONS> commandList = new ArrayList<ParserConstants.EDIT_OPTIONS>
-		  												  (Arrays.asList(ParserConstants.EDIT_OPTIONS.values()));
+		ArrayList<ParserConstants.EDIT_OPTIONS> commandList = new ArrayList<ParserConstants.EDIT_OPTIONS>
+		(Arrays.asList(ParserConstants.EDIT_OPTIONS.values()));
 		for(ParserConstants.EDIT_OPTIONS command : commandList){
 			words.add(command.toString());
 		}
 		return words;
 	}
-	
+
 	public ArrayList<String> viewOptionList(){
 		ArrayList<String> words = new ArrayList<String>();
-        ArrayList<ParserConstants.VIEW_OPTIONS> commandList = new ArrayList<ParserConstants.VIEW_OPTIONS>
-		  												  (Arrays.asList(ParserConstants.VIEW_OPTIONS.values()));
+		ArrayList<ParserConstants.VIEW_OPTIONS> commandList = new ArrayList<ParserConstants.VIEW_OPTIONS>
+		(Arrays.asList(ParserConstants.VIEW_OPTIONS.values()));
 		for(ParserConstants.VIEW_OPTIONS command : commandList){
 			words.add(command.toString());
 		}
 		return words;
 	}
-	
+
 	public ArrayList<String> tagOptionList(){
 		ArrayList<String> words = new ArrayList<String>();
-        ArrayList<ParserConstants.TAGUNTAG_OPTIONS> commandList = new ArrayList<ParserConstants.TAGUNTAG_OPTIONS>
-		  												  (Arrays.asList(ParserConstants.TAGUNTAG_OPTIONS.values()));
+		ArrayList<ParserConstants.TAGUNTAG_OPTIONS> commandList = new ArrayList<ParserConstants.TAGUNTAG_OPTIONS>(Arrays.asList(ParserConstants.TAGUNTAG_OPTIONS.values()));
 		for(ParserConstants.TAGUNTAG_OPTIONS command : commandList){
 			words.add(command.toString());
 		}
 		return words;
 	}
-	
 
+	public boolean isLocationInScreenBounds() {
+		Point location = new Point();
+		location.setLocation(autoSuggestionPopUpWindow.getLocation().x, autoSuggestionPopUpWindow.getLocation().y 
+				+ autoSuggestionPopUpWindow.getHeight());
+		// Check if the location is in the bounds of one of the graphics devices.
+		GraphicsEnvironment graphicsEnvironment = GraphicsEnvironment.getLocalGraphicsEnvironment();
+		GraphicsDevice[] graphicsDevices = graphicsEnvironment.getScreenDevices();
+		Rectangle graphicsConfigurationBounds = new Rectangle();
+
+		// Iterate over the graphics devices.
+		for (int j = 0; j < graphicsDevices.length; j++) {
+
+			// Get the bounds of the device.
+			GraphicsDevice graphicsDevice = graphicsDevices[j];
+			graphicsConfigurationBounds.setRect(graphicsDevice.getDefaultConfiguration().getBounds());
+
+			// Is the location in this bounds?
+			graphicsConfigurationBounds.setRect(graphicsConfigurationBounds.x, graphicsConfigurationBounds.y,
+					graphicsConfigurationBounds.width, graphicsConfigurationBounds.height);
+			if (graphicsConfigurationBounds.contains(location.x, location.y)) {
+
+				// The location is in this screengraphics.
+				return true;
+
+			}
+
+		}
+
+		// We could not find a device that contains the given point.
+		return false;
+
+	}
 }
 
 class SuggestionLabel extends JLabel {
@@ -424,7 +470,7 @@ class SuggestionLabel extends JLabel {
 	private void initComponent() {
 		setFocusable(true);
 		setForeground(suggestionsTextColor);
-
+		setBorder(new LineBorder(Color.BLACK));
 		addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent me) {
@@ -450,7 +496,7 @@ class SuggestionLabel extends JLabel {
 		if (focused) {
 			setBorder(new LineBorder(suggestionBorderColor));
 		} else {
-			setBorder(null);
+			setBorder(new LineBorder(Color.BLACK));
 		}
 		repaint();
 		this.focused = focused;

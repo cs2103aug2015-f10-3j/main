@@ -218,6 +218,7 @@ public class MainFrame implements Observer{
 		frame.setSize(size);
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
+		panel.triggerCommandSuggestor();
 	}
 
 	/**

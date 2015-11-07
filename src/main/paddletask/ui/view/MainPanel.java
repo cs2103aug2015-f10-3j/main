@@ -49,7 +49,7 @@ public class MainPanel extends JPanel implements KeyListener {
 	private String currentCommand = null;
 	private static JScrollPane scrollPane = null;
 	private MainFrame mainFrame = null;
-	private static final float OPACITY_OF_SUGGESTIONS = 0.8f;
+	private static final float OPACITY_OF_SUGGESTIONS = 0.9f;
 	private CommandSuggestor commandSuggestor = null;
 
 	/*** Constructors ***/
@@ -323,6 +323,10 @@ public class MainPanel extends JPanel implements KeyListener {
 	public static void setDialogNull(){
 		reminderDialog = null;
 	}
+	
+	public void triggerCommandSuggestor(){
+		commandSuggestor.checkForAndShowSuggestions();
+	}
 
 	/**
 	 * This method processes the key pressed by user
@@ -419,6 +423,7 @@ public class MainPanel extends JPanel implements KeyListener {
 		// TODO Auto-generated method stub
 
 	}
-
+	
+	
 
 }
