@@ -2,7 +2,6 @@
 package main.paddletask.parser.logic;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.EnumMap;
@@ -14,6 +13,7 @@ import java.util.logging.Logger;
 import com.joestelmach.natty.DateGroup;
 
 import main.paddletask.common.data.ParserConstants;
+import main.paddletask.common.util.DateTimeHelper;
 
 class ParserBackend implements ParserConstants {
 
@@ -244,7 +244,7 @@ class ParserBackend implements ParserConstants {
 		for(DateGroup group : groups) {
 			List<Date> dates = group.getDates();
 			if (!dates.isEmpty()) {
-				return LocalDateTime.ofInstant(dates.get(0).toInstant(), ZoneId.systemDefault());
+				return DateTimeHelper.setTimezoneForDate(dates.get(0));
 			}
 		}
 		return null;
@@ -256,7 +256,7 @@ class ParserBackend implements ParserConstants {
 		for(DateGroup group : groups) {
 			List<Date> dates = group.getDates();
 			while (!dates.isEmpty()) {
-				parsedDates.add(LocalDateTime.ofInstant(dates.remove(0).toInstant(), ZoneId.systemDefault()));
+				parsedDates.add(DateTimeHelper.setTimezoneForDate(dates.remove(0)));
 			}
 		}
 		return parsedDates;

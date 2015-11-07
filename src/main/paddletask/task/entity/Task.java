@@ -4,6 +4,8 @@ package main.paddletask.task.entity;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
+import main.paddletask.common.util.DateTimeHelper;
+
 public class Task {
     /*** Variables ***/
     private static ArrayList<Task> _tasks;
@@ -84,7 +86,7 @@ public class Task {
     
     public Task(String description, int priority, String type) {
         this._description = description;
-        this._createdAt = LocalDateTime.now();
+        this._createdAt = DateTimeHelper.now();
         this._type = determineTaskType(type);
         this._priority = priority;
         this._isComplete = false;
