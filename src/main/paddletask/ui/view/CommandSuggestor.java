@@ -30,6 +30,8 @@ public class CommandSuggestor {
 	private String typedWord;
 	private final ArrayList<String> dictionary = new ArrayList<String>();
 	private int currentIndexOfSpace, tW, tH;
+	private static final String keyNameForF2 = "F2 released";
+	
 	private DocumentListener documentListener = new DocumentListener() {
 		@Override
 		public void insertUpdate(DocumentEvent de) {
@@ -74,8 +76,8 @@ public class CommandSuggestor {
 	}
 
 	private void addKeyBindingToRequestFocusInPopUpWindow() {
-		textField.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_BACK_QUOTE, 0, true), "BQuote released");
-		textField.getActionMap().put("BQuote released", new AbstractAction() {
+		textField.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0, true), keyNameForF2);
+		textField.getActionMap().put(keyNameForF2, new AbstractAction() {
 			@Override
 			public void actionPerformed(ActionEvent ae) {//focuses the first label on popwindow
 				for (int i = 0; i < suggestionsPanel.getComponentCount(); i++) {
@@ -90,8 +92,8 @@ public class CommandSuggestor {
 				}
 			}
 		});
-		suggestionsPanel.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_BACK_QUOTE, 0, true), "BQuote released");
-		suggestionsPanel.getActionMap().put("BQuote released", new AbstractAction() {
+		suggestionsPanel.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0, true), keyNameForF2);
+		suggestionsPanel.getActionMap().put(keyNameForF2, new AbstractAction() {
 			int lastFocusableIndex = 0;
 
 			@Override
@@ -266,9 +268,11 @@ public class CommandSuggestor {
 		for (String word : dictionary) {//get words in the dictionary which we added
 			boolean fullymatches = true;
 			for (int i = 0; i < typedWord.length(); i++) {//each string in the word
-				if (!typedWord.toLowerCase().startsWith(String.valueOf(word.toLowerCase().charAt(i)), i)) {//check for match
-					fullymatches = false;
-					break;
+				if(i < word.length()){
+					if (!typedWord.toLowerCase().startsWith(String.valueOf(word.toLowerCase().charAt(i)), i)) {//check for match
+						fullymatches = false;
+						break;
+					}
 				}
 			}
 			if (fullymatches) {
