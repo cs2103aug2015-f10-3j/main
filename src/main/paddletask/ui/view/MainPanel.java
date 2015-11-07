@@ -159,25 +159,8 @@ public class MainPanel extends JPanel implements KeyListener {
 				currentCommand = null;
 			}
 		});
-		commandSuggestor = new CommandSuggestor(inputField, mainFrame.getFrame(), null,
-				Color.WHITE.brighter(), Color.BLUE, Color.RED, OPACITY_OF_SUGGESTIONS) {
-            @Override
-            public boolean wordTyped(String typedWord) {
-
-                //create list for dictionary this in your case might be done via calling a method which queries db and returns results as arraylist
-                ArrayList<String> words = new ArrayList<>();
-                ArrayList<ParserConstants.COMMANDS> commandList = new ArrayList<ParserConstants.COMMANDS>
-                												  (Arrays.asList(ParserConstants.COMMANDS.values()));
-                for(ParserConstants.COMMANDS command : commandList){
-                	words.add(command.toString());
-                }
-
-                setDictionary(words);
-                //addToDictionary("bye");//adds a single word
-
-                return super.wordTyped(typedWord);//now call super to check for any matches against newest dictionary
-            }
-        };
+		commandSuggestor = new CommandSuggestor(inputField, mainFrame.getFrame(),
+				Color.WHITE.brighter(), Color.BLUE, Color.RED, OPACITY_OF_SUGGESTIONS);
 		
 		return inputField;
 	}

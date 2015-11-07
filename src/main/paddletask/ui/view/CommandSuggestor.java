@@ -12,6 +12,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import javax.swing.AbstractAction;
 import javax.swing.JComponent;
@@ -24,6 +25,8 @@ import javax.swing.border.LineBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import main.paddletask.common.data.ParserConstants;
+
 public class CommandSuggestor {
 
 	private final JTextField textField;
@@ -35,6 +38,9 @@ public class CommandSuggestor {
 	private int currentIndexOfSpace, suggestionWindowWidth, suggestionWindowHeight;
 	private static final String KEYNAME_F2 = "F2 released";
 	private static final String KEYNAME_ESC = "Esc released";
+	private static final int COMMAND_WORD = 0;
+	private static final int PRIMARY_OPTIONS_WORD = 1;
+	private static final int SECONDARY_OPTIONS_WORD = 2;
 	
 	private DocumentListener documentListener = new DocumentListener() {
 		@Override
@@ -55,14 +61,14 @@ public class CommandSuggestor {
 	private final Color suggestionsTextColor;
 	private final Color suggestionFocusedColor;
 
-	public CommandSuggestor(JTextField textField, Window mainWindow, ArrayList<String> words, Color popUpBackground, Color textColor, Color suggestionFocusedColor, float opacity) {
+	public CommandSuggestor(JTextField textField, Window mainWindow, Color popUpBackground, Color textColor, Color suggestionFocusedColor, float opacity) {
 		this.textField = textField;
 		this.suggestionsTextColor = textColor;
 		this.container = mainWindow;
 		this.suggestionFocusedColor = suggestionFocusedColor;
 		this.textField.getDocument().addDocumentListener(documentListener);
 
-		setDictionary(words);
+		createCommandsDictionary();
 
 		typedWord = "";
 		currentIndexOfSpace = 0;
@@ -318,6 +324,21 @@ public class CommandSuggestor {
 			}
 		}
 		return suggestionAdded;
+	}
+	
+	public void createCommandsDictionary(){
+        ArrayList<String> words = new ArrayList<String>();
+        ArrayList<ParserConstants.COMMANDS> commandList = new ArrayList<ParserConstants.COMMANDS>
+        												  (Arrays.asList(ParserConstants.COMMANDS.values()));
+        for(ParserConstants.COMMANDS command : commandList){
+        	words.add(command.toString());
+        }
+
+        setDictionary(words);
+	}
+	
+	public void createAddDictionary(){
+		
 	}
 }
 
