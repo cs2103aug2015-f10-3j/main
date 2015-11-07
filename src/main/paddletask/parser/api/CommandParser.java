@@ -25,6 +25,8 @@ public final class CommandParser {
 		checkUserCommand(userCommand);
 		try {
 			return createCommand(userCommand);
+		} catch (InvalidCommandFormatException e) {
+			throw e;
 		} catch (Throwable e) {
 			String message = String.format("Failed to parse user input: %1$s", userCommand);
 			LOGGER.log(Level.SEVERE, message, e);
@@ -39,6 +41,8 @@ public final class CommandParser {
 		try {
 			userCommand = _parserLogic.replaceRunningIndex(userCommand,stateArray);
 			return parse(userCommand);
+		} catch (InvalidCommandFormatException e) {
+			throw e;
 		} catch (Throwable e) {
 			String message = String.format("Failed to parse user input: %1$s with running index", userCommand);
 			LOGGER.log(Level.SEVERE, message, e);

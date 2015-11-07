@@ -88,8 +88,10 @@ class ParserBackend implements ParserConstants {
 		_shortHandMap.put(OPTIONS.BETWEEN_SHORT.toString(), OPTIONS.BETWEEN.toString());
 		_shortHandMap.put(OPTIONS.AND_SHORT.toString(), OPTIONS.AND.toString());
 		_shortHandMap.put(OPTIONS.DESC_SHORT.toString(), OPTIONS.DESC.toString());
-		_shortHandMap.put(OPTIONS.START_SHORT.toString(), OPTIONS.START.toString());
-		_shortHandMap.put(OPTIONS.END_SHORT.toString(), OPTIONS.END.toString());
+		_shortHandMap.put(OPTIONS.STARTDATE_SHORT.toString(), OPTIONS.STARTDATE.toString());
+		_shortHandMap.put(OPTIONS.STARTTIME_SHORT.toString(), OPTIONS.STARTTIME.toString());
+		_shortHandMap.put(OPTIONS.ENDDATE_SHORT.toString(), OPTIONS.ENDDATE.toString());
+		_shortHandMap.put(OPTIONS.ENDTIME_SHORT.toString(), OPTIONS.ENDTIME.toString());
 		_shortHandMap.put(OPTIONS.ALL_SHORT.toString(), OPTIONS.ALL.toString());
 		_shortHandMap.put(OPTIONS.FLOATING_SHORT.toString(), OPTIONS.FLOATING.toString());
 		_shortHandMap.put(OPTIONS.DEADLINE_SHORT.toString(), OPTIONS.DEADLINE.toString());
@@ -104,7 +106,7 @@ class ParserBackend implements ParserConstants {
 		_shortHandMap.put(OPTIONS.TAG_SHORT.toString(), OPTIONS.TAG.toString());
 		_shortHandMap.put(OPTIONS.UNTAG_SHORT.toString(), OPTIONS.UNTAG.toString());
 		_shortHandMap.put(OPTIONS.PRIORITY_SHORT.toString(), OPTIONS.PRIORITY.toString());
-		_shortHandMap.put(OPTIONS.EVERY_SHORT.toString(), OPTIONS.EVERY.toString());
+		_shortHandMap.put(OPTIONS.REPEAT_SHORT.toString(), OPTIONS.REPEAT.toString());
 	}
 	
 	private void setupTrivialOptions() {
@@ -177,10 +179,12 @@ class ParserBackend implements ParserConstants {
 		editOptions.put(OPTIONS.REMIND, TYPE.DATE);
 		editOptions.put(OPTIONS.BETWEEN, TYPE.DATE);
 		editOptions.put(OPTIONS.AND, TYPE.DATE);
-		editOptions.put(OPTIONS.START, TYPE.DATE);
-		editOptions.put(OPTIONS.END, TYPE.DATE);
+		editOptions.put(OPTIONS.STARTDATE, TYPE.DATE);
+		editOptions.put(OPTIONS.STARTTIME, TYPE.DATE);
+		editOptions.put(OPTIONS.ENDDATE, TYPE.DATE);
+		editOptions.put(OPTIONS.ENDTIME, TYPE.DATE);
 		editOptions.put(OPTIONS.PRIORITY, TYPE.INTEGER);
-		editOptions.put(OPTIONS.EVERY, TYPE.DAY);
+		editOptions.put(OPTIONS.REPEAT, TYPE.DAY);
 		
 		editOptions.put(OPTIONS.EDIT_SHORT, TYPE.INTEGER);
 		editOptions.put(OPTIONS.DESC_SHORT, TYPE.STRING);
@@ -188,10 +192,12 @@ class ParserBackend implements ParserConstants {
 		editOptions.put(OPTIONS.REMIND_SHORT, TYPE.DATE);
 		editOptions.put(OPTIONS.BETWEEN_SHORT, TYPE.DATE);
 		editOptions.put(OPTIONS.AND_SHORT, TYPE.DATE);
-		editOptions.put(OPTIONS.START_SHORT, TYPE.DATE);
-		editOptions.put(OPTIONS.END_SHORT, TYPE.DATE);
+		editOptions.put(OPTIONS.STARTDATE_SHORT, TYPE.DATE);
+		editOptions.put(OPTIONS.STARTTIME_SHORT, TYPE.DATE);
+		editOptions.put(OPTIONS.ENDDATE_SHORT, TYPE.DATE);
+		editOptions.put(OPTIONS.ENDTIME_SHORT, TYPE.DATE);
 		editOptions.put(OPTIONS.PRIORITY_SHORT, TYPE.INTEGER);
-		editOptions.put(OPTIONS.EVERY_SHORT, TYPE.DAY);
+		editOptions.put(OPTIONS.REPEAT, TYPE.DAY);
 		_optionsMap.put(COMMAND_TYPE.EDIT, editOptions);
 	}
 
@@ -222,20 +228,16 @@ class ParserBackend implements ParserConstants {
 		addOptions.put(OPTIONS.REMIND, TYPE.DATE);
 		addOptions.put(OPTIONS.BETWEEN, TYPE.DATE);
 		addOptions.put(OPTIONS.AND, TYPE.DATE);
-		addOptions.put(OPTIONS.START, TYPE.DATE);
-		addOptions.put(OPTIONS.END, TYPE.DATE);
 		addOptions.put(OPTIONS.PRIORITY, TYPE.INTEGER);
-		addOptions.put(OPTIONS.EVERY, TYPE.DAY);
+		addOptions.put(OPTIONS.REPEAT, TYPE.DAY);
 
 		addOptions.put(OPTIONS.ADD_SHORT, TYPE.STRING);
 		addOptions.put(OPTIONS.BY_SHORT, TYPE.DATE);
 		addOptions.put(OPTIONS.REMIND_SHORT, TYPE.DATE);
 		addOptions.put(OPTIONS.BETWEEN_SHORT, TYPE.DATE);
 		addOptions.put(OPTIONS.AND_SHORT, TYPE.DATE);
-		addOptions.put(OPTIONS.START_SHORT, TYPE.DATE);
-		addOptions.put(OPTIONS.END_SHORT, TYPE.DATE);
 		addOptions.put(OPTIONS.PRIORITY_SHORT, TYPE.INTEGER);
-		addOptions.put(OPTIONS.EVERY_SHORT, TYPE.DAY);
+		addOptions.put(OPTIONS.REPEAT, TYPE.DAY);
 		_optionsMap.put(COMMAND_TYPE.ADD, addOptions);
 	}
 	

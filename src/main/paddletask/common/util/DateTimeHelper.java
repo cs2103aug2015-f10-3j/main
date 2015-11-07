@@ -52,6 +52,10 @@ public class DateTimeHelper {
 		}
 	}
 	
+	public static boolean isBigger(LocalDateTime baseline, LocalDateTime than) {
+		return baseline.compareTo(than) > 0;
+	}
+	
 	public static boolean isDate(String date) {
 		return date.matches("(\\d{2})/(\\d{2})/(\\d{4})");
 	}

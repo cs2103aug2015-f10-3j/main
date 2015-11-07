@@ -4,6 +4,7 @@ package main.paddletask.command.api;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Observable;
+import java.util.Stack;
 
 import main.paddletask.command.data.Option;
 import main.paddletask.task.entity.Task;
@@ -11,8 +12,8 @@ import main.paddletask.task.entity.Task;
 public abstract class Command extends Observable {
 
 	/*** Variables ***/
-	private static ArrayList<Command> _commandList;
-	private static ArrayList<Command> _undoCommandList;
+	private static Stack<Command> _commandList;
+	private static Stack<Command> _undoCommandList;
 	private HashMap<String, Option> _options = new HashMap<String, Option>();
 
 	/*** Constructor ***/
@@ -23,8 +24,8 @@ public abstract class Command extends Observable {
 
 	private void createCommandHistories() {
 		if (_commandList == null || _undoCommandList == null) {
-			_commandList = new ArrayList<Command>();
-			_undoCommandList = new ArrayList<Command>();
+			_commandList = new Stack<Command>();
+			_undoCommandList = new Stack<Command>();
 		}
 	}
 
@@ -78,19 +79,19 @@ public abstract class Command extends Observable {
 	public void setOption(HashMap<String, Option> options) {
 		this._options = options;
 	}
-	public static ArrayList<Command> getCommandList() {
+	public static Stack<Command> getCommandList() {
 		return _commandList;
 	}
 
-	public static void setCommandList(ArrayList<Command> commandList) {
+	public static void setCommandList(Stack<Command> commandList) {
 		Command._commandList = commandList;
 	}
 
-	public static ArrayList<Command> getUndoCommandList() {
+	public static Stack<Command> getUndoCommandList() {
 		return _undoCommandList;
 	}
 
-	public static void setUndoCommandList(ArrayList<Command> undoCommandList) {
+	public static void setUndoCommandList(Stack<Command> undoCommandList) {
 		Command._undoCommandList = undoCommandList;
 	}
 
