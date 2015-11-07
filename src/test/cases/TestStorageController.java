@@ -9,6 +9,8 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
+import javax.swing.filechooser.FileSystemView;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,18 +25,35 @@ import main.paddletask.task.entity.TimedTask;
 
 public class TestStorageController {
     /*** Variables ***/
-    protected static final String FILE_NAME = "task.xml";
-    StorageController sdParser;
+    protected static String fileName;
+    StorageController sController;
     ArrayList<Task> testTaskList;
+    byte[] backedUpContent = null;
     
     /*** Setup and Teardown ***/
     @Before
     public void setUp() throws Exception {
-        sdParser = StorageController.getInstance();
+        sController = StorageController.getInstance();
+        fileName = StorageController.DEFAULT_FILE;
+        backUpData();
     }
 
     @After
     public void tearDown() throws Exception {
+        restoreData();
+    }
+    
+    public void backUpData() {
+        File file = new File(fileName);
+        if (file.exists()) {
+            backedUpContent = sController.getFileInBytes(fileName);
+        }
+    }
+    
+    public void restoreData() {
+        if (backedUpContent != null) {
+            sController.writeBytesToFile(fileName, backedUpContent, false);
+        }
     }
 
     public ArrayList<Task> repopulateTask() {
@@ -62,8 +81,8 @@ public class TestStorageController {
         task = new DeadlineTask(10, "Sign up for linux workshop", LocalDateTime.parse("2015-09-14 21:10", formatter), LocalDateTime.parse("2015-09-20 23:59", formatter), LocalDateTime.parse("2015-09-20 23:54", formatter), false, 3, new ArrayList<String>(), false, RECUR_TYPE.NULL);
         testTaskList.add(task);
         
-        Document doc = sdParser.parseTask(testTaskList);
-        sdParser.writeXml(doc);
+        Document doc = sController.parseTask(testTaskList);
+        sController.writeXml(doc);
         
         return testTaskList;
     }
@@ -72,45 +91,50 @@ public class TestStorageController {
      * @throws Exception  ***/
     @Test
     public void testSetDirectory() throws Exception {
+        String oldPath = StorageController.DEFAULT_FILE;
+        int endIndex = oldPath.lastIndexOf(File.separator);
+        if (endIndex != -1) {
+            oldPath = oldPath.substring(0, endIndex);
+        }
         
-        Method m = sdParser.getClass().getDeclaredMethod("setDirectory", String.class);
+        Method m = sController.getClass().getDeclaredMethod("setDirectory", String.class);
         m.setAccessible(true);
-        boolean success = (boolean)m.invoke(sdParser, "C:\\Users\\Juliana\\Desktop\\paddletasktest.xml");
+        boolean success = (boolean)m.invoke(sController, FileSystemView.getFileSystemView().getHomeDirectory().getAbsolutePath());
         if (success) {
             assert true;
         } else {
             assert false;
         }
         
-        m = sdParser.getClass().getDeclaredMethod("setDirectory", String.class);
+        m = sController.getClass().getDeclaredMethod("setDirectory", String.class);
         m.setAccessible(true);
-        success = (boolean)m.invoke(sdParser, "task.xml");
+        success = (boolean)m.invoke(sController, oldPath);
         if (success) {
             assert true;
         } else {
             assert false;
         }
         
-        File file = new File("C:\\paddletasktest.xml");
+        File file = new File(FileSystemView.getFileSystemView().getHomeDirectory() + File.separator + StorageController.TASK_XML);
         file.delete();
     }
     
     @Test
     public void testGetXmlFile() throws Exception {
-    	Method m = sdParser.getClass().getDeclaredMethod("getXmlFile", String.class);
+    	Method m = sController.getClass().getDeclaredMethod("getXmlFile", String.class);
 		m.setAccessible(true);
-        File file = (File)m.invoke(sdParser, FILE_NAME);
+        File file = (File)m.invoke(sController, fileName);
         if (file.exists()) {
             assert true;
         } else {
             assert false;
         }
         
-        file = new File(FILE_NAME);
+        file = new File(fileName);
         file.delete();
-        m = sdParser.getClass().getDeclaredMethod("getXmlFile", String.class);
+        m = sController.getClass().getDeclaredMethod("getXmlFile", String.class);
         m.setAccessible(true);
-        file = (File)m.invoke(sdParser, FILE_NAME);
+        file = (File)m.invoke(sController, fileName);
         if (file.exists()) {
             assert true;
         } else {
@@ -121,7 +145,7 @@ public class TestStorageController {
     @Test
     public void testReadTask() {
         testTaskList = new ArrayList<Task>();
-        ArrayList<Task> taskList = sdParser.readTask();
+        ArrayList<Task> taskList = sController.readTask();
         if (taskList != null) {
             assert true;
         } else {
@@ -134,7 +158,7 @@ public class TestStorageController {
         }
         
         testTaskList = repopulateTask();
-        taskList = sdParser.readTask();
+        taskList = sController.readTask();
         if (taskList.size() > 0) {
             assert true;
         } else {
@@ -145,7 +169,7 @@ public class TestStorageController {
     @Test
     public void testParseTask() {
         testTaskList = new ArrayList<Task>();
-        Document doc = sdParser.parseTask(testTaskList);
+        Document doc = sController.parseTask(testTaskList);
         if (doc != null) {
             assert true;
         } else {
@@ -158,7 +182,7 @@ public class TestStorageController {
         }
         
         testTaskList = repopulateTask();
-        doc = sdParser.parseTask(testTaskList);
+        doc = sController.parseTask(testTaskList);
         if (doc.getDocumentElement().getNodeName().equals("task")) {
             assert true;
         } else {
@@ -173,9 +197,9 @@ public class TestStorageController {
     
     @Test
     public void testParseXml() throws Exception {
-        Method m = sdParser.getClass().getDeclaredMethod("parseXml");
+        Method m = sController.getClass().getDeclaredMethod("parseXml");
         m.setAccessible(true);
-        Document doc = (Document)m.invoke(sdParser);
+        Document doc = (Document)m.invoke(sController);
         if (doc != null) {
             assert true;
         } else {
@@ -191,13 +215,13 @@ public class TestStorageController {
     @Test
     public void testWriteXml() {
         testTaskList = new ArrayList<Task>();
-        Document doc = sdParser.parseTask(testTaskList);
-        boolean result = sdParser.writeXml(doc);
+        Document doc = sController.parseTask(testTaskList);
+        boolean result = sController.writeXml(doc);
         assertEquals(true, result);
         
         testTaskList = repopulateTask();
-        doc = sdParser.parseTask(testTaskList);
-        result = sdParser.writeXml(doc);
+        doc = sController.parseTask(testTaskList);
+        result = sController.writeXml(doc);
         assertEquals(true, result);
     }
 }

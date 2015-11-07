@@ -60,8 +60,8 @@ public class StorageController {
     private static final String ITEM = "item";
     private static final String DEFAULT_XML = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"no\"?><task></task>";
     public static final String CONFIG_FILE = ".config";
-    private static String TASK_XML = "task.xml";
-    private static String DEFAULT_FILE = TASK_XML;
+    public static String TASK_XML = "task.xml";
+    public static String DEFAULT_FILE = TASK_XML;
     private static StorageController _thisInstance;
     
     /*** Constructor ***/
