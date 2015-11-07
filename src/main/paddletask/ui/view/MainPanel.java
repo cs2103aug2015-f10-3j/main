@@ -197,7 +197,7 @@ public class MainPanel extends JPanel implements KeyListener {
 		try {
 			Document doc = textPane.getDocument();
 			textPane.setCaretPosition(doc.getLength());
-			doc.insertString(doc.getLength(), s + NEXT_LINE, null);
+			doc.insertString(doc.getLength(), s + NEXT_LINE + NEXT_LINE, null);
 		} catch(BadLocationException exc) {
 			assert false;
 			exc.printStackTrace();
