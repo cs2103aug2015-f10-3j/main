@@ -184,6 +184,9 @@ public class MainFrame implements Observer{
 	 * 
 	 */
 	private static void createAndShowGUI() {
+		try {
+			UIManager.setLookAndFeel("com.jtattoo.plaf.texture.TextureLookAndFeel");
+		} catch (Exception e) { }
 		prepareFrame();
 		if (isSystemTrayReady()) {
 			isMinimized = false;
@@ -210,7 +213,7 @@ public class MainFrame implements Observer{
 				minimizeToTray();
 			}
 		});
-		removeDefaultButtons(frame);
+		//removeDefaultButtons(frame);
 		panel = new MainPanel(mainFrame);
 		panel.populateContentPane(frame.getContentPane());
 		Dimension size = frame.getToolkit().getScreenSize();
@@ -336,8 +339,9 @@ public class MainFrame implements Observer{
 			return false;
 		}
 		SystemTray tray = SystemTray.getSystemTray();
-		URL resource = Reminder.class.getResource("../../resources/images/bulb.gif");
+		URL resource = MainFrame.class.getResource("/main/resources/images/calendar.png");
 		Image image = Toolkit.getDefaultToolkit().getImage(resource);
+		frame.setIconImage(image);
 		TrayIcon trayIcon = new TrayIcon(image, "PaddleTask");
 		trayIcon.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
