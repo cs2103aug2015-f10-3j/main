@@ -13,6 +13,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 
 import javax.swing.AbstractAction;
 import javax.swing.JComponent;
@@ -34,13 +35,15 @@ public class CommandSuggestor {
 	private JPanel suggestionsPanel;
 	private JWindow autoSuggestionPopUpWindow;
 	private String typedWord;
-	private final ArrayList<String> dictionary = new ArrayList<String>();
+	private final HashMap<String, ArrayList<String>> optionsMap = new HashMap<String, ArrayList<String>>();
 	private int currentIndexOfSpace, suggestionWindowWidth, suggestionWindowHeight;
 	private static final String KEYNAME_F2 = "F2 released";
 	private static final String KEYNAME_ESC = "Esc released";
+	private static final String SPACE = " ";
 	private static final int COMMAND_WORD = 0;
-	private static final int PRIMARY_OPTIONS_WORD = 1;
-	private static final int SECONDARY_OPTIONS_WORD = 2;
+	private static final int OPTIONS_WORD = 1;
+	private static final int SPACE_DOES_NOT_EXIST = -1;
+	private static final String EMPTY_STRING = "";
 	
 	private DocumentListener documentListener = new DocumentListener() {
 		@Override
@@ -68,12 +71,12 @@ public class CommandSuggestor {
 		this.suggestionFocusedColor = suggestionFocusedColor;
 		this.textField.getDocument().addDocumentListener(documentListener);
 
-		createCommandsDictionary();
-
 		typedWord = "";
 		currentIndexOfSpace = 0;
 		suggestionWindowWidth = 0;
 		suggestionWindowHeight = 0;
+		
+		createCommandOptionMap();
 		
 		mainWindow.addComponentListener(new ComponentAdapter() {
 			@Override
@@ -193,6 +196,7 @@ public class CommandSuggestor {
 
 	public void checkForAndShowSuggestions() {
 		typedWord = getCurrentlyTypedWord();
+		int wordCategory = checkWordCategory();
 
 		suggestionsPanel.removeAll();//remove previos words/jlabels that were added
 
@@ -200,7 +204,7 @@ public class CommandSuggestor {
 		suggestionWindowWidth = 0;
 		suggestionWindowHeight = 0;
 
-		boolean added = wordTyped(typedWord);
+		boolean added = wordTyped(typedWord, wordCategory);
 
 		if (!added) {
 			if (autoSuggestionPopUpWindow.isVisible()) {
@@ -234,6 +238,17 @@ public class CommandSuggestor {
 		}
 		return wordBeingTyped.trim();
 	}
+	
+	public int checkWordCategory(){
+		String text = textField.getText();
+		int currentPosition = textField.getCaretPosition();
+		int firstSpacePosition = text.indexOf(SPACE);
+		if(firstSpacePosition > currentPosition || firstSpacePosition == SPACE_DOES_NOT_EXIST){
+			return COMMAND_WORD;
+		} else {
+			return OPTIONS_WORD;
+		}
+	}
 
 	private void calculatePopUpWindowSize(JLabel label) {
 		//so we can size the JWindow correctly
@@ -265,17 +280,6 @@ public class CommandSuggestor {
 		autoSuggestionPopUpWindow.setMinimumSize(new Dimension(textField.getWidth(), 30));
 		autoSuggestionPopUpWindow.revalidate();
 		autoSuggestionPopUpWindow.repaint();
-
-	}
-
-	public void setDictionary(ArrayList<String> words) {
-		dictionary.clear();
-		if (words == null) {
-			return;//so we can call constructor with null value for dictionary without exception thrown
-		}
-		for (String word : words) {
-			dictionary.add(word);
-		}
 	}
 
 	public JWindow getAutoSuggestionPopUpWindow() {
@@ -290,27 +294,31 @@ public class CommandSuggestor {
 		return textField;
 	}
 
-	public void addToDictionary(String word) {
-		dictionary.add(word);
-	}
-
-	public boolean wordTyped(String typedWord) {
-
+	public boolean wordTyped(String typedWord, int wordCategory) {
+		ArrayList<String> dictionary = new ArrayList<String>();
+		if(wordCategory == COMMAND_WORD){
+			dictionary = optionsMap.get(EMPTY_STRING);
+		} else {
+			String command = getFirstWordFromTextField();
+			if(optionsMap.containsKey(command)){
+				dictionary = optionsMap.get(command);
+			}
+		}
+		
 		if (typedWord.isEmpty()) {
 			for(String word : dictionary){
-				if(word.charAt(0)!='/'){
+				if(word.charAt(0)!='/' || word.charAt(0) == ('-')){
 					addWordToSuggestions(word);
 				}
 			}
 			return true;
 		}
-		//System.out.println("Typed word: " + typedWord);
 
 		boolean suggestionAdded = false;
 
-		for (String word : dictionary) {//get words in the dictionary which we added
+		for (String word : dictionary) {
 			boolean fullymatches = true;
-			for (int i = 0; i < typedWord.length(); i++) {//each string in the word
+			for (int i = 0; i < typedWord.length(); i++) {
 				if(i < word.length()){
 					if (!typedWord.toLowerCase().startsWith(String.valueOf(word.toLowerCase().charAt(i)), i)) {//check for match
 						fullymatches = false;
@@ -326,20 +334,71 @@ public class CommandSuggestor {
 		return suggestionAdded;
 	}
 	
-	public void createCommandsDictionary(){
+	public String getFirstWordFromTextField(){
+		String[] textContents = textField.getText().trim().split(SPACE);
+		return textContents[0];
+	}
+	
+	public void createCommandOptionMap(){
+        optionsMap.put("", createCommandsList());
+        optionsMap.put(ParserConstants.COMMANDS.ADD.toString(), addOptionList());
+        optionsMap.put(ParserConstants.COMMANDS.EDIT.toString(), editOptionList());
+        optionsMap.put(ParserConstants.COMMANDS.VIEW.toString(), viewOptionList());
+        optionsMap.put(ParserConstants.COMMANDS.TAG.toString(), tagOptionList());
+        optionsMap.put(ParserConstants.COMMANDS.UNTAG.toString(), tagOptionList());
+	}
+	
+	public ArrayList<String> createCommandsList(){
         ArrayList<String> words = new ArrayList<String>();
         ArrayList<ParserConstants.COMMANDS> commandList = new ArrayList<ParserConstants.COMMANDS>
         												  (Arrays.asList(ParserConstants.COMMANDS.values()));
         for(ParserConstants.COMMANDS command : commandList){
         	words.add(command.toString());
         }
-
-        setDictionary(words);
+        return words;
 	}
 	
-	public void createAddDictionary(){
-		
+	public ArrayList<String> addOptionList(){
+		ArrayList<String> words = new ArrayList<String>();
+        ArrayList<ParserConstants.ADD_OPTIONS> commandList = new ArrayList<ParserConstants.ADD_OPTIONS>
+		  												  (Arrays.asList(ParserConstants.ADD_OPTIONS.values()));
+		for(ParserConstants.ADD_OPTIONS command : commandList){
+			words.add(command.toString());
+		}
+		return words;
 	}
+	
+	public ArrayList<String> editOptionList(){
+		ArrayList<String> words = new ArrayList<String>();
+        ArrayList<ParserConstants.EDIT_OPTIONS> commandList = new ArrayList<ParserConstants.EDIT_OPTIONS>
+		  												  (Arrays.asList(ParserConstants.EDIT_OPTIONS.values()));
+		for(ParserConstants.EDIT_OPTIONS command : commandList){
+			words.add(command.toString());
+		}
+		return words;
+	}
+	
+	public ArrayList<String> viewOptionList(){
+		ArrayList<String> words = new ArrayList<String>();
+        ArrayList<ParserConstants.VIEW_OPTIONS> commandList = new ArrayList<ParserConstants.VIEW_OPTIONS>
+		  												  (Arrays.asList(ParserConstants.VIEW_OPTIONS.values()));
+		for(ParserConstants.VIEW_OPTIONS command : commandList){
+			words.add(command.toString());
+		}
+		return words;
+	}
+	
+	public ArrayList<String> tagOptionList(){
+		ArrayList<String> words = new ArrayList<String>();
+        ArrayList<ParserConstants.TAGUNTAG_OPTIONS> commandList = new ArrayList<ParserConstants.TAGUNTAG_OPTIONS>
+		  												  (Arrays.asList(ParserConstants.TAGUNTAG_OPTIONS.values()));
+		for(ParserConstants.TAGUNTAG_OPTIONS command : commandList){
+			words.add(command.toString());
+		}
+		return words;
+	}
+	
+
 }
 
 class SuggestionLabel extends JLabel {
