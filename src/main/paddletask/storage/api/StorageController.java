@@ -67,10 +67,10 @@ public class StorageController {
     /*** Constructor ***/
     private StorageController() {
         try {
-            DEFAULT_FILE = new File( "." ).getCanonicalPath() + TASK_XML;
+            DEFAULT_FILE = new File( "." ).getCanonicalPath() + File.separator + TASK_XML;
         } catch (IOException e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+            //e.printStackTrace();
         }
         
         setFileName();
