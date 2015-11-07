@@ -22,7 +22,7 @@ public class RedoCommand extends Command {
 	}
 	
 	private void addTo(ArrayList<Command> commandList, Command command) {
-		getCommandList().add(command);
+		commandList.add(command);
 	}
 	
 	private boolean isRedoable(ArrayList<Command> undoCommandList) {
