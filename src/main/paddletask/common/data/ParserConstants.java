@@ -132,9 +132,12 @@ public interface ParserConstants {
 	}
 	
 	public static enum EDIT_OPTIONS {
-		REMIND("remind"), START("start"), END("end"), PRIORITY("priority"), EVERY("every"),
+		REMIND("remind"), STARTDATE("sdate"), STARTTIME("stime"), DESC("desc"),
+		ENDDATE("edate"), ENDTIME("etime"), PRIORITY("priority"), REPEAT("repeat"),
 		
-		REMIND_SHORT("-r"), START_SHORT("-s"), END_SHORT("-e"), PRIORITY_SHORT("-p"), EVERY_SHORT("-re");
+		REMIND_SHORT("-r"), DESC_SHORT("-d"), STARTDATE_SHORT("-sD"), 
+		STARTTIME_SHORT("-sT"), ENDDATE_SHORT("-eD"), ENDTIME_SHORT("-eT"), 
+		PRIORITY_SHORT("-p"), REPEAT_SHORT("-re");
 
 		private final String commandText;
 		
