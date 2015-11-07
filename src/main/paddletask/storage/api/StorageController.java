@@ -37,7 +37,6 @@ import main.paddletask.task.entity.TimedTask;
 import main.paddletask.task.entity.Task.TASK_TYPE;
 
 public class StorageController {
-    /*** Variables ***/
     private static final String ERROR_INITIALIZING_TRANSFORMER = "Error initializing transformer";
     private static final String ERROR_OUTPUTTING_DOCUMENT = "Error outputting document";
     private static final String ERROR_WRITING_TO_FILE = "Error writing to file";
@@ -59,9 +58,10 @@ public class StorageController {
     private static final String DESCRIPTION = "description";
     private static final String TASK_ID = "taskId";
     private static final String ITEM = "item";
+    private static final String TASK_XML = "task.xml";
     private static final String DEFAULT_XML = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"no\"?><task></task>";
     public static final String CONFIG_FILE = ".config";
-    protected static String DEFAULT_FILE = "task.xml";
+    protected static String DEFAULT_FILE = TASK_XML;
     private static StorageController _thisInstance;
     
     /*** Constructor ***/
@@ -117,6 +117,7 @@ public class StorageController {
         byte[] content = getFileInBytes(DEFAULT_FILE);
         
         // Copy data to new path
+        newPath = newPath + File.separator + TASK_XML;
         success = writeBytesToFile(newPath, content, false);
         if (success) {
             // Write new path to CONFIG
