@@ -47,6 +47,8 @@ public class CommandSuggestor {
 	private static final int OPTIONS_WORD = 1;
 	private static final int INVALID_WORD = -1;
 	private static final String EMPTY_STRING = "";
+	private static final char CHAR_SLASH = '/';
+	private static final char CHAR_DASH = '-';
 
 	private DocumentListener documentListener = new DocumentListener() {
 		@Override
@@ -207,7 +209,7 @@ public class CommandSuggestor {
 
 	public void checkForAndShowSuggestions() {
 		typedWord = getCurrentlyTypedWord();
-		int wordCategory = checkWordCategory();
+		int wordCategory = checkWordCategory(typedWord);
 
 		suggestionsPanel.removeAll();//remove previos words/jlabels that were added
 
@@ -250,11 +252,11 @@ public class CommandSuggestor {
 		return wordBeingTyped.trim();
 	}
 
-	public int checkWordCategory(){
+	public int checkWordCategory(String typedWord){
 		String text = textField.getText();
 		int currentPosition = textField.getCaretPosition();
 		int firstSpacePosition = text.indexOf(SPACE);
-		if(firstSpacePosition > currentPosition || firstSpacePosition == INVALID_WORD){
+		if (firstSpacePosition > currentPosition || firstSpacePosition == INVALID_WORD) {
 			return COMMAND_WORD;
 		} else if (firstSpacePosition == currentPosition) {
 			return INVALID_WORD;
@@ -289,7 +291,7 @@ public class CommandSuggestor {
 		}*/
 
 		autoSuggestionPopUpWindow.setLocation(windowX, windowY); 
-		if(!isLocationInScreenBounds()){
+		if (!isLocationInScreenBounds()) {
 			windowY -= autoSuggestionPopUpWindow.getPreferredSize().getHeight() + textField.getHeight();
 			autoSuggestionPopUpWindow.setLocation(windowX, windowY);
 		}
@@ -312,30 +314,34 @@ public class CommandSuggestor {
 
 	public boolean wordTyped(String typedWord, int wordCategory) {
 		ArrayList<String> dictionary = new ArrayList<String>();
-		if(wordCategory == COMMAND_WORD){
+		if (wordCategory == COMMAND_WORD) {
 			dictionary = optionsMap.get(EMPTY_STRING);
 		} else if (wordCategory == OPTIONS_WORD) {
 			String command = getFirstWordFromTextField();
-			if(optionsMap.containsKey(command)){
+			if (optionsMap.containsKey(command)) {
 				dictionary = optionsMap.get(command);
 			}
 		}
 
 		if (typedWord.isEmpty()) {
-			for(String word : dictionary){
-				if(word.charAt(0)!='/' && word.charAt(0) != ('-')){
+			for (String word : dictionary) {
+				if (word.charAt(0) != CHAR_SLASH && word.charAt(0) != CHAR_DASH) {
 					addWordToSuggestions(word);
 				}
 			}
 			return true;
 		}
-
+		
+		if (checkPreviousWordIsOption(dictionary)) {
+			return false;
+		}
+		
 		boolean suggestionAdded = false;
 
 		for (String word : dictionary) {
 			boolean fullymatches = true;
 			for (int i = 0; i < typedWord.length(); i++) {
-				if(i < word.length()){
+				if (i < word.length()) {
 					if (!typedWord.toLowerCase().startsWith(String.valueOf(word.toLowerCase().charAt(i)), i)) {//check for match
 						fullymatches = false;
 						break;
@@ -348,6 +354,26 @@ public class CommandSuggestor {
 			}
 		}
 		return suggestionAdded;
+	}
+
+	private boolean checkPreviousWordIsOption(ArrayList<String> dictionary) {
+		int currentPosition = textField.getCaretPosition();
+		String text = textField.getText();
+		String[] textArray = text.split(SPACE);
+		int currentWordLocation = -1;
+		int length = 0;
+		for (int i = 0; i < textArray.length ; i++) {
+			length += textArray[i].length();
+			if(currentPosition < length){
+				currentWordLocation = i;
+			}
+		}
+		if (currentWordLocation > 0) {
+			if(dictionary.contains(textArray[currentWordLocation - 1])){
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public String getFirstWordFromTextField(){
@@ -368,7 +394,7 @@ public class CommandSuggestor {
 		ArrayList<String> words = new ArrayList<String>();
 		ArrayList<ParserConstants.COMMANDS> commandList = new ArrayList<ParserConstants.COMMANDS>
 		(Arrays.asList(ParserConstants.COMMANDS.values()));
-		for(ParserConstants.COMMANDS command : commandList){
+		for (ParserConstants.COMMANDS command : commandList) {
 			words.add(command.toString());
 		}
 		return words;
@@ -378,7 +404,7 @@ public class CommandSuggestor {
 		ArrayList<String> words = new ArrayList<String>();
 		ArrayList<ParserConstants.ADD_OPTIONS> commandList = new ArrayList<ParserConstants.ADD_OPTIONS>
 		(Arrays.asList(ParserConstants.ADD_OPTIONS.values()));
-		for(ParserConstants.ADD_OPTIONS command : commandList){
+		for (ParserConstants.ADD_OPTIONS command : commandList) {
 			words.add(command.toString());
 		}
 		return words;
@@ -388,7 +414,7 @@ public class CommandSuggestor {
 		ArrayList<String> words = new ArrayList<String>();
 		ArrayList<ParserConstants.EDIT_OPTIONS> commandList = new ArrayList<ParserConstants.EDIT_OPTIONS>
 		(Arrays.asList(ParserConstants.EDIT_OPTIONS.values()));
-		for(ParserConstants.EDIT_OPTIONS command : commandList){
+		for (ParserConstants.EDIT_OPTIONS command : commandList) {
 			words.add(command.toString());
 		}
 		return words;
@@ -398,7 +424,7 @@ public class CommandSuggestor {
 		ArrayList<String> words = new ArrayList<String>();
 		ArrayList<ParserConstants.VIEW_OPTIONS> commandList = new ArrayList<ParserConstants.VIEW_OPTIONS>
 		(Arrays.asList(ParserConstants.VIEW_OPTIONS.values()));
-		for(ParserConstants.VIEW_OPTIONS command : commandList){
+		for (ParserConstants.VIEW_OPTIONS command : commandList) {
 			words.add(command.toString());
 		}
 		return words;
@@ -407,7 +433,7 @@ public class CommandSuggestor {
 	public ArrayList<String> tagOptionList(){
 		ArrayList<String> words = new ArrayList<String>();
 		ArrayList<ParserConstants.TAGUNTAG_OPTIONS> commandList = new ArrayList<ParserConstants.TAGUNTAG_OPTIONS>(Arrays.asList(ParserConstants.TAGUNTAG_OPTIONS.values()));
-		for(ParserConstants.TAGUNTAG_OPTIONS command : commandList){
+		for (ParserConstants.TAGUNTAG_OPTIONS command : commandList) {
 			words.add(command.toString());
 		}
 		return words;
@@ -422,26 +448,15 @@ public class CommandSuggestor {
 		GraphicsDevice[] graphicsDevices = graphicsEnvironment.getScreenDevices();
 		Rectangle graphicsConfigurationBounds = new Rectangle();
 
-		// Iterate over the graphics devices.
 		for (int j = 0; j < graphicsDevices.length; j++) {
-
-			// Get the bounds of the device.
 			GraphicsDevice graphicsDevice = graphicsDevices[j];
 			graphicsConfigurationBounds.setRect(graphicsDevice.getDefaultConfiguration().getBounds());
-
-			// Is the location in this bounds?
 			graphicsConfigurationBounds.setRect(graphicsConfigurationBounds.x, graphicsConfigurationBounds.y,
 					graphicsConfigurationBounds.width, graphicsConfigurationBounds.height);
 			if (graphicsConfigurationBounds.contains(location.x, location.y)) {
-
-				// The location is in this screengraphics.
 				return true;
-
 			}
-
 		}
-
-		// We could not find a device that contains the given point.
 		return false;
 
 	}
