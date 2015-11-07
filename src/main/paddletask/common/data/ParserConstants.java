@@ -53,7 +53,7 @@ public interface ParserConstants {
 		END_SHORT("-e"), ALL_SHORT("-ta"), FLOATING_SHORT("-tf"), DEADLINE_SHORT("-td"), 
 		TIMED_SHORT("-tt"), TODAY_SHORT("-pt"), TOMORROW_SHORT("-ptm"), WEEK_SHORT("-pw"), 
 		MONTH_SHORT("-pm"), HELP_SHORT("/h"), SETDIRECTORY_SHORT("/sd"), MORE_SHORT("/m"),
-		TAG_SHORT("/t"), UNTAG_SHORT("/ut"), PRIORITY_SHORT("-p"), HASHTAG("#"), EVERY_SHORT("-e");
+		TAG_SHORT("/t"), UNTAG_SHORT("/ut"), PRIORITY_SHORT("-p"), HASHTAG("#"), EVERY_SHORT("-re");
 
 		private final String optionText;
 		

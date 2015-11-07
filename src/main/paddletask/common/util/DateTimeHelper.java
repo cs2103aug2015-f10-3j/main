@@ -3,7 +3,9 @@ package main.paddletask.common.util;
 
 import java.time.DateTimeException;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 
 public class DateTimeHelper {
 	private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
@@ -27,6 +29,10 @@ public class DateTimeHelper {
 		} catch (DateTimeException e) {
 			return null;
 		}
+	}
+	
+	public static LocalDateTime setTimezoneForDate(Date date) {
+	    return LocalDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault());
 	}
 
 	// Support for retrieval of date and time instead of whole date

@@ -87,7 +87,7 @@ public class MainPanel extends JPanel implements KeyListener {
 	 * 
 	 */
 	public void prepareWelcome(){
-		String today = DateTimeHelper.getDate(LocalDateTime.now());
+		String today = DateTimeHelper.getDate(DateTimeHelper.now());
 		String[] outputs = new String[3];
 		int counter = 0;
 		outputs[counter++] = WELCOME_MSG_1;

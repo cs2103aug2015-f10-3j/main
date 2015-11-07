@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 
+import main.paddletask.common.util.DateTimeHelper;
 import main.paddletask.task.entity.DeadlineTask;
 import main.paddletask.task.entity.Task;
 import main.paddletask.task.entity.TimedTask;
@@ -52,7 +53,7 @@ public class Reminder extends Observable {
                     // Get task with reminders in the next minute
                     ArrayList<Task> dueTasks = new ArrayList<Task>();
                     LocalDateTime reminder;
-                    LocalDateTime now = LocalDateTime.now();
+                    LocalDateTime now = DateTimeHelper.now();
                     Duration duration;
                     if(tasks != null){
                         for (Task task : tasks) {
@@ -80,7 +81,7 @@ public class Reminder extends Observable {
                         }
                     }
                     
-                    //System.out.println("dueTaskList.size(): " + dueTaskList.size());
+                    //System.out.println("dueTaskList.size(): " + dueTasks.size());
 
                     // Notify observers
                     if (dueTasks.size() > 0) {

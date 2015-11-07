@@ -127,7 +127,7 @@ public class MainFrame implements Observer{
 	 * 
 	 */
 	public void prepareWelcome(){
-		String today = DateTimeHelper.getDate(LocalDateTime.now());
+		String today = DateTimeHelper.getDate(DateTimeHelper.now());
 		String[] outputs = new String[WELCOME_MSG_SIZE];
 		int counter = OFFSET_ZERO;
 		outputs[counter++] = WELCOME_MSG_1;
