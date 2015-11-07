@@ -10,6 +10,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DocumentFilter;
+import javax.swing.text.MutableAttributeSet;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
@@ -18,8 +19,8 @@ import javax.swing.text.StyledDocument;
 public final class CustomizedDocumentFilter extends DocumentFilter {
 	
 	/*** Variables ***/
-	private JTextPane textPane = null;
-	private StyledDocument styledDocument = null;
+	private static JTextPane textPane = null;
+	private static StyledDocument styledDocument = null;
 	private final static StyleContext styleContext = StyleContext.getDefaultStyleContext();
 	private static final AttributeSet redAttributeSet = styleContext.addAttribute(styleContext.getEmptySet(), StyleConstants.Foreground, Color.RED);
 	//private static final AttributeSet orangeAttributeSet = styleContext.addAttribute(styleContext.getEmptySet(), StyleConstants.Foreground, Color.ORANGE);
@@ -184,5 +185,12 @@ public final class CustomizedDocumentFilter extends DocumentFilter {
 			int endOfLine = afterText.indexOf(NEXT_LINE);
 			styledDocument.setCharacterAttributes(startOfLine, endOfLine, redAttributeSet, false);
 		}
+	}
+	
+	public static void changeFontSize(int change){
+	    MutableAttributeSet attrs = textPane.getInputAttributes();
+	    int size = StyleConstants.getFontSize(attrs);
+	    StyleConstants.setFontSize(attrs, size + change);
+	    styledDocument.setCharacterAttributes(0, styledDocument.getLength() + 1, attrs, false);
 	}
 }
