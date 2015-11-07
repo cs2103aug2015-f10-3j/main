@@ -5,6 +5,7 @@ import java.awt.Dialog.ModalityType;
 import java.awt.event.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import javax.swing.*;
 import javax.swing.text.AbstractDocument;
@@ -14,6 +15,7 @@ import javax.swing.text.Document;
 
 import main.paddletask.common.data.DoublyLinkedList;
 import main.paddletask.common.data.Node;
+import main.paddletask.common.data.ParserConstants;
 import main.paddletask.common.util.DateTimeHelper;
 import main.paddletask.task.entity.Task;
 import main.paddletask.ui.controller.UIController;
@@ -47,6 +49,8 @@ public class MainPanel extends JPanel implements KeyListener {
 	private String currentCommand = null;
 	private static JScrollPane scrollPane = null;
 	private MainFrame mainFrame = null;
+	private static final float OPACITY_OF_SUGGESTIONS = 0.8f;
+	private CommandSuggestor commandSuggestor = null;
 
 	/*** Constructors ***/
 	public MainPanel(MainFrame mainFrame){
@@ -145,7 +149,6 @@ public class MainPanel extends JPanel implements KeyListener {
 		inputField.requestFocus();
 		inputField.addKeyListener(this);
 		inputField.addActionListener(new ActionListener() {
-
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				String input = inputField.getText();
@@ -155,6 +158,9 @@ public class MainPanel extends JPanel implements KeyListener {
 				currentCommand = null;
 			}
 		});
+		commandSuggestor = new CommandSuggestor(inputField, mainFrame.getFrame(),
+				Color.WHITE.brighter(), Color.BLUE, Color.RED, OPACITY_OF_SUGGESTIONS);
+		
 		return inputField;
 	}
 

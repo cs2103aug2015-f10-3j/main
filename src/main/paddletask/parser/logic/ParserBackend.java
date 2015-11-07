@@ -175,27 +175,29 @@ class ParserBackend implements ParserConstants {
 	private void setupEditOption() {
 		editOptions.put(OPTIONS.EDIT, TYPE.INTEGER);
 		editOptions.put(OPTIONS.DESC, TYPE.STRING);
-		editOptions.put(OPTIONS.BY, TYPE.DATE);
 		editOptions.put(OPTIONS.REMIND, TYPE.DATE);
+
 		editOptions.put(OPTIONS.BETWEEN, TYPE.DATE);
 		editOptions.put(OPTIONS.AND, TYPE.DATE);
 		editOptions.put(OPTIONS.STARTDATE, TYPE.DATE);
 		editOptions.put(OPTIONS.STARTTIME, TYPE.DATE);
 		editOptions.put(OPTIONS.ENDDATE, TYPE.DATE);
 		editOptions.put(OPTIONS.ENDTIME, TYPE.DATE);
+
 		editOptions.put(OPTIONS.PRIORITY, TYPE.INTEGER);
 		editOptions.put(OPTIONS.REPEAT, TYPE.DAY);
 		
 		editOptions.put(OPTIONS.EDIT_SHORT, TYPE.INTEGER);
 		editOptions.put(OPTIONS.DESC_SHORT, TYPE.STRING);
-		editOptions.put(OPTIONS.BY_SHORT, TYPE.DATE);
 		editOptions.put(OPTIONS.REMIND_SHORT, TYPE.DATE);
+
 		editOptions.put(OPTIONS.BETWEEN_SHORT, TYPE.DATE);
 		editOptions.put(OPTIONS.AND_SHORT, TYPE.DATE);
 		editOptions.put(OPTIONS.STARTDATE_SHORT, TYPE.DATE);
 		editOptions.put(OPTIONS.STARTTIME_SHORT, TYPE.DATE);
 		editOptions.put(OPTIONS.ENDDATE_SHORT, TYPE.DATE);
 		editOptions.put(OPTIONS.ENDTIME_SHORT, TYPE.DATE);
+
 		editOptions.put(OPTIONS.PRIORITY_SHORT, TYPE.INTEGER);
 		editOptions.put(OPTIONS.REPEAT, TYPE.DAY);
 		_optionsMap.put(COMMAND_TYPE.EDIT, editOptions);
@@ -206,6 +208,7 @@ class ParserBackend implements ParserConstants {
 		viewOptions.put(OPTIONS.COMPLETE, TYPE.NONE);
 		viewOptions.put(OPTIONS.ALL, TYPE.NONE);
 		viewOptions.put(OPTIONS.FLOATING, TYPE.NONE);
+		viewOptions.put(OPTIONS.TIMED, TYPE.NONE);
 		viewOptions.put(OPTIONS.TODAY, TYPE.NONE);
 		viewOptions.put(OPTIONS.TOMORROW, TYPE.NONE);
 		viewOptions.put(OPTIONS.WEEK, TYPE.NONE);
@@ -215,6 +218,7 @@ class ParserBackend implements ParserConstants {
 		viewOptions.put(OPTIONS.COMPLETE_SHORT, TYPE.NONE);
 		viewOptions.put(OPTIONS.ALL_SHORT, TYPE.NONE);
 		viewOptions.put(OPTIONS.FLOATING_SHORT, TYPE.NONE);
+		viewOptions.put(OPTIONS.TIMED_SHORT, TYPE.NONE);
 		viewOptions.put(OPTIONS.TODAY_SHORT, TYPE.NONE);
 		viewOptions.put(OPTIONS.TOMORROW_SHORT, TYPE.NONE);
 		viewOptions.put(OPTIONS.WEEK_SHORT, TYPE.NONE);
