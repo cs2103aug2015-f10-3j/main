@@ -52,8 +52,12 @@ public class DateTimeHelper {
 		}
 	}
 	
-	public static boolean isBigger(LocalDateTime baseline, LocalDateTime than) {
+	public static boolean isLater(LocalDateTime baseline, LocalDateTime than) {
 		return baseline.compareTo(than) > 0;
+	}
+	
+	public static boolean isEqual(LocalDateTime baseline, LocalDateTime than) {
+	    return baseline.compareTo(than) == 0;
 	}
 	
 	public static boolean isDate(String date) {

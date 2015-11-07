@@ -114,10 +114,21 @@ public class LogicController extends Observable {
         // Attempt to parse and execute the Command specified by user input
         try {
             command = parseCommand(userInput);
-            executionResult = executeCommand(command, userInput);
+            
         } catch (Exception e) {
             // If an Exception is encounted during the Command parsing or
             // Command execution, update the observer with the Error messages
+            setChanged();
+            notifyObservers(e.getMessage());
+            return null;
+        }
+        
+        try {
+            executionResult = executeCommand(command, userInput);
+        } catch (Exception e) {
+            if (!Command.getCommandList().isEmpty()) {
+                Command.getCommandList().pop();
+            }
             setChanged();
             notifyObservers(e.getMessage());
             return null;
