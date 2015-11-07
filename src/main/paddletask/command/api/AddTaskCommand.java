@@ -54,8 +54,9 @@ public class AddTaskCommand extends Command implements ParserConstants {
 	/**
      * @return       <code>Task</code> if the task is successfully created;
      *               <code>Null</code> otherwise.
+	 * @throws TaskAddFailedException 
      */
-	private Task createNewTask() {
+	private Task createNewTask() throws TaskAddFailedException {
 		assert(hasOption(OPTIONS.ADD.toString()));
 		Task userTask = createTaskByType();
 		return userTask;
@@ -67,8 +68,9 @@ public class AddTaskCommand extends Command implements ParserConstants {
      * 
      * @return       <code>Task</code> if the task is successfully created;
      *               <code>Null</code> otherwise.
+	 * @throws TaskAddFailedException 
      */
-	private Task createTaskByType() {
+	private Task createTaskByType() throws TaskAddFailedException {
 		if (hasOption(OPTIONS.BY.toString())) {
 			return createDeadlineTask();
 		} else if (hasOption(OPTIONS.BETWEEN.toString()) && hasOption(OPTIONS.AND.toString())) {
@@ -96,12 +98,16 @@ public class AddTaskCommand extends Command implements ParserConstants {
 	/**
      * @return       <code>Task</code> if the task is successfully created;
      *               <code>Null</code> otherwise.
+	 * @throws TaskAddFailedException 
      */
-	private Task createTimedTask() {
+	private Task createTimedTask() throws TaskAddFailedException {
 		String description = getTaskDescription();
 		Integer priority = getTaskPriority();
 		LocalDateTime startDate = getTaskStartDate();
 		LocalDateTime deadline = getTaskEndDate();
+		if (DateTimeHelper.isBigger(startDate, deadline)) {
+			throw new TaskAddFailedException("Start date is later than end date");
+		}
 		LocalDateTime reminder = calculateTaskReminderDate(deadline);
 		boolean recurring = isTaskRecurring();
 		RECUR_TYPE recurType = getTaskRecurrenceType(recurring);
