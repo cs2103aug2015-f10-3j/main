@@ -3,8 +3,11 @@ package main.paddletask.ui.view;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.Point;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -64,6 +67,13 @@ public class CommandSuggestor {
 		currentIndexOfSpace = 0;
 		tW = 0;
 		tH = 0;
+		
+		mainWindow.addComponentListener(new ComponentAdapter() {
+			@Override
+			public void componentMoved(ComponentEvent arg0) {
+				recalculatingNewPosition();
+			}
+		});
 
 		autoSuggestionPopUpWindow = new JWindow(mainWindow);
 		autoSuggestionPopUpWindow.setOpacity(opacity);
@@ -73,6 +83,13 @@ public class CommandSuggestor {
 		suggestionsPanel.setBackground(popUpBackground);
 
 		addKeyBindingToRequestFocusInPopUpWindow();
+	}
+	
+	private void recalculatingNewPosition() {
+		int windowX = 0, windowY = 0;
+		windowX = textField.getLocationOnScreen().x;
+		windowY = textField.getLocationOnScreen().y + textField.getHeight();
+		autoSuggestionPopUpWindow.setLocation(windowX, windowY);
 	}
 
 	private void addKeyBindingToRequestFocusInPopUpWindow() {
