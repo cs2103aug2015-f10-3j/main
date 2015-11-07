@@ -3,6 +3,8 @@ package main.paddletask.command.api;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+
+import main.paddletask.common.util.DateTimeHelper;
 import main.paddletask.task.api.TaskController;
 import main.paddletask.task.entity.DeadlineTask;
 import main.paddletask.task.entity.FloatingTask;
@@ -177,7 +179,7 @@ public class ViewTaskCommand extends Command {
      * @return LocalDateTime offset by period
      */
 	public LocalDateTime checkPeriod() {
-		LocalDateTime beforeThisTime = LocalDateTime.now();
+		LocalDateTime beforeThisTime = DateTimeHelper.now();
 		period = period.toLowerCase();
 		switch(period){
 		case "tomorrow":

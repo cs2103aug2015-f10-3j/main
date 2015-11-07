@@ -11,7 +11,7 @@ public class LoggingHandler {
 	
 	/*** Variables ***/
 	private static final String EMPTY = "";
-	private static final String LOG_NAME = "./paddleTask.log";
+	private static final String LOG_NAME = "./Logs/paddleTask.log";
 	private static final String CONFIG_MESSAGE = "Configuration done";
 	private static final String ERROR_MESSAGE = "Error occur in FileHandler";
 	

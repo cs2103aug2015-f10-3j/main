@@ -4,6 +4,8 @@ package main.paddletask.task.entity;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
+import main.paddletask.common.util.DateTimeHelper;
+
 public class Task {
     /*** Variables ***/
     private static ArrayList<Task> _tasks;
@@ -84,7 +86,7 @@ public class Task {
     
     public Task(String description, int priority, String type) {
         this._description = description;
-        this._createdAt = LocalDateTime.now();
+        this._createdAt = DateTimeHelper.now();
         this._type = determineTaskType(type);
         this._priority = priority;
         this._isComplete = false;
@@ -186,13 +188,13 @@ public class Task {
         RECUR_TYPE type = null;
 
         if (typeString != null) {
-            if (typeString.equalsIgnoreCase("day")) {
+            if (typeString.equalsIgnoreCase("daily")) {
                 return RECUR_TYPE.DAY;
-            } else if (typeString.equalsIgnoreCase("week")) {
+            } else if (typeString.equalsIgnoreCase("weekly")) {
                 return RECUR_TYPE.WEEK;
-            } else if (typeString.equalsIgnoreCase("month")) {
+            } else if (typeString.equalsIgnoreCase("monthly")) {
                 return RECUR_TYPE.MONTH;
-            } else if (typeString.equalsIgnoreCase("year")) {
+            } else if (typeString.equalsIgnoreCase("yearly")) {
                 return RECUR_TYPE.YEAR;
             } else if (typeString.equalsIgnoreCase("null")) {
                 return RECUR_TYPE.NULL;

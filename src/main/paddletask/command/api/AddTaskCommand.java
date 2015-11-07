@@ -38,6 +38,8 @@ public class AddTaskCommand extends Command implements ParserConstants {
 			storeNewTask();
 			appendToResult();
 			return _taskList;
+		} catch (TaskAddFailedException e) {
+			throw e;
 		} catch (Exception e) {
 			throw new TaskAddFailedException("Adding of task was unsuccessful");
 		}
@@ -54,8 +56,9 @@ public class AddTaskCommand extends Command implements ParserConstants {
 	/**
      * @return       <code>Task</code> if the task is successfully created;
      *               <code>Null</code> otherwise.
+	 * @throws TaskAddFailedException 
      */
-	private Task createNewTask() {
+	private Task createNewTask() throws TaskAddFailedException {
 		assert(hasOption(OPTIONS.ADD.toString()));
 		Task userTask = createTaskByType();
 		return userTask;
@@ -67,8 +70,9 @@ public class AddTaskCommand extends Command implements ParserConstants {
      * 
      * @return       <code>Task</code> if the task is successfully created;
      *               <code>Null</code> otherwise.
+	 * @throws TaskAddFailedException 
      */
-	private Task createTaskByType() {
+	private Task createTaskByType() throws TaskAddFailedException {
 		if (hasOption(OPTIONS.BY.toString())) {
 			return createDeadlineTask();
 		} else if (hasOption(OPTIONS.BETWEEN.toString()) && hasOption(OPTIONS.AND.toString())) {
@@ -96,12 +100,16 @@ public class AddTaskCommand extends Command implements ParserConstants {
 	/**
      * @return       <code>Task</code> if the task is successfully created;
      *               <code>Null</code> otherwise.
+	 * @throws TaskAddFailedException 
      */
-	private Task createTimedTask() {
+	private Task createTimedTask() throws TaskAddFailedException {
 		String description = getTaskDescription();
 		Integer priority = getTaskPriority();
 		LocalDateTime startDate = getTaskStartDate();
 		LocalDateTime deadline = getTaskEndDate();
+		if (DateTimeHelper.isLater(startDate, deadline)) {
+			throw new TaskAddFailedException("Start date is later than end date");
+		}
 		LocalDateTime reminder = calculateTaskReminderDate(deadline);
 		boolean recurring = isTaskRecurring();
 		RECUR_TYPE recurType = getTaskRecurrenceType(recurring);
@@ -180,7 +188,7 @@ public class AddTaskCommand extends Command implements ParserConstants {
      *               <code>false</code> otherwise.
      */
 	private boolean isTaskRecurring() {
-		return hasOption(OPTIONS.EVERY.toString());
+		return hasOption(OPTIONS.REPEAT.toString());
 	}
 
 	/**
@@ -192,7 +200,7 @@ public class AddTaskCommand extends Command implements ParserConstants {
      */
 	private RECUR_TYPE getTaskRecurrenceType(boolean recurring) {
 		if (recurring) {
-			String recurranceType = getOption(OPTIONS.EVERY.toString()).getStringValue();
+			String recurranceType = getOption(OPTIONS.REPEAT.toString()).getStringValue();
 			return Task.determineRecurType(recurranceType);
 		}
 		return Task.RECUR_TYPE.NULL;

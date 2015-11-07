@@ -43,6 +43,7 @@ public class MainFrame implements Observer{
 	private static final String WELCOME_MSG_2 = "Today is %s.";
 	private static final String WELCOME_MSG_3 = "Your upcoming tasks for today:";
 	private static final String FIRST_COMMAND = "view all today";
+	private static final String REMINDER_MSG = "Reminder Alert!";
 	private static JFrame frame;
 	private static MainPanel panel;
 	private static boolean isMinimized = false;
@@ -57,7 +58,6 @@ public class MainFrame implements Observer{
 	private static final String OPTION_MAXIMIZE = "Maximize";
 	private static final String OPTION_ICONIFY = "Iconify";
 	private static final String OPTION_CLOSE = "Close";
-	private static final String CLEAR_SCREEN = "\033[H\033[2J";
 	private static final int SIZE_PROPORTION = 2;
 	private static final int REMOVE_ONE = 1;
 	private static final int CHARACTER_LOCATION = 0;
@@ -75,9 +75,6 @@ public class MainFrame implements Observer{
 	 * @param  String[] argument on execution
 	 */
 	public static void main(String[] args) {
-		//Schedule a job for the event-dispatching thread:
-		//creating and showing this application's GUI.
-
 		LoggingHandler handler = new LoggingHandler();
 		handler.setupLoggingHandler();
 		initiate(args);
@@ -96,7 +93,7 @@ public class MainFrame implements Observer{
 		if(args.length > OFFSET_ZERO){
 			String input = args[OFFSET_ZERO];
 			if(input.equals(CLI_COMMAND)){
-				//mainFrame.cliMode();
+				mainFrame.cliMode();
 				return true;
 			}
 		}
@@ -130,7 +127,7 @@ public class MainFrame implements Observer{
 	 * 
 	 */
 	public void prepareWelcome(){
-		String today = DateTimeHelper.getDate(LocalDateTime.now());
+		String today = DateTimeHelper.getDate(DateTimeHelper.now());
 		String[] outputs = new String[WELCOME_MSG_SIZE];
 		int counter = OFFSET_ZERO;
 		outputs[counter++] = WELCOME_MSG_1;
@@ -150,6 +147,7 @@ public class MainFrame implements Observer{
 	 * 
 	 */
 	public void outputToCmd(String[] output){
+		System.out.println();
 		for(String s : output){
 			if(s!=null){
 				while(s.charAt(CHARACTER_LOCATION) == BOLD_INDICATOR || 
@@ -159,6 +157,7 @@ public class MainFrame implements Observer{
 				System.out.println(s);
 			}
 		}
+		System.out.println();
 	}
 
 	/**
@@ -245,6 +244,15 @@ public class MainFrame implements Observer{
 	}
 
 	/**
+	 * This method returns the frame of the UI.
+	 * 
+	 *  @return  frame
+	 *  			JFrame frame
+	 */
+	public JFrame getFrame(){
+		return frame;
+	}
+	/**
 	 * This method is the update method for Observer class
 	 * of MainFrame. 
 	 * 
@@ -262,7 +270,8 @@ public class MainFrame implements Observer{
 			if(ui_Mode){
 				MainPanel.setPaneToNull();
 			} else{
-				System.out.println(CLEAR_SCREEN);
+				System.out.println();
+				//System.out.println(CLEAR_SCREEN);
 			}
 		} else if(o instanceof Reminder){
 			if(arg instanceof ArrayList<?>){
@@ -270,6 +279,7 @@ public class MainFrame implements Observer{
 					MainPanel.createReminder((ArrayList<Task>)arg);
 				} else{
 					String[] output = uiController.format((ArrayList<Task>)arg);
+					System.out.println(REMINDER_MSG);
 					outputToCmd(output);
 				}
 			}
@@ -279,6 +289,7 @@ public class MainFrame implements Observer{
 				MainPanel.updatePrint(msg);
 			} else{
 				System.out.println(msg);
+				System.out.println();
 			}
 		}
 	}

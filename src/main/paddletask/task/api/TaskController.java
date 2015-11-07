@@ -288,27 +288,27 @@ public class TaskController {
             switch (task.getType()) {
                 case DEADLINE:
                     if ((task.isComplete() == false) &&
-                            ((DeadlineTask) task).getEnd().isBefore(LocalDateTime.now()) &&
+                            ((DeadlineTask) task).getEnd().isBefore(DateTimeHelper.now()) &&
                             (((DeadlineTask) task).isRecurring() == true)) {
                         LocalDateTime newEndDate = ((DeadlineTask) task).getEnd();
                         switch (((DeadlineTask) task).getRecurPeriod()) {
                             case DAY:
-                                while (newEndDate.isBefore(LocalDateTime.now())) {
+                                while (newEndDate.isBefore(DateTimeHelper.now())) {
                                     newEndDate = DateTimeHelper.addDays(newEndDate, 1);
                                 }
                                 break;
                             case WEEK:
-                                while (newEndDate.isBefore(LocalDateTime.now())) {
+                                while (newEndDate.isBefore(DateTimeHelper.now())) {
                                     newEndDate = DateTimeHelper.addWeeks(newEndDate, 1);
                                 }
                                 break;
                             case MONTH:
-                                while (newEndDate.isBefore(LocalDateTime.now())) {
+                                while (newEndDate.isBefore(DateTimeHelper.now())) {
                                     newEndDate = DateTimeHelper.addMonths(newEndDate, 1);
                                 }
                                 break;
                             case YEAR:
-                                while (newEndDate.isBefore(LocalDateTime.now())) {
+                                while (newEndDate.isBefore(DateTimeHelper.now())) {
                                     newEndDate = DateTimeHelper.addYears(newEndDate, 1);
                                 }
                                 break;
@@ -322,27 +322,27 @@ public class TaskController {
                     break;
                 case TIMED:
                     if ((task.isComplete() == false) &&
-                            ((TimedTask) task).getEnd().isBefore(LocalDateTime.now()) &&
+                            ((TimedTask) task).getEnd().isBefore(DateTimeHelper.now()) &&
                             (((TimedTask) task).isRecurring() == true)) {
                         LocalDateTime newEndDate = ((TimedTask) task).getEnd();
                         switch (((TimedTask) task).getRecurPeriod()) {
                         case DAY:
-                            while (newEndDate.isBefore(LocalDateTime.now())) {
+                            while (newEndDate.isBefore(DateTimeHelper.now())) {
                                 newEndDate = DateTimeHelper.addDays(newEndDate, 1);
                             }
                             break;
                         case WEEK:
-                            while (newEndDate.isBefore(LocalDateTime.now())) {
+                            while (newEndDate.isBefore(DateTimeHelper.now())) {
                                 newEndDate = DateTimeHelper.addWeeks(newEndDate, 1);
                             }
                             break;
                         case MONTH:
-                            while (newEndDate.isBefore(LocalDateTime.now())) {
+                            while (newEndDate.isBefore(DateTimeHelper.now())) {
                                 newEndDate = DateTimeHelper.addMonths(newEndDate, 1);
                             }
                             break;
                         case YEAR:
-                            while (newEndDate.isBefore(LocalDateTime.now())) {
+                            while (newEndDate.isBefore(DateTimeHelper.now())) {
                                 newEndDate = DateTimeHelper.addYears(newEndDate, 1);
                             }
                             break;
