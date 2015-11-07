@@ -53,16 +53,21 @@ public class EditTaskCommand extends Command {
     private Task _originalTask;
     private Task _editedTask;
     private String _originalTaskType;
+    private String _editedTaskType;
     private String _newDescription;
-    private LocalDateTime _newStart;
-    private LocalDateTime _newEnd;
+    private LocalDateTime _newStartDate;
+    private LocalDateTime _newStartTime;
+    private LocalDateTime _newEndDate;
+    private LocalDateTime _newEndTime;
     private LocalDateTime _newReminder;
 
     public EditTaskCommand() {
         _originalTaskType = null;
         _newDescription = null;
-        _newStart = null;
-        _newEnd = null;
+        _newStartDate = null;
+        _newStartTime = null;
+        _newEndDate = null;
+        _newEndTime = null;
         _newReminder = null;
         _newPriority = -1;
         _newRecurStatus = false;
@@ -156,14 +161,22 @@ public class EditTaskCommand extends Command {
     }
 
     private void setNewEnd() {
-        if (hasOption("end")) {
-            _newEnd = getOption("end").getDateValue();
+        if (hasOption("edate")) {
+            _newEndDate = getOption("edate").getDateValue();
+        }
+        
+        if (hasOption("etime")) {
+            _newEndTime = getOption("etime").getDateValue();
         }
     }
 
     private void setNewStartOption() {
-        if (hasOption("start")) {
-            _newStart = getOption("start").getDateValue();
+        if (hasOption("sdate")) {
+            _newStartDate = getOption("sdate").getDateValue();
+        }
+        
+        if (hasOption("stime")) {
+            _newStartTime = getOption("stime").getDateValue();
         }
     }
 
@@ -227,27 +240,32 @@ public class EditTaskCommand extends Command {
      * @throws Exception 
      */
     private String determineEditedTaskType() throws Exception {
+        boolean hasNewStartDate = _newStartDate != null;
+        boolean hasNewStartTime = _newStartTime != null;;
+        boolean hasNewEndDate = _newEndDate != null;
+        boolean hasNewEndTime = _newEndTime != null;
+        
         switch (_originalTaskType) {
             case TASK_TYPE_FLOATING :
                 // If no start/end date/time is specified, task.type is still Floating
-                if (_newStart == null && _newEnd == null) {
+                if (!hasNewStartDate && !hasNewStartTime && !hasNewEndDate && !hasNewEndTime) {
                     return TASK_TYPE_FLOATING;
                  // If only an end date/time is specified, task.type is now a Deadline task
-                } else if (_newStart == null) { 
+                } else if (!hasNewStartDate && !hasNewStartTime) { 
                     return TASK_TYPE_DEADLINE;
                  // If both new and end date/time is specified, task.type is now a Timed task
-                } else if (_newStart != null && _newEnd != null) {
+                } else if ((hasNewStartDate || hasNewStartTime) && (hasNewEndDate || hasNewEndTime)) {
                     return TASK_TYPE_TIMED;
-                } else if (_newStart != null && _newEnd == null) {
+                } else {
                     LOGGER.log(Level.SEVERE, LOG_MSG_SEVERE_ADD_START_TO_FLOAT);
                     throw new InvalidCommandFormatException(ERROR_MSG_ADD_START_TO_FLOAT);
                 }
     
             case TASK_TYPE_DEADLINE :
-                if (_newStart == null) {
-                    return TASK_TYPE_DEADLINE;
-                } else {
+                if (hasNewStartDate || hasNewStartTime) {
                     return TASK_TYPE_TIMED;
+                } else {
+                    return TASK_TYPE_DEADLINE;
                 }
     
             case TASK_TYPE_TIMED :
@@ -289,37 +307,72 @@ public class EditTaskCommand extends Command {
     }
 
     private LocalDateTime getEditedTaskStart() {
-        // If user specified a new Start date/time, use this
-        if (_newStart != null) {
-            return _newStart;
+        LocalDateTime editedTaskStartDate = getEditedTaskStartDate();
+        LocalDateTime editedTaskStartTime = getEditedTaskStartTime();
+        String editedStartDateTime = String.format("%1$s %2$s", DateTimeHelper.getDate(editedTaskStartDate), DateTimeHelper.getTime(editedTaskStartTime));
+        
+        return DateTimeHelper.parseStringToDateTime(editedStartDateTime);
+    }
+    
+    private LocalDateTime getEditedTaskStartDate() {
+        // If user specified a new Start date, use this
+        if (_newStartDate != null) {
+            return _newStartDate;
+        } else if (isOriginalTaskFloating() || isOriginalTaskDeadline()){
+            // Otherwise if edited Task Type is Deadline, set it to today
+            //return getTimedTaskCastedOriginalTask().getStart();
+            return DateTimeHelper.now();
         } else {
+            // Otherwise, the edited Task Type should be TimedTask and we retrieve
+            // original Start date
+            return getTimedTaskCastedOriginalTask().getStart();
+        }
+    }
+    
+    private LocalDateTime getEditedTaskStartTime()   {
+        // If user specified a new Start time, use this
+        if (_newStartTime != null) {
+            return _newStartTime;
+        } else if (isOriginalTaskFloating() || isOriginalTaskDeadline()){
             // Otherwise, retrieve original Task casted to a TimedTask as only this Task
-            // type has Start date/time
+            // type has Start time
+            return DateTimeHelper.now();
+        } else {
             return getTimedTaskCastedOriginalTask().getStart();
         }
     }
 
     private LocalDateTime getEditedTaskEnd() {
-        LocalDateTime newEditedTaskEnd = null;
-        // If user specified a new End date/time, use this
-        if (_newEnd != null) {
-            // If user did not specify a new Reminder, change it to a time that is 
-            // 5 minutes before the new specified End/date time
-            if (_newReminder == null) {
-                _newReminder = DateTimeHelper.addMinutes(_newEnd, -5);
-            }
-            return _newEnd;
-        } else if (isOriginalTaskDeadline()) {
-            // Otherwise, if this Task is a DeadlineTask, get DeadlineTask casted original 
-            // Task and retrieve the End date/time
-            newEditedTaskEnd = getDeadlineTaskCastedOriginalTask().getEnd();
-        } else if (isOriginalTaskTimed()) {
-            // Otherwise, if this Task is a TimedTask, get TimedTask casted original 
-            // Task and retrieve the End date/time
-            newEditedTaskEnd = getTimedTaskCastedOriginalTask().getEnd();
-        }
+        LocalDateTime editedTaskEndDate = getEditedTaskEndDate();
+        LocalDateTime editedTaskEndTime = getEditedTaskEndTime();
+        String editedTaskEndDateTime = String.format("%1$s %2$s", DateTimeHelper.getDate(editedTaskEndDate), DateTimeHelper.getTime(editedTaskEndTime));
         
-        return newEditedTaskEnd;
+        return DateTimeHelper.parseStringToDateTime(editedTaskEndDateTime);
+    }
+    
+    private LocalDateTime getEditedTaskEndDate() {
+        // If user specified a new End date/time, use this
+        if (_newEndDate != null) {
+            return _newEndDate;
+        } else if (isOriginalTaskFloating()) {
+            return DateTimeHelper.now();
+        } else if (isOriginalTaskDeadline()) {
+            return getDeadlineTaskCastedOriginalTask().getEnd();
+        } else {
+            return getTimedTaskCastedOriginalTask().getEnd();
+        }
+    }
+    
+    private LocalDateTime getEditedTaskEndTime() {
+        if (_newEndTime != null) {
+            return _newEndTime;
+        } else if (isOriginalTaskFloating()) {
+            return DateTimeHelper.now();
+        } else if (isOriginalTaskDeadline()) {
+            return getDeadlineTaskCastedOriginalTask().getEnd();
+        } else {
+            return getTimedTaskCastedOriginalTask().getEnd();
+        }
     }
 
     private LocalDateTime getEditedTaskReminder() {
@@ -327,21 +380,9 @@ public class EditTaskCommand extends Command {
         // If user specified a new Reminder LocalDateTime, use this
         if (_newReminder != null) {
             return _newReminder;
-        } else if (isOriginalTaskFloating()) {
-            // Otherwise, if this Task is a Floating Task, set a new Reminder that will
-            // be 5 minutes before the End date/time
-            newEditedTaskReminder = DateTimeHelper.addMinutes(getEditedTaskEnd(), -5);
-        } else if (isOriginalTaskDeadline()) {
-            // Otherwise, if this Task is a DeadlineTask, get the DeadlineTask casted
-            // original Task and retrieve its original Reminder
-            newEditedTaskReminder = getDeadlineTaskCastedOriginalTask().getReminder();
-        } else if (isOriginalTaskTimed()) {
-            // Otherwise, if this Task is a TimedTask, get the TimedTask casted
-            // original Task and retrieve its original Reminder
-            newEditedTaskReminder = getTimedTaskCastedOriginalTask().getReminder();
+        }  else {
+            return DateTimeHelper.addMinutes(getEditedTaskEnd(), -5);
         }
-        
-        return newEditedTaskReminder;
     }
 
     private int getEditedTaskPriority() throws InvalidPriorityException {
