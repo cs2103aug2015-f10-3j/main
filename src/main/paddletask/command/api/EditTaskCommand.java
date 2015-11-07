@@ -17,6 +17,7 @@ import main.paddletask.task.entity.TimedTask;
 import main.paddletask.common.exception.InvalidCommandFormatException;
 import main.paddletask.common.exception.InvalidPriorityException;
 import main.paddletask.common.exception.NoSuchTaskException;
+import main.paddletask.common.exception.UnchronologicalTimeException;
 import main.paddletask.common.exception.UpdateTaskException;
 import main.paddletask.common.util.DateTimeHelper;
 
@@ -53,7 +54,6 @@ public class EditTaskCommand extends Command {
     private Task _originalTask;
     private Task _editedTask;
     private String _originalTaskType;
-    private String _editedTaskType;
     private String _newDescription;
     private LocalDateTime _newStartDate;
     private LocalDateTime _newStartTime;
@@ -288,7 +288,17 @@ public class EditTaskCommand extends Command {
                 getEditedTaskPriority(), _originalTask.getTags(),getEditedTaskRecurStatus(), getEditedTaskRecurType());
     }
 
-    private void createNewTimedTask() throws Exception {
+    private void createNewTimedTask() throws InvalidPriorityException, Exception {
+        LocalDateTime editedTaskStart = getEditedTaskStart();
+        LocalDateTime editedTaskEnd = getEditedTaskEnd();
+        if (DateTimeHelper.isLater(editedTaskStart, editedTaskEnd)) {
+            throw new UnchronologicalTimeException("Start date/time is later than Deadine date/time!");
+        }
+        
+        if (DateTimeHelper.isEqual(editedTaskStart, editedTaskEnd)) {
+            throw new UnchronologicalTimeException("Start date/time is equal to Deadline date/time!");
+        }
+        
         _editedTask = new TimedTask(_originalTask.getTaskId(), getEditedTaskDescription(), _originalTask.getCreatedAt(),
                 getEditedTaskStart(), getEditedTaskEnd(), getEditedTaskReminder(), _originalTask.isComplete(),
                 getEditedTaskPriority(), _originalTask.getTags(),getEditedTaskRecurStatus(), getEditedTaskRecurType());
