@@ -142,7 +142,7 @@ public class ParseLogic extends ParserBackend {
 	private void addCommandToList(Command newCommand, ParseLogic.COMMAND_TYPE commandType) {
 		assert(newCommand != null);
 		if (!isInvalidTypeToAdd(commandType)) {
-			Command.getCommandList().add(newCommand);
+			Command.getCommandList().push(newCommand);
 			Command.getUndoCommandList().clear();
 		}
 	}
