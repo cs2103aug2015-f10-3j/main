@@ -53,6 +53,7 @@ public class EditTaskCommand extends Command {
     private Task _originalTask;
     private Task _editedTask;
     private String _originalTaskType;
+    private String _editedTaskType;
     private String _newDescription;
     private LocalDateTime _newStartDate;
     private LocalDateTime _newStartTime;
@@ -317,7 +318,7 @@ public class EditTaskCommand extends Command {
         // If user specified a new Start date, use this
         if (_newStartDate != null) {
             return _newStartDate;
-        } else if (isOriginalTaskDeadline()){
+        } else if (isOriginalTaskFloating() || isOriginalTaskDeadline()){
             // Otherwise if edited Task Type is Deadline, set it to today
             //return getTimedTaskCastedOriginalTask().getStart();
             return DateTimeHelper.now();
@@ -332,7 +333,7 @@ public class EditTaskCommand extends Command {
         // If user specified a new Start time, use this
         if (_newStartTime != null) {
             return _newStartTime;
-        } else if (isOriginalTaskDeadline()){
+        } else if (isOriginalTaskFloating() || isOriginalTaskDeadline()){
             // Otherwise, retrieve original Task casted to a TimedTask as only this Task
             // type has Start time
             return DateTimeHelper.now();
@@ -379,21 +380,9 @@ public class EditTaskCommand extends Command {
         // If user specified a new Reminder LocalDateTime, use this
         if (_newReminder != null) {
             return _newReminder;
-        } else if (isOriginalTaskFloating()) {
-            // Otherwise, if this Task is a Floating Task, set a new Reminder that will
-            // be 5 minutes before the End date/time
-            newEditedTaskReminder = DateTimeHelper.addMinutes(getEditedTaskEnd(), -5);
-        } else if (isOriginalTaskDeadline()) {
-            // Otherwise, if this Task is a DeadlineTask, get the DeadlineTask casted
-            // original Task and retrieve its original Reminder
-            newEditedTaskReminder = getDeadlineTaskCastedOriginalTask().getReminder();
-        } else if (isOriginalTaskTimed()) {
-            // Otherwise, if this Task is a TimedTask, get the TimedTask casted
-            // original Task and retrieve its original Reminder
-            newEditedTaskReminder = getTimedTaskCastedOriginalTask().getReminder();
+        }  else {
+            return DateTimeHelper.addMinutes(getEditedTaskEnd(), -5);
         }
-        
-        return newEditedTaskReminder;
     }
 
     private int getEditedTaskPriority() throws InvalidPriorityException {
