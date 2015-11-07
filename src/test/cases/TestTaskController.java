@@ -261,4 +261,20 @@ public class TestTaskController {
         result = tController.getAvailableTaskId();
         assertEquals(testTaskList.size() + 1, result);
     }
+    
+    @Test
+    public void testCheckRecurring() {
+        // Set up
+        testTaskList = new ArrayList<Task>();
+        Task.setTaskList(testTaskList);
+        tController.writeAllToFile(testTaskList);
+        
+        // Perform test
+        boolean result = tController.checkRecurring();
+        if (result) {
+            assert true;
+        } else {
+            assert false;
+        }
+    }
 }
