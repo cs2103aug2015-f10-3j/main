@@ -22,7 +22,7 @@ public class UndoCommand extends Command {
 	}
 
 	private void addTo(ArrayList<Command> commandList, Command command) {
-		getCommandList().add(command);
+		commandList.add(command);
 	}
 
 	private boolean isUndoable(ArrayList<Command> commandList) {

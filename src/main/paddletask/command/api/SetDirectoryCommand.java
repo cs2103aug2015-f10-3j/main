@@ -1,6 +1,7 @@
 //@@author A0126332R
 package main.paddletask.command.api;
 
+import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
@@ -11,7 +12,7 @@ public class SetDirectoryCommand extends Command {
 
     /*** Variables ***/
     private static final String NEW_PATH_ERROR = "Error in setting new path: ";
-    private static final String NEW_PATH_SET = "New path set: ";
+    private static final String NEW_PATH_SET = "New directory set: ";
     private static final String KEYWORD_SET_DIRECTORY = "setdirectory";
     private static String _oldPath = "";
     
@@ -36,6 +37,10 @@ public class SetDirectoryCommand extends Command {
         // Store old path for undoing
         byte[] content = storageController.getFileInBytes(StorageController.CONFIG_FILE);
         _oldPath = new String(content, StandardCharsets.UTF_8);
+        int endIndex = _oldPath.lastIndexOf(File.separator);
+        if (endIndex != -1) {
+            _oldPath = _oldPath.substring(0, endIndex);
+        }
         
         // Set new path
         boolean success = storageController.setDirectory(newPath);

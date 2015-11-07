@@ -13,7 +13,7 @@ public class RedoCommand extends Command {
 		ArrayList<Command> undoCommandList = getUndoCommandList();
 		assert(undoCommandList != null);
 		if (isRedoable(undoCommandList)) {
-			throw new InvalidRedoException("Unable to undo further");
+			throw new InvalidRedoException("Unable to redo further");
 		}
 		Command previousCommand = getPreviousCommand(undoCommandList);
 		//add previously undone command back into the list of done commands
@@ -22,7 +22,7 @@ public class RedoCommand extends Command {
 	}
 	
 	private void addTo(ArrayList<Command> commandList, Command command) {
-		getCommandList().add(command);
+		commandList.add(command);
 	}
 	
 	private boolean isRedoable(ArrayList<Command> undoCommandList) {
