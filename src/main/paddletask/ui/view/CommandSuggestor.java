@@ -216,12 +216,14 @@ public class CommandSuggestor {
 		int windowX = 0;
 		int windowY = 0;
 
-		windowX = container.getX() + textField.getX() + 5;
+		windowX = textField.getLocationOnScreen().x;//container.getX() + textField.getX() + 5;
+		windowY = textField.getLocationOnScreen().y + textField.getHeight();
+		/*
 		if (suggestionsPanel.getHeight() > autoSuggestionPopUpWindow.getMinimumSize().height) {
 			windowY = container.getY() + textField.getY() + textField.getHeight() + autoSuggestionPopUpWindow.getMinimumSize().height;
 		} else {
 			windowY = container.getY() + textField.getY() + textField.getHeight() + autoSuggestionPopUpWindow.getHeight();
-		}
+		}*/
 
 		autoSuggestionPopUpWindow.setLocation(windowX, windowY);
 		autoSuggestionPopUpWindow.setMinimumSize(new Dimension(textField.getWidth(), 30));
