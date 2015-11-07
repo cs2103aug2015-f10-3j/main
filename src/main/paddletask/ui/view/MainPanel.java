@@ -149,7 +149,6 @@ public class MainPanel extends JPanel implements KeyListener {
 		inputField.requestFocus();
 		inputField.addKeyListener(this);
 		inputField.addActionListener(new ActionListener() {
-
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				String input = inputField.getText();
