@@ -81,7 +81,7 @@ public class Reminder extends Observable {
                         }
                     }
                     
-                    //System.out.println("dueTaskList.size(): " + dueTaskList.size());
+                    //System.out.println("dueTaskList.size(): " + dueTasks.size());
 
                     // Notify observers
                     if (dueTasks.size() > 0) {
