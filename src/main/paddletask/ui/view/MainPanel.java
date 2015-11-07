@@ -31,10 +31,14 @@ public class MainPanel extends JPanel implements KeyListener {
 	private static final String WELCOME_MSG_3 = "Your upcoming tasks for today:";
 	private static final String MODAL_OPTION = "Modal Dialog";
 	private static final String FIRST_COMMAND = "view all today";
+	private static final String KEYNAME_FONT_UP = "Font up";
+	private static final String KEYNAME_FONT_DOWN = "Font down";
 	private static final int OFFSET_ZERO = 0;
 	private static final int SUBSTRING_BEGIN = 1;
 	private static final char PRIORITY_INDICATOR = '*';
 	private static final char BOLD_INDICATOR = '@';
+	private static final int INCREASE_FONT_SIZE = 1;
+	private static final int DECREASE_FONT_SIZE = -1;
 	protected static int NUM_COMPONENTS = 3;
 	protected UIController uiController = null;
 	private static Font font = new Font("Consolas",Font.PLAIN, 14);
@@ -156,6 +160,20 @@ public class MainPanel extends JPanel implements KeyListener {
 				performCommand(input);
 				inputField.setText(STRING_EMPTY);
 				currentCommand = null;
+			}
+		});
+		inputField.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_F4, 0, true), KEYNAME_FONT_UP);
+		inputField.getActionMap().put(KEYNAME_FONT_UP, new AbstractAction() {
+			@Override
+			public void actionPerformed(ActionEvent ae) {//focuses the first label on popwindow
+				CustomizedDocumentFilter.changeFontSize(INCREASE_FONT_SIZE);
+			}
+		});
+		inputField.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0, true), KEYNAME_FONT_DOWN);
+		inputField.getActionMap().put(KEYNAME_FONT_DOWN, new AbstractAction() {
+			@Override
+			public void actionPerformed(ActionEvent ae) {//focuses the first label on popwindow
+				CustomizedDocumentFilter.changeFontSize(DECREASE_FONT_SIZE);
 			}
 		});
 		commandSuggestor = new CommandSuggestor(inputField, mainFrame.getFrame(),
