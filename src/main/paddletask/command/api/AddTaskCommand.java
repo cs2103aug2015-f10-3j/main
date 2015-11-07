@@ -38,6 +38,8 @@ public class AddTaskCommand extends Command implements ParserConstants {
 			storeNewTask();
 			appendToResult();
 			return _taskList;
+		} catch (TaskAddFailedException e) {
+			throw e;
 		} catch (Exception e) {
 			throw new TaskAddFailedException("Adding of task was unsuccessful");
 		}
