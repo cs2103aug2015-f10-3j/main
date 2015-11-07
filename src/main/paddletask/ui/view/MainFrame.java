@@ -244,6 +244,15 @@ public class MainFrame implements Observer{
 	}
 
 	/**
+	 * This method returns the frame of the UI.
+	 * 
+	 *  @return  frame
+	 *  			JFrame frame
+	 */
+	public JFrame getFrame(){
+		return frame;
+	}
+	/**
 	 * This method is the update method for Observer class
 	 * of MainFrame. 
 	 * 

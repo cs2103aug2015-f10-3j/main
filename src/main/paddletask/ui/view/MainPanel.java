@@ -5,6 +5,7 @@ import java.awt.Dialog.ModalityType;
 import java.awt.event.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import javax.swing.*;
 import javax.swing.text.AbstractDocument;
@@ -14,6 +15,7 @@ import javax.swing.text.Document;
 
 import main.paddletask.common.data.DoublyLinkedList;
 import main.paddletask.common.data.Node;
+import main.paddletask.common.data.ParserConstants;
 import main.paddletask.common.util.DateTimeHelper;
 import main.paddletask.task.entity.Task;
 import main.paddletask.ui.controller.UIController;
@@ -47,6 +49,7 @@ public class MainPanel extends JPanel implements KeyListener {
 	private String currentCommand = null;
 	private static JScrollPane scrollPane = null;
 	private MainFrame mainFrame = null;
+	private static final float OPACITY_OF_SUGGESTIONS = 0.8f;
 
 	/*** Constructors ***/
 	public MainPanel(MainFrame mainFrame){
@@ -155,6 +158,36 @@ public class MainPanel extends JPanel implements KeyListener {
 				currentCommand = null;
 			}
 		});
+		CommandSuggestor commandSuggestor = new CommandSuggestor(inputField, mainFrame.getFrame(), null,
+				Color.WHITE.brighter(), Color.BLUE, Color.RED, OPACITY_OF_SUGGESTIONS) {
+            @Override
+            public boolean wordTyped(String typedWord) {
+
+                //create list for dictionary this in your case might be done via calling a method which queries db and returns results as arraylist
+                ArrayList<String> words = new ArrayList<>();
+                /*words.add("hello");
+                words.add("heritage");
+                words.add("happiness");
+                words.add("goodbye");
+                words.add("cruel");
+                words.add("car");
+                words.add("war");
+                words.add("will");
+                words.add("world");
+                words.add("wall");*/
+                ArrayList<ParserConstants.COMMANDS> commandList = new ArrayList<ParserConstants.COMMANDS>
+                												  (Arrays.asList(ParserConstants.COMMANDS.values()));
+                for(ParserConstants.COMMANDS command : commandList){
+                	words.add(command.toString());
+                }
+
+                setDictionary(words);
+                //addToDictionary("bye");//adds a single word
+
+                return super.wordTyped(typedWord);//now call super to check for any matches against newest dictionary
+            }
+        };
+		
 		return inputField;
 	}
 
