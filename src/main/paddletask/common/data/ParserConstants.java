@@ -1,6 +1,5 @@
 //@@author A0125473H
 package main.paddletask.common.data;
-
 public interface ParserConstants {
 
 	/*** Main command enums ***/
@@ -87,5 +86,78 @@ public interface ParserConstants {
 		STRING, STRING_ARRAY, INTEGER, INTEGER_ARRAY, DATE,
 		STRING_OPT, STRING_ARRAY_OPT, INTEGER_OPT, INTEGER_ARRAY_OPT,
 		DATE_OPT, DAY, NONE;
+	}
+
+	/*** used for suggestions ***/
+	public static enum ADD_OPTIONS {
+		BY("by"), REMIND("remind"), BETWEEN("between"), AND("and"), 
+		PRIORITY("priority"), EVERY("every"),
+		
+		BY_SHORT("-b"), REMIND_SHORT("-r"), BETWEEN_SHORT("-bt"), AND_SHORT("-a"), 
+		PRIORITY_SHORT("-p"), EVERY_SHORT("-re");
+
+		private final String commandText;
+		
+		private ADD_OPTIONS(final String commandText) {
+			this.commandText = commandText;
+		}
+
+		@Override
+		public String toString() {
+			return commandText;
+		}
+	}
+	
+	public static enum VIEW_OPTIONS {
+		COMPLETE("complete"), ALL("all"), FLOATING("floating"), DEADLINE("deadline"), 
+		TIMED("timed"), TODAY("today"), TOMORROW("tomorrow"), WEEK("week"), 
+		MONTH("month"), 
+		
+		COMPLETE_SHORT("/c"), ALL_SHORT("-ta"), FLOATING_SHORT("-tf"), DEADLINE_SHORT("-td"), 
+		TIMED_SHORT("-tt"), TODAY_SHORT("-pt"), TOMORROW_SHORT("-ptm"), WEEK_SHORT("-pw"), 
+		MONTH_SHORT("-pm");
+
+		private final String commandText;
+		
+		private VIEW_OPTIONS(final String commandText) {
+			this.commandText = commandText;
+		}
+
+		@Override
+		public String toString() {
+			return commandText;
+		}
+	}
+	
+	public static enum EDIT_OPTIONS {
+		REMIND("remind"), START("start"), END("end"), PRIORITY("priority"), EVERY("every"),
+		
+		REMIND_SHORT("-r"), START_SHORT("-s"), END_SHORT("-e"), PRIORITY_SHORT("-p"), EVERY_SHORT("-re");
+
+		private final String commandText;
+		
+		private EDIT_OPTIONS(final String commandText) {
+			this.commandText = commandText;
+		}
+
+		@Override
+		public String toString() {
+			return commandText;
+		}
+	}
+	
+	public static enum TAGUNTAG_OPTIONS {
+		HASHTAG("#");
+
+		private final String commandText;
+		
+		private TAGUNTAG_OPTIONS(final String commandText) {
+			this.commandText = commandText;
+		}
+
+		@Override
+		public String toString() {
+			return commandText;
+		}
 	}
 }
