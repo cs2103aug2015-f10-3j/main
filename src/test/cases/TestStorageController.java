@@ -90,6 +90,17 @@ public class TestStorageController {
     /*** Test Cases 
      * @throws Exception  ***/
     @Test
+    public void testSetFileName() throws Exception {
+        Method m = sController.getClass().getDeclaredMethod("setFileName");
+        m.setAccessible(true);
+        boolean success = (boolean)m.invoke(sController);
+        if (success) {
+            assert true;
+        } else {
+            assert false;
+        }
+    }
+    @Test
     public void testSetDirectory() throws Exception {
         String oldPath = StorageController.DEFAULT_FILE;
         int endIndex = oldPath.lastIndexOf(File.separator);
@@ -120,9 +131,54 @@ public class TestStorageController {
     }
     
     @Test
+    public void testGetFile() throws Exception {
+        Method m = sController.getClass().getDeclaredMethod("getFile", String.class);
+        m.setAccessible(true);
+        File file = (File)m.invoke(sController, fileName);
+        if (file.exists()) {
+            assert true;
+        } else {
+            assert false;
+        }
+    }
+    
+    @Test
+    public void testGetFileInBytes() throws Exception {
+        Method m = sController.getClass().getDeclaredMethod("getFileInBytes", String.class);
+        m.setAccessible(true);
+        byte[] content = (byte[])m.invoke(sController, fileName);
+        if (content != null) {
+            assert true;
+        } else {
+            assert false;
+        }
+    }
+    
+    @Test
+    public void testWriteBytesToFile() throws Exception {
+        Method m = sController.getClass().getDeclaredMethod("getFileInBytes", String.class);
+        m.setAccessible(true);
+        byte[] content = (byte[])m.invoke(sController, fileName);
+        if (content != null) {
+            assert true;
+        } else {
+            assert false;
+        }
+        
+        m = sController.getClass().getDeclaredMethod("writeBytesToFile", String.class, byte[].class, boolean.class);
+        m.setAccessible(true);
+        boolean success = (boolean)m.invoke(sController, fileName, content, true);
+        if (success) {
+            assert true;
+        } else {
+            assert false;
+        }
+    }
+    
+    @Test
     public void testGetXmlFile() throws Exception {
-    	Method m = sController.getClass().getDeclaredMethod("getXmlFile", String.class);
-		m.setAccessible(true);
+        Method m = sController.getClass().getDeclaredMethod("getXmlFile", String.class);
+        m.setAccessible(true);
         File file = (File)m.invoke(sController, fileName);
         if (file.exists()) {
             assert true;
@@ -223,5 +279,46 @@ public class TestStorageController {
         doc = sController.parseTask(testTaskList);
         result = sController.writeXml(doc);
         assertEquals(true, result);
+    }
+    
+    @Test
+    public void testGetTagsInString() {
+        ArrayList<String> tags = new ArrayList<String>();
+        tags.add("#tag1");
+        tags.add("#tag2");
+        tags.add("#tag3");
+        String output = sController.getTagsInString(tags);
+        if (output.equals("#tag1 #tag2 #tag3")) {
+            assert true;
+        } else {
+            assert false;
+        }
+        
+        tags = new ArrayList<String>();
+        output = sController.getTagsInString(tags);
+        if (output.equals("")) {
+            assert true;
+        } else {
+            assert false;
+        }
+    }
+    
+    @Test
+    public void testGetTagsInArrayList() {
+        String tags = "#tag1 #tag2 #tag3";
+        ArrayList<String> output = sController.getTagsInArrayList(tags);
+        if (output.size() == 3) {
+            assert true;
+        } else {
+            assert false;
+        }
+        
+        tags = "";
+        output = sController.getTagsInArrayList(tags);
+        if (output.size() == 0) {
+            assert true;
+        } else {
+            assert false;
+        }
     }
 }
