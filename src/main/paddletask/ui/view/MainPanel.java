@@ -12,6 +12,7 @@ import javax.swing.text.AbstractDocument;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
+import javax.swing.text.SimpleAttributeSet;
 
 import main.paddletask.common.data.DoublyLinkedList;
 import main.paddletask.common.data.Node;
@@ -55,6 +56,7 @@ public class MainPanel extends JPanel implements KeyListener {
 	private MainFrame mainFrame = null;
 	private static final float OPACITY_OF_SUGGESTIONS = 0.9f;
 	private CommandSuggestor commandSuggestor = null;
+	private static final int BACKGROUND_GRADIENT_STARTING_VALUE = 240;
 
 	/*** Constructors ***/
 	public MainPanel(MainFrame mainFrame){
@@ -217,23 +219,37 @@ public class MainPanel extends JPanel implements KeyListener {
 			Document doc = textPane.getDocument();
 			textPane.setCaretPosition(doc.getLength());
 			String outputString = STRING_EMPTY;
+			int counter = 0;
+			int backgroundGradient = BACKGROUND_GRADIENT_STARTING_VALUE;
+			int backgroundGradientIntervalValue = BACKGROUND_GRADIENT_STARTING_VALUE / output.length;
+			boolean isTable = false;
 			for(String s : output ){
 				if(s != null){
 					outputString = s + NEXT_LINE;
-					AttributeSet color = null;
+					SimpleAttributeSet color = new SimpleAttributeSet();
 					if(outputString.charAt(OFFSET_ZERO)==BOLD_INDICATOR){
-						color = CustomizedDocumentFilter.setBold();
+						color.addAttributes(CustomizedDocumentFilter.setBold());
+						outputString = outputString.substring(SUBSTRING_BEGIN);
+						color.addAttributes(CustomizedDocumentFilter.setBackgroundColorForHeader());
+						isTable = true;
+					}
+					if(outputString.charAt(OFFSET_ZERO)==PRIORITY_INDICATOR){
+						color.addAttributes(CustomizedDocumentFilter.changeToOrange());
 						outputString = outputString.substring(SUBSTRING_BEGIN);
 					}
 					if(outputString.charAt(OFFSET_ZERO)==PRIORITY_INDICATOR){
-						color = CustomizedDocumentFilter.changeToOrange();
+						color.addAttributes(CustomizedDocumentFilter.changeToRed());
 						outputString = outputString.substring(SUBSTRING_BEGIN);
 					}
-					if(outputString.charAt(OFFSET_ZERO)==PRIORITY_INDICATOR){
-						color = CustomizedDocumentFilter.changeToRed();
-						outputString = outputString.substring(SUBSTRING_BEGIN);
-					}
+					/*if(isTable == true){
+						if(Character.isDigit(outputString.charAt(0))){
+							backgroundGradient -= backgroundGradientIntervalValue;
+						}
+						System.out.println(backgroundGradient);
+						color.addAttributes(CustomizedDocumentFilter.setBackgroundColorForView(backgroundGradient));
+					}*/
 					doc.insertString(doc.getLength(), outputString, color);
+					counter ++;
 				}
 			}
 			doc.insertString(doc.getLength(), NEXT_LINE, null);

@@ -34,7 +34,7 @@ public final class CustomizedDocumentFilter extends DocumentFilter {
 	private static final String[] HEADER_KEYWORDS = {"Description", "Task Type", "Priority", "Start", "Deadline", "Reminder", "Tags", "Recurring"};
 	private static final String EMPTY_STRING = "";
 	private static final Pattern HEADER_PATTERN = buildPattern(HEADER_KEYWORDS, "\\b:|");
-	private static final int MAX_COLOR = 255;
+	private static final Color backgroundColor = new Color(160, 160, 160); //Gray color
 	private static final int OFFSET_ONE = 1;
 	
 	/*** Constructors ***/
@@ -77,17 +77,14 @@ public final class CustomizedDocumentFilter extends DocumentFilter {
 	}
 
 	/**
-	 * This method will change the background of the attribute set to a gradient of teal,
+	 * This method will change the background of the attribute set to a gradient of gray,
 	 * and return the changed set.
 	 * 
-	 * @param gradient
-	 * 				integer value for red of RGB
 	 * 
 	 * @return background
 	 * 				edited attribute set to the gradient
 	 */
-	public SimpleAttributeSet setBackgroundColorForView(int gradient){
-        Color backgroundColor = new Color(gradient, MAX_COLOR, MAX_COLOR);
+	public static SimpleAttributeSet setBackgroundColorForHeader(){
         SimpleAttributeSet background = new SimpleAttributeSet();
         StyleConstants.setBackground(background, backgroundColor);
         return background;
@@ -102,7 +99,6 @@ public final class CustomizedDocumentFilter extends DocumentFilter {
 	 */
 	private static Pattern buildPattern(String[] keywords, String REGEX_END_BOUND){
 		StringBuilder sb = new StringBuilder();
-		
 		for (String token : keywords) {
 			sb.append(REGEX_START_BOUND); 
 			sb.append(token);
@@ -111,8 +107,6 @@ public final class CustomizedDocumentFilter extends DocumentFilter {
 		if (sb.length() > 0) {
 			sb.deleteCharAt(sb.length() - REMOVE_TRAILING);
 		}
-
-		System.out.println(sb.toString());
 		Pattern p = Pattern.compile(sb.toString());
 		return p;
 	}
