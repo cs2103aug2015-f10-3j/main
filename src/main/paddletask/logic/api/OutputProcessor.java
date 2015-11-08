@@ -17,8 +17,8 @@ public class OutputProcessor {
 	private static Observer observer;
 	private static Reminder reminder;
 
-	private static final String FORMAT = "%1$-5s  %2$-50s  %3$-11s  %4$-8s  %5$-11s  %6$-5s ";
-	private static final String CLI_FORMAT = "%1$-3s  %2$-25s  %3$-11s  %4$-5s  %5$-11s  %6$-5s ";
+	private static final String FORMAT = "%1$-5s  %2$-50s  %3$-14s  %4$-8s  %5$-11s  %6$-8s";
+	private static final String CLI_FORMAT = "%1$-3s  %2$-25s  %3$-14s  %4$-8s  %5$-11s  %6$-8s";
 	private static final String TAGS_FORMAT = "%s ";
 	private static final String TAGS_PADDING = "       %s";
 	private static final String PRIORITY_INDICATOR = "*";
@@ -134,9 +134,9 @@ public class OutputProcessor {
 								  taskDetails[detailsPointer].substring(OFFSET_ZERO, 
 										  (ui_Mode ? REPLACE_LENGTH : CLI_MAX_LENGTH - MAX_TAGS_SHOWN_LIMIT)) + 
 								  		   REPLACEMENT_STRING : taskDetails[detailsPointer],
+								  DateTimeHelper.getDayOfWeek(taskDetails[++detailsPointer]),
 								  taskDetails[++detailsPointer],
-								  taskDetails[++detailsPointer],
-								  taskDetails[++detailsPointer],
+								  DateTimeHelper.getDayOfWeek(taskDetails[++detailsPointer]),
 								  taskDetails[++detailsPointer]);
 			ArrayList<String> tags = selectedTask.getTags();
 			if(tags!=null){

@@ -11,6 +11,7 @@ public class DateTimeHelper {
 	private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 	private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 	private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
+	private static final String TIME_PADDING = " 00:00";
 	
 	/*** Methods ***/
 	// parses string exclusively in this format "dd/mm/yyyy HH:mm"
@@ -58,6 +59,16 @@ public class DateTimeHelper {
 	
 	public static boolean isEqual(LocalDateTime baseline, LocalDateTime than) {
 	    return baseline.compareTo(than) == 0;
+	}
+	
+	public static String getDayOfWeek(String inputDate) {
+		try {
+			LocalDateTime date = parseStringToDateTime(inputDate + TIME_PADDING);
+			if (date != null) {
+				return date.getDayOfWeek().toString();
+			}
+		} catch (DateTimeException e) {}
+		return inputDate;
 	}
 	
 	public static boolean isDate(String date) {

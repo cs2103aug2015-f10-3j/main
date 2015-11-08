@@ -79,7 +79,8 @@ public class DeadlineTask extends Task {
      */
     public String[] toDetailsArray(){
         String[] details = super.toDetailsArray();
-        details[4] = DateTimeHelper.getDate(_end);
+        String endDay = DateTimeHelper.getDayOfWeek(DateTimeHelper.getDate(_end)).substring(0, 3);
+        details[4] = endDay + " " + DateTimeHelper.getDate(_end);
         details[5] = DateTimeHelper.getTime(_end);
         return details;
     }

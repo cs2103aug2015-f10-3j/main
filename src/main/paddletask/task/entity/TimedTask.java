@@ -89,9 +89,11 @@ public class TimedTask extends Task {
      */
     public String[] toDetailsArray(){
         String[] details = super.toDetailsArray();
-        details[2] = DateTimeHelper.getDate(_start);
+        String startDay = DateTimeHelper.getDayOfWeek(DateTimeHelper.getDate(_start)).substring(0, 3);
+        String endDay = DateTimeHelper.getDayOfWeek(DateTimeHelper.getDate(_end)).substring(0, 3);
+        details[2] = startDay + " " + DateTimeHelper.getDate(_start);
         details[3] = DateTimeHelper.getTime(_start);
-        details[4] = DateTimeHelper.getDate(_end);
+        details[4] = endDay + " " + DateTimeHelper.getDate(_end);
         details[5] = DateTimeHelper.getTime(_end); 
         
         return details;
