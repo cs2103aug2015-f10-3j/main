@@ -3,20 +3,16 @@ package main.paddletask.ui.view;
 import java.awt.*;
 import java.awt.Dialog.ModalityType;
 import java.awt.event.*;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import javax.swing.*;
 import javax.swing.text.AbstractDocument;
-import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.SimpleAttributeSet;
 
 import main.paddletask.common.data.DoublyLinkedList;
 import main.paddletask.common.data.Node;
-import main.paddletask.common.data.ParserConstants;
 import main.paddletask.common.util.DateTimeHelper;
 import main.paddletask.task.entity.Task;
 import main.paddletask.ui.controller.UIController;
@@ -48,6 +44,8 @@ public class MainPanel extends JPanel implements KeyListener {
 	private static JTextPane textPane = null;
 	public static JDialog reminderDialog = null;
 	private static JPanel panel = null;
+	private static JPanel errorPanel = null;
+	private static JLabel errorLabel = null;
 	private static DoublyLinkedList commandList = null;
 	private Box box = null;
 	private Node node = null;
@@ -56,7 +54,16 @@ public class MainPanel extends JPanel implements KeyListener {
 	private MainFrame mainFrame = null;
 	private static final float OPACITY_OF_SUGGESTIONS = 0.9f;
 	private CommandSuggestor commandSuggestor = null;
-	private static final Color backgroundColor = new Color(160, 160, 160); //Gray color
+	private static final Color backgroundColor = new Color(200, 200, 200); //Gray color
+	private static final int timeDelay = 2000;
+	private static final ActionListener time = new ActionListener() {
+	    @Override
+	    public void actionPerformed(ActionEvent evt) {
+	    	errorPanel.setVisible(false);
+	    	errorTimer.stop();
+	    }
+	};
+	private static final Timer errorTimer = new Timer(timeDelay, time);
 
 	/*** Constructors ***/
 	public MainPanel(MainFrame mainFrame){
@@ -83,7 +90,10 @@ public class MainPanel extends JPanel implements KeyListener {
 
 		JTextField inputField = prepareTextField();
 		scrollPane = prepareScrollPane(textPane);
-		box = prepareBoxComponent(inputField, scrollPane);
+		
+		errorPanel = prepareErrorPanel();
+		
+		box = prepareBoxComponent(inputField, scrollPane, errorPanel);
 
 		panel.add(box, BorderLayout.PAGE_END);
 		contentPane.add(panel, BorderLayout.CENTER);
@@ -118,9 +128,10 @@ public class MainPanel extends JPanel implements KeyListener {
 	 * 			  the scroll pane for the text area.		
 	 * @return Box format with the components on the panel
 	 */
-	public Box prepareBoxComponent(JTextField inputField, JScrollPane areaScrollPane) {
+	public Box prepareBoxComponent(JTextField inputField, JScrollPane areaScrollPane, JPanel errorPanel) {
 		Box box = Box.createVerticalBox();
 		box.add(areaScrollPane);
+		box.add(errorPanel);
 		box.add(inputField);
 		return box;
 	}
@@ -182,6 +193,37 @@ public class MainPanel extends JPanel implements KeyListener {
 				Color.WHITE.brighter(), Color.BLUE, Color.RED, OPACITY_OF_SUGGESTIONS);
 		
 		return inputField;
+	}
+	
+	/**
+	 * This method prepares a Panel for displaying of error messages to the user.
+	 * 
+	 * @return errorPanel - the JPanel created
+	 */
+	private JPanel prepareErrorPanel() {
+		errorPanel = new JPanel();
+		errorPanel.setMaximumSize(inputField.getMaximumSize());
+		errorPanel.setVisible(false);
+		errorPanel.setForeground(Color.RED);
+		errorPanel.setBackground(Color.WHITE);
+		errorPanel.setBorder(BorderFactory.createLineBorder(Color.RED));
+		errorPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+		errorPanel.add(prepareErrorLabel());
+		return errorPanel;
+	}
+	
+
+	/**
+	 * This method prepares a label for displaying of error messages to the user.
+	 * 
+	 * @return errorLabel - the JLabel created
+	 */
+	private JLabel prepareErrorLabel() {
+		errorLabel = new JLabel();
+		errorLabel.setMaximumSize(inputField.getMaximumSize());
+		errorLabel.setHorizontalAlignment(SwingConstants.LEFT);
+		errorLabel.setForeground(Color.RED);
+		return errorLabel;
 	}
 
 	private void addCommandToList(String input){
@@ -307,6 +349,21 @@ public class MainPanel extends JPanel implements KeyListener {
 	}
 
 	/**
+	 * This method will display and print out
+	 * the error message.
+	 * 
+	 * @param msg
+	 * 				String msg to be displayed
+	 */
+	public static void displayError(String msg){
+		errorLabel.setText(msg);
+		if (!errorTimer.isRunning()) {
+			errorPanel.setVisible(true);
+			errorTimer.start();
+		}
+	}
+	
+	/**
 	 * This method will update and print out
 	 * the given string.
 	 * 
@@ -363,7 +420,6 @@ public class MainPanel extends JPanel implements KeyListener {
 	 */
 	@Override
 	public void keyPressed(KeyEvent e) {
-		// TODO Auto-generated method stub
 		int keyCode = e.getKeyCode();
 		switch( keyCode ) { 
 		case KeyEvent.VK_UP:
@@ -439,18 +495,10 @@ public class MainPanel extends JPanel implements KeyListener {
 
 	//@@author generated
 	@Override
-	public void keyTyped(KeyEvent e) {
-		// TODO Auto-generated method stub
-
-	}
+	public void keyTyped(KeyEvent e) {}
 
 	//@@author generated
 	@Override
-	public void keyReleased(KeyEvent e) {
-		// TODO Auto-generated method stub
-
-	}
+	public void keyReleased(KeyEvent e) {}
 	
-	
-
 }

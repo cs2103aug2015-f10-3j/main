@@ -16,7 +16,7 @@ public class Task {
     private boolean _isComplete;
     private int _priority;
     private ArrayList<String> _tags;
-    private String[] _details = {"-","-","-","-","-","-","-"};
+    private String[] _details = {"-","-","-","-","-","-"};
 
     public enum TASK_TYPE {
         FLOATING {
@@ -214,7 +214,6 @@ public class Task {
     public String[] toDetailsArray(){
         int counter = 0;
         _details[counter] = _taskId + "";
-        _details[++counter] = _type.toString().toLowerCase();
         _details[++counter] = _description;
         return _details;
     }

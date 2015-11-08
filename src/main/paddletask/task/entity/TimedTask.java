@@ -89,10 +89,10 @@ public class TimedTask extends Task {
      */
     public String[] toDetailsArray(){
         String[] details = super.toDetailsArray();
-        details[3] = DateTimeHelper.getDate(_start);
-        details[4] = DateTimeHelper.getTime(_start);
-        details[5] = DateTimeHelper.getDate(_end);
-        details[6] = DateTimeHelper.getTime(_end); 
+        details[2] = DateTimeHelper.getDate(_start);
+        details[3] = DateTimeHelper.getTime(_start);
+        details[4] = DateTimeHelper.getDate(_end);
+        details[5] = DateTimeHelper.getTime(_end); 
         
         return details;
     }

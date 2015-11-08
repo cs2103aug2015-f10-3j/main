@@ -17,12 +17,14 @@ public class OutputProcessor {
 	private static Observer observer;
 	private static Reminder reminder;
 
-	private static final String FORMAT = "%1$-5s  %2$-10s  %3$-50s  %4$-11s  %5$-8s  %6$-11s  %7$-5s ";
+	private static final String FORMAT = "%1$-5s  %2$-50s  %3$-11s  %4$-8s  %5$-11s  %6$-5s ";
+	private static final String CLI_FORMAT = "%1$-3s  %2$-25s  %3$-11s  %4$-5s  %5$-11s  %6$-5s ";
 	private static final String TAGS_FORMAT = "%s ";
-	private static final String TAGS_PADDING = "\t\t %s";
+	private static final String TAGS_PADDING = "       %s";
 	private static final String PRIORITY_INDICATOR = "*";
 	private static final char BOLD_INDICATOR = '@';
-	private static final String VIEW_HEADER = BOLD_INDICATOR + String.format(FORMAT, "ID", "Type", "Description", "Start Date","","Deadline", "");
+	private static final String VIEW_HEADER = BOLD_INDICATOR + String.format(FORMAT, "ID", "Description", "Start Date","","Deadline", "");
+	private static final String CLI_VIEW_HEADER = BOLD_INDICATOR + String.format(CLI_FORMAT, "ID", "Description", "Start Date","","Deadline", "");
 	private static final int OFFSET_ONE = 1;
 	private static final int OFFSET_ZERO = 0;
 	private static final int DOUBLE = 2;
@@ -30,10 +32,10 @@ public class OutputProcessor {
 	private static final int SINGLE_TASK = 1;
 	private static final int PRIORITY_ONE = 1;
 	private static final int PRIORITY_TWO = 2;
-	private static final int PRIORITY_THREE = 3;
 	private static final int MAX_TAGS_SHOWN_LIMIT = 3;
 	private static final int MIN_SIZE = 0;
 	private static final int MAX_LENGTH = 50;
+	private static final int CLI_MAX_LENGTH = 25;
 	private static final int REPLACE_LENGTH = 47;
 	private static final String EMPTY_STRING = "";
 	private static final String REPLACEMENT_STRING = "...";
@@ -46,6 +48,7 @@ public class OutputProcessor {
 	private static final String REMINDER_STRING = "Reminder: ";
 	private static final String TAG_STRING = "Tags: ";
 	private static final String RECURRING_STRING = "Recurring: Every ";
+	private static boolean ui_Mode = false;
 
 	/*** Constructor ***/
 	private OutputProcessor(){
@@ -109,7 +112,13 @@ public class OutputProcessor {
 	public String[] formatOutput(ArrayList<Task> taskList){
 		String[] output = new String[(taskList.size() * DOUBLE) + OFFSET_ONE];
 		int rowNumber = OFFSET_ZERO;
-		output[rowNumber++] = VIEW_HEADER;
+		String format = FORMAT;
+		if (!ui_Mode) {
+			format = CLI_FORMAT;
+			output[rowNumber++] = CLI_VIEW_HEADER;
+		} else {
+			output[rowNumber++] = VIEW_HEADER;
+		}
 		for(int i = 0; i < taskList.size();i++){
 			Task selectedTask = taskList.get(i);
 			String[] taskDetails = selectedTask.toDetailsArray();
@@ -120,11 +129,15 @@ public class OutputProcessor {
 			}else if(selectedTask.getPriority() == PRIORITY_ONE){
 				priorityIndicator = PRIORITY_INDICATOR + PRIORITY_INDICATOR;
 			}
-			output[rowNumber++] = priorityIndicator + String.format(FORMAT, i+OFFSET_ONE,taskDetails[++detailsPointer], 
-								  taskDetails[++detailsPointer].length() > MAX_LENGTH ? 
-								  taskDetails[detailsPointer].substring(OFFSET_ZERO, REPLACE_LENGTH) + REPLACEMENT_STRING : taskDetails[detailsPointer]
-								  , taskDetails[++detailsPointer], taskDetails[++detailsPointer],
-								  taskDetails[++detailsPointer],taskDetails[++detailsPointer]);
+			output[rowNumber++] = priorityIndicator + String.format(format, i+OFFSET_ONE,
+								  taskDetails[++detailsPointer].length() > (ui_Mode ? MAX_LENGTH : CLI_MAX_LENGTH) ? 
+								  taskDetails[detailsPointer].substring(OFFSET_ZERO, 
+										  (ui_Mode ? REPLACE_LENGTH : CLI_MAX_LENGTH - MAX_TAGS_SHOWN_LIMIT)) + 
+								  		   REPLACEMENT_STRING : taskDetails[detailsPointer],
+								  taskDetails[++detailsPointer],
+								  taskDetails[++detailsPointer],
+								  taskDetails[++detailsPointer],
+								  taskDetails[++detailsPointer]);
 			ArrayList<String> tags = selectedTask.getTags();
 			if(tags!=null){
 				if(tags.size()>MIN_SIZE){
@@ -157,7 +170,6 @@ public class OutputProcessor {
 	 */
 	public String[] formatOutput(Task task){
 		ArrayList<String> output = new ArrayList<String>();
-		String line;
 		formatDescription(task, output);
 		formatType(task, output);
 		formatPriority(task, output);
@@ -275,6 +287,10 @@ public class OutputProcessor {
 			}
 		} else {
 		}
+	}
+
+	public void setUIModeEnabled(boolean ui_Mode) {
+		OutputProcessor.ui_Mode = ui_Mode;
 	}
 
 

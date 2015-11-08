@@ -28,6 +28,7 @@ public class CliView {
 	public CliView(UIController uiController) {
 		CliView.uiController = uiController;
 		cliMode();
+		UIController.setUIModeEnabled(false);
 	}
 	
 	/**

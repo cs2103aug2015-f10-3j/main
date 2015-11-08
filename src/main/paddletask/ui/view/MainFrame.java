@@ -18,6 +18,7 @@ import org.jnativehook.keyboard.NativeKeyListener;
 
 import main.paddletask.background.Reminder;
 import main.paddletask.command.api.ClearCommand;
+import main.paddletask.command.api.HelpCommand;
 import main.paddletask.command.api.SearchTaskCommand;
 import main.paddletask.command.api.ViewTaskCommand;
 import main.paddletask.common.util.LoggingHandler;
@@ -95,6 +96,7 @@ public class MainFrame implements Observer{
 	 */
 	public static void initiateGUI() {
 		ui_Mode = true;
+		UIController.setUIModeEnabled(ui_Mode);
 		javax.swing.SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				createAndShowGUI();
@@ -213,10 +215,18 @@ public class MainFrame implements Observer{
 					cliView.createReminder((ArrayList<Task>)arg);
 				}
 			}
-		} else {
+		} else if(o instanceof HelpCommand){
 			String msg = (String)arg;
 			if(ui_Mode){
 				MainPanel.updatePrint(msg);
+			} else{
+				System.out.println(msg);
+				System.out.println();
+			}
+		} else {
+			String msg = (String)arg;
+			if(ui_Mode){
+				MainPanel.displayError(msg);
 			} else{
 				System.out.println(msg);
 				System.out.println();

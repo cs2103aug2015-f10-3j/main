@@ -66,5 +66,8 @@ public class UIController {
 	public static void setObserver(Observer new_Observer){
 		observer = new_Observer;
 	}
-
+	
+	public static void setUIModeEnabled(boolean ui_Mode) {
+		outputProcessor.setUIModeEnabled(ui_Mode);
+	}
 }
