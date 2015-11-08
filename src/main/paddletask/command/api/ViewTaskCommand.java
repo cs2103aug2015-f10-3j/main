@@ -10,7 +10,6 @@ import main.paddletask.task.entity.DeadlineTask;
 import main.paddletask.task.entity.FloatingTask;
 import main.paddletask.task.entity.Task;
 import main.paddletask.task.entity.TimedTask;
-import main.paddletask.task.entity.Task.TASK_TYPE;
 
 public class ViewTaskCommand extends Command {
 
@@ -19,9 +18,7 @@ public class ViewTaskCommand extends Command {
 	private static final int OFFSET_ONE = 1;
 	
 	private static final String TYPE_ALL = "all";
-	private static final String TYPE_FLOATING = "floating";
-	private static final String TYPE_DEADLINE = "deadline";
-	private static final String TYPE_TIMED = "timed";
+	private static final String TYPE_OUTSTANDING = "outstanding";
 	private static final String TYPE_COMPLETE = "complete";
 	
 	private static final String PERIOD_TODAY = "today";
@@ -47,19 +44,12 @@ public class ViewTaskCommand extends Command {
      */
 	@Override
 	public ArrayList<Task> execute() {
-		// TODO Auto-generated method stub
-		
 		determineTypePeriod();
-		
-		@SuppressWarnings("unused")
-		boolean result = true;
 		ArrayList<Task> taskList = null;
 		try{
 			taskList = selectTasksByType(taskList);
 			taskList = selectTaskByPeriod(taskList);
-		}catch(Exception e){
-			result = false;
-		}
+		}catch(Exception e) { }
 		setChanged();
 		notifyObservers(null);
 		
@@ -73,13 +63,7 @@ public class ViewTaskCommand extends Command {
      * The type and period variable will be set here.
      */
 	private void determineTypePeriod() {
-		if (hasOption(TYPE_FLOATING)) {
-			this.type = TYPE_FLOATING;
-		} else if (hasOption(TYPE_DEADLINE)) {
-			this.type = TYPE_DEADLINE;
-		} else if (hasOption(TYPE_TIMED)) {
-			this.type = TYPE_TIMED;
-		} else if (hasOption(TYPE_COMPLETE)) {
+		if (hasOption(TYPE_COMPLETE)) {
 			this.type = TYPE_COMPLETE;
 		} else {
 			this.type = TYPE_ALL;
@@ -115,13 +99,17 @@ public class ViewTaskCommand extends Command {
 					selectedTask.add(t);
 				}
 			}
-		} else{
-			TASK_TYPE taskType = Task.determineTaskType(type);
-			allTask = taskController.getTask(taskType);
+		} else if (type.equals(TYPE_OUTSTANDING)){
+			allTask = taskController.getTask();
 			for(Task t : allTask){
 				if(!t.isComplete()){
 					selectedTask.add(t);
 				}
+			}
+		} else {
+			allTask = taskController.getTask();
+			for(Task t : allTask){
+				selectedTask.add(t);
 			}
 		}
 		return selectedTask;

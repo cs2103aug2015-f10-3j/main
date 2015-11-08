@@ -94,9 +94,7 @@ class ParserBackend implements ParserConstants {
 		_shortHandMap.put(OPTIONS.ENDDATE_SHORT.toString(), OPTIONS.ENDDATE.toString());
 		_shortHandMap.put(OPTIONS.ENDTIME_SHORT.toString(), OPTIONS.ENDTIME.toString());
 		_shortHandMap.put(OPTIONS.ALL_SHORT.toString(), OPTIONS.ALL.toString());
-		_shortHandMap.put(OPTIONS.FLOATING_SHORT.toString(), OPTIONS.FLOATING.toString());
-		_shortHandMap.put(OPTIONS.DEADLINE_SHORT.toString(), OPTIONS.DEADLINE.toString());
-		_shortHandMap.put(OPTIONS.TIMED_SHORT.toString(), OPTIONS.TIMED.toString());
+		_shortHandMap.put(OPTIONS.VIEW_COMPLETE_SHORT.toString(), OPTIONS.COMPLETE.toString());
 		_shortHandMap.put(OPTIONS.TODAY_SHORT.toString(), OPTIONS.TODAY.toString());
 		_shortHandMap.put(OPTIONS.TOMORROW_SHORT.toString(), OPTIONS.TOMORROW.toString());
 		_shortHandMap.put(OPTIONS.WEEK_SHORT.toString(), OPTIONS.WEEK.toString());
@@ -208,18 +206,14 @@ class ParserBackend implements ParserConstants {
 		viewOptions.put(OPTIONS.VIEW, TYPE.INTEGER_ARRAY_OPT);
 		viewOptions.put(OPTIONS.COMPLETE, TYPE.NONE);
 		viewOptions.put(OPTIONS.ALL, TYPE.NONE);
-		viewOptions.put(OPTIONS.FLOATING, TYPE.NONE);
-		viewOptions.put(OPTIONS.TIMED, TYPE.NONE);
 		viewOptions.put(OPTIONS.TODAY, TYPE.NONE);
 		viewOptions.put(OPTIONS.TOMORROW, TYPE.NONE);
 		viewOptions.put(OPTIONS.WEEK, TYPE.NONE);
 		viewOptions.put(OPTIONS.MONTH, TYPE.NONE);
 		
 		viewOptions.put(OPTIONS.VIEW_SHORT, TYPE.INTEGER_ARRAY_OPT);
-		viewOptions.put(OPTIONS.COMPLETE_SHORT, TYPE.NONE);
+		viewOptions.put(OPTIONS.VIEW_COMPLETE_SHORT, TYPE.NONE);
 		viewOptions.put(OPTIONS.ALL_SHORT, TYPE.NONE);
-		viewOptions.put(OPTIONS.FLOATING_SHORT, TYPE.NONE);
-		viewOptions.put(OPTIONS.TIMED_SHORT, TYPE.NONE);
 		viewOptions.put(OPTIONS.TODAY_SHORT, TYPE.NONE);
 		viewOptions.put(OPTIONS.TOMORROW_SHORT, TYPE.NONE);
 		viewOptions.put(OPTIONS.WEEK_SHORT, TYPE.NONE);

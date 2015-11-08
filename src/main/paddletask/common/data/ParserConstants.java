@@ -41,8 +41,7 @@ public interface ParserConstants {
 		REDO("redo"), REMIND("remind"), CLEAR("clear"), EXIT("exit"), 
 		BETWEEN("between"), AND("and"), DESC("desc"), STARTDATE("sdate"), 
 		STARTTIME("stime"), ENDDATE("edate"), ENDTIME("etime"),
-		ALL("all"), FLOATING("floating"), DEADLINE("deadline"), 
-		TIMED("timed"), TODAY("today"), TOMORROW("tomorrow"), WEEK("week"), 
+		ALL("all"), TODAY("today"), TOMORROW("tomorrow"), WEEK("week"), 
 		MONTH("month"), HELP("help"), SETDIRECTORY("setdirectory"), MORE("more"),
 		TAG("tag"), UNTAG("untag"), PRIORITY("priority"), REPEAT("repeat"),
 		
@@ -51,9 +50,8 @@ public interface ParserConstants {
 		REDO_SHORT("/r"), REMIND_SHORT("-r"), CLEAR_SHORT("/cl"), EXIT_SHORT("/ex"), 
 		BETWEEN_SHORT("-bt"), AND_SHORT("-a"), DESC_SHORT("-d"), STARTDATE_SHORT("-sD"), 
 		STARTTIME_SHORT("-sT"), ENDDATE_SHORT("-eD"), ENDTIME_SHORT("-eT"), 
-		ALL_SHORT("-ta"), FLOATING_SHORT("-tf"), DEADLINE_SHORT("-td"), 
-		TIMED_SHORT("-tt"), TODAY_SHORT("-pt"), TOMORROW_SHORT("-ptm"), WEEK_SHORT("-pw"), 
-		MONTH_SHORT("-pm"), HELP_SHORT("/h"), SETDIRECTORY_SHORT("/sd"), MORE_SHORT("/m"),
+		ALL_SHORT("-a"), VIEW_COMPLETE_SHORT("-c"), TODAY_SHORT("-td"), TOMORROW_SHORT("-tm"), WEEK_SHORT("-w"), 
+		MONTH_SHORT("-m"), HELP_SHORT("/h"), SETDIRECTORY_SHORT("/sd"), MORE_SHORT("/m"),
 		TAG_SHORT("/t"), UNTAG_SHORT("/ut"), PRIORITY_SHORT("-p"), HASHTAG("#"), REPEAT_SHORT("-re");
 
 		private final String optionText;
@@ -115,9 +113,8 @@ public interface ParserConstants {
 		TIMED("timed"), TODAY("today"), TOMORROW("tomorrow"), WEEK("week"), 
 		MONTH("month"), 
 		
-		COMPLETE_SHORT("/c"), ALL_SHORT("-ta"), FLOATING_SHORT("-tf"), DEADLINE_SHORT("-td"), 
-		TIMED_SHORT("-tt"), TODAY_SHORT("-pt"), TOMORROW_SHORT("-ptm"), WEEK_SHORT("-pw"), 
-		MONTH_SHORT("-pm");
+		COMPLETE_SHORT("-c"), ALL_SHORT("-a"), TODAY_SHORT("-tD"), TOMORROW_SHORT("-tM"), WEEK_SHORT("-w"), 
+		MONTH_SHORT("-m");
 
 		private final String commandText;
 		
