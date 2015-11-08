@@ -41,6 +41,8 @@ public class CommandSuggestor {
 	private String typedWord;
 	private final HashMap<String, ArrayList<String>> optionsMap = new HashMap<String, ArrayList<String>>();
 	private int currentIndexOfSpace, suggestionWindowWidth, suggestionWindowHeight;
+	private static final String KEYNAME_DOWN = "Down released";
+	private static final String KEYNAME_UP = "Up released";
 	private static final String KEYNAME_F2 = "F2 released";
 	private static final String KEYNAME_ESC = "Esc released";
 	private static final String SPACE = " ";
@@ -50,6 +52,7 @@ public class CommandSuggestor {
 	private static final String EMPTY_STRING = "";
 	private static final char CHAR_SLASH = '/';
 	private static final char CHAR_DASH = '-';
+	private static int currentIndex = 0;
 
 	private DocumentListener documentListener = new DocumentListener() {
 		@Override
@@ -97,6 +100,7 @@ public class CommandSuggestor {
 
 		autoSuggestionPopUpWindow = new JWindow(mainWindow);
 		autoSuggestionPopUpWindow.setOpacity(opacity);
+		autoSuggestionPopUpWindow.setVisible(false);
 
 		suggestionsPanel = new JPanel();
 		suggestionsPanel.setLayout(new GridLayout(0, 1));
@@ -116,11 +120,13 @@ public class CommandSuggestor {
 		}
 	}
 
+	@SuppressWarnings("serial")
 	private void addKeyBindingToRequestFocusInPopUpWindow() {
 		textField.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0, true), KEYNAME_F2);
 		textField.getActionMap().put(KEYNAME_F2, new AbstractAction() {
 			@Override
 			public void actionPerformed(ActionEvent ae) {//focuses the first label on popwindow
+				currentIndex = 0;
 				for (int i = 0; i < suggestionsPanel.getComponentCount(); i++) {
 					if (suggestionsPanel.getComponent(i) instanceof SuggestionLabel) {
 						((SuggestionLabel) suggestionsPanel.getComponent(i)).setFocused(true);
@@ -133,9 +139,8 @@ public class CommandSuggestor {
 				}
 			}
 		});
-		suggestionsPanel.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0, true), KEYNAME_F2);
-		suggestionsPanel.getActionMap().put(KEYNAME_F2, new AbstractAction() {
-			int lastFocusableIndex = 0;
+		suggestionsPanel.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0, true), KEYNAME_DOWN);
+		suggestionsPanel.getActionMap().put(KEYNAME_DOWN, new AbstractAction() {
 
 			@Override
 			public void actionPerformed(ActionEvent ae) {//allows scrolling of labels in pop window (I know very hacky for now :))
@@ -144,36 +149,46 @@ public class CommandSuggestor {
 				int max = suggestionLabelLists.size();
 
 				if (max > 1) {//more than 1 suggestion
-					for (int i = 0; i < max; i++) {
-						SuggestionLabel currentLabel = suggestionLabelLists.get(i);
-						if (currentLabel.isFocused()) {
-							if (lastFocusableIndex == max - 1) {
-								lastFocusableIndex = 0;
-								currentLabel.setFocused(false);
-								autoSuggestionPopUpWindow.setVisible(false);
-								setFocusToTextField();
-								checkForAndShowSuggestions();//fire method as if document listener change occured and fired it
-
-							} else {
-								currentLabel.setFocused(false);
-								lastFocusableIndex = i;
-							}
-						} else if (lastFocusableIndex <= i) {
-							if (i < max) {
-								currentLabel.setFocused(true);
-								autoSuggestionPopUpWindow.toFront();
-								autoSuggestionPopUpWindow.requestFocusInWindow();
-								suggestionsPanel.requestFocusInWindow();
-								suggestionsPanel.getComponent(i).requestFocusInWindow();
-								lastFocusableIndex = i;
-								break;
-							}
-						}
+					SuggestionLabel currentLabel = suggestionLabelLists.get(currentIndex);
+					if (currentLabel.isFocused()) {
+						currentLabel.setFocused(false);
 					}
-				} else {//only a single suggestion was given
-					autoSuggestionPopUpWindow.setVisible(false);
-					setFocusToTextField();
-					checkForAndShowSuggestions();//fire method as if document listener change occured and fired it
+					currentIndex++;
+					if (currentIndex >= max) {
+						currentIndex = 0;
+					}
+					suggestionLabelLists.get(currentIndex).setFocused(true);
+					autoSuggestionPopUpWindow.toFront();
+					autoSuggestionPopUpWindow.requestFocusInWindow();
+					suggestionsPanel.requestFocusInWindow();
+					suggestionsPanel.getComponent(currentIndex).requestFocusInWindow();
+				}
+			}
+		});
+		
+		suggestionsPanel.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0, true), KEYNAME_UP);
+		suggestionsPanel.getActionMap().put(KEYNAME_UP, new AbstractAction() {
+
+			@Override
+			public void actionPerformed(ActionEvent ae) {//allows scrolling of labels in pop window (I know very hacky for now :))
+
+				ArrayList<SuggestionLabel> suggestionLabelLists = getAddedSuggestionLabels();
+				int max = suggestionLabelLists.size();
+
+				if (max > 1) {//more than 1 suggestion
+					SuggestionLabel currentLabel = suggestionLabelLists.get(currentIndex);
+					if (currentLabel.isFocused()) {
+						currentLabel.setFocused(false);
+					}
+					currentIndex--;
+					if (currentIndex < 0) {
+						currentIndex = max - 1;
+					}
+					suggestionLabelLists.get(currentIndex).setFocused(true);
+					autoSuggestionPopUpWindow.toFront();
+					autoSuggestionPopUpWindow.requestFocusInWindow();
+					suggestionsPanel.requestFocusInWindow();
+					suggestionsPanel.getComponent(currentIndex).requestFocusInWindow();
 				}
 			}
 		});
@@ -182,7 +197,6 @@ public class CommandSuggestor {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
 				autoSuggestionPopUpWindow.setVisible(false);
 				setFocusToTextField();
 				checkForAndShowSuggestions();
@@ -463,6 +477,7 @@ public class CommandSuggestor {
 	}
 }
 
+@SuppressWarnings("serial")
 class SuggestionLabel extends JLabel {
 
 	private boolean focused = false;

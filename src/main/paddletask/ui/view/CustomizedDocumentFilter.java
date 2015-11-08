@@ -26,7 +26,6 @@ public final class CustomizedDocumentFilter extends DocumentFilter {
 	private static final AttributeSet darkBlueAttributeSet = changeToAnyRGBColor(0, 76, 153);
 	private final String REGEX_TAG = "#\\w{1,}";
 	private final String REGEX_START_BOUND = "\\b";
-	private final String REGEX_END_BOUND = "\\b|";
 	private static final int REMOVE_TRAILING = 1;
 	private static final String CARRIAGE_RETURN = "\r\n";
 	private static final String NEXT_LINE = "\n";
@@ -215,6 +214,7 @@ public final class CustomizedDocumentFilter extends DocumentFilter {
 	 * This method will then change the keywords to red color.
 	 * 
 	 */
+	@SuppressWarnings("unused")
 	private void changeFontOfLineByKeywords(){
 		String[] keywords = {KEYWORD_DEADLINE};
 		Pattern pattern = buildPattern(keywords, EMPTY_STRING);

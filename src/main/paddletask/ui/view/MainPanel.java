@@ -38,7 +38,7 @@ public class MainPanel extends JPanel implements KeyListener {
 	private static final int DECREASE_FONT_SIZE = -1;
 	protected static int NUM_COMPONENTS = 3;
 	protected UIController uiController = null;
-	private static Font font = new Font("Consolas",Font.PLAIN, 14);
+	private static Font font = new Font("Consolas",Font.PLAIN, 15);
 	private JTextField inputField = null;
 	//private JTextArea textArea = null;
 	private static JTextPane textPane = null;
@@ -195,14 +195,14 @@ public class MainPanel extends JPanel implements KeyListener {
 				currentCommand = null;
 			}
 		});
-		inputField.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_F4, 0, true), KEYNAME_FONT_UP);
+		inputField.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_F3, 0, true), KEYNAME_FONT_UP);
 		inputField.getActionMap().put(KEYNAME_FONT_UP, new AbstractAction() {
 			@Override
 			public void actionPerformed(ActionEvent ae) {//focuses the first label on popwindow
 				CustomizedDocumentFilter.changeFontSize(INCREASE_FONT_SIZE, textPane);
 			}
 		});
-		inputField.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0, true), KEYNAME_FONT_DOWN);
+		inputField.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_F4, 0, true), KEYNAME_FONT_DOWN);
 		inputField.getActionMap().put(KEYNAME_FONT_DOWN, new AbstractAction() {
 			@Override
 			public void actionPerformed(ActionEvent ae) {//focuses the first label on popwindow

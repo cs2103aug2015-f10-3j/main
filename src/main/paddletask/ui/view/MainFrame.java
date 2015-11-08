@@ -48,7 +48,7 @@ public class MainFrame implements Observer{
 	private static final String OPTION_MAXIMIZE = "Maximize";
 	private static final String OPTION_ICONIFY = "Iconify";
 	private static final String OPTION_CLOSE = "Close";
-	private static final int SIZE_PROPORTION = 3;
+	private static final int SIZE_PROPORTION = 2;
 	private static final int MINIMUM_WIDTH = 920;
 	private static final int OFFSET_ZERO = 0;
 
