@@ -34,7 +34,6 @@ public final class CustomizedDocumentFilter extends DocumentFilter {
 	private static final String[] HEADER_KEYWORDS = {"Description", "Task Type", "Priority", "Start", "Deadline", "Reminder", "Tags", "Recurring"};
 	private static final String EMPTY_STRING = "";
 	private static final Pattern HEADER_PATTERN = buildPattern(HEADER_KEYWORDS, "\\b:|");
-	private static final Color backgroundColor = new Color(160, 160, 160); //Gray color
 	private static final int OFFSET_ONE = 1;
 	
 	/*** Constructors ***/
@@ -80,11 +79,13 @@ public final class CustomizedDocumentFilter extends DocumentFilter {
 	 * This method will change the background of the attribute set to a gradient of gray,
 	 * and return the changed set.
 	 * 
+	 *@param backgroundColor
+	 * 				Color for background
 	 * 
 	 * @return background
 	 * 				edited attribute set to the gradient
 	 */
-	public static SimpleAttributeSet setBackgroundColorForHeader(){
+	public static SimpleAttributeSet setBackgroundColorForHeader(Color backgroundColor){
         SimpleAttributeSet background = new SimpleAttributeSet();
         StyleConstants.setBackground(background, backgroundColor);
         return background;
