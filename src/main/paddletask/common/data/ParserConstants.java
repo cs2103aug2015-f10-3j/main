@@ -109,8 +109,7 @@ public interface ParserConstants {
 	}
 	
 	public static enum VIEW_OPTIONS {
-		COMPLETE("complete"), ALL("all"), FLOATING("floating"), DEADLINE("deadline"), 
-		TIMED("timed"), TODAY("today"), TOMORROW("tomorrow"), WEEK("week"), 
+		COMPLETE("complete"), ALL("all"), TODAY("today"), TOMORROW("tomorrow"), WEEK("week"), 
 		MONTH("month"), 
 		
 		COMPLETE_SHORT("-c"), ALL_SHORT("-a"), TODAY_SHORT("-tD"), TOMORROW_SHORT("-tM"), WEEK_SHORT("-w"), 

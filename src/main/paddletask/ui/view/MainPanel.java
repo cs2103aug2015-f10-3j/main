@@ -30,6 +30,7 @@ public class MainPanel extends JPanel implements KeyListener {
 	private static final String FIRST_COMMAND = "view all today";
 	private static final String KEYNAME_FONT_UP = "Font up";
 	private static final String KEYNAME_FONT_DOWN = "Font down";
+	private static final String KEY_ACTIVATE = "Activate Suggestion";
 	private static final int OFFSET_ZERO = 0;
 	private static final int SUBSTRING_BEGIN = 1;
 	private static final char PRIORITY_INDICATOR = '*';
@@ -64,6 +65,7 @@ public class MainPanel extends JPanel implements KeyListener {
 	    }
 	};
 	private static final Timer errorTimer = new Timer(timeDelay, time);
+
 
 	/*** Constructors ***/
 	public MainPanel(MainFrame mainFrame){
@@ -207,6 +209,13 @@ public class MainPanel extends JPanel implements KeyListener {
 			@Override
 			public void actionPerformed(ActionEvent ae) {//focuses the first label on popwindow
 				CustomizedDocumentFilter.changeFontSize(DECREASE_FONT_SIZE, textPane);
+			}
+		});
+		inputField.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0, true), KEY_ACTIVATE);
+		inputField.getActionMap().put(KEY_ACTIVATE, new AbstractAction() {
+			@Override
+			public void actionPerformed(ActionEvent ae) {//focuses the first label on popwindow
+				commandSuggestor.toggleActivation();
 			}
 		});
 		commandSuggestor = new CommandSuggestor(inputField, mainFrame.getFrame(),
