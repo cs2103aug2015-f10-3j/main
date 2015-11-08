@@ -4,7 +4,6 @@ package test.cases;
 import static org.junit.Assert.*;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 import org.junit.Before;
@@ -45,6 +44,7 @@ public class TestEditTaskCommand {
     protected static TimedTask _dummy_timedTask;
     protected static Task _dummy_genericTask;
 
+    /*** Final Constants ***/
     protected static final String WHITE_SPACE = " ";
     
     // id,
@@ -54,8 +54,9 @@ public class TestEditTaskCommand {
     // reminder
     // priority
     // recurType
-    protected static final String TEST_COMMAND = "edit %1$s%2$s%3$s%4$s%5$s%6$s%7$s"; 
-
+    protected static final String TEST_COMMAND = "edit %1$s%2$s%3$s%4$s%5$s%6$s%7$s%8$s%9$s"; 
+    protected static final String TEST_DATE_FORMAT = "%1$s %2$s";
+    
     protected static final int TEST_SAMPLE_FLOAT_ID = 1;
     protected static final int TEST_SAMPLE_DEADLINE_ID = 2;
     protected static final int TEST_SAMPLE_TIMED_ID = 3;
@@ -63,29 +64,32 @@ public class TestEditTaskCommand {
     protected static final int TEST_TASK_DEFAULT_PRIORITY = 3;
     
     protected static final String TEST_SAMPLE_DESCRIPTION = "Lorem ipsum dolor";
-    protected static final String TEST_SAMPLE_END_DATE = "25/12/2015";
+    protected static final String TEST_SAMPLE_END_DATE = DateTimeHelper.getDate(DateTimeHelper.addDays(DateTimeHelper.now(), 2));
     protected static final String TEST_SAMPLE_TODAY_DATE = DateTimeHelper.getDate(DateTimeHelper.now());
     protected static final String TEST_SAMPLE_END_TIME = "23:59";
-    protected static final String TEST_SAMPLE_START_DATE = "24/12/2015";
-    protected static final String TEST_SAMPLE_START_TIME = "00:00";
-    protected static final String TEST_SAMPLE_REMINDER_DATE_TIME = "20/12/2015 20:00";
+    protected static final String TEST_SAMPLE_START_DATE = DateTimeHelper.getDate(DateTimeHelper.addDays(DateTimeHelper.now(), -1));
+    protected static final String TEST_SAMPLE_START_TIME = "10:00";
+    protected static final String TEST_SAMPLE_REMINDER_DATE_TIME = DateTimeHelper.parseDateTimeToString(DateTimeHelper.addDays(DateTimeHelper.now(), 3));;
+    
     protected static final String TEST_KEYWORD_DESC = " desc ";
-    protected static final String TEST_KEYWORD_END = " end ";
-    protected static final String TEST_KEYWORD_START = " start ";
+    protected static final String TEST_KEYWORD_END_DATE = " edate ";
+    protected static final String TEST_KEYWORD_END_TIME = " etime ";
+    protected static final String TEST_KEYWORD_START_DATE = " sdate ";
+    protected static final String TEST_KEYWORD_START_TIME = " stime ";
     protected static final String TEST_KEYWORD_REMIND = " remind ";
     protected static final String TEST_KEYWORD_PRIORITY = " priority ";
-    protected static final String TEST_KEYWORD_RECURDAY = " every day ";
-    protected static final String TEST_KEYWORD_RECURWEEK = " every week ";
-    protected static final String TEST_KEYWORD_RECURMONTH = " every month ";
-    protected static final String TEST_KEYWORD_RECURYEAR = " every year ";
+    protected static final String TEST_KEYWORD_RECURDAY = " repeat daily ";
+    protected static final String TEST_KEYWORD_RECURWEEK = " repeat weekly ";
+    protected static final String TEST_KEYWORD_RECURMONTH = " repeat monthly ";
+    protected static final String TEST_KEYWORD_RECURYEAR = " repeat yearly ";
     protected static final String TEST_KEYWORD_EMPTY = "";
     
-    protected static final String DEADLINE_CREATED_SAMPLE_END_DATE = "02/01/2015";
-    protected static final String DEADLINE_CREATED_SAMPLE_END_TIME = "23:59";
-    protected static final String TIMED_CREATED_SAMPLE_END_DATE = "03/01/2015";
-    protected static final String TIMED_CREATED_SAMPLE_END_TIME = "23:59";
-    protected static final String TIMED_CREATED_SAMPLE_START_DATE = "04/01/2015";
-    protected static final String TIMED_CREATED_SAMPLE_START_TIME = "23:59";
+    protected static final String DEADLINE_CREATED_SAMPLE_END_DATE = DateTimeHelper.getDate(DateTimeHelper.addDays(DateTimeHelper.now(), 1));
+    protected static final String DEADLINE_CREATED_SAMPLE_END_TIME = "08:00";
+    protected static final String TIMED_CREATED_SAMPLE_START_DATE = DateTimeHelper.getDate(DateTimeHelper.addDays(DateTimeHelper.now(), 1));
+    protected static final String TIMED_CREATED_SAMPLE_START_TIME = "12:00";
+    protected static final String TIMED_CREATED_SAMPLE_END_DATE = DateTimeHelper.getDate(DateTimeHelper.addDays(DateTimeHelper.now(), 1));
+    protected static final String TIMED_CREATED_SAMPLE_END_TIME = "16:00";
     
     protected static final Task.TASK_TYPE TEST_TASKTYPE_FLOATING = Task.TASK_TYPE.FLOATING;
     protected static final Task.TASK_TYPE TEST_TASKTYPE_DEADLINE = Task.TASK_TYPE.DEADLINE;
@@ -97,7 +101,7 @@ public class TestEditTaskCommand {
     protected static final Task.RECUR_TYPE TEST_RECURTYPE_MONTH = Task.RECUR_TYPE.MONTH;
     protected static final Task.RECUR_TYPE TEST_RECURTYPE_YEAR = Task.RECUR_TYPE.YEAR;
     
-    // Floating Task related test case description
+    /*** FloatingTask Test Case Descriptions ***/
     protected static final String TEST_FLOATING_EDIT_DESCRIPTION = "Test editing Floating Task description";
 //    protected static final String TEST_FLOATING_ADD_END_DATE = "Test adding only an End date to a Floating Task";
 //    protected static final String TEST_FLOATING_ADD_END_DATE_AND_REMINDER = "Test adding only an End date and a custom Reminder to a Floating Task";
@@ -110,7 +114,7 @@ public class TestEditTaskCommand {
     protected static final String TEST_FLOATING_ADD_START_DATE_TIME_AND_END_DATE_TIME = "Testing add both a Start date/time and both an End date/time";
     protected static final String TEST_FLOATING_EDIT_PRIORITY = "Test editing the priority level of a Floating Task";
     
-    // Deadline Task related test case description
+    /*** DeadlineTask Test Case Descriptions ***/
     protected static final String TEST_DEADLINE_EDIT_DESCRIPTION = "Test editing Deadline Task description";
     protected static final String TEST_DEADLINE_EDIT_END_DATE = "Test editing a Deadline Task's End date only";
     protected static final String TEST_DEADLINE_EDIT_END_DATE_AND_REMINDER = "Test editing a Deadline Task's End date and Reminder";
@@ -127,17 +131,28 @@ public class TestEditTaskCommand {
     protected static final String TEST_DEADLINE_EDIT_RECURTYPE_MONTH = "Testing editing the recur type of a Deadline Task to 'every month'";;
     protected static final String TEST_DEADLINE_EDIT_RECURTYPE_YEAR = "Testing editing the recur type of a Deadline Task to 'every year'";;
     
-    // Timed Task related test case description
+    /*** TimedTask Test Case Descriptions ***/
     protected static final String TEST_TIMED_EDIT_DESCRIPTION = "Test editing a Timed Task description";
     protected static final String TEST_TIMED_EDIT_END_DATE = "Test editing a Timed Task's End date only";
     protected static final String TEST_TIMED_EDIT_END_DATE_AND_REMINDER = "Test editing a Timed Task's End date and Reminder";
     protected static final String TEST_TIMED_EDIT_END_TIME = "Test editing a Timed Task's End time only";
     protected static final String TEST_TIMED_EDIT_END_TIME_AND_REMINDER = "Test editing a Timed Task's End time and Reminder";
     protected static final String TEST_TIMED_EDIT_END_DATE_TIME = "Test editing a Timed Task's End date and time";
+    protected static final String TEST_TIMED_EDIT_END_DATE_TIME_AND_REMINDER = "Test editing a Timed Task's both End date/time and a new Reminder";
     protected static final String TEST_TIMED_EDIT_START_DATE = "Test editing a Timed Task's Start date only";
+    protected static final String TEST_TIMED_EDIT_START_DATE_AND_REMINDER = "Testing editing a Timed Task's Start date and Reminder";
     protected static final String TEST_TIMED_EDIT_START_TIME = "Test editing a Timed Task's Start time only";
+    protected static final String TEST_TIMED_EDIT_START_TIME_AND_REMINDER = "Testing editing a Timed Task's Start time and Reminder";
     protected static final String TEST_TIMED_EDIT_START_DATE_TIME = "Test editing a Timed Task's Start date and time";
-
+    protected static final String TEST_TIMED_EDIT_START_DATE_TIME_REMINDER = "Test editing a Timed Task's both Start date/time and a new Reminder";
+    protected static final String TEST_TIMED_EDIT_START_TIME_END_DATE = "Test editing a Timed Task's Start time and End date only";
+    protected static final String TEST_TIMED_EDIT_START_DATE_END_TIME = "Test editing a Timed Task's Start date and End time only";
+    protected static final String TEST_TIMED_EDIT_START_DATE_TIME_END_DATE_TIME = "Testing editing a Timed Task's both Start date/time and End date/time";
+    protected static final String TEST_TIMED_EDIT_RECURTYPE_DAY = "Testing editing the recur type of a Timed Task to 'every day'";
+    protected static final String TEST_TIMED_EDIT_RECURTYPE_WEEK = "Testing editing the recur type of a Timed Task to 'every week'";;
+    protected static final String TEST_TIMED_EDIT_RECURTYPE_MONTH = "Testing editing the recur type of a Timed Task to 'every month'";;
+    protected static final String TEST_TIMED_EDIT_RECURTYPE_YEAR = "Testing editing the recur type of a Timed Task to 'every year'";;
+    
     /*** Setup ***/
     @Before
     public void setUp() throws Exception {
@@ -152,25 +167,26 @@ public class TestEditTaskCommand {
         _commandParserInstance = new CommandParser();
         
         // Populate sample arraylist
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         Task task;
+        LocalDateTime sampleDeadlineEnd = DateTimeHelper.parseStringToDateTime(String.format(TEST_DATE_FORMAT, DEADLINE_CREATED_SAMPLE_END_DATE, DEADLINE_CREATED_SAMPLE_END_TIME));
+        LocalDateTime sampleTimedStart = DateTimeHelper.parseStringToDateTime(String.format(TEST_DATE_FORMAT , TIMED_CREATED_SAMPLE_START_DATE, TIMED_CREATED_SAMPLE_START_TIME));
+        LocalDateTime sampleTimedEnd = DateTimeHelper.parseStringToDateTime(String.format(TEST_DATE_FORMAT, TIMED_CREATED_SAMPLE_END_DATE, TIMED_CREATED_SAMPLE_END_TIME));
+        LocalDateTime sampleReminder = DateTimeHelper.parseStringToDateTime(TEST_SAMPLE_REMINDER_DATE_TIME);
         
         // Float Constructor: taskId | description | createdAt | isComplete | priority | 
         // Deadline Constructor: taskId | description | createdAt | end | reminder | isComplete | priority | isRecurring | recurType
         // Timed Constructor: taskId | description | createdAt | start | end | reminder | isComplete | priority | isRecurring | recurType
         
         // Sample Floating Task
-        task = new FloatingTask(1, "Get a good luck charm", DateTimeHelper.now(), false, 3);
+        task = new FloatingTask(1, "Test Floating Task", DateTimeHelper.now(), false, 3);
         testTaskList.add(task);
         
         // Sample Deadline Task
-        task = new DeadlineTask(2, "CS2103 CE2", DateTimeHelper.now(), LocalDateTime.parse("2015-01-02 23:59", formatter), 
-                                DateTimeHelper.now(), false, 3, false, Task.RECUR_TYPE.NULL);
+        task = new DeadlineTask(2, "Test Deadline Task", DateTimeHelper.now(), sampleDeadlineEnd, sampleReminder, false, 3, false, TEST_RECURTYPE_NULL);
         testTaskList.add(task);
         
         // Sample Timed Task
-        task = new TimedTask(3, "Appointment with dentist", DateTimeHelper.now(), LocalDateTime.parse("2015-01-03 23:59", formatter), 
-                             LocalDateTime.parse("2015-01-04 23:59", formatter), DateTimeHelper.now(), false, 3, false, Task.RECUR_TYPE.NULL);
+        task = new TimedTask(3, "Test TimedTask", DateTimeHelper.now(), sampleTimedStart, sampleTimedEnd, sampleReminder, false, 3, false, TEST_RECURTYPE_NULL);
         testTaskList.add(task);
         
         // Save sample tasks into XML
@@ -219,56 +235,51 @@ public class TestEditTaskCommand {
      *            Index of the Task to edit
      * @param desc
      *            New description of the edited Task
-     * @param end_date
+     * @param endDate
      *            New end date of the edited Task
-     * @param end_time
+     * @param endTime
      *            New end time of the edited Task
-     * @param start_date
+     * @param startDate
      *            New start date of the edited Task
-     * @param start_time
+     * @param startTime
      *            New start time of the edited Task
      * @param remind
      *            New reminder of the edited Task (both date and time)
+     * @param priority
+     *            New priority of the edited Task 
+     * @param recurType
+     *            New RECUR period type of the edit Task (NULL, DAILY, WEEKLY, MONTHLY, YEARLY)
+     
      * @return The Command String that will be used as dummy user input
      */
-    public String getTestCommand(int runningIndex, String desc, String end_date, String end_time, 
-                                 String start_date, String start_time, String remind, int priority, Task.RECUR_TYPE recurType) {
+    public String getTestCommand(int runningIndex, String desc, String endDate, String endTime, 
+                                 String startDate, String startTime, String remind, int priority, Task.RECUR_TYPE recurType) {
         String formattedCommand = TEST_KEYWORD_EMPTY;
-        String start = TEST_KEYWORD_EMPTY;
-        String end = TEST_KEYWORD_EMPTY;
         String editPriority = TEST_KEYWORD_EMPTY;
         String editRecur = TEST_KEYWORD_EMPTY;
-        
-        if (end_date != TEST_KEYWORD_EMPTY || end_time != TEST_KEYWORD_EMPTY) {
-            end += TEST_KEYWORD_END;
+                
+        if (remind != TEST_KEYWORD_EMPTY) {
+            remind = TEST_KEYWORD_REMIND + remind;
         }
         
-        if (start_date != TEST_KEYWORD_EMPTY || start_time != TEST_KEYWORD_EMPTY) {
-            start += TEST_KEYWORD_START;
+        if (endDate != TEST_KEYWORD_EMPTY) {
+            endDate = TEST_KEYWORD_END_DATE + endDate;
+        }
+        
+        if (endTime != TEST_KEYWORD_EMPTY) {
+            endTime = TEST_KEYWORD_END_TIME + endTime;
+        }
+        
+        if (startDate != TEST_KEYWORD_EMPTY) {
+            startDate = TEST_KEYWORD_START_DATE + startDate;
+        }
+        
+        if (startTime != TEST_KEYWORD_EMPTY) {
+            startTime = TEST_KEYWORD_START_TIME + startTime;
         }
 
         if (desc != TEST_KEYWORD_EMPTY) {
             desc = TEST_KEYWORD_DESC + desc;
-        }
-        
-        if (end_date != TEST_KEYWORD_EMPTY) {
-            end += end_date + WHITE_SPACE;
-        }
-        
-        if (end_time != TEST_KEYWORD_EMPTY) {
-            end += end_time;
-        }
-        
-        if (start_date != TEST_KEYWORD_EMPTY) {
-            start += start_date + WHITE_SPACE;
-        }
-        
-        if (start_time != TEST_KEYWORD_EMPTY) {
-            start += start_time;
-        }
-        
-        if (remind != TEST_KEYWORD_EMPTY) {
-            remind = TEST_KEYWORD_REMIND + remind;
         }
         
         if (priority != -1) {
@@ -285,12 +296,12 @@ public class TestEditTaskCommand {
             editRecur = TEST_KEYWORD_RECURYEAR;
         }
         
-        formattedCommand = String.format(TEST_COMMAND, runningIndex, desc, end, start, remind, editPriority, editRecur);
+        formattedCommand = String.format(TEST_COMMAND, runningIndex, desc, endDate, endTime, 
+                                         startDate, startTime, remind, editPriority, editRecur);
         
         return formattedCommand;
     }
 
-    // Test errthing
     @Test
     public void test() throws Exception {
         // testEditTaskCommand parameters: 
@@ -306,7 +317,7 @@ public class TestEditTaskCommand {
         // 10. expected recur status
         // 11. expected recur type
         
-        // Test Floating
+        /*** FloatingTask Test Cases ***/
         testEditTaskCommand(TEST_TASKTYPE_FLOATING, TEST_FLOATING_EDIT_DESCRIPTION, TEST_SAMPLE_FLOAT_ID,
                             getTestCommand(
                                 TEST_SAMPLE_FLOAT_ID,    // Running index of sample Floating Task
@@ -427,12 +438,7 @@ public class TestEditTaskCommand {
                             TEST_SAMPLE_DESCRIPTION, 
                             null, null, null, TEST_SAMPLE_PRIORITY, false, TEST_RECURTYPE_NULL);
         
-//        protected static final String TEST_DEADLINE_EDIT_RECURTYPE_DAY = "Testing editing the recur type of a Deadline Task to 'every day'";
-//        protected static final String TEST_DEADLINE_EDIT_RECURTYPE_WEEK = "Testing editing the recur type of a Deadline Task to 'every week'";;
-//        protected static final String TEST_DEADLINE_EDIT_RECURTYPE_MONTH = "Testing editing the recur type of a Deadline Task to 'every month'";;
-//        protected static final String TEST_DEADLINE_EDIT_RECURTYPE_YEAR = "Testing editing the recur type of a Deadline Task to 'every year'";;
-        
-        // Deadline Test Case
+        /*** DeadlineTask Test Cases ***/
         testEditTaskCommand(TEST_TASKTYPE_DEADLINE, TEST_DEADLINE_EDIT_DESCRIPTION, TEST_SAMPLE_DEADLINE_ID,
                             getTestCommand(
                                 TEST_SAMPLE_DEADLINE_ID,         // Running index of sample Deadline Task
@@ -446,6 +452,37 @@ public class TestEditTaskCommand {
                                 TEST_RECURTYPE_NULL),            // Recur type
                             TEST_SAMPLE_DESCRIPTION, 
                             getExpectedEnd(DEADLINE_CREATED_SAMPLE_END_DATE,DEADLINE_CREATED_SAMPLE_END_TIME), 
+                            null, null, TEST_TASK_DEFAULT_PRIORITY, false, TEST_RECURTYPE_NULL);
+        
+        testEditTaskCommand(TEST_TASKTYPE_DEADLINE, TEST_DEADLINE_EDIT_END_DATE_AND_REMINDER, TEST_SAMPLE_DEADLINE_ID,
+                            getTestCommand(
+                                TEST_SAMPLE_DEADLINE_ID,         // Running index of sample Deadline Task
+                                TEST_SAMPLE_DESCRIPTION,         // Sample description for edited Task
+                                TEST_SAMPLE_END_DATE,            // End date
+                                TEST_KEYWORD_EMPTY,              // End time
+                                TEST_KEYWORD_EMPTY,              // Start date
+                                TEST_KEYWORD_EMPTY,              // Start time
+                                TEST_SAMPLE_REMINDER_DATE_TIME,  // Reminder date and time
+                                -1,                              // Priority: -1 symbolize no specified priority
+                                TEST_RECURTYPE_NULL),            // Recur type
+                            TEST_SAMPLE_DESCRIPTION, 
+                            getExpectedEnd(TEST_SAMPLE_END_DATE, DEADLINE_CREATED_SAMPLE_END_TIME), 
+                            null, getExpectedReminder(TEST_SAMPLE_REMINDER_DATE_TIME), 
+                            TEST_TASK_DEFAULT_PRIORITY, false, TEST_RECURTYPE_NULL);
+        
+        testEditTaskCommand(TEST_TASKTYPE_DEADLINE, TEST_DEADLINE_EDIT_END_DATE, TEST_SAMPLE_DEADLINE_ID,
+                            getTestCommand(
+                                TEST_SAMPLE_DEADLINE_ID,         // Running index of sample Deadline Task
+                                TEST_SAMPLE_DESCRIPTION,         // Sample description for edited Task
+                                TEST_SAMPLE_END_DATE,            // End date
+                                TEST_KEYWORD_EMPTY,              // End time
+                                TEST_KEYWORD_EMPTY,              // Start date
+                                TEST_KEYWORD_EMPTY,              // Start time
+                                TEST_KEYWORD_EMPTY,              // Reminder date and time
+                                -1,                              // Priority: -1 symbolize no specified priority
+                                TEST_RECURTYPE_NULL),            // Recur type
+                            TEST_SAMPLE_DESCRIPTION, 
+                            getExpectedEnd(TEST_SAMPLE_END_DATE, DEADLINE_CREATED_SAMPLE_END_TIME), 
                             null, null, TEST_TASK_DEFAULT_PRIORITY, false, TEST_RECURTYPE_NULL);
         
         testEditTaskCommand(TEST_TASKTYPE_DEADLINE, TEST_DEADLINE_EDIT_END_DATE_TIME, TEST_SAMPLE_DEADLINE_ID,
@@ -464,97 +501,454 @@ public class TestEditTaskCommand {
                             null, null, TEST_TASK_DEFAULT_PRIORITY, false, TEST_RECURTYPE_NULL);
         
         testEditTaskCommand(TEST_TASKTYPE_DEADLINE, TEST_DEADLINE_EDIT_END_DATE_TIME_AND_REMINDER, TEST_SAMPLE_DEADLINE_ID,
-                getTestCommand(
-                    TEST_SAMPLE_DEADLINE_ID,         // Running index of sample Deadline Task
-                    TEST_SAMPLE_DESCRIPTION,         // Sample description for edited Task
-                    TEST_SAMPLE_END_DATE,            // End date
-                    TEST_SAMPLE_END_TIME,            // End time
-                    TEST_KEYWORD_EMPTY,              // Start date
-                    TEST_KEYWORD_EMPTY,              // Start time
-                    TEST_SAMPLE_REMINDER_DATE_TIME,  // Reminder date and time
-                    -1,                              // Priority: -1 symbolize no specified priority
-                    TEST_RECURTYPE_NULL),            // Recur type
-                TEST_SAMPLE_DESCRIPTION, 
-                getExpectedEnd(TEST_SAMPLE_END_DATE, TEST_SAMPLE_END_TIME), 
-                null, getExpectedReminder(TEST_SAMPLE_REMINDER_DATE_TIME), 
-                TEST_TASK_DEFAULT_PRIORITY, false, TEST_RECURTYPE_NULL);
+                            getTestCommand(
+                                TEST_SAMPLE_DEADLINE_ID,         // Running index of sample Deadline Task
+                                TEST_SAMPLE_DESCRIPTION,         // Sample description for edited Task
+                                TEST_SAMPLE_END_DATE,            // End date
+                                TEST_SAMPLE_END_TIME,            // End time
+                                TEST_KEYWORD_EMPTY,              // Start date
+                                TEST_KEYWORD_EMPTY,              // Start time
+                                TEST_SAMPLE_REMINDER_DATE_TIME,  // Reminder date and time
+                                -1,                              // Priority: -1 symbolize no specified priority
+                                TEST_RECURTYPE_NULL),            // Recur type
+                            TEST_SAMPLE_DESCRIPTION, 
+                            getExpectedEnd(TEST_SAMPLE_END_DATE, TEST_SAMPLE_END_TIME), 
+                            null, getExpectedReminder(TEST_SAMPLE_REMINDER_DATE_TIME), 
+                            TEST_TASK_DEFAULT_PRIORITY, false, TEST_RECURTYPE_NULL);
         
         testEditTaskCommand(TEST_TASKTYPE_TIMED, TEST_DEADLINE_ADD_START_TIME, TEST_SAMPLE_DEADLINE_ID,
-                getTestCommand(
-                    TEST_SAMPLE_DEADLINE_ID,         // Running index of sample Deadline Task
-                    TEST_SAMPLE_DESCRIPTION,         // Sample description for edited Task
-                    TEST_KEYWORD_EMPTY,              // End date
-                    TEST_KEYWORD_EMPTY,              // End time
-                    TEST_KEYWORD_EMPTY,              // Start date
-                    TEST_SAMPLE_START_TIME,          // Start time
-                    TEST_KEYWORD_EMPTY,              // Reminder date and time
-                    -1,                              // Priority: -1 symbolize no specified priority
-                    TEST_RECURTYPE_NULL),            // Recur type
-                TEST_SAMPLE_DESCRIPTION, 
-                getExpectedEnd(DEADLINE_CREATED_SAMPLE_END_DATE, DEADLINE_CREATED_SAMPLE_END_TIME), 
-                getExpectedStart(TEST_SAMPLE_TODAY_DATE,TEST_SAMPLE_START_TIME), 
-                null, TEST_TASK_DEFAULT_PRIORITY, false, TEST_RECURTYPE_NULL);
+                            getTestCommand(
+                                TEST_SAMPLE_DEADLINE_ID,         // Running index of sample Deadline Task
+                                TEST_SAMPLE_DESCRIPTION,         // Sample description for edited Task
+                                TEST_KEYWORD_EMPTY,              // End date
+                                TEST_KEYWORD_EMPTY,              // End time
+                                TEST_KEYWORD_EMPTY,              // Start date
+                                TEST_SAMPLE_START_TIME,          // Start time
+                                TEST_KEYWORD_EMPTY,              // Reminder date and time
+                                -1,                              // Priority: -1 symbolize no specified priority
+                                TEST_RECURTYPE_NULL),            // Recur type
+                            TEST_SAMPLE_DESCRIPTION, 
+                            getExpectedEnd(DEADLINE_CREATED_SAMPLE_END_DATE, DEADLINE_CREATED_SAMPLE_END_TIME), 
+                            getExpectedStart(TEST_SAMPLE_TODAY_DATE,TEST_SAMPLE_START_TIME), 
+                            null, TEST_TASK_DEFAULT_PRIORITY, false, TEST_RECURTYPE_NULL);
         
         testEditTaskCommand(TEST_TASKTYPE_TIMED, TEST_DEADLINE_ADD_START_DATE_TIME, TEST_SAMPLE_DEADLINE_ID,
-                getTestCommand(
-                    TEST_SAMPLE_DEADLINE_ID,         // Running index of sample Floating Task
-                    TEST_SAMPLE_DESCRIPTION,         // Sample description for edited Task
-                    TEST_KEYWORD_EMPTY,              // End date
-                    TEST_KEYWORD_EMPTY,              // End time
-                    TEST_SAMPLE_START_DATE,          // Start date
-                    TEST_SAMPLE_START_TIME,          // Start time
-                    TEST_KEYWORD_EMPTY,              // Reminder date and time
-                    -1,                              // Priority: -1 symbolize no specified priority
-                    TEST_RECURTYPE_NULL),            // Recur type
-                TEST_SAMPLE_DESCRIPTION, 
-                getExpectedEnd(DEADLINE_CREATED_SAMPLE_END_DATE, DEADLINE_CREATED_SAMPLE_END_TIME), 
-                getExpectedStart(TEST_SAMPLE_START_DATE,TEST_SAMPLE_START_TIME), 
-                null, TEST_TASK_DEFAULT_PRIORITY, false, TEST_RECURTYPE_NULL);
+                            getTestCommand(
+                                TEST_SAMPLE_DEADLINE_ID,         // Running index of sample Deadline Task
+                                TEST_SAMPLE_DESCRIPTION,         // Sample description for edited Task
+                                TEST_KEYWORD_EMPTY,              // End date
+                                TEST_KEYWORD_EMPTY,              // End time
+                                TEST_SAMPLE_START_DATE,          // Start date
+                                TEST_SAMPLE_START_TIME,          // Start time
+                                TEST_KEYWORD_EMPTY,              // Reminder date and time
+                                -1,                              // Priority: -1 symbolize no specified priority
+                                TEST_RECURTYPE_NULL),            // Recur type
+                            TEST_SAMPLE_DESCRIPTION, 
+                            getExpectedEnd(DEADLINE_CREATED_SAMPLE_END_DATE, DEADLINE_CREATED_SAMPLE_END_TIME), 
+                            getExpectedStart(TEST_SAMPLE_START_DATE,TEST_SAMPLE_START_TIME), 
+                            null, TEST_TASK_DEFAULT_PRIORITY, false, TEST_RECURTYPE_NULL);
         
         testEditTaskCommand(TEST_TASKTYPE_DEADLINE, TEST_DEADLINE_EDIT_PRIORITY, TEST_SAMPLE_DEADLINE_ID,
-                getTestCommand(
-                    TEST_SAMPLE_DEADLINE_ID,         // Running index of sample Floating Task
-                    TEST_SAMPLE_DESCRIPTION,         // Sample description for edited Task
-                    DEADLINE_CREATED_SAMPLE_END_DATE,              // End date
-                    DEADLINE_CREATED_SAMPLE_END_TIME,              // End time
-                    TEST_KEYWORD_EMPTY,              // Start date
-                    TEST_KEYWORD_EMPTY,              // Start time
-                    TEST_KEYWORD_EMPTY,              // Reminder date and time
-                    TEST_SAMPLE_PRIORITY,            // Priority: -1 symbolize no specified priority
-                    TEST_RECURTYPE_NULL),            // Recur type
-                TEST_SAMPLE_DESCRIPTION, 
-                getExpectedEnd(DEADLINE_CREATED_SAMPLE_END_DATE, DEADLINE_CREATED_SAMPLE_END_TIME), 
-                null, null, TEST_SAMPLE_PRIORITY, false, TEST_RECURTYPE_NULL);
+                            getTestCommand(
+                                TEST_SAMPLE_DEADLINE_ID,         // Running index of sample Deadline Task
+                                TEST_SAMPLE_DESCRIPTION,         // Sample description for edited Task
+                                DEADLINE_CREATED_SAMPLE_END_DATE,              // End date
+                                DEADLINE_CREATED_SAMPLE_END_TIME,              // End time
+                                TEST_KEYWORD_EMPTY,              // Start date
+                                TEST_KEYWORD_EMPTY,              // Start time
+                                TEST_KEYWORD_EMPTY,              // Reminder date and time
+                                TEST_SAMPLE_PRIORITY,            // Priority: -1 symbolize no specified priority
+                                TEST_RECURTYPE_NULL),            // Recur type
+                            TEST_SAMPLE_DESCRIPTION, 
+                            getExpectedEnd(DEADLINE_CREATED_SAMPLE_END_DATE, DEADLINE_CREATED_SAMPLE_END_TIME), 
+                            null, null, TEST_SAMPLE_PRIORITY, false, TEST_RECURTYPE_NULL);
         
-        String test = getTestCommand(
-                TEST_SAMPLE_DEADLINE_ID,         // Running index of sample Floating Task
-                TEST_SAMPLE_DESCRIPTION,         // Sample description for edited Task
-                TEST_KEYWORD_EMPTY,              // End date
-                TEST_KEYWORD_EMPTY,              // End time
-                TEST_KEYWORD_EMPTY,              // Start date
-                TEST_KEYWORD_EMPTY,              // Start time
-                TEST_KEYWORD_EMPTY,              // Reminder date and time
-                -1,                              // Priority: -1 symbolize no specified priority
-                TEST_RECURTYPE_DAY);
-        System.out.println(test);
-        prepareDummyData();
-        System.out.println("prepared");
-        /*
         testEditTaskCommand(TEST_TASKTYPE_DEADLINE, TEST_DEADLINE_EDIT_RECURTYPE_DAY, TEST_SAMPLE_DEADLINE_ID,
-                getTestCommand(
-                    TEST_SAMPLE_DEADLINE_ID,         // Running index of sample Floating Task
-                    TEST_SAMPLE_DESCRIPTION,         // Sample description for edited Task
-                    TEST_KEYWORD_EMPTY,              // End date
-                    TEST_KEYWORD_EMPTY,              // End time
-                    TEST_KEYWORD_EMPTY,              // Start date
-                    TEST_KEYWORD_EMPTY,              // Start time
-                    TEST_KEYWORD_EMPTY,              // Reminder date and time
-                    -1,                              // Priority: -1 symbolize no specified priority
-                    TEST_RECURTYPE_DAY),            // Recur type
-                TEST_SAMPLE_DESCRIPTION, 
-                getExpectedEnd(DEADLINE_CREATED_SAMPLE_END_DATE, DEADLINE_CREATED_SAMPLE_END_TIME), 
-                null, null, TEST_TASK_DEFAULT_PRIORITY, false, TEST_RECURTYPE_NULL);
-    */
+                            getTestCommand(
+                                TEST_SAMPLE_DEADLINE_ID,         // Running index of sample Deadline Task
+                                TEST_SAMPLE_DESCRIPTION,         // Sample description for edited Task
+                                TEST_KEYWORD_EMPTY,              // End date
+                                TEST_KEYWORD_EMPTY,              // End time
+                                TEST_KEYWORD_EMPTY,              // Start date
+                                TEST_KEYWORD_EMPTY,              // Start time
+                                TEST_KEYWORD_EMPTY,              // Reminder date and time
+                                -1,                              // Priority: -1 symbolize no specified priority
+                                TEST_RECURTYPE_DAY),            // Recur type
+                            TEST_SAMPLE_DESCRIPTION, 
+                            getExpectedEnd(DEADLINE_CREATED_SAMPLE_END_DATE, DEADLINE_CREATED_SAMPLE_END_TIME), 
+                            null, null, TEST_TASK_DEFAULT_PRIORITY, true, TEST_RECURTYPE_DAY);
+        
+        testEditTaskCommand(TEST_TASKTYPE_DEADLINE, TEST_DEADLINE_EDIT_RECURTYPE_WEEK, TEST_SAMPLE_DEADLINE_ID,
+                            getTestCommand(
+                                TEST_SAMPLE_DEADLINE_ID,         // Running index of sample Floating Task
+                                TEST_SAMPLE_DESCRIPTION,         // Sample description for edited Task
+                                TEST_KEYWORD_EMPTY,              // End date
+                                TEST_KEYWORD_EMPTY,              // End time
+                                TEST_KEYWORD_EMPTY,              // Start date
+                                TEST_KEYWORD_EMPTY,              // Start time
+                                TEST_KEYWORD_EMPTY,              // Reminder date and time
+                                -1,                              // Priority: -1 symbolize no specified priority
+                                TEST_RECURTYPE_WEEK),            // Recur type
+                            TEST_SAMPLE_DESCRIPTION, 
+                            getExpectedEnd(DEADLINE_CREATED_SAMPLE_END_DATE, DEADLINE_CREATED_SAMPLE_END_TIME), 
+                            null, null, TEST_TASK_DEFAULT_PRIORITY, true, TEST_RECURTYPE_WEEK);
+        
+        testEditTaskCommand(TEST_TASKTYPE_DEADLINE, TEST_DEADLINE_EDIT_RECURTYPE_MONTH, TEST_SAMPLE_DEADLINE_ID,
+                            getTestCommand(
+                                TEST_SAMPLE_DEADLINE_ID,         // Running index of sample Deadline Task
+                                TEST_SAMPLE_DESCRIPTION,         // Sample description for edited Task
+                                TEST_KEYWORD_EMPTY,              // End date
+                                TEST_KEYWORD_EMPTY,              // End time
+                                TEST_KEYWORD_EMPTY,              // Start date
+                                TEST_KEYWORD_EMPTY,              // Start time
+                                TEST_KEYWORD_EMPTY,              // Reminder date and time
+                                -1,                              // Priority: -1 symbolize no specified priority
+                                TEST_RECURTYPE_MONTH),            // Recur type
+                            TEST_SAMPLE_DESCRIPTION, 
+                            getExpectedEnd(DEADLINE_CREATED_SAMPLE_END_DATE, DEADLINE_CREATED_SAMPLE_END_TIME), 
+                            null, null, TEST_TASK_DEFAULT_PRIORITY, true, TEST_RECURTYPE_MONTH);
+        
+        testEditTaskCommand(TEST_TASKTYPE_DEADLINE, TEST_DEADLINE_EDIT_RECURTYPE_YEAR, TEST_SAMPLE_DEADLINE_ID,
+                            getTestCommand(
+                                TEST_SAMPLE_DEADLINE_ID,         // Running index of sample Deadline Task
+                                TEST_SAMPLE_DESCRIPTION,         // Sample description for edited Task
+                                TEST_KEYWORD_EMPTY,              // End date
+                                TEST_KEYWORD_EMPTY,              // End time
+                                TEST_KEYWORD_EMPTY,              // Start date
+                                TEST_KEYWORD_EMPTY,              // Start time
+                                TEST_KEYWORD_EMPTY,              // Reminder date and time
+                                -1,                              // Priority: -1 symbolize no specified priority
+                                TEST_RECURTYPE_YEAR),            // Recur type
+                            TEST_SAMPLE_DESCRIPTION, 
+                            getExpectedEnd(DEADLINE_CREATED_SAMPLE_END_DATE, DEADLINE_CREATED_SAMPLE_END_TIME), 
+                            null, null, TEST_TASK_DEFAULT_PRIORITY, true, TEST_RECURTYPE_YEAR);
+    
+        /*** TimedTask Test Cases ***/
+        testEditTaskCommand(TEST_TASKTYPE_TIMED, TEST_TIMED_EDIT_DESCRIPTION, TEST_SAMPLE_TIMED_ID,
+                            getTestCommand(
+                                TEST_SAMPLE_TIMED_ID,            // Running index of sample Timed Task
+                                TEST_SAMPLE_DESCRIPTION,         // Sample description for edited Task
+                                TEST_KEYWORD_EMPTY,              // End date
+                                TEST_KEYWORD_EMPTY,              // End time
+                                TEST_KEYWORD_EMPTY,              // Start date
+                                TEST_KEYWORD_EMPTY,              // Start time
+                                TEST_KEYWORD_EMPTY,              // Reminder date and time
+                                -1,                              // Priority: -1 symbolize no specified priority
+                                TEST_RECURTYPE_NULL),            // Recur type
+                            TEST_SAMPLE_DESCRIPTION, 
+                            getExpectedEnd(TIMED_CREATED_SAMPLE_END_DATE, TIMED_CREATED_SAMPLE_END_TIME), 
+                            getExpectedStart(TIMED_CREATED_SAMPLE_START_DATE, TIMED_CREATED_SAMPLE_START_TIME), 
+                            null, TEST_TASK_DEFAULT_PRIORITY, false, TEST_RECURTYPE_NULL);
+        
+        testEditTaskCommand(TEST_TASKTYPE_TIMED, TEST_TIMED_EDIT_END_DATE, TEST_SAMPLE_TIMED_ID,
+                            getTestCommand(
+                                TEST_SAMPLE_TIMED_ID,            // Running index of sample Timed Task
+                                TEST_SAMPLE_DESCRIPTION,         // Sample description for edited Task
+                                TEST_SAMPLE_END_DATE,            // End date
+                                TEST_KEYWORD_EMPTY,              // End time
+                                TEST_KEYWORD_EMPTY,              // Start date
+                                TEST_KEYWORD_EMPTY,              // Start time
+                                TEST_KEYWORD_EMPTY,              // Reminder date and time
+                                -1,                              // Priority: -1 symbolize no specified priority
+                                TEST_RECURTYPE_NULL),            // Recur type
+                            TEST_SAMPLE_DESCRIPTION, 
+                            getExpectedEnd(TEST_SAMPLE_END_DATE, TIMED_CREATED_SAMPLE_END_TIME), 
+                            getExpectedStart(TIMED_CREATED_SAMPLE_START_DATE, TIMED_CREATED_SAMPLE_START_TIME), 
+                            null, TEST_TASK_DEFAULT_PRIORITY, false, TEST_RECURTYPE_NULL);
+        
+        testEditTaskCommand(TEST_TASKTYPE_TIMED, TEST_TIMED_EDIT_END_DATE_AND_REMINDER, TEST_SAMPLE_TIMED_ID,
+                            getTestCommand(
+                                TEST_SAMPLE_TIMED_ID,            // Running index of sample Timed Task
+                                TEST_SAMPLE_DESCRIPTION,         // Sample description for edited Task
+                                TEST_SAMPLE_END_DATE,            // End date
+                                TEST_KEYWORD_EMPTY,              // End time
+                                TEST_KEYWORD_EMPTY,              // Start date
+                                TEST_KEYWORD_EMPTY,              // Start time
+                                TEST_SAMPLE_REMINDER_DATE_TIME,  // Reminder date and time
+                                -1,                              // Priority: -1 symbolize no specified priority
+                                TEST_RECURTYPE_NULL),            // Recur type
+                            TEST_SAMPLE_DESCRIPTION, 
+                            getExpectedEnd(TEST_SAMPLE_END_DATE, TIMED_CREATED_SAMPLE_END_TIME), 
+                            getExpectedStart(TIMED_CREATED_SAMPLE_START_DATE, TIMED_CREATED_SAMPLE_START_TIME),
+                            getExpectedReminder(TEST_SAMPLE_REMINDER_DATE_TIME), 
+                            TEST_TASK_DEFAULT_PRIORITY, false, TEST_RECURTYPE_NULL);
+        
+        testEditTaskCommand(TEST_TASKTYPE_TIMED, TEST_TIMED_EDIT_END_TIME, TEST_SAMPLE_TIMED_ID,
+                            getTestCommand(
+                                TEST_SAMPLE_TIMED_ID,            // Running index of sample Timed Task
+                                TEST_SAMPLE_DESCRIPTION,         // Sample description for edited Task
+                                TEST_KEYWORD_EMPTY,              // End date
+                                TEST_SAMPLE_END_TIME,            // End time
+                                TEST_KEYWORD_EMPTY,              // Start date
+                                TEST_KEYWORD_EMPTY,              // Start time
+                                TEST_KEYWORD_EMPTY,              // Reminder date and time
+                                -1,                              // Priority: -1 symbolize no specified priority
+                                TEST_RECURTYPE_NULL),            // Recur type
+                            TEST_SAMPLE_DESCRIPTION, 
+                            getExpectedEnd(TIMED_CREATED_SAMPLE_END_DATE, TEST_SAMPLE_END_TIME), 
+                            getExpectedStart(TIMED_CREATED_SAMPLE_START_DATE, TIMED_CREATED_SAMPLE_START_TIME), 
+                            null, TEST_TASK_DEFAULT_PRIORITY, false, TEST_RECURTYPE_NULL);
+        
+        testEditTaskCommand(TEST_TASKTYPE_TIMED, TEST_TIMED_EDIT_END_TIME_AND_REMINDER, TEST_SAMPLE_TIMED_ID,
+                            getTestCommand(
+                                TEST_SAMPLE_TIMED_ID,            // Running index of sample Timed Task
+                                TEST_SAMPLE_DESCRIPTION,         // Sample description for edited Task
+                                TEST_KEYWORD_EMPTY,              // End date
+                                TEST_SAMPLE_END_TIME,            // End time
+                                TEST_KEYWORD_EMPTY,              // Start date
+                                TEST_KEYWORD_EMPTY,              // Start time
+                                TEST_SAMPLE_REMINDER_DATE_TIME,  // Reminder date and time
+                                -1,                              // Priority: -1 symbolize no specified priority
+                                TEST_RECURTYPE_NULL),            // Recur type
+                            TEST_SAMPLE_DESCRIPTION, 
+                            getExpectedEnd(TIMED_CREATED_SAMPLE_END_DATE, TEST_SAMPLE_END_TIME), 
+                            getExpectedStart(TIMED_CREATED_SAMPLE_START_DATE, TIMED_CREATED_SAMPLE_START_TIME), 
+                            getExpectedReminder(TEST_SAMPLE_REMINDER_DATE_TIME), 
+                            TEST_TASK_DEFAULT_PRIORITY, false, TEST_RECURTYPE_NULL);
+        
+        testEditTaskCommand(TEST_TASKTYPE_TIMED, TEST_TIMED_EDIT_END_DATE_TIME, TEST_SAMPLE_TIMED_ID,
+                            getTestCommand(
+                                TEST_SAMPLE_TIMED_ID,            // Running index of sample Timed Task
+                                TEST_SAMPLE_DESCRIPTION,         // Sample description for edited Task
+                                TEST_SAMPLE_END_DATE,            // End date
+                                TEST_SAMPLE_END_TIME,            // End time
+                                TEST_KEYWORD_EMPTY,              // Start date
+                                TEST_KEYWORD_EMPTY,              // Start time
+                                TEST_KEYWORD_EMPTY,              // Reminder date and time
+                                -1,                              // Priority: -1 symbolize no specified priority
+                                TEST_RECURTYPE_NULL),            // Recur type
+                            TEST_SAMPLE_DESCRIPTION, 
+                            getExpectedEnd(TEST_SAMPLE_END_DATE, TEST_SAMPLE_END_TIME), 
+                            getExpectedStart(TIMED_CREATED_SAMPLE_START_DATE, TIMED_CREATED_SAMPLE_START_TIME), 
+                            null, TEST_TASK_DEFAULT_PRIORITY, false, TEST_RECURTYPE_NULL);
+        
+        testEditTaskCommand(TEST_TASKTYPE_TIMED, TEST_TIMED_EDIT_END_DATE_TIME_AND_REMINDER, TEST_SAMPLE_TIMED_ID,
+                            getTestCommand(
+                                TEST_SAMPLE_TIMED_ID,            // Running index of sample Timed Task
+                                TEST_SAMPLE_DESCRIPTION,         // Sample description for edited Task
+                                TEST_SAMPLE_END_DATE,            // End date
+                                TEST_SAMPLE_END_TIME,            // End time
+                                TEST_KEYWORD_EMPTY,              // Start date
+                                TEST_KEYWORD_EMPTY,              // Start time
+                                TEST_SAMPLE_REMINDER_DATE_TIME,  // Reminder date and time
+                                -1,                              // Priority: -1 symbolize no specified priority
+                                TEST_RECURTYPE_NULL),            // Recur type
+                            TEST_SAMPLE_DESCRIPTION, 
+                            getExpectedEnd(TEST_SAMPLE_END_DATE, TEST_SAMPLE_END_TIME), 
+                            getExpectedStart(TIMED_CREATED_SAMPLE_START_DATE, TIMED_CREATED_SAMPLE_START_TIME),
+                            getExpectedReminder(TEST_SAMPLE_REMINDER_DATE_TIME), 
+                            TEST_TASK_DEFAULT_PRIORITY, false, TEST_RECURTYPE_NULL);
+        
+        testEditTaskCommand(TEST_TASKTYPE_TIMED, TEST_TIMED_EDIT_START_DATE, TEST_SAMPLE_TIMED_ID,
+                            getTestCommand(
+                                TEST_SAMPLE_TIMED_ID,            // Running index of sample Timed Task
+                                TEST_SAMPLE_DESCRIPTION,         // Sample description for edited Task
+                                TEST_KEYWORD_EMPTY,              // End date
+                                TEST_KEYWORD_EMPTY,              // End time
+                                TEST_SAMPLE_START_DATE,          // Start date
+                                TEST_KEYWORD_EMPTY,              // Start time
+                                TEST_KEYWORD_EMPTY,              // Reminder date and time
+                                -1,                              // Priority: -1 symbolize no specified priority
+                                TEST_RECURTYPE_NULL),            // Recur type
+                            TEST_SAMPLE_DESCRIPTION, 
+                            getExpectedEnd(TIMED_CREATED_SAMPLE_END_DATE, TIMED_CREATED_SAMPLE_END_TIME), 
+                            getExpectedStart(TEST_SAMPLE_START_DATE, TIMED_CREATED_SAMPLE_START_TIME), 
+                            null, TEST_TASK_DEFAULT_PRIORITY, false, TEST_RECURTYPE_NULL);
+        
+        testEditTaskCommand(TEST_TASKTYPE_TIMED, TEST_TIMED_EDIT_START_DATE_AND_REMINDER, TEST_SAMPLE_TIMED_ID,
+                            getTestCommand(
+                                TEST_SAMPLE_TIMED_ID,            // Running index of sample Timed Task
+                                TEST_SAMPLE_DESCRIPTION,         // Sample description for edited Task
+                                TEST_KEYWORD_EMPTY,              // End date
+                                TEST_KEYWORD_EMPTY,              // End time
+                                TEST_SAMPLE_START_DATE,          // Start date
+                                TEST_KEYWORD_EMPTY,              // Start time
+                                TEST_SAMPLE_REMINDER_DATE_TIME,  // Reminder date and time
+                                -1,                              // Priority: -1 symbolize no specified priority
+                                TEST_RECURTYPE_NULL),            // Recur type
+                            TEST_SAMPLE_DESCRIPTION, 
+                            getExpectedEnd(TIMED_CREATED_SAMPLE_END_DATE, TIMED_CREATED_SAMPLE_END_TIME), 
+                            getExpectedStart(TEST_SAMPLE_START_DATE, TIMED_CREATED_SAMPLE_START_TIME), 
+                            getExpectedReminder(TEST_SAMPLE_REMINDER_DATE_TIME), 
+                            TEST_TASK_DEFAULT_PRIORITY, false, TEST_RECURTYPE_NULL);
+        
+        testEditTaskCommand(TEST_TASKTYPE_TIMED, TEST_TIMED_EDIT_START_TIME, TEST_SAMPLE_TIMED_ID,
+                            getTestCommand(
+                                TEST_SAMPLE_TIMED_ID,            // Running index of sample Timed Task
+                                TEST_SAMPLE_DESCRIPTION,         // Sample description for edited Task
+                                TEST_KEYWORD_EMPTY,              // End date
+                                TEST_KEYWORD_EMPTY,              // End time
+                                TEST_KEYWORD_EMPTY,              // Start date
+                                TEST_SAMPLE_START_TIME,          // Start time
+                                TEST_KEYWORD_EMPTY,              // Reminder date and time
+                                -1,                              // Priority: -1 symbolize no specified priority
+                                TEST_RECURTYPE_NULL),            // Recur type
+                            TEST_SAMPLE_DESCRIPTION, 
+                            getExpectedEnd(TIMED_CREATED_SAMPLE_END_DATE, TIMED_CREATED_SAMPLE_END_TIME), 
+                            getExpectedStart(TIMED_CREATED_SAMPLE_START_DATE, TEST_SAMPLE_START_TIME), 
+                            null, TEST_TASK_DEFAULT_PRIORITY, false, TEST_RECURTYPE_NULL);
+        
+        testEditTaskCommand(TEST_TASKTYPE_TIMED, TEST_TIMED_EDIT_START_TIME_AND_REMINDER, TEST_SAMPLE_TIMED_ID,
+                            getTestCommand(
+                                TEST_SAMPLE_TIMED_ID,            // Running index of sample Timed Task
+                                TEST_SAMPLE_DESCRIPTION,         // Sample description for edited Task
+                                TEST_KEYWORD_EMPTY,              // End date
+                                TEST_KEYWORD_EMPTY,              // End time
+                                TEST_KEYWORD_EMPTY,              // Start date
+                                TEST_SAMPLE_START_TIME,          // Start time
+                                TEST_SAMPLE_REMINDER_DATE_TIME,  // Reminder date and time
+                                -1,                              // Priority: -1 symbolize no specified priority
+                                TEST_RECURTYPE_NULL),            // Recur type
+                            TEST_SAMPLE_DESCRIPTION, 
+                            getExpectedEnd(TIMED_CREATED_SAMPLE_END_DATE, TIMED_CREATED_SAMPLE_END_TIME), 
+                            getExpectedStart(TIMED_CREATED_SAMPLE_START_DATE, TEST_SAMPLE_START_TIME), 
+                            getExpectedReminder(TEST_SAMPLE_REMINDER_DATE_TIME), 
+                            TEST_TASK_DEFAULT_PRIORITY, false, TEST_RECURTYPE_NULL);
+        
+        testEditTaskCommand(TEST_TASKTYPE_TIMED, TEST_TIMED_EDIT_START_DATE_TIME, TEST_SAMPLE_TIMED_ID,
+                            getTestCommand(
+                                TEST_SAMPLE_TIMED_ID,            // Running index of sample Timed Task
+                                TEST_SAMPLE_DESCRIPTION,         // Sample description for edited Task
+                                TEST_KEYWORD_EMPTY,              // End date
+                                TEST_KEYWORD_EMPTY,              // End time
+                                TEST_SAMPLE_START_DATE,          // Start date
+                                TEST_SAMPLE_START_TIME,          // Start time
+                                TEST_KEYWORD_EMPTY,              // Reminder date and time
+                                -1,                              // Priority: -1 symbolize no specified priority
+                                TEST_RECURTYPE_NULL),            // Recur type
+                            TEST_SAMPLE_DESCRIPTION, 
+                            getExpectedEnd(TIMED_CREATED_SAMPLE_END_DATE, TIMED_CREATED_SAMPLE_END_TIME), 
+                            getExpectedStart(TEST_SAMPLE_START_DATE, TEST_SAMPLE_START_TIME), 
+                            null, TEST_TASK_DEFAULT_PRIORITY, false, TEST_RECURTYPE_NULL);
+        
+        testEditTaskCommand(TEST_TASKTYPE_TIMED, TEST_TIMED_EDIT_START_DATE_TIME_REMINDER, TEST_SAMPLE_TIMED_ID,
+                            getTestCommand(
+                                TEST_SAMPLE_TIMED_ID,            // Running index of sample Timed Task
+                                TEST_SAMPLE_DESCRIPTION,         // Sample description for edited Task
+                                TEST_KEYWORD_EMPTY,              // End date
+                                TEST_KEYWORD_EMPTY,              // End time
+                                TEST_SAMPLE_START_DATE,          // Start date
+                                TEST_SAMPLE_START_TIME,          // Start time
+                                TEST_SAMPLE_REMINDER_DATE_TIME,  // Reminder date and time
+                                -1,                              // Priority: -1 symbolize no specified priority
+                                TEST_RECURTYPE_NULL),            // Recur type
+                            TEST_SAMPLE_DESCRIPTION, 
+                            getExpectedEnd(TIMED_CREATED_SAMPLE_END_DATE, TIMED_CREATED_SAMPLE_END_TIME), 
+                            getExpectedStart(TEST_SAMPLE_START_DATE, TEST_SAMPLE_START_TIME), 
+                            getExpectedReminder(TEST_SAMPLE_REMINDER_DATE_TIME), 
+                            TEST_TASK_DEFAULT_PRIORITY, false, TEST_RECURTYPE_NULL);
+        
+        testEditTaskCommand(TEST_TASKTYPE_TIMED, TEST_TIMED_EDIT_START_TIME_END_DATE, TEST_SAMPLE_TIMED_ID,
+                            getTestCommand(
+                                TEST_SAMPLE_TIMED_ID,            // Running index of sample Timed Task
+                                TEST_SAMPLE_DESCRIPTION,         // Sample description for edited Task
+                                TEST_SAMPLE_END_DATE,            // End date
+                                TEST_KEYWORD_EMPTY,              // End time
+                                TEST_KEYWORD_EMPTY,              // Start date
+                                TEST_SAMPLE_START_TIME,          // Start time
+                                TEST_KEYWORD_EMPTY,              // Reminder date and time
+                                -1,                              // Priority: -1 symbolize no specified priority
+                                TEST_RECURTYPE_NULL),            // Recur type
+                            TEST_SAMPLE_DESCRIPTION, 
+                            getExpectedEnd(TEST_SAMPLE_END_DATE, TIMED_CREATED_SAMPLE_END_TIME), 
+                            getExpectedStart(TIMED_CREATED_SAMPLE_START_DATE, TEST_SAMPLE_START_TIME), 
+                            null, TEST_TASK_DEFAULT_PRIORITY, false, TEST_RECURTYPE_NULL);
+        
+        testEditTaskCommand(TEST_TASKTYPE_TIMED, TEST_TIMED_EDIT_START_DATE_END_TIME, TEST_SAMPLE_TIMED_ID,
+                            getTestCommand(
+                                TEST_SAMPLE_TIMED_ID,            // Running index of sample Timed Task
+                                TEST_SAMPLE_DESCRIPTION,         // Sample description for edited Task
+                                TEST_KEYWORD_EMPTY,              // End date
+                                TEST_SAMPLE_END_TIME,            // End time
+                                TEST_SAMPLE_START_DATE,          // Start date
+                                TEST_KEYWORD_EMPTY,              // Start time
+                                TEST_KEYWORD_EMPTY,              // Reminder date and time
+                                -1,                              // Priority: -1 symbolize no specified priority
+                                TEST_RECURTYPE_NULL),            // Recur type
+                            TEST_SAMPLE_DESCRIPTION, 
+                            getExpectedEnd(TIMED_CREATED_SAMPLE_END_DATE, TEST_SAMPLE_END_TIME), 
+                            getExpectedStart(TEST_SAMPLE_START_DATE, TIMED_CREATED_SAMPLE_START_TIME), 
+                            null, TEST_TASK_DEFAULT_PRIORITY, false, TEST_RECURTYPE_NULL);
+        
+        testEditTaskCommand(TEST_TASKTYPE_TIMED, TEST_TIMED_EDIT_START_DATE_TIME_END_DATE_TIME, TEST_SAMPLE_TIMED_ID,
+                            getTestCommand(
+                                TEST_SAMPLE_TIMED_ID,            // Running index of sample Timed Task
+                                TEST_SAMPLE_DESCRIPTION,         // Sample description for edited Task
+                                TEST_SAMPLE_END_DATE,            // End date
+                                TEST_SAMPLE_END_TIME,            // End time
+                                TEST_SAMPLE_START_DATE,          // Start date
+                                TEST_SAMPLE_START_TIME,          // Start time
+                                TEST_KEYWORD_EMPTY,              // Reminder date and time
+                                -1,                              // Priority: -1 symbolize no specified priority
+                                TEST_RECURTYPE_NULL),            // Recur type
+                            TEST_SAMPLE_DESCRIPTION, 
+                            getExpectedEnd(TEST_SAMPLE_END_DATE, TEST_SAMPLE_END_TIME), 
+                            getExpectedStart(TEST_SAMPLE_START_DATE, TEST_SAMPLE_START_TIME), 
+                            null, TEST_TASK_DEFAULT_PRIORITY, false, TEST_RECURTYPE_NULL);
+        
+        testEditTaskCommand(TEST_TASKTYPE_TIMED, TEST_TIMED_EDIT_RECURTYPE_DAY, TEST_SAMPLE_TIMED_ID,
+                            getTestCommand(
+                                TEST_SAMPLE_TIMED_ID,            // Running index of sample Timed Task
+                                TEST_SAMPLE_DESCRIPTION,         // Sample description for edited Task
+                                TEST_KEYWORD_EMPTY,              // End date
+                                TEST_KEYWORD_EMPTY,              // End time
+                                TEST_KEYWORD_EMPTY,              // Start date
+                                TEST_KEYWORD_EMPTY,              // Start time
+                                TEST_KEYWORD_EMPTY,              // Reminder date and time
+                                -1,                              // Priority: -1 symbolize no specified priority
+                                TEST_RECURTYPE_DAY),             // Recur type
+                            TEST_SAMPLE_DESCRIPTION, 
+                            getExpectedEnd(TIMED_CREATED_SAMPLE_END_DATE, TIMED_CREATED_SAMPLE_END_TIME), 
+                            getExpectedStart(TIMED_CREATED_SAMPLE_START_DATE, TIMED_CREATED_SAMPLE_START_TIME), 
+                            null, TEST_TASK_DEFAULT_PRIORITY, true, TEST_RECURTYPE_DAY);
+        
+        testEditTaskCommand(TEST_TASKTYPE_TIMED, TEST_TIMED_EDIT_RECURTYPE_WEEK, TEST_SAMPLE_TIMED_ID,
+                            getTestCommand(
+                                TEST_SAMPLE_TIMED_ID,            // Running index of sample Timed Task
+                                TEST_SAMPLE_DESCRIPTION,         // Sample description for edited Task
+                                TEST_KEYWORD_EMPTY,              // End date
+                                TEST_KEYWORD_EMPTY,              // End time
+                                TEST_KEYWORD_EMPTY,              // Start date
+                                TEST_KEYWORD_EMPTY,              // Start time
+                                TEST_KEYWORD_EMPTY,              // Reminder date and time
+                                -1,                              // Priority: -1 symbolize no specified priority
+                                TEST_RECURTYPE_WEEK),             // Recur type
+                            TEST_SAMPLE_DESCRIPTION, 
+                            getExpectedEnd(TIMED_CREATED_SAMPLE_END_DATE, TIMED_CREATED_SAMPLE_END_TIME), 
+                            getExpectedStart(TIMED_CREATED_SAMPLE_START_DATE, TIMED_CREATED_SAMPLE_START_TIME), 
+                            null, TEST_TASK_DEFAULT_PRIORITY, true, TEST_RECURTYPE_WEEK);
+        
+        testEditTaskCommand(TEST_TASKTYPE_TIMED, TEST_TIMED_EDIT_RECURTYPE_MONTH, TEST_SAMPLE_TIMED_ID,
+                            getTestCommand(
+                                TEST_SAMPLE_TIMED_ID,            // Running index of sample Timed Task
+                                TEST_SAMPLE_DESCRIPTION,         // Sample description for edited Task
+                                TEST_KEYWORD_EMPTY,              // End date
+                                TEST_KEYWORD_EMPTY,              // End time
+                                TEST_KEYWORD_EMPTY,              // Start date
+                                TEST_KEYWORD_EMPTY,              // Start time
+                                TEST_KEYWORD_EMPTY,              // Reminder date and time
+                                -1,                              // Priority: -1 symbolize no specified priority
+                                TEST_RECURTYPE_MONTH),             // Recur type
+                            TEST_SAMPLE_DESCRIPTION, 
+                            getExpectedEnd(TIMED_CREATED_SAMPLE_END_DATE, TIMED_CREATED_SAMPLE_END_TIME), 
+                            getExpectedStart(TIMED_CREATED_SAMPLE_START_DATE, TIMED_CREATED_SAMPLE_START_TIME), 
+                            null, TEST_TASK_DEFAULT_PRIORITY, true, TEST_RECURTYPE_MONTH);
+        
+        testEditTaskCommand(TEST_TASKTYPE_TIMED, TEST_TIMED_EDIT_RECURTYPE_YEAR, TEST_SAMPLE_TIMED_ID,
+                            getTestCommand(
+                                TEST_SAMPLE_TIMED_ID,            // Running index of sample Timed Task
+                                TEST_SAMPLE_DESCRIPTION,         // Sample description for edited Task
+                                TEST_KEYWORD_EMPTY,              // End date
+                                TEST_KEYWORD_EMPTY,              // End time
+                                TEST_KEYWORD_EMPTY,              // Start date
+                                TEST_KEYWORD_EMPTY,              // Start time
+                                TEST_KEYWORD_EMPTY,              // Reminder date and time
+                                -1,                              // Priority: -1 symbolize no specified priority
+                                TEST_RECURTYPE_YEAR),             // Recur type
+                            TEST_SAMPLE_DESCRIPTION, 
+                            getExpectedEnd(TIMED_CREATED_SAMPLE_END_DATE, TIMED_CREATED_SAMPLE_END_TIME), 
+                            getExpectedStart(TIMED_CREATED_SAMPLE_START_DATE, TIMED_CREATED_SAMPLE_START_TIME), 
+                            null, TEST_TASK_DEFAULT_PRIORITY, true, TEST_RECURTYPE_YEAR);
     }
 
     /**
