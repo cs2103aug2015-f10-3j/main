@@ -67,10 +67,10 @@ public class StorageController {
     /*** Constructor ***/
     private StorageController() {
         try {
-            DEFAULT_FILE = new File( "." ).getCanonicalPath() + TASK_XML;
+            DEFAULT_FILE = new File( "." ).getCanonicalPath() + File.separator + TASK_XML;
         } catch (IOException e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+            //e.printStackTrace();
         }
         
         setFileName();
@@ -429,18 +429,24 @@ public class StorageController {
                 
                 // description
                 Element description = doc.createElement(DESCRIPTION);
-                description.appendChild(doc.createTextNode(task.getDescription()));
+                if (task.getDescription() != null) {
+                    description.appendChild(doc.createTextNode(task.getDescription()));
+                }
                 item.appendChild(description);
                 
                 // createdAt
-                String formattedDateTime = DateTimeHelper.parseDateTimeToString(task.getCreatedAt());
                 Element createdAt = doc.createElement(CREATED_AT);
-                createdAt.appendChild(doc.createTextNode(formattedDateTime));
+                if (task.getCreatedAt() != null) {
+                    String formattedDateTime = DateTimeHelper.parseDateTimeToString(task.getCreatedAt());
+                    createdAt.appendChild(doc.createTextNode(formattedDateTime));
+                }
                 item.appendChild(createdAt);
                 
                 // type
                 Element taskType = doc.createElement(TASKTYPE);
-                taskType.appendChild(doc.createTextNode(task.getType().toString()));
+                if (task.getType() != null) {
+                    taskType.appendChild(doc.createTextNode(task.getType().toString()));
+                }
                 item.appendChild(taskType);
                 
                 // complete
@@ -456,9 +462,12 @@ public class StorageController {
                 
                 // tag
                 Element tag = doc.createElement(TAG);
-                tag.appendChild(doc.createTextNode(getTagsInString(task.getTags())));
+                if (task.getTags() != null) {
+                    tag.appendChild(doc.createTextNode(getTagsInString(task.getTags())));
+                }
                 item.appendChild(tag);
                 
+                String formattedDateTime;
                 Element start;
                 Element end;
                 Element reminder;
@@ -476,24 +485,45 @@ public class StorageController {
                         end = doc.createElement(END);
                         end.appendChild(doc.createTextNode(""));
                         item.appendChild(end);
+                        
+                        // reminder
+                        reminder = doc.createElement(REMINDER);
+                        reminder.appendChild(doc.createTextNode(""));
+                        item.appendChild(reminder);
+                        
+                        // recurring
+                        recurring = doc.createElement(RECURRING);
+                        recurring.appendChild(doc.createTextNode(""));
+                        item.appendChild(recurring);
+                        
+                        // type
+                        recurType = doc.createElement(RECURTYPE);
+                        recurType.appendChild(doc.createTextNode(""));
+                        item.appendChild(recurType);
                         break;
                     case TIMED:
                         //start
                         start = doc.createElement(START);
-                        formattedDateTime = DateTimeHelper.parseDateTimeToString(((TimedTask) task).getStart());
-                        start.appendChild(doc.createTextNode(formattedDateTime));
+                        if (((TimedTask) task).getStart() != null) {
+                            formattedDateTime = DateTimeHelper.parseDateTimeToString(((TimedTask) task).getStart());
+                            start.appendChild(doc.createTextNode(formattedDateTime));
+                        }
                         item.appendChild(start);
                         
                         // end
                         end = doc.createElement(END);
-                        formattedDateTime = DateTimeHelper.parseDateTimeToString(((TimedTask) task).getEnd());
-                        end.appendChild(doc.createTextNode(formattedDateTime));
+                        if (((TimedTask) task).getEnd() != null) {
+                            formattedDateTime = DateTimeHelper.parseDateTimeToString(((TimedTask) task).getEnd());
+                            end.appendChild(doc.createTextNode(formattedDateTime));
+                        }
                         item.appendChild(end);
                         
                         // reminder
                         reminder = doc.createElement(REMINDER);
-                        formattedDateTime = DateTimeHelper.parseDateTimeToString(((TimedTask) task).getReminder());
-                        reminder.appendChild(doc.createTextNode(formattedDateTime));
+                        if (((TimedTask) task).getReminder() != null) {
+                            formattedDateTime = DateTimeHelper.parseDateTimeToString(((TimedTask) task).getReminder());
+                            reminder.appendChild(doc.createTextNode(formattedDateTime));
+                        }
                         item.appendChild(reminder);
                         
                         // recurring
@@ -504,7 +534,9 @@ public class StorageController {
                         
                         // type
                         recurType = doc.createElement(RECURTYPE);
-                        recurType.appendChild(doc.createTextNode(((TimedTask) task).getRecurPeriod().toString()));
+                        if (((TimedTask) task).getRecurPeriod() != null) {
+                            recurType.appendChild(doc.createTextNode(((TimedTask) task).getRecurPeriod().toString()));
+                        }
                         item.appendChild(recurType);
                         
                         break;
@@ -516,14 +548,18 @@ public class StorageController {
                         
                         // end
                         end = doc.createElement(END);
-                        formattedDateTime = DateTimeHelper.parseDateTimeToString(((DeadlineTask) task).getEnd());
-                        end.appendChild(doc.createTextNode(formattedDateTime));
+                        if (((DeadlineTask) task).getEnd() != null) {
+                            formattedDateTime = DateTimeHelper.parseDateTimeToString(((DeadlineTask) task).getEnd());
+                            end.appendChild(doc.createTextNode(formattedDateTime));
+                        }
                         item.appendChild(end);
                         
                         // reminder
                         reminder = doc.createElement(REMINDER);
-                        formattedDateTime = DateTimeHelper.parseDateTimeToString(((DeadlineTask) task).getReminder());
-                        reminder.appendChild(doc.createTextNode(formattedDateTime));
+                        if (((DeadlineTask) task).getReminder() != null) {
+                            formattedDateTime = DateTimeHelper.parseDateTimeToString(((DeadlineTask) task).getReminder());
+                            reminder.appendChild(doc.createTextNode(formattedDateTime));
+                        }
                         item.appendChild(reminder);
                         
                         // recurring
@@ -534,7 +570,9 @@ public class StorageController {
                         
                         // type
                         recurType = doc.createElement(RECURTYPE);
-                        recurType.appendChild(doc.createTextNode(((DeadlineTask) task).getRecurPeriod().toString()));
+                        if (((DeadlineTask) task).getRecurPeriod() != null) {
+                            recurType.appendChild(doc.createTextNode(((DeadlineTask) task).getRecurPeriod().toString()));
+                        }
                         item.appendChild(recurType);
                         
                         break;
