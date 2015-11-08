@@ -43,7 +43,7 @@ public class ReminderPanel {
 	private static final int OFFSET_ZERO = 0;
 	private static final int SUBSTRING_BEGIN = 1;
 	private JPanel reminderPanel = new JPanel();
-	private static JTextPane textPane;
+	private JTextPane textPane;
 	private JDialog dialog;
 	private JButton okButton;
 	private static Font font = new Font("Consolas",Font.BOLD, 15);
@@ -183,7 +183,7 @@ public class ReminderPanel {
 	 * @param s
 	 *        	String s to be appended to textPane
 	 */
-	public static void append(String s) {
+	public void append(String s) {
 		try {
 			Document doc = textPane.getDocument();
 			textPane.setCaretPosition(doc.getLength());
