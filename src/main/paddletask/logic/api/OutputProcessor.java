@@ -17,8 +17,8 @@ public class OutputProcessor {
 	private static Observer observer;
 	private static Reminder reminder;
 
-	private static final String FORMAT = "%1$-5s  %2$-50s  %3$-14s  %4$-8s  %5$-11s  %6$-8s";
-	private static final String CLI_FORMAT = "%1$-3s  %2$-25s  %3$-14s  %4$-8s  %5$-11s  %6$-8s";
+	private static final String FORMAT = "%1$-5s  %2$-50s  %3$-14s  %4$-8s  %5$-14s  %6$-8s";
+	private static final String CLI_FORMAT = "%1$-3s  %2$-25s  %3$-14s  %4$-8s  %5$-14s  %6$-8s";
 	private static final String TAGS_FORMAT = "%s ";
 	private static final String TAGS_PADDING = "       %s";
 	private static final String PRIORITY_INDICATOR = "*";

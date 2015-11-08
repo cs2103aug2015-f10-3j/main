@@ -148,6 +148,26 @@ public class MainPanel extends JPanel implements KeyListener {
 	 */
 	private JScrollPane prepareScrollPane(JTextPane textPane) {
 		final JScrollPane areaScrollPane = new JScrollPane(textPane);
+		areaScrollPane.addMouseListener(new MouseListener() {
+
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				inputField.requestFocus();
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent e) {}
+
+			@Override
+			public void mouseExited(MouseEvent e) {}
+
+			@Override
+			public void mousePressed(MouseEvent e) {}
+
+			@Override
+			public void mouseReleased(MouseEvent e) {}
+		});
+		textPane.addMouseListener(areaScrollPane.getMouseListeners()[0]);
 		areaScrollPane.setVerticalScrollBarPolicy(
 				JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		areaScrollPane.setAutoscrolls(true);

@@ -48,7 +48,8 @@ public class MainFrame implements Observer{
 	private static final String OPTION_MAXIMIZE = "Maximize";
 	private static final String OPTION_ICONIFY = "Iconify";
 	private static final String OPTION_CLOSE = "Close";
-	private static final int SIZE_PROPORTION = 2;
+	private static final int SIZE_PROPORTION = 3;
+	private static final int MINIMUM_WIDTH = 920;
 	private static final int OFFSET_ZERO = 0;
 
 	/*** Constructor ***/
@@ -147,7 +148,8 @@ public class MainFrame implements Observer{
 		panel = new MainPanel(mainFrame);
 		panel.populateContentPane(frame.getContentPane());
 		Dimension size = frame.getToolkit().getScreenSize();
-		size.setSize(size.width / SIZE_PROPORTION, size.height / SIZE_PROPORTION);
+		size.setSize(MINIMUM_WIDTH, size.height / SIZE_PROPORTION);
+		frame.setMinimumSize(size);
 		frame.setSize(size);
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
