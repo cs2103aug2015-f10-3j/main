@@ -187,9 +187,9 @@ public class EditTaskCommand extends Command {
     }
 
     private void setNewRecurStatus() {
-        if (hasOption("every")) {
+        if (hasOption("repeat")) {
             _newRecurStatus = true;
-            _newRecurType = Task.determineRecurType(getOption("every").getStringValue());
+            _newRecurType = Task.determineRecurType(getOption("repeat").getStringValue());
         }
     }
     
@@ -386,7 +386,6 @@ public class EditTaskCommand extends Command {
     }
 
     private LocalDateTime getEditedTaskReminder() {
-        LocalDateTime newEditedTaskReminder = null;
         // If user specified a new Reminder LocalDateTime, use this
         if (_newReminder != null) {
             return _newReminder;
