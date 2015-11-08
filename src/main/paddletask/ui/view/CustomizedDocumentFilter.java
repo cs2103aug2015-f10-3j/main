@@ -126,6 +126,19 @@ public final class CustomizedDocumentFilter extends DocumentFilter {
 	}
 	
 	/**
+	 * This method will change the attribute set to white and bold,
+	 * and return the changed set.
+	 * 
+	 * @return whiteAttributeSet
+	 * 				edited attribute set to white
+	 */
+	public static AttributeSet changeToWhite(){
+		AttributeSet whiteAttributeSet = styleContext.addAttribute(styleContext.getEmptySet(), StyleConstants.Foreground, Color.WHITE);
+		whiteAttributeSet = styleContext.addAttribute(whiteAttributeSet, StyleConstants.CharacterConstants.Bold, Boolean.TRUE);
+		return whiteAttributeSet;
+	}
+	
+	/**
 	 * This method will change the attribute set to red and bold,
 	 * and return the changed set.
 	 * 

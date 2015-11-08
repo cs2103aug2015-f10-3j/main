@@ -31,6 +31,7 @@ public class OutputProcessor {
 	private static final int PRIORITY_ONE = 1;
 	private static final int PRIORITY_TWO = 2;
 	private static final int PRIORITY_THREE = 3;
+	private static final int MAX_TAGS_SHOWN_LIMIT = 3;
 	private static final int MIN_SIZE = 0;
 	private static final int MAX_LENGTH = 50;
 	private static final int REPLACE_LENGTH = 47;
@@ -134,7 +135,7 @@ public class OutputProcessor {
 							if(!s.equals(EMPTY_STRING)){
 								tag+=String.format(TAGS_FORMAT, tags.get(j));
 							}
-							if(j == PRIORITY_THREE){
+							if(j == MAX_TAGS_SHOWN_LIMIT){
 								break;
 							}
 						}
