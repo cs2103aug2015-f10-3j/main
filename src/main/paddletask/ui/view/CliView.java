@@ -90,8 +90,16 @@ public class CliView {
 		outputToCmd(output);
 	}
 
-	public void createReminder(ArrayList<Task> arg) {
-		String[] output = uiController.format((ArrayList<Task>)arg);
+	/**
+	 * This method is will create Reminder on the command line mode and
+	 * display the output of the arraylist of tasks to the Command Prompt.
+	 * 
+	 * @param taskList
+	 * 				arraylist of tasks
+	 * 
+	 */
+	public void createReminder(ArrayList<Task> taskList) {
+		String[] output = uiController.format((ArrayList<Task>)taskList);
 		System.out.println(REMINDER_MSG);
 		outputToCmd(output);
 	}

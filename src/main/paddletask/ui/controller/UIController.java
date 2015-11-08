@@ -1,3 +1,4 @@
+//@@author A0125528E
 package main.paddletask.ui.controller;
 
 import java.util.ArrayList;
@@ -67,6 +68,12 @@ public class UIController {
 		observer = new_Observer;
 	}
 	
+	/**
+	 * This method sets the outputProcessor with the boolean of the ui mode.
+	 * 
+	 * @param ui_Mode
+	 * 			boolean of the ui mode
+	 */
 	public static void setUIModeEnabled(boolean ui_Mode) {
 		outputProcessor.setUIModeEnabled(ui_Mode);
 	}

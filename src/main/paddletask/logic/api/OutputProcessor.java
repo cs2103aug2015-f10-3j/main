@@ -289,6 +289,11 @@ public class OutputProcessor {
 		}
 	}
 
+	/**
+	 * This method sets the variable ui_Mode to the given boolean.
+	 * 
+	 * @param ui_Mode
+	 */
 	public void setUIModeEnabled(boolean ui_Mode) {
 		OutputProcessor.ui_Mode = ui_Mode;
 	}
