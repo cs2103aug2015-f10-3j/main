@@ -18,7 +18,7 @@ public class TestClearCommand {
 	@Test
 	public void testClearScreenCommand() {
 		MainFrame mf = new MainFrame();
-		mf.cliMode();
+		//mf.cliMode();
 		System.setOut(new PrintStream(_outContent));
 		System.setIn(new ByteArrayInputStream("clear\r\nexit".getBytes()));
 		assertEquals("", _outContent.toString());
@@ -27,7 +27,7 @@ public class TestClearCommand {
 	@Test
 	public void testClearShortcutScreenCommand() {
 		MainFrame mf = new MainFrame();
-		mf.cliMode();
+		//mf.cliMode();
 		System.setOut(new PrintStream(_outContent));
 		System.setIn(new ByteArrayInputStream("/cl".getBytes()));
 		assertEquals("", _outContent.toString());

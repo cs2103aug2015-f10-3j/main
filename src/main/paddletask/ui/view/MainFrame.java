@@ -7,7 +7,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -21,7 +20,6 @@ import main.paddletask.background.Reminder;
 import main.paddletask.command.api.ClearCommand;
 import main.paddletask.command.api.SearchTaskCommand;
 import main.paddletask.command.api.ViewTaskCommand;
-import main.paddletask.common.util.DateTimeHelper;
 import main.paddletask.common.util.LoggingHandler;
 import main.paddletask.task.entity.Task;
 import main.paddletask.ui.controller.UIController;
@@ -38,28 +36,18 @@ public class MainFrame implements Observer{
 
 	/*** Variables ***/
 	private static final String TITLE = "PaddleTask";
-	private static final String WELCOME_MSG_1 = "Welcome to PaddleTask.";
-	private static final String WELCOME_MSG_2 = "Today is %s.";
-	private static final String WELCOME_MSG_3 = "Your upcoming tasks for today:";
-	private static final String FIRST_COMMAND = "view all today";
-	private static final String REMINDER_MSG = "Reminder Alert!";
 	private static JFrame frame;
 	private static MainPanel panel;
 	private static boolean isMinimized = false;
-	private static Scanner sc = new Scanner(System.in);
 	private static final String CLI_COMMAND = "cli";
 	private static UIController uiController;
-	private static final char PRIORITY_INDICATOR = '*';
-	private static final char BOLD_INDICATOR = '@';
 	private static boolean ui_Mode = false;
 	private static MainFrame mainFrame = null;
-	private static final int WELCOME_MSG_SIZE = 3;
+	private static CliView cliView = null;
 	private static final String OPTION_MAXIMIZE = "Maximize";
 	private static final String OPTION_ICONIFY = "Iconify";
 	private static final String OPTION_CLOSE = "Close";
 	private static final int SIZE_PROPORTION = 2;
-	private static final int REMOVE_ONE = 1;
-	private static final int CHARACTER_LOCATION = 0;
 	private static final int OFFSET_ZERO = 0;
 
 	/*** Constructor ***/
@@ -92,71 +80,12 @@ public class MainFrame implements Observer{
 		if(args.length > OFFSET_ZERO){
 			String input = args[OFFSET_ZERO];
 			if(input.equals(CLI_COMMAND)){
-				mainFrame.cliMode();
+				cliView = new CliView(uiController);
 				return true;
 			}
 		}
 		initiateGUI();
 		return true;
-	}
-	
-	/**
-	 * This method is to initiate the command line mode
-	 * of PaddleTask. This will take in input from the user
-	 * to be processed.
-	 * 
-	 */
-	public void cliMode(){
-		prepareWelcome();
-		while(sc.hasNext()){
-			String command = sc.nextLine();
-			String[] output = uiController.processUserInput(command);
-			if(output!= null){
-				outputToCmd(output);
-			}
-
-		}
-	}
-
-	/**
-	 * This method is to prepare the welcome message of 
-	 * PaddleTask. It will also send a "view all today"
-	 * command that will be used to display user's task today
-	 * on initialization of PaddleTask.
-	 * 
-	 */
-	public void prepareWelcome(){
-		String today = DateTimeHelper.getDate(DateTimeHelper.now());
-		String[] outputs = new String[WELCOME_MSG_SIZE];
-		int counter = OFFSET_ZERO;
-		outputs[counter++] = WELCOME_MSG_1;
-		outputs[counter++] = String.format(WELCOME_MSG_2, today);
-		outputs[counter++] = WELCOME_MSG_3;
-		String[] output = uiController.processUserInput(FIRST_COMMAND);
-		outputToCmd(outputs);
-		outputToCmd(output);
-	}
-
-	/**
-	 * This method is process the output and
-	 * display it onto the command line.
-	 * 
-	 * @param output 
-	 * 					String array to be displayed
-	 * 
-	 */
-	public void outputToCmd(String[] output){
-		System.out.println();
-		for(String s : output){
-			if(s!=null){
-				while(s.charAt(CHARACTER_LOCATION) == BOLD_INDICATOR || 
-						s.charAt(CHARACTER_LOCATION) == PRIORITY_INDICATOR ){
-					s = s.substring(REMOVE_ONE);
-				}
-				System.out.println(s);
-			}
-		}
-		System.out.println();
 	}
 
 	/**
@@ -230,6 +159,7 @@ public class MainFrame implements Observer{
 	 *  @param  Component 
 	 *  			JFrame frame
 	 */
+	@SuppressWarnings("unused")
 	private static void removeDefaultButtons(Component com){
 		if(com instanceof JButton){
 			String name = ((JButton) com).getAccessibleContext().getAccessibleName();
@@ -268,7 +198,6 @@ public class MainFrame implements Observer{
 	@SuppressWarnings("unchecked")
 	@Override
 	public void update(Observable o, Object arg) {
-		// TODO Auto-generated method stub
 		if (o instanceof ClearCommand || o instanceof ViewTaskCommand || o instanceof SearchTaskCommand) {
 			if(ui_Mode){
 				MainPanel.setPaneToNull();
@@ -281,9 +210,7 @@ public class MainFrame implements Observer{
 				if(ui_Mode){
 					panel.createReminder((ArrayList<Task>)arg);
 				} else{
-					String[] output = uiController.format((ArrayList<Task>)arg);
-					System.out.println(REMINDER_MSG);
-					outputToCmd(output);
+					cliView.createReminder((ArrayList<Task>)arg);
 				}
 			}
 		} else {
