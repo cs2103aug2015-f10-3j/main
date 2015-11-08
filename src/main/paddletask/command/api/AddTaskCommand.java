@@ -107,7 +107,7 @@ public class AddTaskCommand extends Command implements ParserConstants {
 		Integer priority = getTaskPriority();
 		LocalDateTime startDate = getTaskStartDate();
 		LocalDateTime deadline = getTaskEndDate();
-		if (DateTimeHelper.isBigger(startDate, deadline)) {
+		if (DateTimeHelper.isLater(startDate, deadline)) {
 			throw new TaskAddFailedException("Start date is later than end date");
 		}
 		LocalDateTime reminder = calculateTaskReminderDate(deadline);

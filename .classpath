@@ -13,5 +13,6 @@
 	<classpathentry kind="lib" path="src/main/resources/external/natty-0.12.jar"/>
 	<classpathentry kind="lib" path="src/main/resources/external/slf4j-api-1.7.10.jar"/>
 	<classpathentry kind="lib" path="src/main/resources/external/slf4j-nop-1.7.10.jar"/>
+	<classpathentry kind="lib" path="src/main/resources/external/JTattoo-1.6.11.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

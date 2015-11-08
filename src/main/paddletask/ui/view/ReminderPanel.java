@@ -2,6 +2,7 @@
 package main.paddletask.ui.view;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -16,7 +17,12 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.JTextPane;
+import javax.swing.text.AbstractDocument;
+import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultCaret;
+import javax.swing.text.Document;
+import javax.swing.text.SimpleAttributeSet;
 
 import main.paddletask.task.entity.Task;
 import main.paddletask.ui.controller.UIController;
@@ -31,14 +37,20 @@ public class ReminderPanel {
 	private static final String OPTION_MAXIMIZE = "Maximize";
 	private static final String OPTION_ICONIFY = "Iconify";
 	private static final String OPTION_CLOSE = "Close";
+	private static final String STRING_EMPTY = "";
+	private static final char PRIORITY_INDICATOR = '*';
+	private static final char BOLD_INDICATOR = '@';
+	private static final int OFFSET_ZERO = 0;
+	private static final int SUBSTRING_BEGIN = 1;
 	private JPanel reminderPanel = new JPanel();
-	private JTextArea textArea;
+	private static JTextPane textPane;
 	private JDialog dialog;
 	private JButton okButton;
-	private static Font font = new Font("Courier",Font.PLAIN, 12);
+	private static Font font = new Font("Consolas",Font.BOLD, 14);
 	private Box box = null;
 	private static final int HEIGHT = 3;
 	private static final int WIDTH = 2;
+	private static final Color backgroundColor = new Color(220, 0, 0); //Red color
 	
 	/*** Constructors ***/
 	public ReminderPanel(ArrayList<Task> taskList, JDialog dialog){
@@ -61,7 +73,7 @@ public class ReminderPanel {
 	private void processArrayList(){
 		UIController uiController = UIController.getInstance(null);
 		String[] output = uiController.format(taskList);
-		appendTexts(textArea, output);
+		append(output);
 	}
 
 	/**
@@ -72,8 +84,8 @@ public class ReminderPanel {
 	 */
 	private void preparePanelComponents() {
 		reminderPanel.setLayout(new BoxLayout(reminderPanel, BoxLayout.PAGE_AXIS));
-		textArea = prepareJTextArea();
-		JScrollPane scrollPane = prepareScrollPane(textArea);
+		textPane = prepareJTextPane();
+		JScrollPane scrollPane = prepareScrollPane(textPane);
 		okButton = prepareButton();
 		prepareBoxComponent(scrollPane);
 		prepareBoxComponent(okButton);
@@ -84,38 +96,18 @@ public class ReminderPanel {
 	 * This method prepares a scroll pane for the textPane to enable scrolling
 	 * for display.
 	 * 
-	 * @param textArea
+	 * @param textPane
 	 * 				JTextPane of the panel
 
 	 * @return areaScrollPane 
 	 * 				JScrollPane with textPane
 	 */
-	private JScrollPane prepareScrollPane(JTextArea textArea) {
-		JScrollPane areaScrollPane = new JScrollPane(textArea);
+	private JScrollPane prepareScrollPane(JTextPane textPane) {
+		JScrollPane areaScrollPane = new JScrollPane(textPane);
 		areaScrollPane.setVerticalScrollBarPolicy(
 				JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		areaScrollPane.setAutoscrolls(true);
 		return areaScrollPane;
-	}
-	
-	/**
-	 * This method prepares a text area for displaying
-	 * output to the user.
-	 * 
-	 * @return textArea
-	 * 				JTextPane of the panel
-	 */
-	private JTextArea prepareJTextArea() {
-		textArea = new JTextArea();
-		textArea.setFont(font);
-		textArea.setLineWrap(true);
-		textArea.setEditable(false);
-		Dimension size = reminderPanel.getToolkit().getScreenSize();
-		size.setSize(size.width / WIDTH , size.height / HEIGHT);
-		textArea.setPreferredSize(size);
-		DefaultCaret caret = (DefaultCaret)textArea.getCaret();
-		caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
-		return textArea;
 	} 
 	
 	/**
@@ -146,6 +138,25 @@ public class ReminderPanel {
 	}
 	
 	/**
+	 * This method prepares a text pane for the 
+	 * output of the program to be displayed on.
+	 * 
+	 * @return inputTextPane
+	 * 				JTextPane for the panel
+	 */
+	private JTextPane prepareJTextPane() {
+		JTextPane inputTextPane = new JTextPane();
+		inputTextPane.setFont(font);
+		inputTextPane.setEditable(false);
+		((AbstractDocument) inputTextPane.getDocument()).setDocumentFilter(new CustomizedDocumentFilter(inputTextPane));
+        Dimension size = dialog.getToolkit().getScreenSize();
+        size.setSize(size.width / WIDTH , size.height / HEIGHT);
+        inputTextPane.setPreferredSize(size);
+
+		return inputTextPane;
+	}
+	
+	/**
 	 * This method prepares a button to allow the user
 	 * to close the reminder when clicked.
 	 * 
@@ -167,19 +178,59 @@ public class ReminderPanel {
 	}
 	
 	/**
-	 * This method prepares a button to allow the user
-	 * to close the reminder when clicked.
+	 * This method appends a string of text into the textPane to display to the user
 	 * 
-	 * @param textArea
-	 * 				JTextArea to be appended to.
-	 * 		  output
-	 * 				String array of outputs
+	 * @param s
+	 *        	String s to be appended to textPane
 	 */
-	public void appendTexts(final JTextArea textArea, String[] output) {
-		for(String s : output){
-			if(s != null){
-				textArea.append( s + NEXT_LINE);
+	public static void append(String s) {
+		try {
+			Document doc = textPane.getDocument();
+			textPane.setCaretPosition(doc.getLength());
+			doc.insertString(doc.getLength(), s + NEXT_LINE + NEXT_LINE, null);
+		} catch(BadLocationException exc) {
+			assert false;
+			exc.printStackTrace();
+		}
+
+	}
+
+	/**
+	 * This method appends a string array of text into the textPane to display to the user
+	 * 
+	 * @param output
+	 * 			String[] to be appended to textPane
+	 *        	   
+	 */
+	public void append(String[] output){
+		try {
+			Document doc = textPane.getDocument();
+			textPane.setCaretPosition(doc.getLength());
+			String outputString = STRING_EMPTY;
+			for(String s : output ){
+				if(s != null){
+					outputString = s + NEXT_LINE;
+					SimpleAttributeSet color = new SimpleAttributeSet();
+					if(outputString.charAt(OFFSET_ZERO)==BOLD_INDICATOR){
+						color.addAttributes(CustomizedDocumentFilter.setBold());
+						outputString = outputString.substring(SUBSTRING_BEGIN);
+						color.addAttributes(CustomizedDocumentFilter.setBackgroundColorForHeader(backgroundColor));
+					}
+					if(outputString.charAt(OFFSET_ZERO)==PRIORITY_INDICATOR){
+						color.addAttributes(CustomizedDocumentFilter.changeToOrange());
+						outputString = outputString.substring(SUBSTRING_BEGIN);
+					}
+					if(outputString.charAt(OFFSET_ZERO)==PRIORITY_INDICATOR){
+						color.addAttributes(CustomizedDocumentFilter.changeToRed());
+						outputString = outputString.substring(SUBSTRING_BEGIN);
+					}
+					doc.insertString(doc.getLength(), outputString, color);
+				}
 			}
+			doc.insertString(doc.getLength(), NEXT_LINE, null);
+		} catch(BadLocationException exc) {
+			assert false;
+			exc.printStackTrace();
 		}
 	}
 	

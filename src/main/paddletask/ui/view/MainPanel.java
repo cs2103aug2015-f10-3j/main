@@ -5,15 +5,18 @@ import java.awt.Dialog.ModalityType;
 import java.awt.event.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import javax.swing.*;
 import javax.swing.text.AbstractDocument;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
+import javax.swing.text.SimpleAttributeSet;
 
 import main.paddletask.common.data.DoublyLinkedList;
 import main.paddletask.common.data.Node;
+import main.paddletask.common.data.ParserConstants;
 import main.paddletask.common.util.DateTimeHelper;
 import main.paddletask.task.entity.Task;
 import main.paddletask.ui.controller.UIController;
@@ -29,10 +32,14 @@ public class MainPanel extends JPanel implements KeyListener {
 	private static final String WELCOME_MSG_3 = "Your upcoming tasks for today:";
 	private static final String MODAL_OPTION = "Modal Dialog";
 	private static final String FIRST_COMMAND = "view all today";
+	private static final String KEYNAME_FONT_UP = "Font up";
+	private static final String KEYNAME_FONT_DOWN = "Font down";
 	private static final int OFFSET_ZERO = 0;
 	private static final int SUBSTRING_BEGIN = 1;
 	private static final char PRIORITY_INDICATOR = '*';
 	private static final char BOLD_INDICATOR = '@';
+	private static final int INCREASE_FONT_SIZE = 1;
+	private static final int DECREASE_FONT_SIZE = -1;
 	protected static int NUM_COMPONENTS = 3;
 	protected UIController uiController = null;
 	private static Font font = new Font("Consolas",Font.PLAIN, 14);
@@ -47,6 +54,9 @@ public class MainPanel extends JPanel implements KeyListener {
 	private String currentCommand = null;
 	private static JScrollPane scrollPane = null;
 	private MainFrame mainFrame = null;
+	private static final float OPACITY_OF_SUGGESTIONS = 0.9f;
+	private CommandSuggestor commandSuggestor = null;
+	private static final Color backgroundColor = new Color(160, 160, 160); //Gray color
 
 	/*** Constructors ***/
 	public MainPanel(MainFrame mainFrame){
@@ -145,7 +155,6 @@ public class MainPanel extends JPanel implements KeyListener {
 		inputField.requestFocus();
 		inputField.addKeyListener(this);
 		inputField.addActionListener(new ActionListener() {
-
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				String input = inputField.getText();
@@ -155,6 +164,23 @@ public class MainPanel extends JPanel implements KeyListener {
 				currentCommand = null;
 			}
 		});
+		inputField.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_F4, 0, true), KEYNAME_FONT_UP);
+		inputField.getActionMap().put(KEYNAME_FONT_UP, new AbstractAction() {
+			@Override
+			public void actionPerformed(ActionEvent ae) {//focuses the first label on popwindow
+				CustomizedDocumentFilter.changeFontSize(INCREASE_FONT_SIZE);
+			}
+		});
+		inputField.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0, true), KEYNAME_FONT_DOWN);
+		inputField.getActionMap().put(KEYNAME_FONT_DOWN, new AbstractAction() {
+			@Override
+			public void actionPerformed(ActionEvent ae) {//focuses the first label on popwindow
+				CustomizedDocumentFilter.changeFontSize(DECREASE_FONT_SIZE);
+			}
+		});
+		commandSuggestor = new CommandSuggestor(inputField, mainFrame.getFrame(),
+				Color.WHITE.brighter(), Color.BLUE, Color.RED, OPACITY_OF_SUGGESTIONS);
+		
 		return inputField;
 	}
 
@@ -173,7 +199,7 @@ public class MainPanel extends JPanel implements KeyListener {
 		try {
 			Document doc = textPane.getDocument();
 			textPane.setCaretPosition(doc.getLength());
-			doc.insertString(doc.getLength(), s + NEXT_LINE, null);
+			doc.insertString(doc.getLength(), s + NEXT_LINE + NEXT_LINE, null);
 		} catch(BadLocationException exc) {
 			assert false;
 			exc.printStackTrace();
@@ -196,17 +222,18 @@ public class MainPanel extends JPanel implements KeyListener {
 			for(String s : output ){
 				if(s != null){
 					outputString = s + NEXT_LINE;
-					AttributeSet color = null;
+					SimpleAttributeSet color = new SimpleAttributeSet();
 					if(outputString.charAt(OFFSET_ZERO)==BOLD_INDICATOR){
-						color = CustomizedDocumentFilter.setBold();
+						color.addAttributes(CustomizedDocumentFilter.setBold());
+						outputString = outputString.substring(SUBSTRING_BEGIN);
+						color.addAttributes(CustomizedDocumentFilter.setBackgroundColorForHeader(backgroundColor));
+					}
+					if(outputString.charAt(OFFSET_ZERO)==PRIORITY_INDICATOR){
+						color.addAttributes(CustomizedDocumentFilter.changeToOrange());
 						outputString = outputString.substring(SUBSTRING_BEGIN);
 					}
 					if(outputString.charAt(OFFSET_ZERO)==PRIORITY_INDICATOR){
-						color = CustomizedDocumentFilter.changeToOrange();
-						outputString = outputString.substring(SUBSTRING_BEGIN);
-					}
-					if(outputString.charAt(OFFSET_ZERO)==PRIORITY_INDICATOR){
-						color = CustomizedDocumentFilter.changeToRed();
+						color.addAttributes(CustomizedDocumentFilter.changeToRed());
 						outputString = outputString.substring(SUBSTRING_BEGIN);
 					}
 					doc.insertString(doc.getLength(), outputString, color);
@@ -247,12 +274,9 @@ public class MainPanel extends JPanel implements KeyListener {
 	private JTextPane prepareJTextPane() {
 		JTextPane inputTextPane = new JTextPane();
 		inputTextPane.setFont(font);
-		//inputTextPane.setLineWrap(true);
 		inputTextPane.setEditable(false);
 		((AbstractDocument) inputTextPane.getDocument()).setDocumentFilter(new CustomizedDocumentFilter(inputTextPane));
 
-		/*DefaultCaret caret = (DefaultCaret)inputTextPane.getCaret();
-		caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);*/
 		return inputTextPane;
 	}
 
@@ -316,6 +340,10 @@ public class MainPanel extends JPanel implements KeyListener {
 	 */
 	public static void setDialogNull(){
 		reminderDialog = null;
+	}
+	
+	public void triggerCommandSuggestor(){
+		commandSuggestor.checkForAndShowSuggestions();
 	}
 
 	/**
@@ -413,6 +441,7 @@ public class MainPanel extends JPanel implements KeyListener {
 		// TODO Auto-generated method stub
 
 	}
-
+	
+	
 
 }
