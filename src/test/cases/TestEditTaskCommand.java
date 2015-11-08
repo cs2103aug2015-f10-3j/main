@@ -57,10 +57,16 @@ public class TestEditTaskCommand {
     protected static final String TEST_COMMAND = "edit %1$s%2$s%3$s%4$s%5$s%6$s%7$s%8$s%9$s"; 
     protected static final String TEST_DATE_FORMAT = "%1$s %2$s";
     
-    protected static final int TEST_SAMPLE_FLOAT_ID = 1;
-    protected static final int TEST_SAMPLE_DEADLINE_ID = 2;
-    protected static final int TEST_SAMPLE_TIMED_ID = 3;
+    protected static final int TEST_SAMPLE_FLOAT_ID = 0;
+    protected static final int TEST_SAMPLE_DEADLINE_ID = 1;
+    protected static final int TEST_SAMPLE_TIMED_ID = 2;
+    
+    protected static final int TEST_SAMPLE_FLOAT_INDEX = 1;
+    protected static final int TEST_SAMPLE_DEADLINE_INDEX = 2;
+    protected static final int TEST_SAMPLE_TIMED_INDEX = 3;
     protected static final int TEST_SAMPLE_PRIORITY = 1;
+    
+    
     protected static final int TEST_TASK_DEFAULT_PRIORITY = 3;
     
     protected static final String TEST_SAMPLE_DESCRIPTION = "Lorem ipsum dolor";
@@ -110,7 +116,14 @@ public class TestEditTaskCommand {
     protected static final String TEST_FLOATING_ADD_END_DATE_TIME = "Test adding both an End time and date to a Floating Task";
     protected static final String TEST_FLOATING_ADD_END_DATE_TIME_AND_REMINDER = "Testing adding both an End time,date and a Reminder to a Floating task";
 //    protected static final String TEST_FLOATING_ADD_START_DATE_AND_END_DATE_TIME = "Test adding only a Start date and both an End date/time";
+    protected static final String TEST_FLOATING_ADD_START_DATE_AND_END_TIME = "Test adding a Start date only and an End time only to a Floating Task";
+    protected static final String TEST_FLOATING_ADD_START_TIME_AND_END_TIME = "Test adding a Start time only and an End time only to a Floating Task";
+    protected static final String TEST_FLOATING_ADD_START_DATE_TIME_AND_END_TIME = "Test adding both Start date/time only and an End time only to a Floating Task";
+    protected static final String TEST_FLOATING_ADD_START_DATE_AND_END_DATE = "Test adding a Start date only and an End date only to a Floating Task";
+    protected static final String TEST_FLOATING_ADD_START_TIME_AND_END_DATE = "Test adding a Start time only and an End date only to a Floating Task";
+    protected static final String TEST_FLOATING_ADD_START_DATE_TIME_AND_END_DATE = "Test adding both a Start date/time and an End date only";
     protected static final String TEST_FLOATING_ADD_START_TIME_AND_END_DATE_TIME = "Test adding only a Start time and both an End date/time";
+    protected static final String TEST_FLOATING_ADD_START_DATE_AND_END_DATE_TIME = "Testing add only a Start date and both an End date/time";
     protected static final String TEST_FLOATING_ADD_START_DATE_TIME_AND_END_DATE_TIME = "Testing add both a Start date/time and both an End date/time";
     protected static final String TEST_FLOATING_EDIT_PRIORITY = "Test editing the priority level of a Floating Task";
     
@@ -178,15 +191,15 @@ public class TestEditTaskCommand {
         // Timed Constructor: taskId | description | createdAt | start | end | reminder | isComplete | priority | isRecurring | recurType
         
         // Sample Floating Task
-        task = new FloatingTask(1, "Test Floating Task", DateTimeHelper.now(), false, 3);
+        task = new FloatingTask(TEST_SAMPLE_FLOAT_ID, "Test Floating Task", DateTimeHelper.now(), false, 3);
         testTaskList.add(task);
         
         // Sample Deadline Task
-        task = new DeadlineTask(2, "Test Deadline Task", DateTimeHelper.now(), sampleDeadlineEnd, sampleReminder, false, 3, false, TEST_RECURTYPE_NULL);
+        task = new DeadlineTask(TEST_SAMPLE_DEADLINE_ID, "Test Deadline Task", DateTimeHelper.now(), sampleDeadlineEnd, sampleReminder, false, 3, false, TEST_RECURTYPE_NULL);
         testTaskList.add(task);
         
         // Sample Timed Task
-        task = new TimedTask(3, "Test TimedTask", DateTimeHelper.now(), sampleTimedStart, sampleTimedEnd, sampleReminder, false, 3, false, TEST_RECURTYPE_NULL);
+        task = new TimedTask(TEST_SAMPLE_TIMED_ID, "Test TimedTask", DateTimeHelper.now(), sampleTimedStart, sampleTimedEnd, sampleReminder, false, 3, false, TEST_RECURTYPE_NULL);
         testTaskList.add(task);
         
         // Save sample tasks into XML
@@ -320,7 +333,7 @@ public class TestEditTaskCommand {
         /*** FloatingTask Test Cases ***/
         testEditTaskCommand(TEST_TASKTYPE_FLOATING, TEST_FLOATING_EDIT_DESCRIPTION, TEST_SAMPLE_FLOAT_ID,
                             getTestCommand(
-                                TEST_SAMPLE_FLOAT_ID,    // Running index of sample Floating Task
+                                TEST_SAMPLE_FLOAT_INDEX,    // Running index of sample Floating Task
                                 TEST_SAMPLE_DESCRIPTION, // Sample description for edited Task
                                 TEST_KEYWORD_EMPTY,      // End date
                                 TEST_KEYWORD_EMPTY,      // End time
@@ -333,7 +346,7 @@ public class TestEditTaskCommand {
         
         testEditTaskCommand(TEST_TASKTYPE_DEADLINE, TEST_FLOATING_ADD_END_DATE_TIME, TEST_SAMPLE_FLOAT_ID,
                             getTestCommand(
-                                TEST_SAMPLE_FLOAT_ID,             // Running index of sample Floating Task
+                                TEST_SAMPLE_FLOAT_INDEX,             // Running index of sample Floating Task
                                 TEST_SAMPLE_DESCRIPTION,          // Sample description for edited Task
                                 TEST_SAMPLE_END_DATE,             // End date
                                 TEST_SAMPLE_END_TIME,             // End time
@@ -348,7 +361,7 @@ public class TestEditTaskCommand {
         
         testEditTaskCommand(TEST_TASKTYPE_DEADLINE, TEST_FLOATING_ADD_END_DATE_TIME_AND_REMINDER, TEST_SAMPLE_FLOAT_ID,
                             getTestCommand(
-                                TEST_SAMPLE_FLOAT_ID,            // Running index of sample Floating Task
+                                TEST_SAMPLE_FLOAT_INDEX,            // Running index of sample Floating Task
                                 TEST_SAMPLE_DESCRIPTION,         // Sample description for edited Task
                                 TEST_SAMPLE_END_DATE,            // End date
                                 TEST_SAMPLE_END_TIME,            // End time
@@ -364,7 +377,7 @@ public class TestEditTaskCommand {
         
         testEditTaskCommand(TEST_TASKTYPE_DEADLINE, TEST_FLOATING_ADD_END_TIME, TEST_SAMPLE_FLOAT_ID,
                             getTestCommand(
-                                TEST_SAMPLE_FLOAT_ID,            // Running index of sample Floating Task
+                                TEST_SAMPLE_FLOAT_INDEX,            // Running index of sample Floating Task
                                 TEST_SAMPLE_DESCRIPTION,         // Sample description for edited Task
                                 TEST_KEYWORD_EMPTY,              // End date
                                 TEST_SAMPLE_END_TIME,            // End time
@@ -378,7 +391,7 @@ public class TestEditTaskCommand {
         
         testEditTaskCommand(TEST_TASKTYPE_DEADLINE, TEST_FLOATING_ADD_END_TIME_AND_REMINDER, TEST_SAMPLE_FLOAT_ID,
                             getTestCommand(
-                                TEST_SAMPLE_FLOAT_ID,            // Running index of sample Floating Task
+                                TEST_SAMPLE_FLOAT_INDEX,            // Running index of sample Floating Task
                                 TEST_SAMPLE_DESCRIPTION,         // Sample description for edited Task
                                 TEST_KEYWORD_EMPTY,              // End date
                                 TEST_SAMPLE_END_TIME,            // End time
@@ -392,9 +405,122 @@ public class TestEditTaskCommand {
                             getExpectedReminder(TEST_SAMPLE_REMINDER_DATE_TIME), 
                             TEST_TASK_DEFAULT_PRIORITY, false, TEST_RECURTYPE_NULL);
         
+        testEditTaskCommand(TEST_TASKTYPE_TIMED, TEST_FLOATING_ADD_START_DATE_AND_END_TIME, TEST_SAMPLE_FLOAT_ID,
+                            getTestCommand(
+                                TEST_SAMPLE_FLOAT_INDEX,         // Running index of sample Floating Task
+                                TEST_SAMPLE_DESCRIPTION,         // Sample description for edited Task
+                                TEST_KEYWORD_EMPTY,              // End date
+                                TEST_SAMPLE_END_TIME,            // End time
+                                TEST_SAMPLE_START_DATE,          // Start date
+                                TEST_KEYWORD_EMPTY,              // Start time
+                                TEST_KEYWORD_EMPTY,              // Reminder date and time
+                                -1,                              // Priority: -1 symbolize no specified priority
+                                TEST_RECURTYPE_NULL),            // Recur type
+                            TEST_SAMPLE_DESCRIPTION, 
+                            getExpectedEnd(TEST_SAMPLE_TODAY_DATE, TEST_SAMPLE_END_TIME), 
+                            getExpectedStart(TEST_SAMPLE_START_DATE, DateTimeHelper.getTime(DateTimeHelper.now())), 
+                            null, TEST_TASK_DEFAULT_PRIORITY, false, TEST_RECURTYPE_NULL);
+        
+        testEditTaskCommand(TEST_TASKTYPE_TIMED, TEST_FLOATING_ADD_START_TIME_AND_END_TIME, TEST_SAMPLE_FLOAT_ID,
+                            getTestCommand(
+                                TEST_SAMPLE_FLOAT_INDEX,         // Running index of sample Floating Task
+                                TEST_SAMPLE_DESCRIPTION,         // Sample description for edited Task
+                                TEST_KEYWORD_EMPTY,              // End date
+                                TEST_SAMPLE_END_TIME,            // End time
+                                TEST_KEYWORD_EMPTY,              // Start date
+                                TEST_SAMPLE_START_TIME,          // Start time
+                                TEST_KEYWORD_EMPTY,              // Reminder date and time
+                                -1,                              // Priority: -1 symbolize no specified priority
+                                TEST_RECURTYPE_NULL),            // Recur type
+                            TEST_SAMPLE_DESCRIPTION, 
+                            getExpectedEnd(TEST_SAMPLE_TODAY_DATE, TEST_SAMPLE_END_TIME), 
+                            getExpectedStart(TEST_SAMPLE_TODAY_DATE, TEST_SAMPLE_START_TIME), 
+                            null, TEST_TASK_DEFAULT_PRIORITY, false, TEST_RECURTYPE_NULL);
+        
+        testEditTaskCommand(TEST_TASKTYPE_TIMED, TEST_FLOATING_ADD_START_DATE_TIME_AND_END_TIME, TEST_SAMPLE_FLOAT_ID,
+                            getTestCommand(
+                                TEST_SAMPLE_FLOAT_INDEX,         // Running index of sample Floating Task
+                                TEST_SAMPLE_DESCRIPTION,         // Sample description for edited Task
+                                TEST_KEYWORD_EMPTY,              // End date
+                                TEST_SAMPLE_END_TIME,            // End time
+                                TEST_SAMPLE_START_DATE,          // Start date
+                                TEST_SAMPLE_START_TIME,          // Start time
+                                TEST_KEYWORD_EMPTY,              // Reminder date and time
+                                -1,                              // Priority: -1 symbolize no specified priority
+                                TEST_RECURTYPE_NULL),            // Recur type
+                            TEST_SAMPLE_DESCRIPTION, 
+                            getExpectedEnd(TEST_SAMPLE_TODAY_DATE, TEST_SAMPLE_END_TIME), 
+                            getExpectedStart(TEST_SAMPLE_START_DATE, TEST_SAMPLE_START_TIME), 
+                            null, TEST_TASK_DEFAULT_PRIORITY, false, TEST_RECURTYPE_NULL);
+        
+        testEditTaskCommand(TEST_TASKTYPE_TIMED, TEST_FLOATING_ADD_START_DATE_AND_END_DATE, TEST_SAMPLE_FLOAT_ID,
+                            getTestCommand(
+                                TEST_SAMPLE_FLOAT_INDEX,         // Running index of sample Floating Task
+                                TEST_SAMPLE_DESCRIPTION,         // Sample description for edited Task
+                                TEST_SAMPLE_END_DATE,            // End date
+                                TEST_KEYWORD_EMPTY,              // End time
+                                TEST_SAMPLE_START_DATE,          // Start date
+                                TEST_KEYWORD_EMPTY,              // Start time
+                                TEST_KEYWORD_EMPTY,              // Reminder date and time
+                                -1,                              // Priority: -1 symbolize no specified priority
+                                TEST_RECURTYPE_NULL),            // Recur type
+                            TEST_SAMPLE_DESCRIPTION, 
+                            getExpectedEnd(TEST_SAMPLE_END_DATE, DateTimeHelper.getTime(DateTimeHelper.now())), 
+                            getExpectedStart(TEST_SAMPLE_START_DATE, DateTimeHelper.getTime(DateTimeHelper.now())), 
+                            null, TEST_TASK_DEFAULT_PRIORITY, false, TEST_RECURTYPE_NULL);
+        
+        testEditTaskCommand(TEST_TASKTYPE_TIMED, TEST_FLOATING_ADD_START_TIME_AND_END_DATE, TEST_SAMPLE_FLOAT_ID,
+                            getTestCommand(
+                                TEST_SAMPLE_FLOAT_INDEX,         // Running index of sample Floating Task
+                                TEST_SAMPLE_DESCRIPTION,         // Sample description for edited Task
+                                TEST_SAMPLE_END_DATE,            // End date
+                                TEST_KEYWORD_EMPTY,              // End time
+                                TEST_KEYWORD_EMPTY,              // Start date
+                                TEST_SAMPLE_START_TIME,          // Start time
+                                TEST_KEYWORD_EMPTY,              // Reminder date and time
+                                -1,                              // Priority: -1 symbolize no specified priority
+                                TEST_RECURTYPE_NULL),            // Recur type
+                            TEST_SAMPLE_DESCRIPTION, 
+                            getExpectedEnd(TEST_SAMPLE_END_DATE, DateTimeHelper.getTime(DateTimeHelper.now())), 
+                            getExpectedStart(TEST_SAMPLE_TODAY_DATE, TEST_SAMPLE_START_TIME), 
+                            null, TEST_TASK_DEFAULT_PRIORITY, false, TEST_RECURTYPE_NULL);
+        
+        
+        testEditTaskCommand(TEST_TASKTYPE_TIMED, TEST_FLOATING_ADD_START_DATE_TIME_AND_END_DATE, TEST_SAMPLE_FLOAT_ID,
+                            getTestCommand(
+                                TEST_SAMPLE_FLOAT_INDEX,         // Running index of sample Floating Task
+                                TEST_SAMPLE_DESCRIPTION,         // Sample description for edited Task
+                                TEST_SAMPLE_END_DATE,            // End date
+                                TEST_KEYWORD_EMPTY,              // End time
+                                TEST_SAMPLE_START_DATE,          // Start date
+                                TEST_SAMPLE_START_TIME,          // Start time
+                                TEST_KEYWORD_EMPTY,              // Reminder date and time
+                                -1,                              // Priority: -1 symbolize no specified priority
+                                TEST_RECURTYPE_NULL),            // Recur type
+                            TEST_SAMPLE_DESCRIPTION, 
+                            getExpectedEnd(TEST_SAMPLE_END_DATE, DateTimeHelper.getTime(DateTimeHelper.now())), 
+                            getExpectedStart(TEST_SAMPLE_START_DATE, TEST_SAMPLE_START_TIME), 
+                            null, TEST_TASK_DEFAULT_PRIORITY, false, TEST_RECURTYPE_NULL);
+        
+        testEditTaskCommand(TEST_TASKTYPE_TIMED, TEST_FLOATING_ADD_START_DATE_AND_END_DATE_TIME, TEST_SAMPLE_FLOAT_ID,
+                            getTestCommand(
+                                TEST_SAMPLE_FLOAT_INDEX,         // Running index of sample Floating Task
+                                TEST_SAMPLE_DESCRIPTION,         // Sample description for edited Task
+                                TEST_SAMPLE_END_DATE,            // End date
+                                TEST_SAMPLE_END_TIME,            // End time
+                                TEST_SAMPLE_START_DATE,          // Start date
+                                TEST_KEYWORD_EMPTY,              // Start time
+                                TEST_KEYWORD_EMPTY,              // Reminder date and time
+                                -1,                              // Priority: -1 symbolize no specified priority
+                                TEST_RECURTYPE_NULL),            // Recur type
+                            TEST_SAMPLE_DESCRIPTION, 
+                            getExpectedEnd(TEST_SAMPLE_END_DATE, TEST_SAMPLE_END_TIME), 
+                            getExpectedStart(TEST_SAMPLE_START_DATE, DateTimeHelper.getTime(DateTimeHelper.now())), 
+                            null, TEST_TASK_DEFAULT_PRIORITY, false, TEST_RECURTYPE_NULL);
+        
         testEditTaskCommand(TEST_TASKTYPE_TIMED, TEST_FLOATING_ADD_START_TIME_AND_END_DATE_TIME, TEST_SAMPLE_FLOAT_ID,
                             getTestCommand(
-                                TEST_SAMPLE_FLOAT_ID,            // Running index of sample Floating Task
+                                TEST_SAMPLE_FLOAT_INDEX,            // Running index of sample Floating Task
                                 TEST_SAMPLE_DESCRIPTION,         // Sample description for edited Task
                                 TEST_SAMPLE_END_DATE,            // End date
                                 TEST_SAMPLE_END_TIME,            // End time
@@ -410,7 +536,7 @@ public class TestEditTaskCommand {
         
         testEditTaskCommand(TEST_TASKTYPE_TIMED, TEST_FLOATING_ADD_START_DATE_TIME_AND_END_DATE_TIME, TEST_SAMPLE_FLOAT_ID,
                             getTestCommand(
-                                TEST_SAMPLE_FLOAT_ID,            // Running index of sample Floating Task
+                                TEST_SAMPLE_FLOAT_INDEX,            // Running index of sample Floating Task
                                 TEST_SAMPLE_DESCRIPTION,         // Sample description for edited Task
                                 TEST_SAMPLE_END_DATE,            // End date
                                 TEST_SAMPLE_END_TIME,            // End time
@@ -426,7 +552,7 @@ public class TestEditTaskCommand {
         
         testEditTaskCommand(TEST_TASKTYPE_FLOATING, TEST_FLOATING_EDIT_PRIORITY, TEST_SAMPLE_FLOAT_ID,
                             getTestCommand(
-                                TEST_SAMPLE_FLOAT_ID,            // Running index of sample Floating Task
+                                TEST_SAMPLE_FLOAT_INDEX,            // Running index of sample Floating Task
                                 TEST_SAMPLE_DESCRIPTION,         // Sample description for edited Task
                                 TEST_KEYWORD_EMPTY,              // End date
                                 TEST_KEYWORD_EMPTY,              // End time
@@ -441,7 +567,7 @@ public class TestEditTaskCommand {
         /*** DeadlineTask Test Cases ***/
         testEditTaskCommand(TEST_TASKTYPE_DEADLINE, TEST_DEADLINE_EDIT_DESCRIPTION, TEST_SAMPLE_DEADLINE_ID,
                             getTestCommand(
-                                TEST_SAMPLE_DEADLINE_ID,         // Running index of sample Deadline Task
+                                TEST_SAMPLE_DEADLINE_INDEX,         // Running index of sample Deadline Task
                                 TEST_SAMPLE_DESCRIPTION,         // Sample description for edited Task
                                 TEST_KEYWORD_EMPTY,              // End date
                                 TEST_KEYWORD_EMPTY,              // End time
@@ -456,7 +582,7 @@ public class TestEditTaskCommand {
         
         testEditTaskCommand(TEST_TASKTYPE_DEADLINE, TEST_DEADLINE_EDIT_END_DATE_AND_REMINDER, TEST_SAMPLE_DEADLINE_ID,
                             getTestCommand(
-                                TEST_SAMPLE_DEADLINE_ID,         // Running index of sample Deadline Task
+                                TEST_SAMPLE_DEADLINE_INDEX,         // Running index of sample Deadline Task
                                 TEST_SAMPLE_DESCRIPTION,         // Sample description for edited Task
                                 TEST_SAMPLE_END_DATE,            // End date
                                 TEST_KEYWORD_EMPTY,              // End time
@@ -472,7 +598,7 @@ public class TestEditTaskCommand {
         
         testEditTaskCommand(TEST_TASKTYPE_DEADLINE, TEST_DEADLINE_EDIT_END_DATE, TEST_SAMPLE_DEADLINE_ID,
                             getTestCommand(
-                                TEST_SAMPLE_DEADLINE_ID,         // Running index of sample Deadline Task
+                                TEST_SAMPLE_DEADLINE_INDEX,         // Running index of sample Deadline Task
                                 TEST_SAMPLE_DESCRIPTION,         // Sample description for edited Task
                                 TEST_SAMPLE_END_DATE,            // End date
                                 TEST_KEYWORD_EMPTY,              // End time
@@ -487,7 +613,7 @@ public class TestEditTaskCommand {
         
         testEditTaskCommand(TEST_TASKTYPE_DEADLINE, TEST_DEADLINE_EDIT_END_DATE_TIME, TEST_SAMPLE_DEADLINE_ID,
                             getTestCommand(
-                                TEST_SAMPLE_DEADLINE_ID,         // Running index of sample Deadline Task
+                                TEST_SAMPLE_DEADLINE_INDEX,         // Running index of sample Deadline Task
                                 TEST_SAMPLE_DESCRIPTION,         // Sample description for edited Task
                                 TEST_SAMPLE_END_DATE,            // End date
                                 TEST_SAMPLE_END_TIME,            // End time
@@ -502,7 +628,7 @@ public class TestEditTaskCommand {
         
         testEditTaskCommand(TEST_TASKTYPE_DEADLINE, TEST_DEADLINE_EDIT_END_DATE_TIME_AND_REMINDER, TEST_SAMPLE_DEADLINE_ID,
                             getTestCommand(
-                                TEST_SAMPLE_DEADLINE_ID,         // Running index of sample Deadline Task
+                                TEST_SAMPLE_DEADLINE_INDEX,         // Running index of sample Deadline Task
                                 TEST_SAMPLE_DESCRIPTION,         // Sample description for edited Task
                                 TEST_SAMPLE_END_DATE,            // End date
                                 TEST_SAMPLE_END_TIME,            // End time
@@ -518,7 +644,7 @@ public class TestEditTaskCommand {
         
         testEditTaskCommand(TEST_TASKTYPE_TIMED, TEST_DEADLINE_ADD_START_TIME, TEST_SAMPLE_DEADLINE_ID,
                             getTestCommand(
-                                TEST_SAMPLE_DEADLINE_ID,         // Running index of sample Deadline Task
+                                TEST_SAMPLE_DEADLINE_INDEX,         // Running index of sample Deadline Task
                                 TEST_SAMPLE_DESCRIPTION,         // Sample description for edited Task
                                 TEST_KEYWORD_EMPTY,              // End date
                                 TEST_KEYWORD_EMPTY,              // End time
@@ -534,7 +660,7 @@ public class TestEditTaskCommand {
         
         testEditTaskCommand(TEST_TASKTYPE_TIMED, TEST_DEADLINE_ADD_START_DATE_TIME, TEST_SAMPLE_DEADLINE_ID,
                             getTestCommand(
-                                TEST_SAMPLE_DEADLINE_ID,         // Running index of sample Deadline Task
+                                TEST_SAMPLE_DEADLINE_INDEX,         // Running index of sample Deadline Task
                                 TEST_SAMPLE_DESCRIPTION,         // Sample description for edited Task
                                 TEST_KEYWORD_EMPTY,              // End date
                                 TEST_KEYWORD_EMPTY,              // End time
@@ -550,7 +676,7 @@ public class TestEditTaskCommand {
         
         testEditTaskCommand(TEST_TASKTYPE_DEADLINE, TEST_DEADLINE_EDIT_PRIORITY, TEST_SAMPLE_DEADLINE_ID,
                             getTestCommand(
-                                TEST_SAMPLE_DEADLINE_ID,         // Running index of sample Deadline Task
+                                TEST_SAMPLE_DEADLINE_INDEX,         // Running index of sample Deadline Task
                                 TEST_SAMPLE_DESCRIPTION,         // Sample description for edited Task
                                 DEADLINE_CREATED_SAMPLE_END_DATE,              // End date
                                 DEADLINE_CREATED_SAMPLE_END_TIME,              // End time
@@ -565,7 +691,7 @@ public class TestEditTaskCommand {
         
         testEditTaskCommand(TEST_TASKTYPE_DEADLINE, TEST_DEADLINE_EDIT_RECURTYPE_DAY, TEST_SAMPLE_DEADLINE_ID,
                             getTestCommand(
-                                TEST_SAMPLE_DEADLINE_ID,         // Running index of sample Deadline Task
+                                TEST_SAMPLE_DEADLINE_INDEX,         // Running index of sample Deadline Task
                                 TEST_SAMPLE_DESCRIPTION,         // Sample description for edited Task
                                 TEST_KEYWORD_EMPTY,              // End date
                                 TEST_KEYWORD_EMPTY,              // End time
@@ -580,7 +706,7 @@ public class TestEditTaskCommand {
         
         testEditTaskCommand(TEST_TASKTYPE_DEADLINE, TEST_DEADLINE_EDIT_RECURTYPE_WEEK, TEST_SAMPLE_DEADLINE_ID,
                             getTestCommand(
-                                TEST_SAMPLE_DEADLINE_ID,         // Running index of sample Floating Task
+                                TEST_SAMPLE_DEADLINE_INDEX,         // Running index of sample Floating Task
                                 TEST_SAMPLE_DESCRIPTION,         // Sample description for edited Task
                                 TEST_KEYWORD_EMPTY,              // End date
                                 TEST_KEYWORD_EMPTY,              // End time
@@ -595,7 +721,7 @@ public class TestEditTaskCommand {
         
         testEditTaskCommand(TEST_TASKTYPE_DEADLINE, TEST_DEADLINE_EDIT_RECURTYPE_MONTH, TEST_SAMPLE_DEADLINE_ID,
                             getTestCommand(
-                                TEST_SAMPLE_DEADLINE_ID,         // Running index of sample Deadline Task
+                                TEST_SAMPLE_DEADLINE_INDEX,         // Running index of sample Deadline Task
                                 TEST_SAMPLE_DESCRIPTION,         // Sample description for edited Task
                                 TEST_KEYWORD_EMPTY,              // End date
                                 TEST_KEYWORD_EMPTY,              // End time
@@ -610,7 +736,7 @@ public class TestEditTaskCommand {
         
         testEditTaskCommand(TEST_TASKTYPE_DEADLINE, TEST_DEADLINE_EDIT_RECURTYPE_YEAR, TEST_SAMPLE_DEADLINE_ID,
                             getTestCommand(
-                                TEST_SAMPLE_DEADLINE_ID,         // Running index of sample Deadline Task
+                                TEST_SAMPLE_DEADLINE_INDEX,         // Running index of sample Deadline Task
                                 TEST_SAMPLE_DESCRIPTION,         // Sample description for edited Task
                                 TEST_KEYWORD_EMPTY,              // End date
                                 TEST_KEYWORD_EMPTY,              // End time
@@ -626,7 +752,7 @@ public class TestEditTaskCommand {
         /*** TimedTask Test Cases ***/
         testEditTaskCommand(TEST_TASKTYPE_TIMED, TEST_TIMED_EDIT_DESCRIPTION, TEST_SAMPLE_TIMED_ID,
                             getTestCommand(
-                                TEST_SAMPLE_TIMED_ID,            // Running index of sample Timed Task
+                                TEST_SAMPLE_TIMED_INDEX,            // Running index of sample Timed Task
                                 TEST_SAMPLE_DESCRIPTION,         // Sample description for edited Task
                                 TEST_KEYWORD_EMPTY,              // End date
                                 TEST_KEYWORD_EMPTY,              // End time
@@ -642,7 +768,7 @@ public class TestEditTaskCommand {
         
         testEditTaskCommand(TEST_TASKTYPE_TIMED, TEST_TIMED_EDIT_END_DATE, TEST_SAMPLE_TIMED_ID,
                             getTestCommand(
-                                TEST_SAMPLE_TIMED_ID,            // Running index of sample Timed Task
+                                TEST_SAMPLE_TIMED_INDEX,            // Running index of sample Timed Task
                                 TEST_SAMPLE_DESCRIPTION,         // Sample description for edited Task
                                 TEST_SAMPLE_END_DATE,            // End date
                                 TEST_KEYWORD_EMPTY,              // End time
@@ -658,7 +784,7 @@ public class TestEditTaskCommand {
         
         testEditTaskCommand(TEST_TASKTYPE_TIMED, TEST_TIMED_EDIT_END_DATE_AND_REMINDER, TEST_SAMPLE_TIMED_ID,
                             getTestCommand(
-                                TEST_SAMPLE_TIMED_ID,            // Running index of sample Timed Task
+                                TEST_SAMPLE_TIMED_INDEX,            // Running index of sample Timed Task
                                 TEST_SAMPLE_DESCRIPTION,         // Sample description for edited Task
                                 TEST_SAMPLE_END_DATE,            // End date
                                 TEST_KEYWORD_EMPTY,              // End time
@@ -675,7 +801,7 @@ public class TestEditTaskCommand {
         
         testEditTaskCommand(TEST_TASKTYPE_TIMED, TEST_TIMED_EDIT_END_TIME, TEST_SAMPLE_TIMED_ID,
                             getTestCommand(
-                                TEST_SAMPLE_TIMED_ID,            // Running index of sample Timed Task
+                                TEST_SAMPLE_TIMED_INDEX,            // Running index of sample Timed Task
                                 TEST_SAMPLE_DESCRIPTION,         // Sample description for edited Task
                                 TEST_KEYWORD_EMPTY,              // End date
                                 TEST_SAMPLE_END_TIME,            // End time
@@ -691,7 +817,7 @@ public class TestEditTaskCommand {
         
         testEditTaskCommand(TEST_TASKTYPE_TIMED, TEST_TIMED_EDIT_END_TIME_AND_REMINDER, TEST_SAMPLE_TIMED_ID,
                             getTestCommand(
-                                TEST_SAMPLE_TIMED_ID,            // Running index of sample Timed Task
+                                TEST_SAMPLE_TIMED_INDEX,            // Running index of sample Timed Task
                                 TEST_SAMPLE_DESCRIPTION,         // Sample description for edited Task
                                 TEST_KEYWORD_EMPTY,              // End date
                                 TEST_SAMPLE_END_TIME,            // End time
@@ -708,7 +834,7 @@ public class TestEditTaskCommand {
         
         testEditTaskCommand(TEST_TASKTYPE_TIMED, TEST_TIMED_EDIT_END_DATE_TIME, TEST_SAMPLE_TIMED_ID,
                             getTestCommand(
-                                TEST_SAMPLE_TIMED_ID,            // Running index of sample Timed Task
+                                TEST_SAMPLE_TIMED_INDEX,            // Running index of sample Timed Task
                                 TEST_SAMPLE_DESCRIPTION,         // Sample description for edited Task
                                 TEST_SAMPLE_END_DATE,            // End date
                                 TEST_SAMPLE_END_TIME,            // End time
@@ -724,7 +850,7 @@ public class TestEditTaskCommand {
         
         testEditTaskCommand(TEST_TASKTYPE_TIMED, TEST_TIMED_EDIT_END_DATE_TIME_AND_REMINDER, TEST_SAMPLE_TIMED_ID,
                             getTestCommand(
-                                TEST_SAMPLE_TIMED_ID,            // Running index of sample Timed Task
+                                TEST_SAMPLE_TIMED_INDEX,            // Running index of sample Timed Task
                                 TEST_SAMPLE_DESCRIPTION,         // Sample description for edited Task
                                 TEST_SAMPLE_END_DATE,            // End date
                                 TEST_SAMPLE_END_TIME,            // End time
@@ -741,7 +867,7 @@ public class TestEditTaskCommand {
         
         testEditTaskCommand(TEST_TASKTYPE_TIMED, TEST_TIMED_EDIT_START_DATE, TEST_SAMPLE_TIMED_ID,
                             getTestCommand(
-                                TEST_SAMPLE_TIMED_ID,            // Running index of sample Timed Task
+                                TEST_SAMPLE_TIMED_INDEX,            // Running index of sample Timed Task
                                 TEST_SAMPLE_DESCRIPTION,         // Sample description for edited Task
                                 TEST_KEYWORD_EMPTY,              // End date
                                 TEST_KEYWORD_EMPTY,              // End time
@@ -757,7 +883,7 @@ public class TestEditTaskCommand {
         
         testEditTaskCommand(TEST_TASKTYPE_TIMED, TEST_TIMED_EDIT_START_DATE_AND_REMINDER, TEST_SAMPLE_TIMED_ID,
                             getTestCommand(
-                                TEST_SAMPLE_TIMED_ID,            // Running index of sample Timed Task
+                                TEST_SAMPLE_TIMED_INDEX,            // Running index of sample Timed Task
                                 TEST_SAMPLE_DESCRIPTION,         // Sample description for edited Task
                                 TEST_KEYWORD_EMPTY,              // End date
                                 TEST_KEYWORD_EMPTY,              // End time
@@ -774,7 +900,7 @@ public class TestEditTaskCommand {
         
         testEditTaskCommand(TEST_TASKTYPE_TIMED, TEST_TIMED_EDIT_START_TIME, TEST_SAMPLE_TIMED_ID,
                             getTestCommand(
-                                TEST_SAMPLE_TIMED_ID,            // Running index of sample Timed Task
+                                TEST_SAMPLE_TIMED_INDEX,            // Running index of sample Timed Task
                                 TEST_SAMPLE_DESCRIPTION,         // Sample description for edited Task
                                 TEST_KEYWORD_EMPTY,              // End date
                                 TEST_KEYWORD_EMPTY,              // End time
@@ -790,7 +916,7 @@ public class TestEditTaskCommand {
         
         testEditTaskCommand(TEST_TASKTYPE_TIMED, TEST_TIMED_EDIT_START_TIME_AND_REMINDER, TEST_SAMPLE_TIMED_ID,
                             getTestCommand(
-                                TEST_SAMPLE_TIMED_ID,            // Running index of sample Timed Task
+                                TEST_SAMPLE_TIMED_INDEX,            // Running index of sample Timed Task
                                 TEST_SAMPLE_DESCRIPTION,         // Sample description for edited Task
                                 TEST_KEYWORD_EMPTY,              // End date
                                 TEST_KEYWORD_EMPTY,              // End time
@@ -807,7 +933,7 @@ public class TestEditTaskCommand {
         
         testEditTaskCommand(TEST_TASKTYPE_TIMED, TEST_TIMED_EDIT_START_DATE_TIME, TEST_SAMPLE_TIMED_ID,
                             getTestCommand(
-                                TEST_SAMPLE_TIMED_ID,            // Running index of sample Timed Task
+                                TEST_SAMPLE_TIMED_INDEX,            // Running index of sample Timed Task
                                 TEST_SAMPLE_DESCRIPTION,         // Sample description for edited Task
                                 TEST_KEYWORD_EMPTY,              // End date
                                 TEST_KEYWORD_EMPTY,              // End time
@@ -823,7 +949,7 @@ public class TestEditTaskCommand {
         
         testEditTaskCommand(TEST_TASKTYPE_TIMED, TEST_TIMED_EDIT_START_DATE_TIME_REMINDER, TEST_SAMPLE_TIMED_ID,
                             getTestCommand(
-                                TEST_SAMPLE_TIMED_ID,            // Running index of sample Timed Task
+                                TEST_SAMPLE_TIMED_INDEX,            // Running index of sample Timed Task
                                 TEST_SAMPLE_DESCRIPTION,         // Sample description for edited Task
                                 TEST_KEYWORD_EMPTY,              // End date
                                 TEST_KEYWORD_EMPTY,              // End time
@@ -840,7 +966,7 @@ public class TestEditTaskCommand {
         
         testEditTaskCommand(TEST_TASKTYPE_TIMED, TEST_TIMED_EDIT_START_TIME_END_DATE, TEST_SAMPLE_TIMED_ID,
                             getTestCommand(
-                                TEST_SAMPLE_TIMED_ID,            // Running index of sample Timed Task
+                                TEST_SAMPLE_TIMED_INDEX,            // Running index of sample Timed Task
                                 TEST_SAMPLE_DESCRIPTION,         // Sample description for edited Task
                                 TEST_SAMPLE_END_DATE,            // End date
                                 TEST_KEYWORD_EMPTY,              // End time
@@ -856,7 +982,7 @@ public class TestEditTaskCommand {
         
         testEditTaskCommand(TEST_TASKTYPE_TIMED, TEST_TIMED_EDIT_START_DATE_END_TIME, TEST_SAMPLE_TIMED_ID,
                             getTestCommand(
-                                TEST_SAMPLE_TIMED_ID,            // Running index of sample Timed Task
+                                TEST_SAMPLE_TIMED_INDEX,            // Running index of sample Timed Task
                                 TEST_SAMPLE_DESCRIPTION,         // Sample description for edited Task
                                 TEST_KEYWORD_EMPTY,              // End date
                                 TEST_SAMPLE_END_TIME,            // End time
@@ -872,7 +998,7 @@ public class TestEditTaskCommand {
         
         testEditTaskCommand(TEST_TASKTYPE_TIMED, TEST_TIMED_EDIT_START_DATE_TIME_END_DATE_TIME, TEST_SAMPLE_TIMED_ID,
                             getTestCommand(
-                                TEST_SAMPLE_TIMED_ID,            // Running index of sample Timed Task
+                                TEST_SAMPLE_TIMED_INDEX,            // Running index of sample Timed Task
                                 TEST_SAMPLE_DESCRIPTION,         // Sample description for edited Task
                                 TEST_SAMPLE_END_DATE,            // End date
                                 TEST_SAMPLE_END_TIME,            // End time
@@ -888,7 +1014,7 @@ public class TestEditTaskCommand {
         
         testEditTaskCommand(TEST_TASKTYPE_TIMED, TEST_TIMED_EDIT_RECURTYPE_DAY, TEST_SAMPLE_TIMED_ID,
                             getTestCommand(
-                                TEST_SAMPLE_TIMED_ID,            // Running index of sample Timed Task
+                                TEST_SAMPLE_TIMED_INDEX,            // Running index of sample Timed Task
                                 TEST_SAMPLE_DESCRIPTION,         // Sample description for edited Task
                                 TEST_KEYWORD_EMPTY,              // End date
                                 TEST_KEYWORD_EMPTY,              // End time
@@ -904,7 +1030,7 @@ public class TestEditTaskCommand {
         
         testEditTaskCommand(TEST_TASKTYPE_TIMED, TEST_TIMED_EDIT_RECURTYPE_WEEK, TEST_SAMPLE_TIMED_ID,
                             getTestCommand(
-                                TEST_SAMPLE_TIMED_ID,            // Running index of sample Timed Task
+                                TEST_SAMPLE_TIMED_INDEX,            // Running index of sample Timed Task
                                 TEST_SAMPLE_DESCRIPTION,         // Sample description for edited Task
                                 TEST_KEYWORD_EMPTY,              // End date
                                 TEST_KEYWORD_EMPTY,              // End time
@@ -920,7 +1046,7 @@ public class TestEditTaskCommand {
         
         testEditTaskCommand(TEST_TASKTYPE_TIMED, TEST_TIMED_EDIT_RECURTYPE_MONTH, TEST_SAMPLE_TIMED_ID,
                             getTestCommand(
-                                TEST_SAMPLE_TIMED_ID,            // Running index of sample Timed Task
+                                TEST_SAMPLE_TIMED_INDEX,            // Running index of sample Timed Task
                                 TEST_SAMPLE_DESCRIPTION,         // Sample description for edited Task
                                 TEST_KEYWORD_EMPTY,              // End date
                                 TEST_KEYWORD_EMPTY,              // End time
@@ -936,7 +1062,7 @@ public class TestEditTaskCommand {
         
         testEditTaskCommand(TEST_TASKTYPE_TIMED, TEST_TIMED_EDIT_RECURTYPE_YEAR, TEST_SAMPLE_TIMED_ID,
                             getTestCommand(
-                                TEST_SAMPLE_TIMED_ID,            // Running index of sample Timed Task
+                                TEST_SAMPLE_TIMED_INDEX,            // Running index of sample Timed Task
                                 TEST_SAMPLE_DESCRIPTION,         // Sample description for edited Task
                                 TEST_KEYWORD_EMPTY,              // End date
                                 TEST_KEYWORD_EMPTY,              // End time
