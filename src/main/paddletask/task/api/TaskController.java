@@ -280,18 +280,53 @@ public class TaskController {
      *         <code>false</code> otherwise.
      */
     public boolean checkRecurring() {
-        ArrayList<Task> tasks = Task.getTaskList();
-
-        // Loop through all task
-        for (int i = 0; i < tasks.size(); i++) {
-            Task task = tasks.get(i);
-            switch (task.getType()) {
-                case DEADLINE:
-                    if ((task.isComplete() == false) &&
-                            ((DeadlineTask) task).getEnd().isBefore(DateTimeHelper.now()) &&
-                            (((DeadlineTask) task).isRecurring() == true)) {
-                        LocalDateTime newEndDate = ((DeadlineTask) task).getEnd();
-                        switch (((DeadlineTask) task).getRecurPeriod()) {
+        try {
+            ArrayList<Task> tasks = Task.getTaskList();
+    
+            // Loop through all task
+            for (int i = 0; i < tasks.size(); i++) {
+                Task task = tasks.get(i);
+                switch (task.getType()) {
+                    case DEADLINE:
+                        if ((task.isComplete() == false) &&
+                                ((DeadlineTask) task).getEnd().isBefore(DateTimeHelper.now()) &&
+                                (((DeadlineTask) task).isRecurring() == true)) {
+                            LocalDateTime newEndDate = ((DeadlineTask) task).getEnd();
+                            switch (((DeadlineTask) task).getRecurPeriod()) {
+                                case DAY:
+                                    while (newEndDate.isBefore(DateTimeHelper.now())) {
+                                        newEndDate = DateTimeHelper.addDays(newEndDate, 1);
+                                    }
+                                    break;
+                                case WEEK:
+                                    while (newEndDate.isBefore(DateTimeHelper.now())) {
+                                        newEndDate = DateTimeHelper.addWeeks(newEndDate, 1);
+                                    }
+                                    break;
+                                case MONTH:
+                                    while (newEndDate.isBefore(DateTimeHelper.now())) {
+                                        newEndDate = DateTimeHelper.addMonths(newEndDate, 1);
+                                    }
+                                    break;
+                                case YEAR:
+                                    while (newEndDate.isBefore(DateTimeHelper.now())) {
+                                        newEndDate = DateTimeHelper.addYears(newEndDate, 1);
+                                    }
+                                    break;
+                                default:
+                                    break;
+                            }
+                            ((DeadlineTask) task).setEnd(newEndDate);
+                            ((DeadlineTask) task).setReminder(newEndDate.minusMinutes(5));
+                            tasks.set(i, task);
+                        }
+                        break;
+                    case TIMED:
+                        if ((task.isComplete() == false) &&
+                                ((TimedTask) task).getEnd().isBefore(DateTimeHelper.now()) &&
+                                (((TimedTask) task).isRecurring() == true)) {
+                            LocalDateTime newEndDate = ((TimedTask) task).getEnd();
+                            switch (((TimedTask) task).getRecurPeriod()) {
                             case DAY:
                                 while (newEndDate.isBefore(DateTimeHelper.now())) {
                                     newEndDate = DateTimeHelper.addDays(newEndDate, 1);
@@ -314,56 +349,26 @@ public class TaskController {
                                 break;
                             default:
                                 break;
+                            }
+                            ((TimedTask) task).setEnd(newEndDate);
+                            ((TimedTask) task).setReminder(newEndDate.minusMinutes(5));
+                            tasks.set(i, task);
                         }
-                        ((DeadlineTask) task).setEnd(newEndDate);
-                        ((DeadlineTask) task).setReminder(newEndDate.minusMinutes(5));
-                        tasks.set(i, task);
-                    }
-                    break;
-                case TIMED:
-                    if ((task.isComplete() == false) &&
-                            ((TimedTask) task).getEnd().isBefore(DateTimeHelper.now()) &&
-                            (((TimedTask) task).isRecurring() == true)) {
-                        LocalDateTime newEndDate = ((TimedTask) task).getEnd();
-                        switch (((TimedTask) task).getRecurPeriod()) {
-                        case DAY:
-                            while (newEndDate.isBefore(DateTimeHelper.now())) {
-                                newEndDate = DateTimeHelper.addDays(newEndDate, 1);
-                            }
-                            break;
-                        case WEEK:
-                            while (newEndDate.isBefore(DateTimeHelper.now())) {
-                                newEndDate = DateTimeHelper.addWeeks(newEndDate, 1);
-                            }
-                            break;
-                        case MONTH:
-                            while (newEndDate.isBefore(DateTimeHelper.now())) {
-                                newEndDate = DateTimeHelper.addMonths(newEndDate, 1);
-                            }
-                            break;
-                        case YEAR:
-                            while (newEndDate.isBefore(DateTimeHelper.now())) {
-                                newEndDate = DateTimeHelper.addYears(newEndDate, 1);
-                            }
-                            break;
-                        default:
-                            break;
-                        }
-                        ((TimedTask) task).setEnd(newEndDate);
-                        ((TimedTask) task).setReminder(newEndDate.minusMinutes(5));
-                        tasks.set(i, task);
-                    }
-                    break;
-                default:
-                    break;
+                        break;
+                    default:
+                        break;
+                }
             }
+    
+            // Store to file
+            Task.setTaskList(tasks);
+            Document doc = sController.parseTask(tasks);
+            boolean isSuccessful = sController.writeXml(doc);
+
+            return isSuccessful;
+        } catch (Exception e) {
+            //e.printStackTrace();
         }
-
-        // Store to file
-        Task.setTaskList(tasks);
-        Document doc = sController.parseTask(tasks);
-        boolean isSuccessful = sController.writeXml(doc);
-
-        return isSuccessful;
+        return true;
     }
 }
