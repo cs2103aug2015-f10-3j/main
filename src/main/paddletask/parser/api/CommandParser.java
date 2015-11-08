@@ -1,8 +1,8 @@
 //@@author A0125473H
 package main.paddletask.parser.api;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import main.paddletask.command.api.Command;
 import main.paddletask.common.exception.InvalidCommandFormatException;
@@ -12,7 +12,7 @@ public final class CommandParser {
 
 	/*** Variables ***/
 	private ParseLogic _parserLogic = new ParseLogic();
-	private static final Logger LOGGER = Logger.getLogger(CommandParser.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(CommandParser.class);
 
 	/*** Constructor ***/
 	public CommandParser() {
@@ -29,7 +29,7 @@ public final class CommandParser {
 			throw e;
 		} catch (Throwable e) {
 			String message = String.format("Failed to parse user input: %1$s", userCommand);
-			LOGGER.log(Level.SEVERE, message, e);
+			LOGGER.error(message, e);
 			throw new InvalidCommandFormatException("User input supplied was in an invalid format");
 		}
 	}
@@ -45,7 +45,7 @@ public final class CommandParser {
 			throw e;
 		} catch (Throwable e) {
 			String message = String.format("Failed to parse user input: %1$s with running index", userCommand);
-			LOGGER.log(Level.SEVERE, message, e);
+			LOGGER.error(message, e);
 			throw new InvalidCommandFormatException("User input supplied was in an invalid format");
 		}
 	}
@@ -53,7 +53,7 @@ public final class CommandParser {
 	private void checkUserCommand(String userCommand) throws InvalidCommandFormatException {
 		userCommand = userCommand.trim();
 		if (userCommand.length() <= 0) {
-			LOGGER.severe("User input string is of 0 length");
+			LOGGER.error("User input string is of 0 length");
 			throw new InvalidCommandFormatException("User input is blank");
 		}
 	}

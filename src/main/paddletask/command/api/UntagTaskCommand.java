@@ -2,8 +2,8 @@
 package main.paddletask.command.api;
 
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import main.paddletask.common.exception.NoSuchTaskException;
 import main.paddletask.common.exception.UpdateTaskException;
@@ -14,14 +14,14 @@ import main.paddletask.task.entity.Task;
 public class UntagTaskCommand extends Command {
 
     /*** Variables ***/
-    private static final Logger LOGGER = Logger.getLogger(TagTaskCommand.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(TagTaskCommand.class);
     
     private static final String ERROR_MSG_NO_SUCH_TASK = "Task with the following Task ID does not exist!";
     private static final String ERROR_MSG_UPDATE_TASK_FAIL = "Failed to store updated Task to Storage";
     
     private static final String LOG_MSG_INFO_STORE_TASK = "UntagTaskCommand: Storing updated task to Storage\n";
-    private static final String LOG_MSG_SEVERE_GET_TASK_FAIL = "Executing UntagTaskCommand: Retrieve Task with taskId -> %1s failed";
-    private static final String LOG_MSG_SEVERE_STORE_TASK_FAIL = "Executing UntagTaskCommand: storeTaskToStorage(): Storing Task with taskId -> %1s failed\n";
+    private static final String LOG_MSG_SEVERE_GET_TASK_FAIL = "Executing UntagTaskCommand: Retrieve Task with taskId -> {} failed";
+    private static final String LOG_MSG_SEVERE_STORE_TASK_FAIL = "Executing UntagTaskCommand: storeTaskToStorage(): Storing Task with taskId -> {} failed\n";
     
     private ArrayList<String> _tagsToRemove;
     private ArrayList<String> _modifiedTaglist;
@@ -120,7 +120,7 @@ public class UntagTaskCommand extends Command {
     private void getTaskFromStorage(int taskId) throws NoSuchTaskException {
         _taskToEdit = TaskController.getInstance().getTask(taskId);
         if (_taskToEdit == null) {
-            LOGGER.log(Level.SEVERE, String.format(LOG_MSG_SEVERE_GET_TASK_FAIL, taskId));
+            LOGGER.error(LOG_MSG_SEVERE_GET_TASK_FAIL, taskId);
             throw new NoSuchTaskException(ERROR_MSG_NO_SUCH_TASK);
         }
     }
@@ -128,7 +128,7 @@ public class UntagTaskCommand extends Command {
     private void storeTaskToStorage(Task task) throws UpdateTaskException {
         LOGGER.info(LOG_MSG_INFO_STORE_TASK);
         if (!TaskController.getInstance().updateTask(task)) {
-            LOGGER.log(Level.SEVERE, String.format(LOG_MSG_SEVERE_STORE_TASK_FAIL, _taskId));
+            LOGGER.error(LOG_MSG_SEVERE_STORE_TASK_FAIL, _taskId);
             throw new UpdateTaskException(ERROR_MSG_UPDATE_TASK_FAIL);
         }
     }

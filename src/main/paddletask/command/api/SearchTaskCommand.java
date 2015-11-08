@@ -3,8 +3,8 @@ package main.paddletask.command.api;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.PriorityQueue;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import main.paddletask.common.exception.NoMatchException;
 import main.paddletask.common.util.DateTimeHelper;
@@ -17,7 +17,7 @@ import main.paddletask.task.entity.TimedTask;
 
 public class SearchTaskCommand extends Command{
 
-	private static final Logger LOGGER = Logger.getLogger(SearchTaskCommand.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(SearchTaskCommand.class);
 	private TaskController taskController = TaskController.getInstance();
 	private ArrayList<String> searchSequences;
 	private ArrayList<LocalDateTime> searchDates;
@@ -94,7 +94,7 @@ public class SearchTaskCommand extends Command{
 		}
 
 		if (matchedTaskWithRanking.isEmpty()) {
-			LOGGER.log(Level.INFO, "Executing SearchTaskCommand: No matching results found");
+			LOGGER.info("Executing SearchTaskCommand: No matching results found");
 			throw new NoMatchException("No matching results");
 		} else {
 			while (!matchedTaskWithRanking.isEmpty()) {

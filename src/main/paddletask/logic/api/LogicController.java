@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import main.paddletask.command.api.Command;
 import main.paddletask.command.api.SearchTaskCommand;
@@ -21,7 +21,7 @@ import main.paddletask.task.entity.TaskComparator;
 public class LogicController extends Observable {
 
     /*** Variable ***/
-    private static final Logger LOGGER = Logger.getLogger(LogicController.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(LogicController.class);
     
     private static final String LOG_MSG_INFO_INIT_LOGIC_CONTROLLER = "Intialising LogicController";
     private static final String LOG_MSG_SEVERE_NO_TASK_STATE = "LogicController:parseCommand(): Attempt to read state when there are no tasks";
@@ -72,7 +72,7 @@ public class LogicController extends Observable {
         // or "delete <running index>", send both the user input and the state to the Parser
         if (_parserInstance.isStatefulCommand(userInput)) {
             if (_deliveredTaskState.isEmpty()) {
-                LOGGER.log(Level.SEVERE, LOG_MSG_SEVERE_NO_TASK_STATE);
+                LOGGER.error(LOG_MSG_SEVERE_NO_TASK_STATE);
                 throw new NoTaskStateException(ERROR_MSG_NO_TASK_STATE);
             } else {
                 command = _parserInstance.parse(userInput, getStateTaskId());

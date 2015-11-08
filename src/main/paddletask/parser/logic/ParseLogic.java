@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
-import java.util.logging.Level;
+import org.slf4j.Logger;
 
 import main.paddletask.command.api.*;
 import main.paddletask.command.data.Option;
@@ -21,7 +21,7 @@ public class ParseLogic extends ParserBackend {
 
 	/*** Methods ***/
 	public COMMAND_TYPE determineCommandType(String userCommand) {
-		LOGGER.log(Level.INFO, "Attempt to determine command type from user input: {0}", userCommand);
+		LOGGER.info("Attempt to determine command type from user input: {}", userCommand);
 		assert(userCommand != null);
 		String mainCommand = getMainCommand(userCommand).toLowerCase();
 		if (mainCommand.equalsIgnoreCase(COMMANDS.ADD.toString()) 
@@ -90,7 +90,7 @@ public class ParseLogic extends ParserBackend {
 	}
 		
 	public Command createCommand(String userCommand) throws Exception {
-		LOGGER.log(Level.INFO, "Create command based on determined command type: {0}", userCommand);
+		LOGGER.info("Create command based on determined command type: {}", userCommand);
 		assert(userCommand != null);
 		COMMAND_TYPE commandType = determineCommandType(userCommand);
 		Command newCommand = createCommandByType(commandType);
@@ -134,7 +134,7 @@ public class ParseLogic extends ParserBackend {
 			case INVALID:
 				return null;
 			default:
-				LOGGER.severe("commandType is corrupted and not within expectations");
+				LOGGER.error("commandType is corrupted and not within expectations");
 				throw new Error("Corrupted commandType");
 		}
 	}
@@ -171,7 +171,7 @@ public class ParseLogic extends ParserBackend {
 					continue;
 				}
 				if (!addOption(option, commandOption, command)) {
-					LOGGER.severe("Unable to add option into command due to unknown reasons.");
+					LOGGER.error("Unable to add option into command due to unknown reasons.");
 					throw new Error("Unknown error has occured.");
 				}
 				subList.clear();
@@ -192,7 +192,7 @@ public class ParseLogic extends ParserBackend {
 		assert(optionMap != null && commandList != null);
 		Option newOption = null;
 		String option = commandList.remove(0);
-		LOGGER.log(Level.INFO, "Retrieve expected value of specified option: {0}", option);
+		LOGGER.info("Retrieve expected value of specified option: {}", option);
 		for (OPTIONS opt : optionMap.keySet()) {
 			if (option.equalsIgnoreCase(opt.toString())) {
 				switch (optionMap.get(opt)) {
@@ -237,7 +237,7 @@ public class ParseLogic extends ParserBackend {
 			}
 		}
 		// failed to get anything
-		LOGGER.severe("option keyword is not within expectations");
+		LOGGER.error("option keyword is not within expectations");
 		throw new Error("corrupted variable: option");
 	}
 	
@@ -251,7 +251,7 @@ public class ParseLogic extends ParserBackend {
 			if (optional) {
 				return false;
 			} else {
-				LOGGER.log(Level.SEVERE, "expected input not found");
+				LOGGER.error("Expected input not found");
 				throw new InvalidCommandFormatException("Expected input not found!");
 			}
 		}
@@ -259,7 +259,7 @@ public class ParseLogic extends ParserBackend {
 	}
 	
 	private Option scanForDates(List<String> commandList, boolean optional) throws Exception {
-		LOGGER.log(Level.INFO, "Attempt to parse expected string from user input");
+		LOGGER.info("Attempt to parse expected string from user input");
 		assert(commandList != null);
 		Option commandOption = new Option();
 		if (!isCommandListValid(commandList, optional)) {
@@ -285,7 +285,7 @@ public class ParseLogic extends ParserBackend {
 	private String formatDates(List<String> commandList) {
 		StringBuilder stringOption = new StringBuilder();
 		for (String s : commandList) { 
-			LOGGER.fine("Expecting a list of Strings");
+			LOGGER.debug("Expecting a list of Strings");
 			if (DateTimeHelper.isDate(s)) {
 				String[] testedString = s.split("/");
 				s = String.format(DATE_FORMAT, testedString[2], testedString[1], testedString[0]);
@@ -297,7 +297,7 @@ public class ParseLogic extends ParserBackend {
 	}
 
 	private Option expectDay(List<String> commandList, boolean optional) throws Exception {
-		LOGGER.log(Level.INFO, "Attempt to parse expected array of integers from user input");
+		LOGGER.info("Attempt to parse expected array of integers from user input");
 		assert(commandList != null);
 		Option commandOption = new Option();
 		if (!isCommandListValid(commandList, optional)) {
@@ -313,7 +313,7 @@ public class ParseLogic extends ParserBackend {
 	}
 
 	private Option expectIntegerArray(List<String> commandList, boolean optional) throws Exception {
-		LOGGER.log(Level.INFO, "Attempt to parse expected array of integers from user input");
+		LOGGER.info("Attempt to parse expected array of integers from user input");
 		assert(commandList != null);
 		Option commandOption = new Option();
 		if (!isCommandListValid(commandList, optional)) {
@@ -334,7 +334,7 @@ public class ParseLogic extends ParserBackend {
 	}
 	
 	private Option expectString(List<String> commandList, boolean optional) throws Exception {
-		LOGGER.log(Level.INFO, "Attempt to parse expected string from user input");
+		LOGGER.info("Attempt to parse expected string from user input");
 		assert(commandList != null);
 		Option commandOption = new Option();
 		if (!isCommandListValid(commandList, optional)) {
@@ -348,7 +348,7 @@ public class ParseLogic extends ParserBackend {
 	private String findString(List<String> commandList) {
 		StringBuilder stringOption = new StringBuilder();
 		for (String s : commandList) { 
-			LOGGER.fine("Expecting a list of Strings");
+			LOGGER.debug("Expecting a list of Strings");
 			stringOption.append(s);
 			stringOption.append(SPACE);
 		}
@@ -356,13 +356,13 @@ public class ParseLogic extends ParserBackend {
 	}
 	
 	private Option expectInteger(List<String> commandList, boolean optional) throws Exception {
-		LOGGER.log(Level.INFO, "Attempt to parse single expected integer from user input");
+		LOGGER.info("Attempt to parse single expected integer from user input");
 		assert(commandList != null);
 		Option commandOption = new Option();
 		if (!isCommandListValid(commandList, optional)) {
 			return null;
 		}
-		LOGGER.log(Level.WARNING, "expectedInt = commandList.get(0) may cause index out of bounds exception");
+		LOGGER.warn("expectedInt = commandList.get(0) may cause index out of bounds exception");
 		String expectedInt = commandList.get(0);
 		Integer parsedInt = tryParseInteger(expectedInt);
 		if (!isParsedIntValid(parsedInt)) {
@@ -373,7 +373,7 @@ public class ParseLogic extends ParserBackend {
 	}
 	
 	private Option expectStringArray(List<String> commandList, boolean optional) throws Exception {
-		LOGGER.log(Level.INFO, "Attempt to parse expected array of Strings from user input");
+		LOGGER.info("Attempt to parse expected array of Strings from user input");
 		assert(commandList != null);
 		Option commandOption = new Option();
 		if (!isCommandListValid(commandList, optional)) {
@@ -391,7 +391,7 @@ public class ParseLogic extends ParserBackend {
 	}
 	
 	private Option expectHashtagArray(List<String> commandList, boolean optional) throws Exception {
-		LOGGER.log(Level.INFO, "Attempt to parse expected array of Strings from user input");
+		LOGGER.info("Attempt to parse expected array of Strings from user input");
 		assert(commandList != null);
 		Option commandOption = new Option();
 		if (!isCommandListValid(commandList, optional)) {
@@ -408,7 +408,7 @@ public class ParseLogic extends ParserBackend {
 	
 	private void checkValidOption(Option commandOption) throws InvalidCommandFormatException {
 		if (commandOption.getValuesCount() == 0) {
-			LOGGER.log(Level.SEVERE, "expected input not found");
+			LOGGER.error("Expected input not found");
 			throw new InvalidCommandFormatException("Expected input not found!");
 		}
 	}
@@ -418,7 +418,7 @@ public class ParseLogic extends ParserBackend {
 	}
 	
 	private Option expectDate(List<String> commandList, boolean optional) throws Exception {
-		LOGGER.log(Level.INFO, "Attempt to parse expected string from user input");
+		LOGGER.info("Attempt to parse expected string from user input");
 		assert(commandList != null);
 		Option commandOption = new Option();
 		if (!isCommandListValid(commandList, optional)) {
@@ -508,8 +508,7 @@ public class ParseLogic extends ParserBackend {
 
 	private void checkTaskID(int taskID, String userCommand) throws InvalidCommandFormatException {
 		if (taskID <= 0) {
-			String message = String.format("Failed to parse user input: %1$s", userCommand);
-			LOGGER.log(Level.SEVERE, message, "Invalid ID provided");
+			LOGGER.error("Failed to parse user input: {}. Invalid ID provided", userCommand);
 			throw new InvalidCommandFormatException("Task with the following Task ID does not exist!");
 		}
 	}

@@ -7,8 +7,9 @@ import java.util.Date;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.joestelmach.natty.DateGroup;
 
@@ -45,7 +46,7 @@ class ParserBackend implements ParserConstants {
 	private static final EnumMap<OPTIONS, TYPE> redoOptions = new EnumMap<OPTIONS, TYPE>(OPTIONS.class);
 	private static final EnumMap<OPTIONS, TYPE> undoOptions = new EnumMap<OPTIONS, TYPE>(OPTIONS.class);
 	
-	protected static final Logger LOGGER = Logger.getLogger(ParseLogic.class.getName());
+	protected static final Logger LOGGER = LoggerFactory.getLogger(ParseLogic.class);
 	private static HashMap<String, String> _shortHandMap = new HashMap<String, String>();
 	private static HashMap<COMMAND_TYPE, EnumMap<OPTIONS, TYPE>> _optionsMap = new HashMap<COMMAND_TYPE, EnumMap<OPTIONS, TYPE>>();
 	private static com.joestelmach.natty.Parser _dateParser = new com.joestelmach.natty.Parser();
@@ -275,7 +276,7 @@ class ParserBackend implements ParserConstants {
 	}
 	
 	protected String getMainCommand(String userCommand) {
-		LOGGER.log(Level.INFO, "Get first word of user input: {0}", userCommand);
+		LOGGER.info("Get first word of user input: {}", userCommand);
 		assert(userCommand != null && userCommand.length() > 0);
 		return userCommand.split(SPACE)[0];
 	}
@@ -331,7 +332,7 @@ class ParserBackend implements ParserConstants {
 	
 	protected EnumMap<OPTIONS, TYPE> getOptionMap(COMMAND_TYPE commandType) {
 		if (!_optionsMap.containsKey(commandType)) {
-			LOGGER.severe("commandType is corrupted and not within expectations");
+			LOGGER.error("commandType is corrupted and not within expectations");
 			throw new Error("Corrupted commandType");
 		}
 		return _optionsMap.get(commandType);
