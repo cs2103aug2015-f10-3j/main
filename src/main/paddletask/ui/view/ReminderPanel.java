@@ -43,14 +43,14 @@ public class ReminderPanel {
 	private static final int OFFSET_ZERO = 0;
 	private static final int SUBSTRING_BEGIN = 1;
 	private JPanel reminderPanel = new JPanel();
-	private static JTextPane textPane;
+	private JTextPane textPane;
 	private JDialog dialog;
 	private JButton okButton;
-	private static Font font = new Font("Consolas",Font.BOLD, 14);
+	private static Font font = new Font("Consolas",Font.BOLD, 15);
 	private Box box = null;
-	private static final int HEIGHT = 3;
+	private static final int HEIGHT = 4;
 	private static final int WIDTH = 2;
-	private static final Color backgroundColor = new Color(220, 0, 0); //Red color
+	private static final Color backgroundColor = new Color(180, 0, 0); //Red color
 	
 	/*** Constructors ***/
 	public ReminderPanel(ArrayList<Task> taskList, JDialog dialog){
@@ -149,7 +149,7 @@ public class ReminderPanel {
 		inputTextPane.setFont(font);
 		inputTextPane.setEditable(false);
 		((AbstractDocument) inputTextPane.getDocument()).setDocumentFilter(new CustomizedDocumentFilter(inputTextPane));
-        Dimension size = dialog.getToolkit().getScreenSize();
+        Dimension size = reminderPanel.getToolkit().getScreenSize();
         size.setSize(size.width / WIDTH , size.height / HEIGHT);
         inputTextPane.setPreferredSize(size);
 
@@ -183,7 +183,7 @@ public class ReminderPanel {
 	 * @param s
 	 *        	String s to be appended to textPane
 	 */
-	public static void append(String s) {
+	public void append(String s) {
 		try {
 			Document doc = textPane.getDocument();
 			textPane.setCaretPosition(doc.getLength());
@@ -215,6 +215,7 @@ public class ReminderPanel {
 						color.addAttributes(CustomizedDocumentFilter.setBold());
 						outputString = outputString.substring(SUBSTRING_BEGIN);
 						color.addAttributes(CustomizedDocumentFilter.setBackgroundColorForHeader(backgroundColor));
+						color.addAttributes(CustomizedDocumentFilter.changeToWhite());
 					}
 					if(outputString.charAt(OFFSET_ZERO)==PRIORITY_INDICATOR){
 						color.addAttributes(CustomizedDocumentFilter.changeToOrange());

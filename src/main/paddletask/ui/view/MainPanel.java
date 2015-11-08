@@ -168,14 +168,14 @@ public class MainPanel extends JPanel implements KeyListener {
 		inputField.getActionMap().put(KEYNAME_FONT_UP, new AbstractAction() {
 			@Override
 			public void actionPerformed(ActionEvent ae) {//focuses the first label on popwindow
-				CustomizedDocumentFilter.changeFontSize(INCREASE_FONT_SIZE);
+				CustomizedDocumentFilter.changeFontSize(INCREASE_FONT_SIZE, textPane);
 			}
 		});
 		inputField.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0, true), KEYNAME_FONT_DOWN);
 		inputField.getActionMap().put(KEYNAME_FONT_DOWN, new AbstractAction() {
 			@Override
 			public void actionPerformed(ActionEvent ae) {//focuses the first label on popwindow
-				CustomizedDocumentFilter.changeFontSize(DECREASE_FONT_SIZE);
+				CustomizedDocumentFilter.changeFontSize(DECREASE_FONT_SIZE, textPane);
 			}
 		});
 		commandSuggestor = new CommandSuggestor(inputField, mainFrame.getFrame(),
@@ -194,12 +194,19 @@ public class MainPanel extends JPanel implements KeyListener {
 	 * 
 	 * @param s
 	 *        	String s to be appended to textPane
+	 *        isCommand
+	 *        	boolean to check if it is command
 	 */
-	public static void append(String s) {
+	public static void append(String s, boolean isCommand) {
 		try {
 			Document doc = textPane.getDocument();
 			textPane.setCaretPosition(doc.getLength());
-			doc.insertString(doc.getLength(), s + NEXT_LINE + NEXT_LINE, null);
+			SimpleAttributeSet color = null;
+			if(isCommand){
+				color = new SimpleAttributeSet();
+				color.addAttributes(CustomizedDocumentFilter.setBold());
+			}
+			doc.insertString(doc.getLength(), s + NEXT_LINE + NEXT_LINE, color);
 		} catch(BadLocationException exc) {
 			assert false;
 			exc.printStackTrace();
@@ -257,9 +264,10 @@ public class MainPanel extends JPanel implements KeyListener {
 	 * 				String input from user
 	 */
 	public void performCommand(String input){
+		boolean isCommand = true;
 		String[] output = uiController.processUserInput(input);
 		if(output!= null){
-			append(input);
+			append(input, isCommand);
 			append(output);
 		}
 	}
@@ -306,8 +314,8 @@ public class MainPanel extends JPanel implements KeyListener {
 	 * 				String msg to be displayed
 	 */
 	public static void updatePrint(String msg){
-		append(commandList.getLast().getData());
-		append(msg +NEXT_LINE);
+		append(commandList.getLast().getData(), true);
+		append(msg +NEXT_LINE, false);
 	}
 
 	/**
@@ -317,7 +325,7 @@ public class MainPanel extends JPanel implements KeyListener {
 	 * @param taskList
 	 * 				array list of tasks 
 	 */
-	public static void createReminder(ArrayList<Task> taskList){
+	public void createReminder(ArrayList<Task> taskList){
 		//System.out.println("Reminder alert");
 		if (reminderDialog == null) {
 			Window topWindow = SwingUtilities.getWindowAncestor(panel);
@@ -325,6 +333,7 @@ public class MainPanel extends JPanel implements KeyListener {
 			reminderDialog.getContentPane().add(new ReminderPanel(taskList, reminderDialog).getMainPanel());
 			reminderDialog.pack();
 			reminderDialog.setLocationRelativeTo(topWindow);
+			reminderDialog.setLocation(reminderDialog.getLocation().x, 0);
 			reminderDialog.setVisible(true);
 		} else {
 			reminderDialog.getContentPane().add(new ReminderPanel(taskList, reminderDialog).getMainPanel());

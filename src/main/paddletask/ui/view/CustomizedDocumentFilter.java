@@ -19,26 +19,26 @@ import javax.swing.text.StyledDocument;
 public final class CustomizedDocumentFilter extends DocumentFilter {
 	
 	/*** Variables ***/
-	private static JTextPane textPane = null;
-	private static StyledDocument styledDocument = null;
-	private final static StyleContext styleContext = StyleContext.getDefaultStyleContext();
+	private JTextPane textPane = null;
+	private StyledDocument styledDocument = null;
+	private static final StyleContext styleContext = StyleContext.getDefaultStyleContext();
 	private static final AttributeSet redAttributeSet = styleContext.addAttribute(styleContext.getEmptySet(), StyleConstants.Foreground, Color.RED);
 	private static final AttributeSet darkBlueAttributeSet = changeToAnyRGBColor(0, 76, 153);
-	private static final String REGEX_TAG = "#\\w{1,}";
-	private static final String REGEX_START_BOUND = "\\b";
-	private static final String REGEX_END_BOUND = "\\b|";
+	private final String REGEX_TAG = "#\\w{1,}";
+	private final String REGEX_START_BOUND = "\\b";
+	private final String REGEX_END_BOUND = "\\b|";
 	private static final int REMOVE_TRAILING = 1;
 	private static final String CARRIAGE_RETURN = "\r\n";
 	private static final String NEXT_LINE = "\n";
 	private static final String KEYWORD_DEADLINE = "deadline";
 	private static final String[] HEADER_KEYWORDS = {"Description", "Task Type", "Priority", "Start", "Deadline", "Reminder", "Tags", "Recurring"};
 	private static final String EMPTY_STRING = "";
-	private static final Pattern HEADER_PATTERN = buildPattern(HEADER_KEYWORDS, "\\b:|");
+	private final Pattern HEADER_PATTERN = buildPattern(HEADER_KEYWORDS, "\\b:|");
 	private static final int OFFSET_ONE = 1;
 	
 	/*** Constructors ***/
 	public CustomizedDocumentFilter(JTextPane textPane){
-		CustomizedDocumentFilter.textPane = textPane;
+		this.textPane = textPane;
 		styledDocument = textPane.getStyledDocument();
 	}
 
@@ -98,7 +98,7 @@ public final class CustomizedDocumentFilter extends DocumentFilter {
 	 * @param keywords
 	 * 				String array of keywords
 	 */
-	private static Pattern buildPattern(String[] keywords, String REGEX_END_BOUND){
+	private Pattern buildPattern(String[] keywords, String REGEX_END_BOUND){
 		StringBuilder sb = new StringBuilder();
 		for (String token : keywords) {
 			sb.append(REGEX_START_BOUND); 
@@ -123,6 +123,19 @@ public final class CustomizedDocumentFilter extends DocumentFilter {
 		AttributeSet orangeAttributeSet = styleContext.addAttribute(styleContext.getEmptySet(), StyleConstants.Foreground, Color.ORANGE);
 		orangeAttributeSet = styleContext.addAttribute(orangeAttributeSet, StyleConstants.CharacterConstants.Bold, Boolean.TRUE);
 		return orangeAttributeSet;
+	}
+	
+	/**
+	 * This method will change the attribute set to white and bold,
+	 * and return the changed set.
+	 * 
+	 * @return whiteAttributeSet
+	 * 				edited attribute set to white
+	 */
+	public static AttributeSet changeToWhite(){
+		AttributeSet whiteAttributeSet = styleContext.addAttribute(styleContext.getEmptySet(), StyleConstants.Foreground, Color.WHITE);
+		whiteAttributeSet = styleContext.addAttribute(whiteAttributeSet, StyleConstants.CharacterConstants.Bold, Boolean.TRUE);
+		return whiteAttributeSet;
 	}
 	
 	/**
@@ -225,10 +238,11 @@ public final class CustomizedDocumentFilter extends DocumentFilter {
 	 * @param change
 	 * 				integer value of change
 	 */
-	public static void changeFontSize(int change){
+	public static void changeFontSize(int change, JTextPane textPane){
 	    MutableAttributeSet attrs = textPane.getInputAttributes();
 	    int size = StyleConstants.getFontSize(attrs);
 	    StyleConstants.setFontSize(attrs, size + change);
+	    StyledDocument styledDocument = textPane.getStyledDocument();
 	    styledDocument.setCharacterAttributes(0, styledDocument.getLength() + OFFSET_ONE, attrs, false);
 	}
 	

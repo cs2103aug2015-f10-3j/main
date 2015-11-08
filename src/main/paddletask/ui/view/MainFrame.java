@@ -280,7 +280,7 @@ public class MainFrame implements Observer{
 		} else if(o instanceof Reminder){
 			if(arg instanceof ArrayList<?>){
 				if(ui_Mode){
-					MainPanel.createReminder((ArrayList<Task>)arg);
+					panel.createReminder((ArrayList<Task>)arg);
 				} else{
 					String[] output = uiController.format((ArrayList<Task>)arg);
 					System.out.println(REMINDER_MSG);
