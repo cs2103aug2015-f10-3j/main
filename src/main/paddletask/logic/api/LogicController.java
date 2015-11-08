@@ -10,7 +10,8 @@ import org.slf4j.LoggerFactory;
 
 import main.paddletask.command.api.Command;
 import main.paddletask.command.api.SearchTaskCommand;
-
+import main.paddletask.common.exception.InvalidRedoException;
+import main.paddletask.common.exception.InvalidUndoException;
 import main.paddletask.common.exception.NoTaskStateException;
 
 import main.paddletask.parser.api.CommandParser;
@@ -125,6 +126,10 @@ public class LogicController extends Observable {
         
         try {
             executionResult = executeCommand(command, userInput);
+        } catch (InvalidRedoException | InvalidUndoException e) { 
+            setChanged();
+            notifyObservers(e.getMessage());
+            return null;
         } catch (Exception e) {
             if (!Command.getCommandList().isEmpty()) {
                 Command.getCommandList().pop();
