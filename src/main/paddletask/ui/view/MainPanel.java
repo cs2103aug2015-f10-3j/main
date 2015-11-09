@@ -411,16 +411,21 @@ public class MainPanel extends JPanel implements KeyListener {
 	 * @param taskList
 	 * 				array list of tasks 
 	 */
-	public void createReminder(ArrayList<Task> taskList){
+	public void createReminder(final ArrayList<Task> taskList){
 		//System.out.println("Reminder alert");
 		if (reminderDialog == null) {
-			Window topWindow = SwingUtilities.getWindowAncestor(panel);
-			reminderDialog = new JDialog(topWindow, MODAL_OPTION , ModalityType.APPLICATION_MODAL);
-			reminderDialog.getContentPane().add(new ReminderPanel(taskList, reminderDialog).getMainPanel());
-			reminderDialog.pack();
-			reminderDialog.setLocationRelativeTo(topWindow);
-			reminderDialog.setLocation(reminderDialog.getLocation().x, 0);
-			reminderDialog.setVisible(true);
+			javax.swing.SwingUtilities.invokeLater(new Runnable() {
+				public void run() {
+					Window topWindow = SwingUtilities.getWindowAncestor(panel);
+					reminderDialog = new JDialog(topWindow, MODAL_OPTION , ModalityType.APPLICATION_MODAL);
+					reminderDialog.getContentPane().add(new ReminderPanel(taskList, reminderDialog).getMainPanel());
+					reminderDialog.pack();
+					reminderDialog.setLocationRelativeTo(topWindow);
+					reminderDialog.setLocation(reminderDialog.getLocation().x, 0);
+					reminderDialog.setVisible(true);
+				}
+			});
+
 		} else {
 			reminderDialog.getContentPane().add(new ReminderPanel(taskList, reminderDialog).getMainPanel());
 			reminderDialog.pack();
