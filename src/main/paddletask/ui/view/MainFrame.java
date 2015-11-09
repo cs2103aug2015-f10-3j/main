@@ -189,6 +189,7 @@ public class MainFrame implements Observer{
 	public JFrame getFrame(){
 		return frame;
 	}
+	
 	/**
 	 * This method is the update method for Observer class
 	 * of MainFrame. 
@@ -236,9 +237,37 @@ public class MainFrame implements Observer{
 		}
 	}
 	
+	/**
+	 * This method is the test driver for PaddleTask.
+	 * All tests can use this method to test the usabilty of
+	 * the entire architecture.
+	 * 
+	 *  @param 	userCommand
+	 *  			String of a command
+	 *  @return output
+	 *  			String[] of the output
+	 *  
+	 */
 	public static String[] testDriver(String userCommand){
 		mainFrame = new MainFrame();
 		String[] output = CliView.testDriver(userCommand, uiController);
+		return output;
+	}
+	
+	/**
+	 * This method is the test driver for PaddleTask.
+	 * All tests can use this method to test the usabilty of
+	 * the entire architecture.
+	 * 
+	 *  @param 	userCommands
+	 *  			String[] of a command
+	 *  @return output
+	 *  			String[] of the output
+	 *  
+	 */
+	public static String[] testDriver(String[] userCommands){
+		mainFrame = new MainFrame();
+		String[] output = CliView.testDriver(userCommands, uiController);
 		return output;
 	}
 	//@@author A0125473H
