@@ -110,10 +110,58 @@ public class CliView {
 		outputToCmd(output);
 	}
 	
+	/**
+	 * This method is the test driver for PaddleTask.
+	 * All tests can use this method to test the usabilty of
+	 * the entire architecture.
+	 * 
+	 *  @param 	userCommand
+	 *  			String of a command
+	 *  		uiController
+	 *  			instance of uiController
+	 *  @return output
+	 *  			String[] of the output
+	 *  
+	 */
 	public static String[] testDriver(String userCommand, UIController uiController){
 		UIController.setUIModeEnabled(false);
 		CliView.uiController = uiController;
 		String[] output = uiController.processUserInput(userCommand);
+		ArrayList<String> filterOutput = new ArrayList<String>();
+				for(String s : output){
+					if(s!=null){
+						while(s.charAt(CHARACTER_LOCATION) == BOLD_INDICATOR || 
+								s.charAt(CHARACTER_LOCATION) == PRIORITY_INDICATOR ||
+								s.charAt(CHARACTER_LOCATION) == COLOR_INDICATOR){
+							s = s.substring(REMOVE_ONE);
+						}
+						System.out.println(s);
+						filterOutput.add(s);
+					}
+				}
+		return filterOutput.toArray(output);
+	}
+	
+	/**
+	 * This method is the test driver for PaddleTask.
+	 * All tests can use this method to test the usabilty of
+	 * the entire architecture.
+	 * 
+	 *  @param 	userCommands
+	 *  			String[] of a command
+	 *  		uiController
+	 *  			instance of uiController
+	 *  @return output
+	 *  			String[] of the output
+	 *  
+	 */
+	public static String[] testDriver(String[] userCommands, UIController uiController){
+		UIController.setUIModeEnabled(false);
+		CliView.uiController = uiController;
+		String[] output = new String[0];
+		for(String s : userCommands){
+			output = uiController.processUserInput(s);
+		}
 		ArrayList<String> filterOutput = new ArrayList<String>();
 				for(String s : output){
 					if(s!=null){
