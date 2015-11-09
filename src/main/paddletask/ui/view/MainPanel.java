@@ -35,6 +35,7 @@ public class MainPanel extends JPanel implements KeyListener {
 	private static final int SUBSTRING_BEGIN = 1;
 	private static final char PRIORITY_INDICATOR = '*';
 	private static final char BOLD_INDICATOR = '@';
+	private static final char MSG_INDICATOR = '|';
 	private static final int INCREASE_FONT_SIZE = 1;
 	private static final int DECREASE_FONT_SIZE = -1;
 	protected static int NUM_COMPONENTS = 3;
@@ -301,6 +302,11 @@ public class MainPanel extends JPanel implements KeyListener {
 				if(s != null){
 					outputString = s + NEXT_LINE;
 					SimpleAttributeSet color = new SimpleAttributeSet();
+					if(outputString.charAt(OFFSET_ZERO)==MSG_INDICATOR){
+						color.addAttributes(CustomizedDocumentFilter.setBold());
+						color.addAttributes(CustomizedDocumentFilter.changeToGreen());
+						outputString = outputString.substring(SUBSTRING_BEGIN);
+					}
 					if(outputString.charAt(OFFSET_ZERO)==BOLD_INDICATOR){
 						color.addAttributes(CustomizedDocumentFilter.setBold());
 						outputString = outputString.substring(SUBSTRING_BEGIN);

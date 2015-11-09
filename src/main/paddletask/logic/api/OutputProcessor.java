@@ -23,6 +23,7 @@ public class OutputProcessor {
 	private static final String TAGS_PADDING = "       %s";
 	private static final String PRIORITY_INDICATOR = "*";
 	private static final char BOLD_INDICATOR = '@';
+	private static final char MSG_INDICATOR = '|';
 	private static final String VIEW_HEADER = BOLD_INDICATOR + String.format(FORMAT, "ID", "Description", "Start Date","","Deadline", "");
 	private static final String CLI_VIEW_HEADER = BOLD_INDICATOR + String.format(CLI_FORMAT, "ID", "Description", "Start Date","","Deadline", "");
 	private static final int OFFSET_ONE = 1;
@@ -94,8 +95,18 @@ public class OutputProcessor {
 			else{
 				output = formatOutput(taskList);
 			}
-		} 
+			output = getSuccessMessage(input, output);
+		}
 		return output;
+	}
+
+	private String[] getSuccessMessage(String input, String[] output) {
+		String[] successOutput = new String[output.length + 1];
+		successOutput [0] = MSG_INDICATOR + executor.getSuccessfulMessage();
+		for (int i = 0; i < output.length; i++) {
+			successOutput[i+1] = output[i];
+		}
+		return successOutput;
 	}
 
 	/**

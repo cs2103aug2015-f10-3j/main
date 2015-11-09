@@ -261,4 +261,10 @@ public final class CustomizedDocumentFilter extends DocumentFilter {
 			styledDocument.setCharacterAttributes(start, end - start, darkBlueAttributeSet, false);
 		}
 	}
+
+	public static AttributeSet changeToGreen() {
+		AttributeSet orangeAttributeSet = styleContext.addAttribute(styleContext.getEmptySet(), StyleConstants.Foreground, Color.GREEN);
+		orangeAttributeSet = styleContext.addAttribute(orangeAttributeSet, StyleConstants.CharacterConstants.Bold, Boolean.TRUE);
+		return orangeAttributeSet;
+	}
 }

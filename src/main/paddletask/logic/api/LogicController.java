@@ -9,7 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import main.paddletask.command.api.Command;
-import main.paddletask.command.api.SearchTaskCommand;
+import main.paddletask.command.api.*;
 import main.paddletask.common.exception.InvalidRedoException;
 import main.paddletask.common.exception.InvalidUndoException;
 import main.paddletask.common.exception.NoTaskStateException;
@@ -29,11 +29,26 @@ public class LogicController extends Observable {
     
     private static final String ERROR_MSG_NO_TASK_STATE = "Please perform a view to retrieve a list of task so that you can perform this command!";
     
+
+	private static final String ADD_MSG_SUCCESS = "New task added successfully\n";
+	private static final String COMPLETE_MSG_SUCCESS = "Selected task completed successfully\n";
+	private static final String DELETE_MSG_SUCCESS = "Selected task deleted successfully\n";
+	private static final String EDIT_MSG_SUCCESS = "Selected task edited successfully\n";
+	private static final String MORE_MSG_SUCCESS = "Showing full details of selected task\n";
+	private static final String REDO_MSG_SUCCESS = "Previous undo redone successfully\n";
+	private static final String UNDO_MSG_SUCCESS = "Previous command undone successfully\n";
+	private static final String SETDIR_MSG_SUCCESS = "Set directory successfully\n";
+	private static final String TAG_MSG_SUCCESS = "Selected task tagged successfully\n";
+	private static final String UNTAG_MSG_SUCCESS = "Selected task untagged successfully\n";
+	private static final String EMPTY_MSG_SUCCESS = "";
+    
     private static LogicController _thisInstance;
     private static CommandParser _parserInstance;
     private static TaskComparator _taskComparatorInstance;
     private static ArrayList<Task> _deliveredTaskState;
     private static Observer _observer;
+    
+    private String successMessage;
 
     /*** Constructor ***/
     public LogicController() {
@@ -124,6 +139,8 @@ public class LogicController extends Observable {
             return null;
         }
         
+        setSuccessMessage(command);
+        
         try {
             executionResult = executeCommand(command, userInput);
         } catch (InvalidRedoException | InvalidUndoException e) { 
@@ -138,11 +155,36 @@ public class LogicController extends Observable {
             notifyObservers(e.getMessage());
             return null;
         }
-        
         return executionResult;
     }
 
-    // Pull out the task ID of all Task in the state so that it can be 
+    private void setSuccessMessage(Command command) {
+    	if (command instanceof AddTaskCommand) {
+    		successMessage = ADD_MSG_SUCCESS;
+    	} else if (command instanceof CompleteTaskCommand) {
+    		successMessage = COMPLETE_MSG_SUCCESS;
+    	} else if (command instanceof DeleteTaskCommand) {
+    		successMessage = DELETE_MSG_SUCCESS;
+    	} else if (command instanceof EditTaskCommand) {
+    		successMessage = EDIT_MSG_SUCCESS;
+    	} else if (command instanceof MoreCommand) {
+    		successMessage = MORE_MSG_SUCCESS;
+    	} else if (command instanceof RedoCommand) {
+    		successMessage = REDO_MSG_SUCCESS;
+    	} else if (command instanceof UndoCommand) {
+    		successMessage = UNDO_MSG_SUCCESS;
+    	} else if (command instanceof SetDirectoryCommand) {
+    		successMessage = SETDIR_MSG_SUCCESS;
+    	} else if (command instanceof TagTaskCommand) {
+    		successMessage = TAG_MSG_SUCCESS;
+    	} else if (command instanceof UntagTaskCommand) {
+    		successMessage = UNTAG_MSG_SUCCESS;
+    	} else {
+    		successMessage = EMPTY_MSG_SUCCESS;
+    	}
+	}
+
+	// Pull out the task ID of all Task in the state so that it can be 
     // passed to the Parser for stateful command parsing
     private int[] getStateTaskId() {
         int numId = _deliveredTaskState.size();
@@ -161,4 +203,8 @@ public class LogicController extends Observable {
             return false;
         }
     }
+
+	public String getSuccessfulMessage() {
+		return successMessage;
+	}
 }
