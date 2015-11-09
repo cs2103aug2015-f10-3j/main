@@ -6,7 +6,7 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
-@SuiteClasses({ FullSystemFlowTest.class, TestClearCommand.class,
+@SuiteClasses({ FullSystemFlowTest.class,
         TestCommandParser.class, TestEditTaskCommand.class,
         TestHelpCommand.class, TestStorageController.class,
         TestTaskController.class, TestViewCommand.class,
