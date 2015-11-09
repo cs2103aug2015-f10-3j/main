@@ -15,8 +15,10 @@ public class CliView {
 	private static final String WELCOME_MSG_3 = "Your upcoming tasks for today:";
 	private static final String FIRST_COMMAND = "view all today";
 	private static final String REMINDER_MSG = "Reminder Alert!";
+	private static final String EMPTY_STRING = "";
 	private static final char PRIORITY_INDICATOR = '*';
 	private static final char BOLD_INDICATOR = '@';
+	private static final char COLOR_INDICATOR = '|';
 	private static final int WELCOME_MSG_SIZE = 3;
 	private static final int REMOVE_ONE = 1;
 	private static final int CHARACTER_LOCATION = 0;
@@ -60,10 +62,14 @@ public class CliView {
 	public void outputToCmd(String[] output){
 		System.out.println();
 		for(String s : output){
-			if(s!=null){
+			if(s!=null && !s.equals(EMPTY_STRING)){
 				while(s.charAt(CHARACTER_LOCATION) == BOLD_INDICATOR || 
-						s.charAt(CHARACTER_LOCATION) == PRIORITY_INDICATOR ){
+						s.charAt(CHARACTER_LOCATION) == PRIORITY_INDICATOR || 
+						s.charAt(CHARACTER_LOCATION) == COLOR_INDICATOR){
 					s = s.substring(REMOVE_ONE);
+					if(s.equals(EMPTY_STRING)){
+						break;
+					}
 				}
 				System.out.println(s);
 			}
@@ -102,5 +108,72 @@ public class CliView {
 		String[] output = uiController.format((ArrayList<Task>)taskList);
 		System.out.println(REMINDER_MSG);
 		outputToCmd(output);
+	}
+	
+	/**
+	 * This method is the test driver for PaddleTask.
+	 * All tests can use this method to test the usabilty of
+	 * the entire architecture.
+	 * 
+	 *  @param 	userCommand
+	 *  			String of a command
+	 *  		uiController
+	 *  			instance of uiController
+	 *  @return output
+	 *  			String[] of the output
+	 *  
+	 */
+	public static String[] testDriver(String userCommand, UIController uiController){
+		UIController.setUIModeEnabled(false);
+		CliView.uiController = uiController;
+		String[] output = uiController.processUserInput(userCommand);
+		ArrayList<String> filterOutput = new ArrayList<String>();
+				for(String s : output){
+					if(s!=null){
+						while(s.charAt(CHARACTER_LOCATION) == BOLD_INDICATOR || 
+								s.charAt(CHARACTER_LOCATION) == PRIORITY_INDICATOR ||
+								s.charAt(CHARACTER_LOCATION) == COLOR_INDICATOR){
+							s = s.substring(REMOVE_ONE);
+						}
+						System.out.println(s);
+						filterOutput.add(s);
+					}
+				}
+		return filterOutput.toArray(output);
+	}
+	
+	/**
+	 * This method is the test driver for PaddleTask.
+	 * All tests can use this method to test the usabilty of
+	 * the entire architecture.
+	 * 
+	 *  @param 	userCommands
+	 *  			String[] of a command
+	 *  		uiController
+	 *  			instance of uiController
+	 *  @return output
+	 *  			String[] of the output
+	 *  
+	 */
+	public static String[] testDriver(String[] userCommands, UIController uiController){
+		UIController.setUIModeEnabled(false);
+		CliView.uiController = uiController;
+		String[] output = new String[0];
+		for(String s : userCommands){
+			output = uiController.processUserInput(s);
+		}
+		ArrayList<String> filterOutput = new ArrayList<String>();
+				for(String s : output){
+					if(s!=null){
+						while(s.charAt(CHARACTER_LOCATION) == BOLD_INDICATOR || 
+								s.charAt(CHARACTER_LOCATION) == PRIORITY_INDICATOR ||
+								s.charAt(CHARACTER_LOCATION) == COLOR_INDICATOR){
+							s = s.substring(REMOVE_ONE);
+						}
+						System.out.println(s);
+						filterOutput.add(s);
+					}
+				}
+		return filterOutput.toArray(output);
 	}
 }

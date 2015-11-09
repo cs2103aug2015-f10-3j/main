@@ -702,6 +702,8 @@ class SuggestionLabel extends JLabel {
 	private final JTextField textField;
 	private final CommandSuggestor commandSuggestor;
 	private Color suggestionsTextColor, suggestionBorderColor;
+	private static final String KEYNAME_ENTER = "Enter released";
+	private static final String SPACE = " ";
 
 	/*** Constructors ***/
 	public SuggestionLabel(String string, final Color borderColor, Color suggestionsTextColor, CommandSuggestor commandSuggestor) {
@@ -737,8 +739,8 @@ class SuggestionLabel extends JLabel {
 			}
 		});
 
-		getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0, true), "Enter released");
-		getActionMap().put("Enter released", new AbstractAction() {
+		getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0, true), KEYNAME_ENTER);
+		getActionMap().put(KEYNAME_ENTER, new AbstractAction() {
 			@Override
 			public void actionPerformed(ActionEvent ae) {
 				replaceWithSuggestedText();
@@ -783,8 +785,8 @@ class SuggestionLabel extends JLabel {
 		String suggestedWord = getText();
 		String text = textField.getText();
 		String typedWord = commandSuggestor.getCurrentlyTypedWord();
-		String t = text.substring(0, text.lastIndexOf(typedWord));
-		String tmp = t + text.substring(text.lastIndexOf(typedWord)).replace(typedWord, suggestedWord);
-		textField.setText(tmp + " ");
+		String textBeforeSuggestedWord = text.substring(0, text.lastIndexOf(typedWord));
+		String newText = textBeforeSuggestedWord + text.substring(text.lastIndexOf(typedWord)).replace(typedWord, suggestedWord);
+		textField.setText(newText + SPACE);
 	}
 }
