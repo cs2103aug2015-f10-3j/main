@@ -168,6 +168,10 @@ class ParserBackend implements ParserConstants {
 	private void setupDeleteOption() {
 		deleteOptions.put(OPTIONS.DELETE, TYPE.INTEGER_ARRAY);
 		deleteOptions.put(OPTIONS.DELETE_SHORT, TYPE.INTEGER_ARRAY);
+		deleteOptions.put(OPTIONS.BETWEEN, TYPE.DATE);
+		deleteOptions.put(OPTIONS.AND, TYPE.DATE);
+		deleteOptions.put(OPTIONS.BETWEEN_SHORT, TYPE.DATE);
+		deleteOptions.put(OPTIONS.AND_SHORT, TYPE.DATE);
 		_optionsMap.put(COMMAND_TYPE.DELETE, deleteOptions);
 	}
 
@@ -175,9 +179,7 @@ class ParserBackend implements ParserConstants {
 		editOptions.put(OPTIONS.EDIT, TYPE.INTEGER);
 		editOptions.put(OPTIONS.DESC, TYPE.STRING);
 		editOptions.put(OPTIONS.REMIND, TYPE.DATE);
-
-		editOptions.put(OPTIONS.BETWEEN, TYPE.DATE);
-		editOptions.put(OPTIONS.AND, TYPE.DATE);
+		
 		editOptions.put(OPTIONS.STARTDATE, TYPE.DATE);
 		editOptions.put(OPTIONS.STARTTIME, TYPE.DATE);
 		editOptions.put(OPTIONS.ENDDATE, TYPE.DATE);
@@ -189,9 +191,7 @@ class ParserBackend implements ParserConstants {
 		editOptions.put(OPTIONS.EDIT_SHORT, TYPE.INTEGER);
 		editOptions.put(OPTIONS.DESC_SHORT, TYPE.STRING);
 		editOptions.put(OPTIONS.REMIND_SHORT, TYPE.DATE);
-
-		editOptions.put(OPTIONS.BETWEEN_SHORT, TYPE.DATE);
-		editOptions.put(OPTIONS.AND_SHORT, TYPE.DATE);
+		
 		editOptions.put(OPTIONS.STARTDATE_SHORT, TYPE.DATE);
 		editOptions.put(OPTIONS.STARTTIME_SHORT, TYPE.DATE);
 		editOptions.put(OPTIONS.ENDDATE_SHORT, TYPE.DATE);
