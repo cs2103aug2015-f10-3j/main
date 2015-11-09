@@ -53,11 +53,20 @@ public class HelpManual {
 			+ "\t- Eg. complete 1"
 			+ "\t- Eg. complete 1 2";
 	private static final String SEARCH_MSG ="SEARCH COMMAND\n"
-			+ "TBC";
+			+ "search | /s search sequence/dates \n"
+			+ "Searches the whole Task list for Tasks that has description or dates that matches the search sequence or search dates.\n"
+			+ "Multiple search sequence/dates are allowed. \n"
+			+ "\t- Eg. search assignments \n"
+			+ "\t- Eg. search assignments 12/12/2015\n"
+			+ "\t- Eg. search assignments quizzes\n"
+			+ "\t- Eg. search 12/12/2015 13/12/2015";
+
 	private static final String UNDO_MSG ="UNDO COMMAND\n"
-			+ "TBC";
+			+ "undo - To undo a previous operation that modifies the data file, such as setdirectory, \n"
+			+ "add, edit, delete and complete, type undo. This will undo the effects of the previous operations.";
 	private static final String REDO_MSG ="REDO COMMAND\n"
-			+ "TBC";
+			+ "redo - To redo a previous undo, an undo command have to be done previously. \n"
+			+ "If there is no undo command performed, this redo command will fail.";
 	private static final String EXIT_MSG ="EXIT COMMAND \n"
 			+ "exit - Close and exit PaddleTask";
 	private static final String CLEAR_MSG ="CLEAR COMMAND \n"
@@ -66,6 +75,20 @@ public class HelpManual {
 			+ "help command - Display help message for command. If no command is keyed, all help messages will show.\n"
 			+ "\t- Eg. help\n"
 			+ "\t- Eg. help add";
+	private static final String MORE_MSG = "MORE COMMAND \n"
+			+ "More task id - This command will display the selected task in full details for the user. \n"
+			+ "\t- Eg. more 1\n"
+			+ "\t- Eg. more 2";
+	private static final String TAG_MSG = "TAG/UNTAG COMMAND \n"
+			+ "To tag or untag an existing task, type tag/untag, followed by the running index of the task and the tags to add/remove.\n"
+			+ "You may enter 1 or more tags. Note that the tags have to be preceded with a ‘#’. \n"
+			+ "\t- Eg. tag 1 #yolo\n"
+			+ "\t- Eg. untag 1 #yolo";
+	private static final String SET_DIR_MSG = "SET DIRECTORY COMMAND \n"
+			+ "set directory command - , you can change the directory of where "
+			+ "the data file will be stored instead of using the default location. \n"
+			+ "\t- Eg. setdirectory	C:\\Users\\Admin\\Desktop";
+			
 	private static final String ERROR_MSG = "No such command for Help found";
 	private static final String NEXT_LINE = "\n";
 	
@@ -101,53 +124,43 @@ public class HelpManual {
 	 * 
 	 */
 	public String getHelp(String command) {
-		if (command.equals(COMMANDS.ADD.toString())) {
+		if (command.equals(ParserConstants.COMMANDS.ADD.toString())) {
 			return ADD_MSG;
-		} else if (command.equals(COMMANDS.EDIT.toString())) {
+		} else if (command.equals(ParserConstants.COMMANDS.EDIT.toString())) {
 			return EDIT_MSG;
-		} else if (command.equals(COMMANDS.VIEW.toString())) {
+		} else if (command.equals(ParserConstants.COMMANDS.VIEW.toString())) {
 			return VIEW_MSG;
-		} else if (command.equals(COMMANDS.DELETE.toString())) {
+		} else if (command.equals(ParserConstants.COMMANDS.DELETE.toString())) {
 			return DELETE_MSG;
-		} else if (command.equals(COMMANDS.COMPLETE.toString())) {
+		} else if (command.equals(ParserConstants.COMMANDS.COMPLETE.toString())) {
             return COMPLETE_MSG;
-        } else if (command.equals(COMMANDS.SEARCH.toString())) {
+        } else if (command.equals(ParserConstants.COMMANDS.SEARCH.toString())) {
 			return SEARCH_MSG;
-		} else if (command.equals(COMMANDS.UNDO.toString())) {
+		} else if (command.equals(ParserConstants.COMMANDS.UNDO.toString())) {
 			return UNDO_MSG;
-		} else if (command.equals(COMMANDS.REDO.toString())) {
+		} else if (command.equals(ParserConstants.COMMANDS.REDO.toString())) {
 			return REDO_MSG;
-		} else if (command.equals(COMMANDS.CLEAR.toString())) {
+		} else if (command.equals(ParserConstants.COMMANDS.CLEAR.toString())) {
 			return CLEAR_MSG;
-		} else if (command.equals(COMMANDS.HELP.toString())) {
+		} else if (command.equals(ParserConstants.COMMANDS.HELP.toString())) {
 			return HELP_MSG;
-		} else if (command.equals(COMMANDS.EXIT.toString())) {
+		} else if (command.equals(ParserConstants.COMMANDS.TAG.toString())|| command.equals(ParserConstants.COMMANDS.UNTAG.toString())) {
+			return TAG_MSG;
+		} else if (command.equals(ParserConstants.COMMANDS.MORE.toString())) {
+			return MORE_MSG;
+		} else if (command.equals(ParserConstants.COMMANDS.SETDIRECTORY.toString())) {
+			return SET_DIR_MSG;
+		} else if (command.equals(ParserConstants.COMMANDS.EXIT.toString())) {
 			return EXIT_MSG;
 		} else if (command.equals(null)|| command.equals("") || command.equals("all") ) {
 			return OVERALL_MSG + NEXT_LINE + ADD_MSG + NEXT_LINE + EDIT_MSG + NEXT_LINE + VIEW_MSG + NEXT_LINE + 
 					DELETE_MSG + NEXT_LINE + COMPLETE_MSG + NEXT_LINE + SEARCH_MSG + NEXT_LINE + UNDO_MSG + NEXT_LINE 
-					+ REDO_MSG + NEXT_LINE + CLEAR_MSG + NEXT_LINE + HELP_MSG + NEXT_LINE + EXIT_MSG;
+					+ REDO_MSG + NEXT_LINE + CLEAR_MSG + NEXT_LINE + HELP_MSG + TAG_MSG +
+					MORE_MSG + SET_DIR_MSG + NEXT_LINE + EXIT_MSG;
 		} else {
 			return ERROR_MSG;
 		}
 
-	}
-	
-	//@@author A0125473H-reused
-	protected static enum COMMANDS {
-		ADD("add"), VIEW("view"), EDIT("edit"), DELETE("delete"), 
-		COMPLETE("complete"), SEARCH("search"), UNDO("undo"), REDO("redo"),
-		EXIT("exit"), CLEAR("clear"), HELP("help");
-
-		private final String commandText;
-		
-		private COMMANDS(final String commandText) {
-			this.commandText = commandText;
-		}
-
-		public String toString() {
-			return commandText;
-		}
 	}
 
 	
