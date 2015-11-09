@@ -11,20 +11,13 @@
 ###### src\main\paddletask\ui\view\MainPanel.java
 ``` java
 	@Override
-	public void keyTyped(KeyEvent e) {
-		// TODO Auto-generated method stub
-
-	}
+	public void keyTyped(KeyEvent e) {}
 
 ```
 ###### src\main\paddletask\ui\view\MainPanel.java
 ``` java
 	@Override
-	public void keyReleased(KeyEvent e) {
-		// TODO Auto-generated method stub
-
-	}
-
-
+	public void keyReleased(KeyEvent e) {}
+	
 }
 ```
