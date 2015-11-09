@@ -19,16 +19,16 @@ import main.paddletask.common.util.DateTimeHelper;
 class ParserBackend implements ParserConstants {
 
 	/*** Variables ***/
-	public static final String EMPTY_STRING = "";
-	public static final String SPACE = " ";
-	public static final char SPACES = ' ';
-	public static final char QUOTES = '"';
-	public static final String DATE_FORMAT = "%1$s/%2$s/%3$s";
-	public static final String OLD_TASKID_FORMAT = "\\s+%1$d(\\s+|$)";
-	public static final String NEW_TASKID_FORMAT = " %1$d ";
+	protected static final String EMPTY_STRING = "";
+	protected static final String SPACE = " ";
+	protected static final char SPACES = ' ';
+	protected static final char QUOTES = '"';
+	protected static final String DATE_FORMAT = "%1$s/%2$s/%3$s";
+	protected static final String OLD_TASKID_FORMAT = "\\s+%1$d(\\s+|$)";
+	protected static final String NEW_TASKID_FORMAT = " %1$d ";
 	
-	public static final boolean OPTIONAL = true;
-	public static final boolean NOT_OPTIONAL = false;
+	protected static final boolean OPTIONAL = true;
+	protected static final boolean NOT_OPTIONAL = false;
 	
 	private static final EnumMap<OPTIONS, TYPE> addOptions = new EnumMap<OPTIONS, TYPE>(OPTIONS.class);
 	private static final EnumMap<OPTIONS, TYPE> viewOptions = new EnumMap<OPTIONS, TYPE>(OPTIONS.class);
