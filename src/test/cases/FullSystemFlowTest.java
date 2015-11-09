@@ -10,7 +10,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import main.paddletask.storage.api.StorageController;
-import main.paddletask.ui.controller.UIController;
 import main.paddletask.ui.view.MainFrame;
 
 public class FullSystemFlowTest {

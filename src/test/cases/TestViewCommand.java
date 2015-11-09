@@ -10,6 +10,7 @@ import main.paddletask.ui.controller.UIController;
 
 public class TestViewCommand {
 	 /*** Variables ***/
+	@SuppressWarnings("unused")
 	private UIController uiController = null;
 	
 	/*** Setup and Teardown ***/

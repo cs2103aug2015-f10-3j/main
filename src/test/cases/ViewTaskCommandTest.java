@@ -11,6 +11,7 @@ public class ViewTaskCommandTest {
 	@Test
 	public void testViewByType() throws Exception{
 		ViewTaskCommand view = new ViewTaskCommand();
+		@SuppressWarnings("unused")
 		ArrayList<Task> allTask = new ArrayList<Task>();
 		assertNotNull(view.execute());
 		//view.selectTaskByPeriod(allTask);

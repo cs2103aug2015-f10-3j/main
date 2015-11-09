@@ -6,13 +6,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import main.paddletask.command.api.Command;
 import main.paddletask.command.api.HelpCommand;
 import main.paddletask.common.data.HelpManual;
-import main.paddletask.common.exception.InvalidCommandFormatException;
-import main.paddletask.logic.api.LogicController;
 import main.paddletask.parser.api.CommandParser;
-import main.paddletask.ui.controller.UIController;
 
 public class TestHelpCommand {
 	/*** Variables ***/
