@@ -216,7 +216,7 @@ public class TestCommandParser {
 	}
 	
 	private void checkCommand (COMMAND_TYPE expected, String input) throws Exception{
-    	Field f = parser.getClass().getDeclaredField("parserLogic");
+    	Field f = parser.getClass().getDeclaredField("_parserLogic");
 		f.setAccessible(true);
 		ParseLogic pl = (ParseLogic) f.get(parser);
 		assertEquals(expected, pl.determineCommandType(input));
