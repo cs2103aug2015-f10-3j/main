@@ -10,7 +10,7 @@ import org.junit.runners.Suite.SuiteClasses;
         TestCommandParser.class, TestEditTaskCommand.class,
         TestHelpCommand.class, TestStorageController.class,
         TestTaskController.class, TestViewCommand.class,
-        ViewTaskCommandTest.class })
+        TestViewCommand.class })
 public class AllTests {
 
 }

@@ -1,33 +1,20 @@
+//@@author A0125528E
 package test.cases;
 
 import static org.junit.Assert.*;
 
-import org.junit.After;
-import org.junit.Before;
+import java.util.ArrayList;
 import org.junit.Test;
-
-import main.paddletask.ui.controller.UIController;
+import main.paddletask.command.api.ViewTaskCommand;
+import main.paddletask.task.entity.Task;
 
 public class TestViewCommand {
-	 /*** Variables ***/
-	@SuppressWarnings("unused")
-	private UIController uiController = null;
-	
-	/*** Setup and Teardown ***/
-	@Before
-	public void setUp() throws Exception {
-		uiController = UIController.getInstance(null);
-	}
-
-	@After
-	public void tearDown() throws Exception {
-	}
-
-    /*** Test Cases 
-     * @throws Exception  ***/
 	@Test
-	public void testView() throws Exception {
-		fail("Not yet implemented");
+	public void testViewByType() throws Exception{
+		ViewTaskCommand view = new ViewTaskCommand();
+		@SuppressWarnings("unused")
+		ArrayList<Task> allTask = new ArrayList<Task>();
+		assertNotNull(view.execute());
+		//view.selectTaskByPeriod(allTask);
 	}
-
 }
