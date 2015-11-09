@@ -1,5 +1,7 @@
 package test.cases;
 
+import static org.junit.Assert.*;
+
 import java.util.ArrayList;
 import org.junit.Test;
 import main.paddletask.command.api.ViewTaskCommand;
@@ -10,7 +12,7 @@ public class ViewTaskCommandTest {
 	public void testViewByType() throws Exception{
 		ViewTaskCommand view = new ViewTaskCommand();
 		ArrayList<Task> allTask = new ArrayList<Task>();
-		//view.execute();
-		view.selectTaskByPeriod(allTask);
+		assertNotNull(view.execute());
+		//view.selectTaskByPeriod(allTask);
 	}
 }
