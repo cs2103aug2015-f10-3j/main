@@ -109,14 +109,6 @@ public class TestHelpCommand {
 		//fail("Not yet implemented");
 	}
 	
-	@Test
-	public void testHelp() throws Exception{
-		String testInput = "help help";
-		HelpCommand command = (HelpCommand)parser.parse(testInput);
-		command.execute();
-		assertEquals(command.getHelpComments(), manual.getHelp("help") );
-		//fail("Not yet implemented");
-	}
 	
 	@Test
 	public void testExit() throws Exception{
