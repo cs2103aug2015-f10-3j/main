@@ -236,6 +236,11 @@ public class MainFrame implements Observer{
 		}
 	}
 	
+	public static String[] testDriver(String userCommand){
+		mainFrame = new MainFrame();
+		String[] output = CliView.testDriver(userCommand, uiController);
+		return output;
+	}
 	//@@author A0125473H
 	/**
 	 * This method is invoked to hide and minimize the

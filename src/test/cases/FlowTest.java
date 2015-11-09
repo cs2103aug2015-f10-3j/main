@@ -14,9 +14,6 @@ public class FlowTest {
 	UIController uiController;
 	@Before
 	public void setUp() throws Exception {
-		MainFrame mainFrame = new MainFrame();
-		MainPanel panel = new MainPanel(null);
-		UIController uiController = UIController.getInstance(mainFrame);
 	}
 
 	@After
@@ -25,9 +22,16 @@ public class FlowTest {
 
 	@Test
 	public void testAdd() {
-		String input = "add buy hotdog";
-		String[] expected = {"Description: buy hotdog", "Task Type: floating", "Priority: 3"};
-		assertArrayEquals(uiController.processUserInput(input), expected);
+
+		String input = "add watch movie";
+		String[] expected = {"New task added successfully\n","Description: watch movie", "Task Type: floating", "Priority: 3", "\n"};
+		String[] actual = MainFrame.testDriver(input);
+		System.out.println("add test");
+		for(int i = 0; i < 5; i ++){
+			//System.out.println("ex:" + expected[i]);
+			System.out.println("ac:" + actual[i]);
+		}
+		assertArrayEquals(expected, actual);
 	}
 	
 	@Test
@@ -35,10 +39,8 @@ public class FlowTest {
 		String input = "help exit";
 		String[] expected = {"EXIT COMMAND",
 				"exit - Close and exit PaddleTask"};
-		String[] actual = uiController.processUserInput(input);
-		for(int i = 0;i < expected.length; i++){
-			assertArrayEquals(expected, actual);
-		}
+		String[] actual = MainFrame.testDriver(input);
+		assertArrayEquals(expected, actual);
 	}
 
 }
