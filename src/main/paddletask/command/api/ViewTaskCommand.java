@@ -18,9 +18,7 @@ public class ViewTaskCommand extends Command {
 	private static final int OFFSET_ONE = 1;
 	
 	private static final String TYPE_ALL = "all";
-	private static final String TYPE_OUTSTANDING = "outstanding";
 	private static final String TYPE_COMPLETE = "complete";
-	
 	private static final String PERIOD_TODAY = "today";
 	private static final String PERIOD_TOMORROW = "tomorrow";
 	private static final String PERIOD_WEEK = "week";
@@ -99,17 +97,12 @@ public class ViewTaskCommand extends Command {
 					selectedTask.add(t);
 				}
 			}
-		} else if (type.equals(TYPE_OUTSTANDING)){
+		} else {
 			allTask = taskController.getTask();
 			for(Task t : allTask){
 				if(!t.isComplete()){
 					selectedTask.add(t);
 				}
-			}
-		} else {
-			allTask = taskController.getTask();
-			for(Task t : allTask){
-				selectedTask.add(t);
 			}
 		}
 		return selectedTask;
