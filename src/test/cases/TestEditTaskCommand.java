@@ -342,7 +342,7 @@ public class TestEditTaskCommand {
                                 TEST_KEYWORD_EMPTY,      // Reminder date and time
                                 -1,                      // Priority: -1 symbolize no specified priority
                                 TEST_RECURTYPE_NULL),    // Recur type
-                            TEST_SAMPLE_DESCRIPTION, null, null, null, TEST_TASK_DEFAULT_PRIORITY, false, TEST_RECURTYPE_NULL); 
+                            TEST_SAMPLE_DESCRIPTION, null, null, null, TEST_TASK_DEFAULT_PRIORITY, false, TEST_RECURTYPE_NULL);
         
         testEditTaskCommand(TEST_TASKTYPE_DEADLINE, TEST_FLOATING_ADD_END_DATE_TIME, TEST_SAMPLE_FLOAT_ID,
                             getTestCommand(
